@@ -1,0 +1,6 @@
+datasource: https://raw.githubusercontent.com/qinmoelei/TradeMater-Data/main/dj30.csv
+data: "dj30" 
+data_path: "./experiment_result/data"
+output_config_path: "./output_config/data"
+split_proportion: [0.8,0.1,0.1]
+generate_config: True
