@@ -1,0 +1,24 @@
+backward_num_day: 5
+df_path: ./data/data/BTC/valid.csv
+forward_num_day: 5
+future_weights: 0.2
+initial_amount: 100000
+max_volume: 1
+tech_indicator_list:
+- high
+- low
+- open
+- close
+- adjcp
+- zopen
+- zhigh
+- zlow
+- zadjcp
+- zclose
+- zd_5
+- zd_10
+- zd_15
+- zd_20
+- zd_25
+- zd_30
+transaction_cost_pct: 0.001

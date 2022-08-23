@@ -1,0 +1,135 @@
+\newcommand{\D}{6} % number of protocol dimensions (config option)
+\newcommand{\U}{100} % number of scale units (config option)
+\newcommand{\M}{6}
+\newcommand{\EV}{16} %number of evaluation measures (config option)
+
+\newdimen\R % maximal diagram radius (config option)
+\R=2.7cm
+% \R=2cm
+\newdimen\L % radius to put dimension labels (config option)
+\L=3.3cm
+% \L=3cm
+
+\newcommand{\Ro}{30}
+\newcommand{\A}{360/\D} % calculated angle between dimension axes
+\newcommand{\B}{360/\EV} % calculated angle between evaluation measure axes
+\newcommand{\BM}{\B/\M}
+
+\newcommand{\Doffset}{3*\A - 90 + \Ro}
+% \newcommand{\Doffset}{90}
+
+\newcommand{\Instrip}{3.6cm}
+\newcommand{\Outstrip}{3.85cm}
+
+\newcommand{\nodefontsize}{|\tiny \selectfont|}
+\usetikzlibrary{positioning}
+\usetikzlibrary{decorations.text, arrows.meta}
+
+\tikzset{
+  font={\tiny\selectfont},
+  myarrow/.style={thick, -latex},
+  whiteshell/.style={draw=white,fill=white,opacity=0.0},
+  whitecircle/.style={draw=black,fill=white,circle, align=center,, inner sep=1pt, opacity=0.75},
+  magentashell/.style={draw=magenta,fill=magenta,fill opacity=0.4,  opacity=0.3},
+  greenshell/.style={draw=green!50!black,fill=green!50!black, fill opacity=0.4,  opacity=0.3},
+  blueshell/.style={draw=blue!70!black, fill=blue!70!black, fill opacity=0.4,opacity=0.3},
+  orangeshell/.style={draw=orange!90!black, fill=orange!80,fill opacity=0.4, opacity=0.3},
+  cyanshell/.style={draw=cyan!90!black, fill=cyan!80!black,fill opacity=0.4, opacity=0.3},
+  brownshell/.style={draw=brown!90!black, fill=brown!80!black,fill opacity=0.4, opacity=0.3},
+  % #1=radius, #2=start angle, #3=end angle, #4=draw style,
+  % #5 text colour, #6=text
+  pics/strip/.style args = {#1,#2,#3,#4,#5,#6}{
+       code = {
+        \draw[#4] (#2:#1-1.25mm) arc (#2:#3:#1-1.25mm)
+             -- (#3:#1) -- (#3:#1+1.25mm) arc (#3:#2:#1+1.25mm)
+             -- (#2:#1) -- cycle;
+        \path[
+              decoration={text along path, text color=#5, text = {#6},
+                          text align = {align = center}, raise = -0.3ex},
+              decorate] (#2:#1) arc (#2:#3:#1);
+       }
+  }
+}
+
+
+
+\begin{tikzpicture}[scale=1]
+%   \path (0:0cm) coordinate (O); 
+%   \fill (O) circle (0pt);% define coordinate for origin
+
+  draw the spiderweb
+  \foreach \X in {1,...,\D}{
+    \draw [opacity=0.5](\X*\A+\Ro:0) -- (\X*\A+\Ro:\R);
+  }
+
+  \foreach \Y in {1,...,\U}{
+    \foreach \X in {1,...,\D}{
+      \path (\X*\A+\Ro:\Y*\R/\U) coordinate (D\X-\Y);
+    %   \fill (D\X-\Y) circle (1.5pt);
+    \pgfextra{\ifthenelse{\Y=50}{\fill (D\X-\Y) circle (1.2pt);}{}}
+    \pgfextra{\ifthenelse{\Y=100}{\fill (D\X-\Y) circle (1.2pt);}{}}
+    }
+    
+    \pgfextra{\ifthenelse{\Y=50}{\draw [opacity=0.5] (\Ro:\Y*\R/\U) \foreach \X in {1,...,\D}{
+        -- (\X*\A+\Ro:\Y*\R/\U)
+    } -- cycle;}{}}
+    
+        \pgfextra{\ifthenelse{\Y=100}{\draw [opacity=0.5] (\Ro:\Y*\R/\U) \foreach \X in {1,...,\D}{
+        -- (\X*\A+\Ro:\Y*\R/\U)
+    } -- cycle;}{}}
+    
+
+  }
+
+  % define labels for each dimension axis (names config option)
+  \path (1*\A:\L) node (L1)[yshift=-0ex,xshift=-10ex, rotate=\Doffset-2*\A] {Risk Control};
+  \path (2*\A:\L) node (L2)[yshift=-9ex, xshift=-5.5ex,rotate=\Doffset-\A] {Profitability};
+  \path (3*\A:\L) node (L3) [xshift=5ex, yshift=-9.5ex,  rotate=\Doffset+7*\A+120]{Explainability};
+  \path (4*\A:\L) node (L4) [xshift=10.2ex, yshift=-0.3ex, rotate=\Doffset+8*\A+120]{Reliability};
+  \path (5*\A:\L) node (L5) [xshift=5.5ex, yshift=9ex, rotate=\Doffset-3*\A+120]{Diversity};
+
+  \path (6*\A:\L) node (L6) [xshift=-5ex, yshift=9ex, rotate=\Doffset+3*\A]{Universality};
+
+    %-$INNER-CIRCLE$
+
+    %-$OUTER-CIRCLE$
+
+
+
+
+
+    \pic at (0,0){strip={\Outstrip,  1*\B,  0*\B,whitecircle,black,\nodefontsize country}};
+    \pic at (0,0){strip={\Outstrip,  2*\B,  1*\B,whitecircle,black,\nodefontsize asset type}};
+    \pic at (0,0){strip={\Outstrip,  3*\B,  2*\B,whitecircle,black,\nodefontsize time-scale}};
+    \pic at (0,0){strip={\Outstrip,  4*\B,  3*\B,whitecircle,black,\nodefontsize risk}};
+    \pic at (0,0){strip={\Outstrip,  5*\B,  4*\B,whitecircle,black,\nodefontsize risk-adjusted}};
+    \pic at (0,0){strip={\Outstrip,  6*\B,  5*\B,whitecircle,black,\nodefontsize extreme market}};
+    \pic at (0,0){strip={\Outstrip,  7*\B,  6*\B,whitecircle,black,\nodefontsize profit}};
+    \pic at (0,0){strip={\Outstrip,  8*\B,  7*\B,whitecircle,black,\nodefontsize alpha-decay}};
+    
+
+
+    \pic at (0,0){strip={\Outstrip,  8*\B,  9*\B,whitecircle,black,\nodefontsize  equity curve }};
+    \pic at (0,0){strip={\Outstrip,  9*\B, 10*\B,whitecircle,black,\nodefontsize  profile}};
+    \pic at (0,0){strip={\Outstrip, 10*\B, 11*\B,whitecircle,black,\nodefontsize  variability}};
+    \pic at (0,0){strip={\Outstrip, 11*\B, 12*\B,whitecircle,black,\nodefontsize rank order}};
+    \pic at (0,0){strip={\Outstrip, 12*\B, 13*\B,whitecircle,black,\nodefontsize t-SNE}};
+    \pic at (0,0){strip={\Outstrip, 13*\B, 14*\B,whitecircle,black,\nodefontsize entropy}};
+    \pic at (0,0){strip={\Outstrip, 14*\B, 15*\B,whitecircle,black,\nodefontsize correlation}};
+    \pic at (0,0){strip={\Outstrip, 15*\B, 16*\B,whitecircle,black,\nodefontsize rolling window}};
+
+
+
+    \newcommand{\lentry}[2]{%
+      % #1: color, #2: label
+      \scalebox{0.6}{\fcolorbox{#1!30}{#1!30}{\textcolor{#1!30}{\rule{\fontcharht\font`X}{\fontcharht\font`X}}}} #2
+    }
+    \coordinate (center) at (0,0);
+    {\protect\NoHyper
+    \node[] (legend) [below=4.05cm of center, align = left] {
+            %-$LEGEND$
+    };
+    \protect\endNoHyper}
+
+
+\end{tikzpicture}

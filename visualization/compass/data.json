@@ -1,0 +1,226 @@
+{
+    "entries": [
+      {
+        "color": "orange",
+        "label": "A2C",
+        "inner_level": {
+          "Proftability": 29,
+          "Risk_Control": 31,
+          "University": 33,
+          "Diversity": 43,
+          "Reliability": 42,
+          "Explainability": 50
+        },
+        "outer_level": {
+          "alpha_decay": false,
+          "profit": true,
+          "extreme_market": false,
+          "risk_adjusted": true,
+          "risk": false,
+          "time_scale": false,
+          "assert_type": false,
+          "country": true,
+          "rolling_window": false,
+          "correlation": false,
+          "entropy": false,
+          "t_SNE": false,
+          "rank_order": false,
+          "variability": false,
+          "profile": false,
+          "equity_curve": false
+        }
+      },
+      {
+        "color": "brown",
+        "label": "PPO",
+        "inner_level": {
+          "Proftability": 37,
+          "Risk_Control": 35,
+          "University": 41,
+          "Diversity": 48,
+          "Reliability": 43,
+          "Explainability": 50
+        },
+        "outer_level": {
+          "alpha_decay": false,
+          "profit": true,
+          "extreme_market": false,
+          "risk_adjusted": true,
+          "risk": false,
+          "time_scale": false,
+          "assert_type": false,
+          "country": true,
+          "rolling_window": false,
+          "correlation": false,
+          "entropy": false,
+          "t_SNE": false,
+          "rank_order": false,
+          "variability": false,
+          "profile": false,
+          "equity_curve": false
+        }
+      },  
+      {
+        "color": "blue",
+        "label": "SAC",
+        "inner_level": {
+          "Proftability": 27,
+          "Risk_Control": 14,
+          "University": 30,
+          "Diversity": 46,
+          "Reliability": 43,
+          "Explainability": 50
+        },
+        "outer_level": {
+          "alpha_decay": false,
+          "profit": true,
+          "extreme_market": false,
+          "risk_adjusted": true,
+          "risk": false,
+          "time_scale": false,
+          "assert_type": false,
+          "country": true,
+          "rolling_window": false,
+          "correlation": false,
+          "entropy": false,
+          "t_SNE": false,
+          "rank_order": false,
+          "variability": false,
+          "profile": false,
+          "equity_curve": false
+        }
+      },
+
+      {
+        "color": "green",
+        "label": "SARL",
+        "inner_level": {
+          "Proftability": 45,
+          "Risk_Control": 47,
+          "University": 59,
+          "Diversity": 49,
+          "Reliability": 51,
+          "Explainability": 50
+        },
+        "outer_level": {
+          "alpha_decay": false,
+          "profit": true,
+          "extreme_market": false,
+          "risk_adjusted": true,
+          "risk": true,
+          "time_scale": true,
+          "assert_type": true,
+          "country": true,
+          "rolling_window": false,
+          "correlation": false,
+          "entropy": false,
+          "t_SNE": false,
+          "rank_order": false,
+          "variability": false,
+          "profile": false,
+          "equity_curve": true
+        }
+      },
+      {
+        "color": "cyan",
+        "label": "DeepTrader",
+        "inner_level": {
+          "Proftability": 29,
+          "Risk_Control": 31,
+          "University": 44,
+          "Diversity": 43,
+          "Reliability": 38,
+          "Explainability": 50
+        },
+        "outer_level": {
+          "alpha_decay": false,
+          "profit": true,
+          "extreme_market": false,
+          "risk_adjusted": true,
+          "risk": true,
+          "time_scale": false,
+          "assert_type": false,
+          "country": true,
+          "rolling_window": false,
+          "correlation": false,
+          "entropy": false,
+          "t_SNE": false,
+          "rank_order": false,
+          "variability": false,
+          "profile": false,
+          "equity_curve": true
+        }
+      },
+      {
+        "color": "magenta",
+        "label": "AlphaMix+",
+        "inner_level": {
+          "Proftability": 63,
+          "Risk_Control": 57,
+          "University": 90,
+          "Diversity": 70,
+          "Reliability": 52,
+          "Explainability": 50
+        },
+        "outer_level": {
+          "alpha_decay": false,
+          "profit": true,
+          "extreme_market": true,
+          "risk_adjusted": true,
+          "risk": true,
+          "time_scale": true,
+          "assert_type": true,
+          "country": true,
+          "rolling_window": true,
+          "correlation": true,
+          "entropy": true,
+          "t_SNE": true,
+          "rank_order": true,
+          "variability": true,
+          "profile": true,
+          "equity_curve": true
+        }
+      }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    ]
+  }

@@ -1,0 +1,94 @@
+\newcommand{\D}{8} % number of protocol dimensions (config option)
+\newcommand{\U}{100} % number of scale units (config option)
+\newcommand{\M}{3}
+\newcommand{\EV}{15} %number of evaluation measures (config option)
+
+\newdimen\R % maximal diagram radius (config option)
+\R=2.7cm
+\newdimen\L % radius to put dimension labels (config option)
+\L=3.3cm
+\newcommand{\Ro}{22.5}
+\newcommand{\A}{360/\D} % calculated angle between dimension axes
+\newcommand{\B}{360/\EV} % calculated angle between evaluation measure axes
+\newcommand{\BM}{\B/\M}
+
+\newcommand{\Doffset}{3*\A - 90 + \Ro}
+% \newcommand{\Doffset}{90}
+\newcommand{\Instrip}{3.6cm}
+\newcommand{\Outstrip}{3.85cm}
+\newcommand{\nodefontsize}{|\tiny \selectfont|}
+\usetikzlibrary{positioning}
+\usetikzlibrary{decorations.text, arrows.meta}
+
+\tikzset{
+  font={\tiny\selectfont},
+  myarrow/.style={thick, -latex},
+  whiteshell/.style={draw=white,fill=white,opacity=0.0},
+  whitecircle/.style={draw=black,fill=white,circle, align=center,, inner sep=1pt, opacity=0.75},
+  magentashell/.style={draw=magenta,fill=magenta,fill opacity=0.4,  opacity=0.3},
+  greenshell/.style={draw=green!50!black,fill=green!50!black, fill opacity=0.4,  opacity=0.3},
+  blueshell/.style={draw=blue!70!black, fill=blue!70!black, fill opacity=0.4,opacity=0.3},
+  orangeshell/.style={draw=orange!90!black, fill=orange!80,fill opacity=0.4, opacity=0.3},
+  cyanshell/.style={draw=cyan!90!black, fill=cyan!80!black,fill opacity=0.4, opacity=0.3},
+  brownshell/.style={draw=brown!90!black, fill=brown!80!black,fill opacity=0.4, opacity=0.3},
+  % #1=radius, #2=start angle, #3=end angle, #4=draw style,
+  % #5 text colour, #6=text
+  pics/strip/.style args = {#1,#2,#3,#4,#5,#6}{
+      code = {
+        \draw[#4] (#2:#1-1.25mm) arc (#2:#3:#1-1.25mm)
+             -- (#3:#1) -- (#3:#1+1.25mm) arc (#3:#2:#1+1.25mm)
+             -- (#2:#1) -- cycle;
+        \path[
+              decoration={text along path, text color=#5, text = {#6},
+                          text align = {align = center}, raise = -0.3ex},
+              decorate] (#2:#1) arc (#2:#3:#1);
+      }
+  }
+
+}
+
+
+
+\begin{tikzpicture}[scale=0.5]
+%   \path (0:0cm) coordinate (O); 
+%   \fill (O) circle (0pt);% define coordinate for origin
+
+  draw the spiderweb
+  \foreach \X in {1,...,\D}{
+    \draw [opacity=0.5](\X*\A+\Ro:0) -- (\X*\A+\Ro:\R);
+  }
+
+  \foreach \Y in {1,...,\U}{
+    \foreach \X in {1,...,\D}{
+      \path (\X*\A+\Ro:\Y*\R/\U) coordinate (D\X-\Y);
+    %   \fill (D\X-\Y) circle (1.5pt);
+    \pgfextra{\ifthenelse{\Y=50}{\fill (D\X-\Y) circle (1.2pt);}{}}
+    \pgfextra{\ifthenelse{\Y=100}{\fill (D\X-\Y) circle (1.2pt);}{}}
+    }
+    
+    \pgfextra{\ifthenelse{\Y=50}{\draw [opacity=0.5] (\Ro:\Y*\R/\U) \foreach \X in {1,...,\D}{
+        -- (\X*\A+\Ro:\Y*\R/\U)
+    } -- cycle;}{}}
+    
+        \pgfextra{\ifthenelse{\Y=100}{\draw [opacity=0.5] (\Ro:\Y*\R/\U) \foreach \X in {1,...,\D}{
+        -- (\X*\A+\Ro:\Y*\R/\U)
+    } -- cycle;}{}}
+    
+    % \draw [opacity=0.5] (\Ro:\Y*\R/\U) \foreach \X in {1,...,\D}{
+    %     -- (\X*\A+\Ro:\Y*\R/\U)
+    % } -- cycle;
+  }
+
+  % define labels for each dimension axis (names config option)
+  \path (1*\A:\L) node (L1)[yshift=-3.8ex,xshift=1.2ex, rotate=\Doffset-3*\A] {TR};
+  \path (2*\A:\L) node (L2)[yshift=-1.9ex, xshift=3.8ex,rotate=\Doffset-2*\A] {SR};
+\path (1*\A:\L) node (L1)[yshift=1.2ex,xshift=-10.8ex, rotate=\Doffset-1*\A] {CR};
+  \path (2*\A:\L) node (L2)[yshift=-6.5ex, xshift=-8.5ex,rotate=\Doffset] {SoR};
+    \path (1*\A:\L) node (L1)[yshift=-10.6ex,xshift=-16.3ex, rotate=\Doffset+1*\A] {Vol};
+  \path (2*\A:\L) node (L2)[yshift=-19ex, xshift=-3.5ex,rotate=\Doffset+2*\A] {MDD};
+    \path (1*\A:\L) node (L1)[yshift=-16ex,xshift=-4ex, rotate=\Doffset+3*\A] {ENT};
+  \path (2*\A:\L) node (L2)[yshift=-13.7ex, xshift=8.7ex,rotate=\Doffset+4\A] {ENB};
+
+\draw [color=cyan!90!black,line width=1.5pt,opacity=0.6, fill=cyan!90!black!10, fill opacity=0.4](D1-20) -- (D2-26) -- (D3-31) -- (D4-17) -- (D5-45) -- (D6-19)-- (D7-67)-- (D8-37) -- cycle;
+
+\end{tikzpicture}

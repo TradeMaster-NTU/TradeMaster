@@ -1,0 +1,8 @@
+dict_trained_model: result/invest_imitator/trained_model
+env_name: portfolio
+num_epochs: 10
+random_seed: 12345
+result_dict: result/invest_imitator/test_result/
+test_env_config_dict: config/input_config/env/portfolio/portfolio_for_investor_imitator/test.yml
+train_env_config_dict: config/input_config/env/portfolio/portfolio_for_investor_imitator/train.yml
+valid_env_config_dict: config/input_config/env/portfolio/portfolio_for_investor_imitator/valid.yml

@@ -1,0 +1,21 @@
+df_dict: data/data/dj30/valid.csv
+dict: result/PM/invest_imitator/logic_discriptor
+initial_amount: 100000
+tech_indicator_list:
+- high
+- low
+- open
+- close
+- adjcp
+- zopen
+- zhigh
+- zlow
+- zadjcp
+- zclose
+- zd_5
+- zd_10
+- zd_15
+- zd_20
+- zd_25
+- zd_30
+transaction_cost_pct: 0.0001
