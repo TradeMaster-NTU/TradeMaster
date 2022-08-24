@@ -56,16 +56,16 @@ The evaluation module of TradeMaster is mainly based on [PRUDEX-Compass](https:/
 **PRUDEX-Compass** provides an intuitive visual means to give readers a sense of comparability and positioning of FinRL methods. The inner level maps out the relative strength of FinRL methods in terms of each axis, whereas the outer level provides a compact way to visually assess which set-up and evaluation measures are practically reported to point out how comprehensive the evaluation are for FinRL algorithms.
 
 <div align="center">
-  <img src="https://github.com/qinmoelei/TradeMaster_reframe/blob/master/tutorial/visualization_data/PRUDEX.jpg" width = 500 height = 400 />
+  <img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/visualization_data/PRUDEX.jpg" width = 500 height = 400 />
 </div>
 
 **PRIDE-Star** is a star plot to evaluate profitability,risk-control and diversity. It contains the normalized score of 8 measures.
 
 <table align="center">
     <tr>
-        <td ><center><img src="https://github.com/qinmoelei/TradeMaster_reframe/blob/master/tutorial/visualization_data/A2C.PNG" width = 220 height = 200 />   </center></td>
-        <td ><center><img src="https://github.com/qinmoelei/TradeMaster_reframe/blob/master/tutorial/visualization_data/PPO.PNG" width = 220 height = 200 /> </center></td>
-        <td ><center><img src="https://github.com/qinmoelei/TradeMaster_reframe/blob/master/tutorial/visualization_data/SAC.PNG" width = 220 height = 200 /> </center></td>
+        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/visualization_data/A2C.PNG" width = 220 height = 200 />   </center></td>
+        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/visualization_data/PPO.PNG" width = 220 height = 200 /> </center></td>
+        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/visualization_data/SAC.PNG" width = 220 height = 200 /> </center></td>
     </tr>
     <tr>
      <td align="center"><center>(a) A2C</center></td><td align="center"><center>(b) PPO</center></td>      <td align="center"><center>(c) SAC</center></td>                   
@@ -81,9 +81,9 @@ plot is a bar plot, where the i-th column in the rank distribution shows the pro
 
 <table align="center">
     <tr>
-        <td ><center><img src="https://github.com/qinmoelei/TradeMaster_reframe/blob/master/tutorial/result/visualization/rank-1.png" width = 300 height = 170 />   </center></td>
-        <td ><center><img src="https://github.com/qinmoelei/TradeMaster_reframe/blob/master/tutorial/visualization_data/USrank.PNG" width = 300 height = 170 /> </center></td>
-        <td ><center><img src="https://github.com/qinmoelei/TradeMaster_reframe/blob/master/tutorial/visualization_data/FXrank.PNG" width = 300 height = 170 /> </center></td>
+        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/result/visualization/rank-1.png" width = 300 height = 170 />   </center></td>
+        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/visualization_data/USrank.PNG" width = 300 height = 170 /> </center></td>
+        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/visualization_data/FXrank.PNG" width = 300 height = 170 /> </center></td>
     </tr>
     <tr>
      <td align="center"><center>(a) All 4 datasets</center></td><td align="center"><center>(b) DJ30</center></td>      <td align="center"><center>(c) FX</center></td>                   
@@ -99,9 +99,9 @@ plot is a bar plot, where the i-th column in the rank distribution shows the pro
 
 <table align="center">
     <tr>
-        <td ><center><img src="https://github.com/qinmoelei/TradeMaster_reframe/blob/master/tutorial/result/visualization/pp-1.png" width = 300 height = 170 />   </center></td>
-        <td ><center><img src="https://github.com/qinmoelei/TradeMaster_reframe/blob/master/tutorial/visualization_data/USPP.PNG" width = 300 height = 170 /> </center></td>
-        <td ><center><img src="https://github.com/qinmoelei/TradeMaster_reframe/blob/master/tutorial/visualization_data/FXPP.PNG" width = 300 height = 170 /> </center></td>
+        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/result/visualization/pp-1.png" width = 300 height = 170 />   </center></td>
+        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/visualization_data/USPP.PNG" width = 300 height = 170 /> </center></td>
+        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/visualization_data/FXPP.PNG" width = 300 height = 170 /> </center></td>
     </tr>
     <tr>
      <td align="center"><center>(a) All 4 datasets</center></td><td align="center"><center>(b) DJ30</center></td>      <td align="center"><center>(c) FX</center></td>                   
@@ -135,7 +135,7 @@ Classic RL based on Pytorch and Ray:
 |  DJ30   | [YahooFinance](https://pypi.org/project/yfinance/) |   US Stock    | 2012/01/01-2021/12/31, 1day |  OHLCV   | Prices&Indicators |   [DJ30](https://github.com/qinmoelei/TradeMaster_reframe/blob/master/data/data/dj30/DJ30.pdf)   |
 |   FX    |    [Kaggle](https://pypi.org/project/yfinance/)    |      FX       | 2000/01/01-2019/12/31, 1day |  OHLCV   | Prices&Indicators |   [FX](https://github.com/qinmoelei/TradeMaster_reframe/blob/master/data/data/exchange/FX.pdf)   |
 | Crypto  |    [Kaggle](https://pypi.org/project/yfinance/)    |    Crypto     | 2013/04/29-2021/07/06, 1day |  OHLCV   | Prices&Indicators | [Crypto](https://github.com/qinmoelei/TradeMaster_reframe/blob/master/data/data/exchange/FX.pdf) |
-|  SZ50   |      [JoinQuant](https://www.joinquant.com/)       | CN Securities | 2009/01/02-2021-01-01, 1day |  OHLCV   | Prices&Indicators | [SZ50](https://github.com/qinmoelei/TradeMaster_reframe/tree/master/data/data/sz50/SZ50.pdf) |
+|  SZ50   |      [JoinQuant](https://www.joinquant.com/)       | CN Securities | 2009/01/02-2021-01-01, 1day |  OHLCV   | Prices&Indicators |   [SZ50](https://github.com/qinmoelei/TradeMaster_reframe/tree/master/data/data/sz50/SZ50.pdf)   |
 
 ## How to Use Your Own Data
 TradeMaster supports financial data with open, high, low, close, volume (OHLCV) raw informations as:
