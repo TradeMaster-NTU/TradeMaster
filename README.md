@@ -99,7 +99,7 @@ plot is a bar plot, where the i-th column in the rank distribution shows the pro
 
 <table align="center">
     <tr>
-        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/master/tutorial/result/visualization/pp-1.png" width = 300 height = 170 />   </center></td>
+        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/result/visualization/pp-1.png" width = 300 height = 170 />   </center></td>
         <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/master/tutorial/visualization_data/USPP.PNG" width = 300 height = 170 /> </center></td>
         <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/master/tutorial/visualization_data/FXPP.PNG" width = 300 height = 170 /> </center></td>
     </tr>
