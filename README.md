@@ -144,7 +144,7 @@ TradeMaster supports financial data with open, high, low, close, volume (OHLCV) 
 <img align="center" src=figure/ohlcv.jpg width="70%"/>
 </div>
 
-we compute 10 technical indicators to describe the financial markets:
+We compute 10 technical indicators to describe the financial markets:
 
 <div align="center">
 <img align="center" src=figure/feature.jpg width="40%"/>
@@ -199,7 +199,7 @@ We plan to support limit order book (LOB) and altervative data such as text and 
 ```
 
 ## Publications
-[Deep Reinforcement Learning for Quantitative Trading: Challenges and Opportunities](https://ieeexplore.ieee.org/abstract/document/9779600) *IEEE Intelligent System*
+[Deep Reinforcement Learning for Quantitative Trading: Challenges and Opportunities](https://ieeexplore.ieee.org/abstract/document/9779600) *IEEE Intelligent Systems*
 
 [DeepScalper: A Risk-Aware Reinforcement Learning Framework to Capture Fleeting Intraday Trading Opportunities](https://arxiv.org/abs/2201.09058) *CIKM 22*
 
