@@ -62,6 +62,7 @@ Step 2: Install [`Homebrew`](https://brew.sh/)
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   ```
 Step 3: Install [`OpenAI`](https://github.com/openai/baselines)
+
 Installation of system packages on Mac requires Homebrew. With Homebrew installed, run the following in your terminal:
 ```
 brew install cmake openmpi
