@@ -42,13 +42,13 @@ pip install -r requirements.txt
 
 ## Tutorial
 We provide a tutorial for users to get start with.
-|  Algorithm  | Dataset |                                                       Code link                                                       |                     Description                      |
-| :---------: | :-----: | :-------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------: |
-| Classic RL  |   FX    |   [tutorial](https://github.com/qinmoelei/TradeMaster_reframe/blob/master/tutorial/ClassicalRL_for_PM_on_FX.ipynb)    | Classic RL Algorithms for Portfolio Management on FX |
-| DeepScalper | Bitcoin | [tutorial](https://github.com/qinmoelei/TradeMaster_reframe/blob/master/tutorial/DeepScalper_for_AT_on_Bitcoin.ipynb) |     DeepScalper for Algorithm Trading on Crypto      |
-|    EIIE     |  DJ30   |      [tutorial](https://github.com/qinmoelei/TradeMaster_reframe/blob/master/tutorial/EIIE_for_PM_on_DJ30.ipynb)      |        EIIE for Portfolio Management on DJ30         |
-|    IMIT     |  DJ30   |      [tutorial](https://github.com/qinmoelei/TradeMaster_reframe/blob/master/tutorial/IMIT_for_PM_on_DJ30.ipynb)      |  Investor Imitator for Portfolio Management on DJ30  |
-|    SARL     |  DJ30   |      [tutorial](https://github.com/qinmoelei/TradeMaster_reframe/blob/master/tutorial/SARL_for_PM_on_DJ30.ipynb)      |        SARL for Portfolio Management on DJ30         |
+|  Algorithm  | Dataset |                                                     Code link                                                     |                     Description                      |
+| :---------: | :-----: | :---------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------: |
+| Classic RL  |   FX    |   [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/ClassicalRL_for_PM_on_FX.ipynb)    | Classic RL Algorithms for Portfolio Management on FX |
+| DeepScalper | Bitcoin | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/DeepScalper_for_AT_on_Bitcoin.ipynb) |     DeepScalper for Algorithm Trading on Crypto      |
+|    EIIE     |  DJ30   |      [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/EIIE_for_PM_on_DJ30.ipynb)      |        EIIE for Portfolio Management on DJ30         |
+|    IMIT     |  DJ30   |      [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/IMIT_for_PM_on_DJ30.ipynb)      |  Investor Imitator for Portfolio Management on DJ30  |
+|    SARL     |  DJ30   |      [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/SARL_for_PM_on_DJ30.ipynb)      |        SARL for Portfolio Management on DJ30         |
 
 ## Results and Visualization
 The evaluation module of TradeMaster is mainly based on [PRUDEX-Compass](https://github.com/ai-gamer/PRUDEX-Compass), a systematic evaluation toolkit of FinRL methods with 6 axes and 17 measures. We show some results here:
@@ -101,7 +101,8 @@ plot is a bar plot, where the i-th column in the rank distribution shows the pro
     <tr>
         <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/result/visualization/pp-1.png" width = 300 height = 170 />   </center></td>
         <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/visualization_data/USPP.PNG" width = 300 height = 170 /> </center></td>
-        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/visualization_data/FXPP.PNG" width = 300 height = 170 /> </center></td>
+        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/visualization_data/FXPP.PNG" width = 3
+        00 height = 170 /> </center></td>
     </tr>
     <tr>
      <td align="center"><center>(a) All 4 datasets</center></td><td align="center"><center>(b) DJ30</center></td>      <td align="center"><center>(c) FX</center></td>                   
