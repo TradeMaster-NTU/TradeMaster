@@ -132,10 +132,10 @@ Classic RL based on Pytorch and Ray:
 ## Supported Data Source
 | Dataset |                    Data Source                     |     Type      |     Range and Frequency     | Raw Data | Preprocessed Data |                                            Datasheet                                             |
 | :-----: | :------------------------------------------------: | :-----------: | :-------------------------: | :------: | :---------------: | :----------------------------------------------------------------------------------------------: |
-|  DJ30   | [YahooFinance](https://pypi.org/project/yfinance/) |   US Stock    | 2012/01/01-2021/12/31, 1day |  OHLCV   | Prices&Indicators |   [DJ30](https://github.com/qinmoelei/TradeMaster_reframe/blob/master/data/data/dj30/DJ30.pdf)   |
-|   FX    |    [Kaggle](https://pypi.org/project/yfinance/)    |      FX       | 2000/01/01-2019/12/31, 1day |  OHLCV   | Prices&Indicators |   [FX](https://github.com/qinmoelei/TradeMaster_reframe/blob/master/data/data/exchange/FX.pdf)   |
-| Crypto  |    [Kaggle](https://pypi.org/project/yfinance/)    |    Crypto     | 2013/04/29-2021/07/06, 1day |  OHLCV   | Prices&Indicators | [Crypto](https://github.com/qinmoelei/TradeMaster_reframe/blob/master/data/data/exchange/FX.pdf) |
-|  SZ50   |      [JoinQuant](https://www.joinquant.com/)       | CN Securities | 2009/01/02-2021-01-01, 1day |  OHLCV   | Prices&Indicators |   [SZ50](https://github.com/qinmoelei/TradeMaster_reframe/tree/master/data/data/sz50/SZ50.pdf)   |
+|  DJ30   | [YahooFinance](https://pypi.org/project/yfinance/) |   US Stock    | 2012/01/01-2021/12/31, 1day |  OHLCV   | Prices&Indicators |   [DJ30](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/dj30/DJ30.pdf)   |
+|   FX    |    [Kaggle](https://pypi.org/project/yfinance/)    |      FX       | 2000/01/01-2019/12/31, 1day |  OHLCV   | Prices&Indicators |   [FX](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/exchange/FX.pdf)   |
+| Crypto  |    [Kaggle](https://pypi.org/project/yfinance/)    |    Crypto     | 2013/04/29-2021/07/06, 1day |  OHLCV   | Prices&Indicators | [Crypto](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/BTC/Crypto.pdf) |
+|  SZ50   |      [JoinQuant](https://www.joinquant.com/)       | CN Securities | 2009/01/02-2021-01-01, 1day |  OHLCV   | Prices&Indicators |   [SZ50](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/sz50/SZ50.pdf)   |
 
 ## How to Use Your Own Data
 TradeMaster supports financial data with open, high, low, close, volume (OHLCV) raw informations as:
