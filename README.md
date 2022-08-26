@@ -138,6 +138,10 @@ Classic RL based on Pytorch and Ray:
 | Crypto  |    [Kaggle](https://pypi.org/project/yfinance/)    |    Crypto     | 2013/04/29-2021/07/06, 1day |  OHLCV   | Prices&Indicators | [Crypto](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/BTC/Crypto.pdf) |
 |  SZ50   |      [YahooFinance](https://pypi.org/project/yfinance/)       | CN Securities | 2009/01/02-2021-01-01, 1day |  OHLCV   | Prices&Indicators |   [SZ50](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/sz50/SZ50.pdf)   |
 
+OHLCV: open, high, low, and close prices; volume. adjusted_close: adjusted close price
+
+Technical indicators: 'macd', 'boll_ub', 'boll_lb', 'rsi_30', 'dx_30', 'close_30_sma', 'close_60_sma'. Users also can add new features.
+
 ## External Data Source
 Users may download data from the following data source with personal account:
 |Data Source |Type |Range and Frequency |Request Limits|Raw Data|Preprocessed Data|
