@@ -139,7 +139,7 @@ Classic RL based on Pytorch and Ray:
 |  SZ50   |      [YahooFinance](https://pypi.org/project/yfinance/)       | CN Securities | 2009/01/02-2021-01-01, 1day |  OHLCV   | Prices&Indicators |   [SZ50](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/sz50/SZ50.pdf)   |
 
 ## External Data Source
-
+Users may download data from the following data source with personal account:
 |Data Source |Type |Range and Frequency |Request Limits|Raw Data|Preprocessed Data|
 |  ----  |  ----  |  ----  |  ----  |  ----  |  ----  |
 |[Alpaca](https://alpaca.markets/docs/introduction/)| US Stocks, ETFs| 2015-now, 1min| Account-specific| OHLCV| Prices&Indicators|
