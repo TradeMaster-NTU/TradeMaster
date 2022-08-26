@@ -129,7 +129,7 @@ For more information of the usage of this part, please refer to this [tutorial](
 Classic RL based on Pytorch and Ray: 
 [PPO](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#ppo) [A2C](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#a3c) [SAC](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#sac) [DDPG](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#ddpg) [DQN](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#dqn) [PG](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#pg) [TD3](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#ddpg)
 
-## Supported Data Source
+## Datasets
 | Dataset |                    Data Source                     |     Type      |     Range and Frequency     | Raw Data | Preprocessed Data |                                            Datasheet                                             |
 | :-----: | :------------------------------------------------: | :-----------: | :-------------------------: | :------: | :---------------: | :----------------------------------------------------------------------------------------------: |
 |  DJ30   | [YahooFinance](https://pypi.org/project/yfinance/) |   US Stock    | 2012/01/01-2021/12/31, 1day |  OHLCV   | Prices&Indicators |   [DJ30](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/dj30/DJ30.pdf)   |
