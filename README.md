@@ -39,7 +39,7 @@ TradeMaster could be beneficial to a wide range of communities including leading
 ## Installation
 
 Setup Tutorial for Beginners([MacOS](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/installation/Mac/README.md),[Linux](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/installation/Linux/README.md),[Windows](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/installation/Windows/README.md))
-a
+
 ## Tutorial
 We provide a tutorial for users to get start with.
 |  Algorithm  | Dataset |                                                     Code link                                                     |                     Description                      |
