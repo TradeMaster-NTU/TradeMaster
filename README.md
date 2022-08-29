@@ -27,6 +27,7 @@ It covers the full pipeline for the design, implementation, evaluation and deplo
   - [File Structure](#file-structure)
   - [Publications](#publications)
   - [Contact](#contact)
+  - [Join Us](#join-us)
 
 ## Overview
 <div align="center">
@@ -231,3 +232,6 @@ We plan to support limit order book (LOB) and altervative data such as text and 
 ## Contact
 - This repository is developed and maintained by [AMI](https://personal.ntu.edu.sg/boan/) group at [Nanyang Technological University](https://www.ntu.edu.sg/)
 - If you want to make contributions to `TradeMaster`, please [create pull requests](https://github.com/TradeMaster-NTU/TradeMaster/compare).
+
+## Join Us
+We have positions for software engineer, RA, PhD, postdoc. If you are interested in working at the intersection of RL and financial trading, feel free to send an email to shuo003@e.ntu.edu.sg with your CV.
