@@ -16,7 +16,7 @@ Step 3: Install [`TradeMaster`](https://github.com/TradeMaster-NTU/TradeMaster)
   to install a new conda environment for `TradeMaster`
 - Install `TradeMaster`
   ```
-   pip install git+https://github.com/TradeMaster-NTU/TradeMaster.git
+  git clone https://github.com/TradeMaster-NTU/TradeMaster.git
   ```
 - Open the folder `TradeMaster` and open a terminal under the same position
 - Install the dependency of `TradeMaster`, run the command:
