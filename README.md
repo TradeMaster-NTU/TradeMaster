@@ -22,7 +22,7 @@ It covers the full pipeline for the design, implementation, evaluation and deplo
   - [Results and Visualization](#results-and-visualization)
   - [Model Zoo](#model-zoo)
   - [Dataset](#dataset)
-  - [External Data Source](#externel-data-source)
+  - [External Data Source](#external-data-source)
   - [How to Use Your Own Data](#how-to-use-your-own-data)
   - [File Structure](#file-structure)
   - [Publications](#publications)
