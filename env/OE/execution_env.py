@@ -5,12 +5,12 @@ import numpy as np
 import gym
 from gym import error, spaces, utils
 from gym.utils import seeding
-from utils.action import Action
-from utils.action_state import ActionState
-from utils.order import Order
-from utils.order_type import OrderType
-from utils.order_side import OrderSide
-from utils.feature_type import FeatureType
+from env.OE.utils.action import Action
+from env.OE.utils.action_state import ActionState
+from env.OE.utils.order import Order
+from env.OE.utils.order_type import OrderType
+from env.OE.utils.order_side import OrderSide
+from env.OE.utils.feature_type import FeatureType
 
 import os
 from datetime import timedelta
@@ -31,7 +31,7 @@ class ExecutionEnv_TwoActions(gym.Env):
         self.actionState = None
         self.execution = None
         self.episode = 0
-        self._configure()
+        self.configure()
         self.done = False
         self.initOrderbookIndex = 0
 
@@ -48,7 +48,7 @@ class ExecutionEnv_TwoActions(gym.Env):
             i = i + step
         return I
 
-    def _configure(self,
+    def configure(self,
                    orderbook=None,
                    side=OrderSide.SELL,
                    levels=(-50, 50, 1),
@@ -302,9 +302,9 @@ class ExecutionEnv_TwoActions(gym.Env):
         return state_next.toArray(), reward, done, {}
 
     def reset(self):
-        return self._reset(t=self.T[-1], i=self.I[-1])
+        return self.inside_reset(t=self.T[-1], i=self.I[-1])
 
-    def _reset(self, t, i):
+    def inside_reset(self, t, i):
         orderbookState, orderbookIndex = self._get_random_orderbook_state()
         feature = self._makeFeature(
             orderbookIndex=orderbookIndex,
