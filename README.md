@@ -1,4 +1,4 @@
-# TradeMaster: An RL Platform for Trading
+# TradeMaster: An RL Platform for Trading P
 [![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-3713/)
 [![Platform](https://img.shields.io/badge/platform-linux%20%7C%20windows%20%7C%20macos-lightgrey)](Platform)
 [![License](https://img.shields.io/github/license/ai-gamer/PRUDEX-Compass)](License)
