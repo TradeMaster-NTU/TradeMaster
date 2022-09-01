@@ -1,5 +1,5 @@
 from datetime import datetime
-from env.OE.utils.order_type import OrderType
+from ctc_executioner.order_type import OrderType
 
 
 class Order:

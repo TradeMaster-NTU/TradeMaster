@@ -49,7 +49,7 @@ class stock_DQN_TwoActions(nn.Module):
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--task', type=str, default='/home/cil-c42/disk1/Projects/TradeMaster_reframe/agent/aaai2020/T2009')
+    parser.add_argument('--task', type=str, default='./data/600030')
     parser.add_argument('--seed', type=int, default=1626)
     parser.add_argument('--eps-test', type=float, default=0.05)
     parser.add_argument('--eps-train', type=float, default=0.5)
