@@ -44,7 +44,7 @@ To install the dependency of `TradeMaster`, see the following tutorials for diff
 - [Windows](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/installation/Windows/README.md)
 
 ## Tutorial
-We provide a tutorial for users to get start with.
+We provide tutorials for users to get start with.
 |  Algorithm  | Dataset |                                                     Code link                                                     |                     Description                      |
 | :---------: | :-----: | :---------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------: |
 | Classic RL  |   FX    |   [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/ClassicalRL_for_PM_on_FX.ipynb)    | Classic RL Algorithms for Portfolio Management on FX |
@@ -52,6 +52,8 @@ We provide a tutorial for users to get start with.
 |    EIIE     |  DJ30   |      [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/EIIE_for_PM_on_DJ30.ipynb)      |        EIIE for Portfolio Management on DJ30         |
 |    IMIT     |  DJ30   |      [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/IMIT_for_PM_on_DJ30.ipynb)      |  Investor Imitator for Portfolio Management on DJ30  |
 |    SARL     |  DJ30   |      [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/SARL_for_PM_on_DJ30.ipynb)      |        SARL for Portfolio Management on DJ30         |
+- Visualize OHLC as candle sticks with mplfinance [(tutorial)]()
+- [CSDI](https://proceedings.neurips.cc/paper/2021/hash/cfe8504bda37b575c70ee1a8276f3486-Abstract.html) for financial data imputation [(tutorial)]()
 
 ## Results and Visualization
 The evaluation module of TradeMaster is mainly based on [PRUDEX-Compass](https://github.com/ai-gamer/PRUDEX-Compass), a systematic evaluation toolkit of FinRL methods with 6 axes and 17 measures. We show some results here:
@@ -133,12 +135,13 @@ Classic RL based on Pytorch and Ray:
 [PPO](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#ppo) [A2C](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#a3c) [SAC](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#sac) [DDPG](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#ddpg) [DQN](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#dqn) [PG](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#pg) [TD3](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#ddpg)
 
 ## Dataset
-| Dataset |                    Data Source                     |     Type      |     Range and Frequency     | Raw Data | Preprocessed Data |                                            Datasheet                                             |
-| :-----: | :------------------------------------------------: | :-----------: | :-------------------------: | :------: | :---------------: | :----------------------------------------------------------------------------------------------: |
-|  DJ30   | [YahooFinance](https://pypi.org/project/yfinance/) |   US Stock    | 2012/01/01-2021/12/31, 1day |  OHLCV   | Prices&Indicators |   [DJ30](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/dj30/DJ30.pdf)   |
-|   FX    |    [Kaggle](https://pypi.org/project/yfinance/)    |      FX       | 2000/01/01-2019/12/31, 1day |  OHLCV   | Prices&Indicators |   [FX](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/exchange/FX.pdf)   |
-| Crypto  |    [Kaggle](https://pypi.org/project/yfinance/)    |    Crypto     | 2013/04/29-2021/07/06, 1day |  OHLCV   | Prices&Indicators | [Crypto](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/BTC/Crypto.pdf) |
-|  SZ50   |      [YahooFinance](https://pypi.org/project/yfinance/)       | CN Securities | 2009/01/02-2021-01-01, 1day |  OHLCV   | Prices&Indicators |   [SZ50](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/sz50/SZ50.pdf)   |
+| Dataset |                    Data Source                     |     Type      |     Range and Frequency     | Raw Data |                                            Datasheet                                             |
+| :-----: | :------------------------------------------------: | :-----------: | :-------------------------: | :------: | :----------------------------------------------------------------------------------------------: |
+|  DJ30   | [YahooFinance](https://pypi.org/project/yfinance/) |   US Stock    | 2012/01/01-2021/12/31, 1day |  OHLCV   |   [DJ30](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/dj30/DJ30.pdf)   |
+|   FX    |    [Kaggle](https://pypi.org/project/yfinance/)    |      FX       | 2000/01/01-2019/12/31, 1day |  OHLCV   |   [FX](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/exchange/FX.pdf)   |
+| Crypto  |    [Kaggle](https://pypi.org/project/yfinance/)    |    Crypto     | 2013/04/29-2021/07/06, 1day |  OHLCV   | [Crypto](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/BTC/Crypto.pdf) |
+|  SZ50   |      [YahooFinance](https://pypi.org/project/yfinance/)       | CN Securities | 2009/01/02-2021-01-01, 1day |  OHLCV    |   [SZ50](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/sz50/SZ50.pdf)   |
+| Bitcoin  |    [Kaggle]()    |    Crypto     | , 1min |  LOB   | [Bitcoin]() |
 
 OHLCV: open, high, low, and close prices; volume: corresponding trading volume
 
