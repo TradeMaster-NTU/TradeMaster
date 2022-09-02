@@ -80,7 +80,6 @@ The evaluation module of TradeMaster is mainly based on [PRUDEX-Compass](https:/
 
 
 
-
 **Rank distribution**
 plot is a bar plot, where the i-th column in the rank distribution shows the probability that a given method is assigned rank i in the corresponding metrics.
 
