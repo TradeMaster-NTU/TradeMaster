@@ -10,7 +10,7 @@
 ***
 TradeMaster is a first-of-its kind, best-in-class open-source platform for quantitative trading (QT) empowered by reinforcement learning (RL).
 
-It covers the full pipeline for the design, implementation, evaluation and deployment of RL-based trading methods. It contains: 1) a toolkit for efficient data collection, preprocessing and analysis; 2) high-fidelity data-driven market simulator for mainstream QT tasks (e.g., portfolio management and algorithmic trading); 3) standard implementation of over 10 novel FinRL methods; 4) a systematic evaluation benchmark called PRUDEX-Compass.
+It covers the full pipeline for the design, implementation, evaluation and deployment of RL-based trading methods. It contains: 1) a toolkit for efficient data collection, preprocessing and analysis; 2) a high-fidelity data-driven market simulator for mainstream QT tasks (e.g., portfolio management and algorithmic trading); 3) standard implementation of over 10 novel FinRL methods; 4) a systematic evaluation benchmark called PRUDEX-Compass.
 
 ## Outline
 
@@ -22,11 +22,13 @@ It covers the full pipeline for the design, implementation, evaluation and deplo
   - [Tutorial](#tutorial)
   - [Results and Visualization](#results-and-visualization)
   - [Model Zoo](#model-zoo)
-  - [Supported Data Source](#supported-data-source)
+  - [Dataset](#dataset)
+  - [External Data Source](#external-data-source)
   - [How to Use Your Own Data](#how-to-use-your-own-data)
   - [File Structure](#file-structure)
   - [Publications](#publications)
   - [Contact](#contact)
+  - [Join Us](#join-us)
 
 ## Overview
 <div align="center">
@@ -37,6 +39,7 @@ TradeMaster could be beneficial to a wide range of communities including leading
 
 ## Installation
 
+<<<<<<< HEAD
 
 ### MAC OS
 
@@ -84,9 +87,15 @@ Step 4: Install [`TradeMaster`](https://github.com/TradeMaster-NTU/TradeMaster)
    pip install -r requirements.txt
    conda install pytorch torchvision torchaudio -c pytorch
    ```
+=======
+To install the dependency of `TradeMaster`, see the following tutorials for different operating systems:
+- [MacOS](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/installation/Mac/README.md)
+- [Linux](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/installation/Linux/README.md)
+- [Windows](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/installation/Windows/README.md)
+>>>>>>> a8edbd3bb0889ab3a03c0b34e7f5b459298eda49
 
 ## Tutorial
-We provide a tutorial for users to get start with.
+We provide tutorials for users to get start with.
 |  Algorithm  | Dataset |                                                     Code link                                                     |                     Description                      |
 | :---------: | :-----: | :---------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------: |
 | Classic RL  |   FX    |   [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/ClassicalRL_for_PM_on_FX.ipynb)    | Classic RL Algorithms for Portfolio Management on FX |
@@ -94,6 +103,8 @@ We provide a tutorial for users to get start with.
 |    EIIE     |  DJ30   |      [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/EIIE_for_PM_on_DJ30.ipynb)      |        EIIE for Portfolio Management on DJ30         |
 |    IMIT     |  DJ30   |      [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/IMIT_for_PM_on_DJ30.ipynb)      |  Investor Imitator for Portfolio Management on DJ30  |
 |    SARL     |  DJ30   |      [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/SARL_for_PM_on_DJ30.ipynb)      |        SARL for Portfolio Management on DJ30         |
+- Visualize OHLC as candle sticks with mplfinance [(tutorial)]()
+- [CSDI](https://proceedings.neurips.cc/paper/2021/hash/cfe8504bda37b575c70ee1a8276f3486-Abstract.html) for financial data imputation [(tutorial)]()
 
 ## Results and Visualization
 The evaluation module of TradeMaster is mainly based on [PRUDEX-Compass](https://github.com/ai-gamer/PRUDEX-Compass), a systematic evaluation toolkit of FinRL methods with 6 axes and 17 measures. We show some results here:
@@ -116,7 +127,6 @@ The evaluation module of TradeMaster is mainly based on [PRUDEX-Compass](https:/
      <td align="center"><center>(a) A2C</center></td><td align="center"><center>(b) PPO</center></td>      <td align="center"><center>(c) SAC</center></td>                   
     </tr>
 </table>
-
 
 
 
@@ -174,6 +184,7 @@ For more information of the usage of this part, please refer to this [tutorial](
 Classic RL based on Pytorch and Ray: 
 [PPO](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#ppo) [A2C](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#a3c) [SAC](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#sac) [DDPG](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#ddpg) [DQN](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#dqn) [PG](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#pg) [TD3](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#ddpg)
 
+<<<<<<< HEAD
 ## Supported Data Source
 | Dataset |                    Data Source                     |     Type      |     Range and Frequency     | Raw Data | Preprocessed Data |                                          Datasheet                                          |
 | :-----: | :------------------------------------------------: | :-----------: | :-------------------------: | :------: | :---------------: | :-----------------------------------------------------------------------------------------: |
@@ -181,6 +192,35 @@ Classic RL based on Pytorch and Ray:
 |   FX    |    [Kaggle](https://pypi.org/project/yfinance/)    |      FX       | 2000/01/01-2019/12/31, 1day |  OHLCV   | Prices&Indicators |  [FX](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/exchange/FX.pdf)   |
 | Crypto  |    [Kaggle](https://pypi.org/project/yfinance/)    |    Crypto     | 2013/04/29-2021/07/06, 1day |  OHLCV   | Prices&Indicators | [Crypto](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/BTC/Crypto.pdf) |
 |  SZ50   |      [JoinQuant](https://www.joinquant.com/)       | CN Securities | 2009/01/02-2021-01-01, 1day |  OHLCV   | Prices&Indicators |  [SZ50](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/sz50/SZ50.pdf)   |
+=======
+## Dataset
+| Dataset |                    Data Source                     |     Type      |     Range and Frequency     | Raw Data |                                            Datasheet                                             |
+| :-----: | :------------------------------------------------: | :-----------: | :-------------------------: | :------: | :----------------------------------------------------------------------------------------------: |
+|  DJ30   | [YahooFinance](https://pypi.org/project/yfinance/) |   US Stock    | 2012/01/01-2021/12/31, 1day |  OHLCV   |   [DJ30](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/dj30/DJ30.pdf)   |
+|   FX    |    [Kaggle](https://pypi.org/project/yfinance/)    |      FX       | 2000/01/01-2019/12/31, 1day |  OHLCV   |   [FX](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/exchange/FX.pdf)   |
+| Crypto  |    [Kaggle](https://pypi.org/project/yfinance/)    |    Crypto     | 2013/04/29-2021/07/06, 1day |  OHLCV   | [Crypto](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/BTC/Crypto.pdf) |
+|  SZ50   |      [YahooFinance](https://pypi.org/project/yfinance/)       | CN Securities | 2009/01/02-2021-01-01, 1day |  OHLCV    |   [SZ50](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/sz50/SZ50.pdf)   |
+| Bitcoin  |    [Kaggle]()    |    Crypto     | , 1min |  LOB   | [Bitcoin]() |
+
+OHLCV: open, high, low, and close prices; volume: corresponding trading volume
+
+
+## External Data Source
+Users may download data from the following data source with personal account:
+|Data Source |Type |Range and Frequency |Request Limits|Raw Data|
+|  ----  |  ----  |  ----  |  ----  |  ----  |  
+|[Alpaca](https://alpaca.markets/docs/introduction/)| US Stocks, ETFs| 2015-now, 1min| Account-specific| OHLCV| 
+|[Baostock](http://baostock.com/baostock/index.php/Python_API%E6%96%87%E6%A1%A3)| CN Securities| 1990-12-19-now, 5min| Account-specific| OHLCV|
+|[Binance](https://binance-docs.github.io/apidocs/spot/en/#public-api-definitions)| Cryptocurrency| API-specific, 1s, 1min| API-specific| Tick-level daily data| 
+|[CCXT](https://docs.ccxt.com/en/latest/manual.html)| Cryptocurrency| API-specific, 1min| API-specific| OHLCV| 
+|[IEXCloud](https://iexcloud.io/docs/api/)| NMS US securities|1970-now, 1 day|100 per second per IP|OHLCV| 
+|[JoinQuant](https://www.joinquant.com/)| CN Securities| 2005-now, 1min| 3 requests each time| OHLCV| 
+|[QuantConnect](https://www.quantconnect.com/docs/home/home)| US Securities| 1998-now, 1s| NA| OHLCV| 
+|[RiceQuant](https://www.ricequant.com/doc/rqdata/python/)| CN Securities| 2005-now, 1ms| Account-specific| OHLCV| 
+|[Tushare](https://tushare.pro/document/1?doc_id=131)| CN Securities, A share| -now, 1 min| Account-specific| OHLCV| 
+|[WRDS](https://wrds-www.wharton.upenn.edu/pages/about/data-vendors/nyse-trade-and-quote-taq/)| US Securities| 2003-now, 1ms| 5 requests each time| Intraday Trades|
+|[YahooFinance](https://pypi.org/project/yfinance/)| US Securities| Frequency-specific, 1min| 2,000/hour| OHLCV | 
+>>>>>>> a8edbd3bb0889ab3a03c0b34e7f5b459298eda49
 
 ## How to Use Your Own Data
 TradeMaster supports financial data with open, high, low, close, volume (OHLCV) raw informations as:
@@ -189,7 +229,7 @@ TradeMaster supports financial data with open, high, low, close, volume (OHLCV) 
 <img align="center" src=figure/ohlcv.jpg width="70%"/>
 </div>
 
-we compute 10 technical indicators to describe the financial markets:
+We compute 10 technical indicators to describe the financial markets:
 
 <div align="center">
 <img align="center" src=figure/feature.jpg width="40%"/>
@@ -244,7 +284,7 @@ We plan to support limit order book (LOB) and altervative data such as text and 
 ```
 
 ## Publications
-[Deep Reinforcement Learning for Quantitative Trading: Challenges and Opportunities](https://ieeexplore.ieee.org/abstract/document/9779600) *IEEE Intelligent System*
+[Deep Reinforcement Learning for Quantitative Trading: Challenges and Opportunities](https://ieeexplore.ieee.org/abstract/document/9779600) *IEEE Intelligent Systems*
 
 [DeepScalper: A Risk-Aware Reinforcement Learning Framework to Capture Fleeting Intraday Trading Opportunities](https://arxiv.org/abs/2201.09058) *CIKM 22*
 
@@ -254,3 +294,8 @@ We plan to support limit order book (LOB) and altervative data such as text and 
 
 [Commission Fee is not Enough: A Hierarchical Reinforced Framework for Portfolio Management](https://ojs.aaai.org/index.php/AAAI/article/view/16142) *AAAI 21*
 ## Contact
+- This repository is developed and maintained by [AMI](https://personal.ntu.edu.sg/boan/) group at [Nanyang Technological University](https://www.ntu.edu.sg/)
+- If you want to make contributions to `TradeMaster`, please [create pull requests](https://github.com/TradeMaster-NTU/TradeMaster/compare).
+
+## Join Us
+We have positions for software engineer, RA and postdoc. If you are interested in working at the intersection of RL and financial trading, feel free to send an email to shuo003@e.ntu.edu.sg with your CV.
