@@ -1,7 +1,9 @@
+from turtle import forward
 import torch
 import torch.nn as nn
 from torch.nn.utils import weight_norm
 # feature为通道数 长为时间 宽为tic
+import numpy as np
 
 
 class Chomp1d(nn.Module):
@@ -131,3 +133,70 @@ class TemporalConvNet(nn.Module):
         :return: size of (Batch, output_channel, seq_len)
         """
         return self.network(x)
+
+
+class SA(nn.Module):
+    def __init__(self, C, N, K_l) -> None:
+        # C should be the number of features output from the TCN,N should be the batch size, here indicates the number of tickers and
+        # K_l represents the length
+        super(SA, self).__init__()
+        self.C = C
+        self.N = N
+        self.K_l = K_l
+        self.W_1 = nn.Parameter(torch.randn(K_l))
+        self.W_2 = nn.Parameter(torch.randn(C, K_l))
+        self.W_3 = nn.Parameter(torch.randn(C))
+        self.V_s = nn.Parameter(torch.randn(N, N))
+        self.b_s = nn.Parameter(torch.randn(N, N))
+
+    def forward(self, x):
+        S_l = torch.matmul(torch.matmul(torch.matmul(x, self.W_1).T, self.W_2),
+                           torch.matmul(self.W_3, x.transpose(0, 1)).T)
+        return S_l
+
+
+class GCN(nn.Module):
+    # this module is designed only for the graph convolution part
+    # It is a little trick here because we are using the adjclose as the metric to construct the convoluition
+    def __init__(self, K_l) -> None:
+        super(GCN, self).__init__()
+        self.K_l = K_l
+        self.theta = nn.Parameter(torch.randn(K_l, K_l))
+
+    def forward(self, A, H_l):
+        sum = np.sum(A, axis=1)
+        A = (A.T / sum).T
+        A = torch.from_numpy(A).to(torch.float32)
+        Z_l = torch.matmul(torch.matmul(A, H_l), self.theta)
+        return Z_l
+
+
+class IN(nn.Module):
+    def __init__(self, N) -> None:
+        super(IN, self).__init__()
+        self.N = N
+
+    def forward(self, S_l, Z_l, H_l):
+        x = torch.matmul(S_l, Z_l)
+        x = x + H_l
+        x = x.reshape(self.N, -1)
+        linear_layer = nn.Linear(x.shape[1], 1)
+        x = torch.sigmoid(linear_layer(x))
+        return x
+
+
+class market_scoring(nn.Module):
+    def __init__(self, n_features) -> None:
+        super(market_scoring, self).__init__()
+        self.lstm = nn.LSTM(input_size=n_features,
+                            hidden_size=12,
+                            num_layers=1,
+                            batch_first=True)
+
+    def forward(self, x):
+        lstm_out, _ = self.lstm(x)
+        #lstm_out 为batch,length, feature dj30为(1,10,12)
+        H_K = lstm_out[:, -1, :]
+        for k in range(lstm_out.shape[1]):
+            h_k = lstm_out[:, k, :]
+        return lstm_out
