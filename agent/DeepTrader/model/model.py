@@ -181,22 +181,61 @@ class IN(nn.Module):
         x = x + H_l
         x = x.reshape(self.N, -1)
         linear_layer = nn.Linear(x.shape[1], 1)
+        print(linear_layer(x))
         x = torch.sigmoid(linear_layer(x))
         return x
 
 
+class asset_scoring(nn.Module):
+    def __init__(self,
+                 N,
+                 K_l,
+                 num_inputs,
+                 num_channels,
+                 kernel_size=2,
+                 dropout=0.2) -> None:
+        super(asset_scoring, self).__init__()
+        self.TCN = TemporalConvNet(num_inputs, num_channels)
+        self.SA = SA(num_channels[-1], N, K_l)
+        self.GCN = GCN(K_l)
+        self.IN = IN(N)
+
+    def forward(self, x, A):
+        H_L = self.TCN(x)
+        S_L = self.SA(H_L.transpose(0, 1))
+        Z_L = self.GCN(A, H_L.transpose(0, 1))
+        result = self.IN(S_L, Z_L, H_L.transpose(0, 1))
+        return result
+
+
 class market_scoring(nn.Module):
-    def __init__(self, n_features) -> None:
+    def __init__(self, n_features, hidden_size=12) -> None:
         super(market_scoring, self).__init__()
         self.lstm = nn.LSTM(input_size=n_features,
-                            hidden_size=12,
+                            hidden_size=hidden_size,
                             num_layers=1,
                             batch_first=True)
+        self.U1 = nn.Parameter(torch.randn(hidden_size, hidden_size * 2))
+        self.U2 = nn.Parameter(torch.randn(hidden_size, n_features))
+        self.V = nn.Parameter(torch.randn(hidden_size))
+        self.linear = nn.Linear(hidden_size, 2)
 
     def forward(self, x):
         lstm_out, _ = self.lstm(x)
+
         #lstm_out 为batch,length, feature dj30为(1,10,12)
         H_K = lstm_out[:, -1, :]
+        eks = []
         for k in range(lstm_out.shape[1]):
             h_k = lstm_out[:, k, :]
-        return lstm_out
+            h_kh_K = torch.cat((h_k, H_K), 1).reshape(-1, 1)
+            multiplier = torch.matmul(self.U1, h_kh_K) + torch.matmul(
+                self.U2, x[:, k, :].reshape(-1, 1))
+            e_k = torch.matmul(self.V.T, multiplier)
+            eks.append(e_k)
+        eks = torch.cat(eks).unsqueeze(0)
+        alpha_ks = nn.Softmax(dim=1)(eks)
+        H_K_bar = torch.matmul(alpha_ks, lstm_out[0, :, :]).squeeze()
+        result = self.linear(H_K_bar).squeeze()
+
+        return result
