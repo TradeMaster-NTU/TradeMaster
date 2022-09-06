@@ -117,7 +117,7 @@ plot is a bar plot, where the i-th column in the rank distribution shows the pro
   <img src="https://github.com/qinmoelei/TradeMaster_reframe/blob/master/tutorial/result/visualization/pp-1.png" width = 300 height = 225 />
 </div> -->
 
-For more information of the usage of this part, please refer to this [tutorial](https://github.com/qinmoelei/TradeMaster_reframe/blob/master/tutorial/Visualization.ipynb) and this [project](https://github.com/ai-gamer/PRUDEX-Compass)
+For more information of the usage of this part, please refer to this [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/Visualization.ipynb) and this [project](https://github.com/ai-gamer/PRUDEX-Compass)
 
 
 
@@ -134,32 +134,32 @@ Classic RL based on Pytorch and Ray:
 [PPO](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#ppo) [A2C](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#a3c) [SAC](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#sac) [DDPG](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#ddpg) [DQN](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#dqn) [PG](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#pg) [TD3](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#ddpg)
 
 ## Dataset
-| Dataset |                    Data Source                     |     Type      |     Range and Frequency     | Raw Data |                                            Datasheet                                             |
-| :-----: | :------------------------------------------------: | :-----------: | :-------------------------: | :------: | :----------------------------------------------------------------------------------------------: |
-|  DJ30   | [YahooFinance](https://pypi.org/project/yfinance/) |   US Stock    | 2012/01/01-2021/12/31, 1day |  OHLCV   |   [DJ30](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/dj30/DJ30.pdf)   |
-|   FX    |    [Kaggle](https://pypi.org/project/yfinance/)    |      FX       | 2000/01/01-2019/12/31, 1day |  OHLCV   |   [FX](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/exchange/FX.pdf)   |
+| Dataset |                    Data Source                     |     Type      |     Range and Frequency     | Raw Data |                                          Datasheet                                          |
+| :-----: | :------------------------------------------------: | :-----------: | :-------------------------: | :------: | :-----------------------------------------------------------------------------------------: |
+|  DJ30   | [YahooFinance](https://pypi.org/project/yfinance/) |   US Stock    | 2012/01/01-2021/12/31, 1day |  OHLCV   |  [DJ30](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/dj30/DJ30.pdf)   |
+|   FX    |    [Kaggle](https://pypi.org/project/yfinance/)    |      FX       | 2000/01/01-2019/12/31, 1day |  OHLCV   |  [FX](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/exchange/FX.pdf)   |
 | Crypto  |    [Kaggle](https://pypi.org/project/yfinance/)    |    Crypto     | 2013/04/29-2021/07/06, 1day |  OHLCV   | [Crypto](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/BTC/Crypto.pdf) |
-|  SZ50   |      [YahooFinance](https://pypi.org/project/yfinance/)       | CN Securities | 2009/01/02-2021-01-01, 1day |  OHLCV    |   [SZ50](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/sz50/SZ50.pdf)   |
-| Bitcoin  |    [Kaggle]()    |    Crypto     | , 1min |  LOB   | [Bitcoin]() |
+|  SZ50   | [YahooFinance](https://pypi.org/project/yfinance/) | CN Securities | 2009/01/02-2021-01-01, 1day |  OHLCV   |  [SZ50](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/sz50/SZ50.pdf)   |
+| Bitcoin |                     [Kaggle]()                     |    Crypto     |           , 1min            |   LOB    |                                         [Bitcoin]()                                         |
 
 OHLCV: open, high, low, and close prices; volume: corresponding trading volume
 
 
 ## External Data Source
 Users may download data from the following data source with personal account:
-|Data Source |Type |Range and Frequency |Request Limits|Raw Data|
-|  ----  |  ----  |  ----  |  ----  |  ----  |  
-|[Alpaca](https://alpaca.markets/docs/introduction/)| US Stocks, ETFs| 2015-now, 1min| Account-specific| OHLCV| 
-|[Baostock](http://baostock.com/baostock/index.php/Python_API%E6%96%87%E6%A1%A3)| CN Securities| 1990-12-19-now, 5min| Account-specific| OHLCV|
-|[Binance](https://binance-docs.github.io/apidocs/spot/en/#public-api-definitions)| Cryptocurrency| API-specific, 1s, 1min| API-specific| Tick-level daily data| 
-|[CCXT](https://docs.ccxt.com/en/latest/manual.html)| Cryptocurrency| API-specific, 1min| API-specific| OHLCV| 
-|[IEXCloud](https://iexcloud.io/docs/api/)| NMS US securities|1970-now, 1 day|100 per second per IP|OHLCV| 
-|[JoinQuant](https://www.joinquant.com/)| CN Securities| 2005-now, 1min| 3 requests each time| OHLCV| 
-|[QuantConnect](https://www.quantconnect.com/docs/home/home)| US Securities| 1998-now, 1s| NA| OHLCV| 
-|[RiceQuant](https://www.ricequant.com/doc/rqdata/python/)| CN Securities| 2005-now, 1ms| Account-specific| OHLCV| 
-|[Tushare](https://tushare.pro/document/1?doc_id=131)| CN Securities, A share| -now, 1 min| Account-specific| OHLCV| 
-|[WRDS](https://wrds-www.wharton.upenn.edu/pages/about/data-vendors/nyse-trade-and-quote-taq/)| US Securities| 2003-now, 1ms| 5 requests each time| Intraday Trades|
-|[YahooFinance](https://pypi.org/project/yfinance/)| US Securities| Frequency-specific, 1min| 2,000/hour| OHLCV | 
+| Data Source                                                                                   | Type                   | Range and Frequency      | Request Limits        | Raw Data              |
+| --------------------------------------------------------------------------------------------- | ---------------------- | ------------------------ | --------------------- | --------------------- |
+| [Alpaca](https://alpaca.markets/docs/introduction/)                                           | US Stocks, ETFs        | 2015-now, 1min           | Account-specific      | OHLCV                 |
+| [Baostock](http://baostock.com/baostock/index.php/Python_API%E6%96%87%E6%A1%A3)               | CN Securities          | 1990-12-19-now, 5min     | Account-specific      | OHLCV                 |
+| [Binance](https://binance-docs.github.io/apidocs/spot/en/#public-api-definitions)             | Cryptocurrency         | API-specific, 1s, 1min   | API-specific          | Tick-level daily data |
+| [CCXT](https://docs.ccxt.com/en/latest/manual.html)                                           | Cryptocurrency         | API-specific, 1min       | API-specific          | OHLCV                 |
+| [IEXCloud](https://iexcloud.io/docs/api/)                                                     | NMS US securities      | 1970-now, 1 day          | 100 per second per IP | OHLCV                 |
+| [JoinQuant](https://www.joinquant.com/)                                                       | CN Securities          | 2005-now, 1min           | 3 requests each time  | OHLCV                 |
+| [QuantConnect](https://www.quantconnect.com/docs/home/home)                                   | US Securities          | 1998-now, 1s             | NA                    | OHLCV                 |
+| [RiceQuant](https://www.ricequant.com/doc/rqdata/python/)                                     | CN Securities          | 2005-now, 1ms            | Account-specific      | OHLCV                 |
+| [Tushare](https://tushare.pro/document/1?doc_id=131)                                          | CN Securities, A share | -now, 1 min              | Account-specific      | OHLCV                 |
+| [WRDS](https://wrds-www.wharton.upenn.edu/pages/about/data-vendors/nyse-trade-and-quote-taq/) | US Securities          | 2003-now, 1ms            | 5 requests each time  | Intraday Trades       |
+| [YahooFinance](https://pypi.org/project/yfinance/)                                            | US Securities          | Frequency-specific, 1min | 2,000/hour            | OHLCV                 |
 
 ## How to Use Your Own Data
 TradeMaster supports financial data with open, high, low, close, volume (OHLCV) raw informations as:

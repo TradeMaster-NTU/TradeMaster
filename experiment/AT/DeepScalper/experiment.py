@@ -4,6 +4,8 @@ import sys
 sys.path.append(".")
 from agent.DeepScalper.dqn import *
 
+args = parser.parse_args()
+
 
 def build_agent():
     a = DQN(args)
