@@ -140,7 +140,7 @@ Classic RL based on Pytorch and Ray:
 |   FX    |    [Kaggle](https://pypi.org/project/yfinance/)    |      FX       | 2000/01/01-2019/12/31, 1day |  OHLCV   |  [FX](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/exchange/FX.pdf)   |
 | Crypto  |    [Kaggle](https://pypi.org/project/yfinance/)    |    Crypto     | 2013/04/29-2021/07/06, 1day |  OHLCV   | [Crypto](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/BTC/Crypto.pdf) |
 |  SZ50   | [YahooFinance](https://pypi.org/project/yfinance/) | CN Securities | 2009/01/02-2021-01-01, 1day |  OHLCV   |  [SZ50](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/sz50/SZ50.pdf)   |
-| Bitcoin |                     [Kaggle]()                     |    Crypto     |          2021-04-07 11:33-2021-04-19 09:54 , 1min            |   LOB    |                                         [Bitcoin](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/OE_BTC/limit order book.pdf)                                         |
+| Bitcoin |                     [Kaggle]()                     |    Crypto     |          2021-04-07 11:33-2021-04-19 09:54 , 1min            |   LOB    |                                         [Bitcoin](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/OE_BTC/limit_order_book.pdf)                                         |
 
 OHLCV: open, high, low, and close prices; volume: corresponding trading volume
 
