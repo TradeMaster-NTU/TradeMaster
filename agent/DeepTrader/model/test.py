@@ -1,12 +1,12 @@
 import sys
 
 sys.path.append(".")
-from agent.DeepTrader.model.model import IN, Chomp1d, TemporalBlock, TemporalConvNet, SA, GCN, IN, market_scoring, asset_scoring
+from agent.DeepTrader.model.model import IN, Chomp1d, TemporalBlock, TemporalConvNet, SA, GCN, IN, market_scoring, asset_scoring, asset_scoring_value
 import torch
 from env.PM.portfolio_for_deeptrader import *
 from env.PM.portfolio_for_deeptrader import Tradingenv
 from agent.DeepTrader.data.market_information import *
-from agent.DeepTrader.model.portfolio_generator import generate_portfolio
+from agent.DeepTrader.model.portfolio_generator import generate_portfolio, generate_rho
 
 a = Tradingenv(vars(args))
 state = a.reset()
@@ -17,14 +17,32 @@ market_information = make_market_information(
         "high", "low", "open", "close", "adjcp", "zopen", "zhigh", "zlow",
         "zadjcp", "zclose", "zd_5", "zd_10", "zd_15", "zd_20", "zd_25", "zd_30"
     ])
-input = torch.from_numpy(state).to(torch.float32)
-output = asset_scoring(N=29, K_l=10, num_inputs=16,
-                       num_channels=[12, 12, 12])(input, A=corr_matrix)
-print(output.shape)
-print(len(output))
-print(output[1])
-print(output[1] <= 0)
-print(output)
+input_asset = torch.from_numpy(state).to(torch.float32)
+print(input_asset.shape)
+net_asset = asset_scoring(N=29,
+                          K_l=10,
+                          num_inputs=16,
+                          num_channels=[12, 12, 12])
+output_asset = net_asset(input_asset, A=corr_matrix)
+net = asset_scoring_value(N=29,
+                          K_l=10,
+                          num_inputs=16,
+                          num_channels=[12, 12, 12])
+print(net(input_asset, A=corr_matrix).shape)
+input_market = torch.from_numpy(market_information).unsqueeze(0).to(
+    torch.float32)
+output_market = market_scoring(16)(input_market)
+roh_bar = generate_rho(output_market[0], output_market[1])
+print(roh_bar)
+print(generate_portfolio(output_asset, roh_bar))
+action = generate_portfolio(output_asset, roh_bar)
+action = action.numpy()
+state_ = a.step(action)
+print(state.shape)
+# input_market = torch.from_numpy(market_information).to(
+#     torch.float32).unsqueeze(0)
+# output_market = market_scoring(16)(input_market)
+# rhou_bar = generate_rho(output_market)
 # net = market_scoring(16)
 # print(
 #     torch.from_numpy(market_information).to(torch.float32).unsqueeze(0).shape)
