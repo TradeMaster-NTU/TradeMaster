@@ -190,13 +190,15 @@ class IN_value(nn.Module):
         super(IN_value, self).__init__()
         self.N = N
         self.linear = nn.Linear(num_features, 1)
-        self.linear2 = nn.Linear(N, 1)
+        self.linear2 = nn.Linear(2 * N, 1)
 
-    def forward(self, S_l, Z_l, H_l):
+    def forward(self, S_l, Z_l, H_l, action):
+        action = action.reshape(1, -1)
         x = torch.matmul(S_l, Z_l)
         x = x + H_l
         x = x.reshape(self.N, -1)
         x = torch.sigmoid(self.linear(x)).squeeze().unsqueeze(0)
+        x = torch.cat((x, action), dim=1)
         x = self.linear2(x)
         return x
 
@@ -237,11 +239,11 @@ class asset_scoring_value(nn.Module):
         self.GCN = GCN(K_l)
         self.IN_value = IN_value(N, num_channels[-1] * K_l)
 
-    def forward(self, x, A):
+    def forward(self, x, A, action):
         H_L = self.TCN(x)
         S_L = self.SA(H_L.transpose(0, 1))
         Z_L = self.GCN(A, H_L.transpose(0, 1))
-        result = self.IN_value(S_L, Z_L, H_L.transpose(0, 1))
+        result = self.IN_value(S_L, Z_L, H_L.transpose(0, 1), action)
         return result
 
 
@@ -268,11 +270,12 @@ class market_scoring(nn.Module):
             h_kh_K = torch.cat((h_k, H_K), 1).reshape(-1, 1)
             multiplier = torch.matmul(self.U1, h_kh_K) + torch.matmul(
                 self.U2, x[:, k, :].reshape(-1, 1))
-            e_k = torch.matmul(self.V.T, multiplier)
+            e_k = torch.matmul(self.V.reshape(1, -1), multiplier)
             eks.append(e_k)
         eks = torch.cat(eks).unsqueeze(0)
         alpha_ks = nn.Softmax(dim=1)(eks)
-        H_K_bar = torch.matmul(alpha_ks, lstm_out[0, :, :]).squeeze()
+        H_K_bar = torch.matmul(alpha_ks.squeeze(2),
+                               lstm_out[0, :, :]).squeeze()
         result = torch.sigmoid(self.linear(H_K_bar).squeeze())
 
         return result

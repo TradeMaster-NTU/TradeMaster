@@ -28,7 +28,7 @@ net = asset_scoring_value(N=29,
                           K_l=10,
                           num_inputs=16,
                           num_channels=[12, 12, 12])
-print(net(input_asset, A=corr_matrix).shape)
+print(net(input_asset, A=corr_matrix, action=output_asset).shape)
 input_market = torch.from_numpy(market_information).unsqueeze(0).to(
     torch.float32)
 output_market = market_scoring(16)(input_market)
