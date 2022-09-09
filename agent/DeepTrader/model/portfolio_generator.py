@@ -9,7 +9,9 @@ def generate_portfolio(scores=torch.sigmoid(torch.randn(29, 1)), quantile=0.5):
     sorted_score, indices = torch.sort(scores, descending=True)
     length = len(scores)
     rank_hold = int(quantile * length)
-    value_hold = sorted_score[rank_hold - 1]
+    value_hold = sorted_score[-1] + (sorted_score[0] -
+                                     sorted_score[-1]) * quantile
+
     good_portfolio = []
     good_scores = []
     bad_portfolio = []
@@ -18,15 +20,17 @@ def generate_portfolio(scores=torch.sigmoid(torch.randn(29, 1)), quantile=0.5):
         score = scores[i]
         if score <= value_hold:
             bad_portfolio.append(i)
-            bad_scores.append(score)
+            bad_scores.append(score.unsqueeze(0))
         else:
             good_portfolio.append(i)
-            good_scores.append(score)
+            good_scores.append(score.unsqueeze(0))
     final_portfollio = [0] * length
-    good_portion = np.exp(good_scores) / np.sum(
-        np.exp(good_scores)) * (quantile)
-    bad_portion = -np.exp(1 - np.array(bad_scores)) / np.sum(
-        np.exp(1 - np.array(bad_scores))) * (1 - quantile)
+    good_scores = torch.cat(good_scores)
+    bad_scores = torch.cat(bad_scores)
+    good_portion = torch.exp(good_scores) / torch.sum(
+        torch.exp(good_scores)) * (quantile)
+    bad_portion = -torch.exp(1 - bad_scores) / torch.sum(
+        torch.exp(1 - bad_scores)) * (1 - quantile)
     for i in range(length):
         if i in bad_portfolio:
             index = bad_portfolio.index(i)
@@ -34,13 +38,22 @@ def generate_portfolio(scores=torch.sigmoid(torch.randn(29, 1)), quantile=0.5):
         else:
             index = good_portfolio.index(i)
             final_portfollio[i] = good_portion[index]
+    weights = []
+    for weight in final_portfollio:
+        weight_tensor = torch.tensor([weight])
+        weights.append(weight_tensor)
+    weights = torch.cat(weights)
 
-    return final_portfollio
+    return weights
 
 
 def generate_rho(mean: torch.tensor, std: torch.tensor):
     normal = Normal(mean, std)
     result = normal.sample()
+    if result <= 0:
+        result = torch.tensor(0)
+    if result >= 1:
+        result = torch.tensor(0.99)
     return result
 
 

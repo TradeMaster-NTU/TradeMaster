@@ -164,7 +164,7 @@ class GCN(nn.Module):
         self.theta = nn.Parameter(torch.randn(K_l, K_l))
 
     def forward(self, A, H_l):
-        sum = np.sum(A, axis=1)
+        sum = np.sum(np.abs(A), axis=1)
         A = (A.T / sum).T
         A = torch.from_numpy(A).to(torch.float32)
         Z_l = torch.matmul(torch.matmul(A, H_l), self.theta)
@@ -172,17 +172,34 @@ class GCN(nn.Module):
 
 
 class IN(nn.Module):
-    def __init__(self, N) -> None:
+    def __init__(self, N, num_features) -> None:
         super(IN, self).__init__()
         self.N = N
+        self.linear = nn.Linear(num_features, 1)
 
     def forward(self, S_l, Z_l, H_l):
         x = torch.matmul(S_l, Z_l)
         x = x + H_l
         x = x.reshape(self.N, -1)
-        linear_layer = nn.Linear(x.shape[1], 1)
-        print(linear_layer(x))
-        x = torch.sigmoid(linear_layer(x))
+        x = torch.sigmoid(self.linear(x)).squeeze()
+        return x
+
+
+class IN_value(nn.Module):
+    def __init__(self, N, num_features) -> None:
+        super(IN_value, self).__init__()
+        self.N = N
+        self.linear = nn.Linear(num_features, 1)
+        self.linear2 = nn.Linear(2 * N, 1)
+
+    def forward(self, S_l, Z_l, H_l, action):
+        action = action.reshape(1, -1)
+        x = torch.matmul(S_l, Z_l)
+        x = x + H_l
+        x = x.reshape(self.N, -1)
+        x = torch.sigmoid(self.linear(x)).squeeze().unsqueeze(0)
+        x = torch.cat((x, action), dim=1)
+        x = self.linear2(x)
         return x
 
 
@@ -198,13 +215,35 @@ class asset_scoring(nn.Module):
         self.TCN = TemporalConvNet(num_inputs, num_channels)
         self.SA = SA(num_channels[-1], N, K_l)
         self.GCN = GCN(K_l)
-        self.IN = IN(N)
+        self.IN = IN(N, num_channels[-1] * K_l)
 
     def forward(self, x, A):
         H_L = self.TCN(x)
         S_L = self.SA(H_L.transpose(0, 1))
         Z_L = self.GCN(A, H_L.transpose(0, 1))
         result = self.IN(S_L, Z_L, H_L.transpose(0, 1))
+        return result
+
+
+class asset_scoring_value(nn.Module):
+    def __init__(self,
+                 N,
+                 K_l,
+                 num_inputs,
+                 num_channels,
+                 kernel_size=2,
+                 dropout=0.2) -> None:
+        super(asset_scoring_value, self).__init__()
+        self.TCN = TemporalConvNet(num_inputs, num_channels)
+        self.SA = SA(num_channels[-1], N, K_l)
+        self.GCN = GCN(K_l)
+        self.IN_value = IN_value(N, num_channels[-1] * K_l)
+
+    def forward(self, x, A, action):
+        H_L = self.TCN(x)
+        S_L = self.SA(H_L.transpose(0, 1))
+        Z_L = self.GCN(A, H_L.transpose(0, 1))
+        result = self.IN_value(S_L, Z_L, H_L.transpose(0, 1), action)
         return result
 
 
@@ -231,11 +270,12 @@ class market_scoring(nn.Module):
             h_kh_K = torch.cat((h_k, H_K), 1).reshape(-1, 1)
             multiplier = torch.matmul(self.U1, h_kh_K) + torch.matmul(
                 self.U2, x[:, k, :].reshape(-1, 1))
-            e_k = torch.matmul(self.V.T, multiplier)
+            e_k = torch.matmul(self.V.reshape(1, -1), multiplier)
             eks.append(e_k)
         eks = torch.cat(eks).unsqueeze(0)
         alpha_ks = nn.Softmax(dim=1)(eks)
-        H_K_bar = torch.matmul(alpha_ks, lstm_out[0, :, :]).squeeze()
-        result = self.linear(H_K_bar).squeeze()
+        H_K_bar = torch.matmul(alpha_ks.squeeze(2),
+                               lstm_out[0, :, :]).squeeze()
+        result = torch.sigmoid(self.linear(H_K_bar).squeeze())
 
         return result

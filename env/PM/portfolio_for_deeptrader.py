@@ -50,7 +50,7 @@ class Tradingenv(gym.Env):
         self.initial_amount = config["initial_amount"]
         self.transaction_cost_pct = config["transaction_cost_pct"]
         self.state_space_shape = self.stock_dim
-        self.action_space_shape = self.stock_dim + 1
+        self.action_space_shape = self.stock_dim
         self.length_day = config["length_day"]
 
         self.tech_indicator_list = config["tech_indicator_list"]
@@ -80,7 +80,7 @@ class Tradingenv(gym.Env):
         self.portfolio_value = self.initial_amount
         self.asset_memory = [self.initial_amount]
         self.portfolio_return_memory = [0]
-        self.weights_memory = [[1] + [0] * self.stock_dim]
+        self.weights_memory = [[1 / self.stock_dim] * self.stock_dim]
         self.date_memory = [self.data.date.unique()[0]]
         self.transaction_cost_memory = []
 
@@ -97,8 +97,7 @@ class Tradingenv(gym.Env):
         self.portfolio_value = self.initial_amount
         self.asset_memory = [self.initial_amount]
         self.portfolio_return_memory = [0]
-        self.weights_memory = [[1 / (self.stock_dim + 1)] *
-                               (self.stock_dim + 1)]
+        self.weights_memory = [[1 / (self.stock_dim)] * (self.stock_dim)]
         self.date_memory = [self.data.date.unique()[0]]
         self.transaction_cost_memory = []
 
@@ -132,14 +131,15 @@ class Tradingenv(gym.Env):
             ] for tic in self.data.tic.unique()])
             # self.state = np.transpose(self.state, (2, 0, 1))
             new_price_memory = self.df.loc[self.day, :]
-            portfolio_weights = weights[1:]
+            portfolio_weights = weights
             portfolio_return = sum(
                 ((new_price_memory.close.values / last_day_memory.close.values)
                  - 1) * portfolio_weights)
-            weights_brandnew = self.normalization([weights[0]] + list(
-                np.array(weights[1:]) *
-                np.array((new_price_memory.close.values /
-                          last_day_memory.close.values))))
+            weights_brandnew = self.normalization(
+                list(
+                    np.array(weights[:]) * np.array(
+                        (new_price_memory.close.values /
+                         last_day_memory.close.values))))
             self.weights_memory.append(weights_brandnew)
             weights_old = (self.weights_memory[-3])
             weights_new = (self.weights_memory[-2])
@@ -223,15 +223,31 @@ class Tradingenv(gym.Env):
 
 
 if __name__ == "__main__":
-    df = pd.read_csv(vars(args)["df_path"])
-    num_tickers = len(df.tic.unique()) + 1
-    weights = [1 / num_tickers] * num_tickers
-    a = Tradingenv(vars(args))
-    state = a.reset()
-    print(state.shape)
-    done = False
-    while not done:
-        weights = [1 / num_tickers] * num_tickers
-        state, reward, done, _ = a.step(weights)
-        print(state.shape)
-        print(reward)
+    import yaml
+
+    def save_dict_to_yaml(dict_value: dict, save_path: str):
+        with open(save_path, 'w') as file:
+            file.write(yaml.dump(dict_value, allow_unicode=True))
+
+    def read_yaml_to_dict(yaml_path: str, ):
+        with open(yaml_path) as file:
+            dict_value = yaml.load(file.read(), Loader=yaml.FullLoader)
+            return dict_value
+
+    save_dict_to_yaml(
+        vars(args),
+        "config/input_config/env/portfolio/portfolio_for_deeptrader/test.yml")
+
+    # df = pd.read_csv(vars(args)["df_path"])
+    # num_tickers = len(df.tic.unique())
+    # weights = [1 / num_tickers] * num_tickers
+    # print(num_tickers)
+    # a = Tradingenv(vars(args))
+    # state = a.reset()
+    # print(state.shape)
+    # done = False
+    # while not done:
+    #     weights = [1 / num_tickers] * num_tickers
+    #     state, reward, done, _ = a.step(weights)
+    #     # print(state.shape)
+    #     # print(reward)

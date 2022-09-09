@@ -160,7 +160,7 @@ class trader:
         for bs, ba, br, bs_ in zip(s_learn, a_learn, r_learn, sn_learn):
             #update actor
             a = self.net(bs)
-            q = self.critic(bs, a.detach())
+            q = self.critic(bs, a)
             a_loss = -torch.mean(q)
             self.optimizer_actor.zero_grad()
             a_loss.backward(retain_graph=True)
@@ -185,6 +185,7 @@ class trader:
             done = False
             s = self.train_env_instance.reset()
             while not done:
+
                 old_state = s
                 action = self.net(torch.from_numpy(s).float())
                 s, reward, done, _ = self.train_env_instance.step(
@@ -195,7 +196,8 @@ class trader:
                     torch.tensor(reward).float().to(self.device),
                     torch.from_numpy(s).float().to(self.device))
                 j = j + 1
-                if j % 200 == 20:
+                if j % 200 == 1:
+
                     self.learn()
             all_model_path = self.model_path + "/all_model/"
             best_model_path = self.model_path + "/best_model/"
@@ -209,6 +211,7 @@ class trader:
             done = False
             rewards = 0
             while not done:
+
                 old_state = s
                 action = self.net(torch.from_numpy(s).float())
                 s, reward, done, _ = self.valid_env_instance.step(

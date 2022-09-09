@@ -2,7 +2,7 @@ import sys
 
 sys.path.append("./")
 from data.download_data import Dataconfig
-from agent.ClassicRL.SOTA import agent as Agent
+from agent.ClassicRL.SOTA import trader as Agent
 import argparse
 
 parser = argparse.ArgumentParser()
