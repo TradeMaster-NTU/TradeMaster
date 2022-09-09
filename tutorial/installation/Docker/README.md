@@ -62,8 +62,9 @@ Step 3: Test whether the image is installed correctly
   REPOSITORY    TAG       IMAGE ID       CREATED         SIZE
   trademaster   0.1       02801f755797   4 minutes ago   15GB 
   ```
-- Run an experiment in the project and see the if it works
+- Create a container and run an experiment to see whether the installation is successful
   ```
-  docker run -v ${absolute_path_for_project}$:opt/project trademaster:0.1 /opt/conda/envs/TradeMaster/bin/python -u /opt/project/agent/DeepTrader/model/trader.py
+  docker run -it trademaster:0.1
+  python experiment/AT/DeepScalper/experiment.py
   ```
-  Make sure to replace `${absolute_path_for_project}$` with the absolute path for the project.
+  
