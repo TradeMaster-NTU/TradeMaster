@@ -164,7 +164,7 @@ class GCN(nn.Module):
         self.theta = nn.Parameter(torch.randn(K_l, K_l))
 
     def forward(self, A, H_l):
-        sum = np.sum(A, axis=1)
+        sum = np.sum(np.abs(A), axis=1)
         A = (A.T / sum).T
         A = torch.from_numpy(A).to(torch.float32)
         Z_l = torch.matmul(torch.matmul(A, H_l), self.theta)

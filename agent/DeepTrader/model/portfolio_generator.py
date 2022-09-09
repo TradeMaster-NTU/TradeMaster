@@ -53,7 +53,7 @@ def generate_rho(mean: torch.tensor, std: torch.tensor):
     if result <= 0:
         result = torch.tensor(0)
     if result >= 1:
-        result = torch.tensor(1)
+        result = torch.tensor(0.99)
     return result
 
 
