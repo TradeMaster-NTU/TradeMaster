@@ -1,5 +1,4 @@
 import sys
-
 sys.path.append(".")
 from agent.DeepTrader.data.market_information import make_market_information, make_correlation_information
 from agent.DeepTrader.model.model import Chomp1d, TemporalBlock, TemporalConvNet, SA, GCN, IN, IN_value, asset_scoring, asset_scoring_value, market_scoring
