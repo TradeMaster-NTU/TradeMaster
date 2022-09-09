@@ -39,6 +39,7 @@ TradeMaster could be beneficial to a wide range of communities including leading
 ## Installation
 
 To install the dependency of `TradeMaster`, see the following tutorials for different operating systems:
+- [Docker](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/installation/Docker/README.md)<font color='red'> (recommended) </font>
 - [MacOS](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/installation/Mac/README.md)
 - [Linux](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/installation/Linux/README.md)
 - [Windows](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/installation/Windows/README.md)
@@ -134,13 +135,13 @@ Classic RL based on Pytorch and Ray:
 [PPO](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#ppo) [A2C](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#a3c) [SAC](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#sac) [DDPG](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#ddpg) [DQN](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#dqn) [PG](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#pg) [TD3](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#ddpg)
 
 ## Dataset
-| Dataset |                    Data Source                     |     Type      |     Range and Frequency     | Raw Data |                                          Datasheet                                          |
-| :-----: | :------------------------------------------------: | :-----------: | :-------------------------: | :------: | :-----------------------------------------------------------------------------------------: |
-|  DJ30   | [YahooFinance](https://pypi.org/project/yfinance/) |   US Stock    | 2012/01/01-2021/12/31, 1day |  OHLCV   |  [DJ30](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/dj30/DJ30.pdf)   |
-|   FX    |    [Kaggle](https://pypi.org/project/yfinance/)    |      FX       | 2000/01/01-2019/12/31, 1day |  OHLCV   |  [FX](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/exchange/FX.pdf)   |
-| Crypto  |    [Kaggle](https://pypi.org/project/yfinance/)    |    Crypto     | 2013/04/29-2021/07/06, 1day |  OHLCV   | [Crypto](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/BTC/Crypto.pdf) |
-|  SZ50   | [YahooFinance](https://pypi.org/project/yfinance/) | CN Securities | 2009/01/02-2021-01-01, 1day |  OHLCV   |  [SZ50](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/sz50/SZ50.pdf)   |
-| Bitcoin |                     [Kaggle]()                     |    Crypto     |          2021-04-07 11:33-2021-04-19 09:54 , 1min            |   LOB    |                                         [Bitcoin](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/OE_BTC/limit_order_book.pdf)                                         |
+| Dataset |                    Data Source                     |     Type      |           Range and Frequency            | Raw Data |                                                 Datasheet                                                 |
+| :-----: | :------------------------------------------------: | :-----------: | :--------------------------------------: | :------: | :-------------------------------------------------------------------------------------------------------: |
+|  DJ30   | [YahooFinance](https://pypi.org/project/yfinance/) |   US Stock    |       2012/01/01-2021/12/31, 1day        |  OHLCV   |         [DJ30](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/dj30/DJ30.pdf)          |
+|   FX    |    [Kaggle](https://pypi.org/project/yfinance/)    |      FX       |       2000/01/01-2019/12/31, 1day        |  OHLCV   |         [FX](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/exchange/FX.pdf)          |
+| Crypto  |    [Kaggle](https://pypi.org/project/yfinance/)    |    Crypto     |       2013/04/29-2021/07/06, 1day        |  OHLCV   |        [Crypto](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/BTC/Crypto.pdf)        |
+|  SZ50   | [YahooFinance](https://pypi.org/project/yfinance/) | CN Securities |       2009/01/02-2021-01-01, 1day        |  OHLCV   |         [SZ50](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/sz50/SZ50.pdf)          |
+| Bitcoin |                     [Kaggle]()                     |    Crypto     | 2021-04-07 11:33-2021-04-19 09:54 , 1min |   LOB    | [Bitcoin](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/OE_BTC/limit_order_book.pdf) |
 
 OHLCV: open, high, low, and close prices; volume: corresponding trading volume
 
