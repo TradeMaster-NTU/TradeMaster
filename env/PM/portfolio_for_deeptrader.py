@@ -223,31 +223,33 @@ class Tradingenv(gym.Env):
 
 
 if __name__ == "__main__":
-    import yaml
+    # import yaml
 
-    def save_dict_to_yaml(dict_value: dict, save_path: str):
-        with open(save_path, 'w') as file:
-            file.write(yaml.dump(dict_value, allow_unicode=True))
+    # def save_dict_to_yaml(dict_value: dict, save_path: str):
+    #     with open(save_path, 'w') as file:
+    #         file.write(yaml.dump(dict_value, allow_unicode=True))
 
-    def read_yaml_to_dict(yaml_path: str, ):
-        with open(yaml_path) as file:
-            dict_value = yaml.load(file.read(), Loader=yaml.FullLoader)
-            return dict_value
+    # def read_yaml_to_dict(yaml_path: str, ):
+    #     with open(yaml_path) as file:
+    #         dict_value = yaml.load(file.read(), Loader=yaml.FullLoader)
+    #         return dict_value
 
-    save_dict_to_yaml(
-        vars(args),
-        "config/input_config/env/portfolio/portfolio_for_deeptrader/test.yml")
+    # save_dict_to_yaml(
+    #     vars(args),
+    #     "config/input_config/env/portfolio/portfolio_for_deeptrader/test.yml")
 
-    # df = pd.read_csv(vars(args)["df_path"])
-    # num_tickers = len(df.tic.unique())
-    # weights = [1 / num_tickers] * num_tickers
-    # print(num_tickers)
-    # a = Tradingenv(vars(args))
-    # state = a.reset()
-    # print(state.shape)
-    # done = False
-    # while not done:
-    #     weights = [1 / num_tickers] * num_tickers
-    #     state, reward, done, _ = a.step(weights)
-    #     # print(state.shape)
-    #     # print(reward)
+    df = pd.read_csv(vars(args)["df_path"])
+    num_tickers = len(df.tic.unique())
+    weights = [1 / num_tickers] * num_tickers
+    print(num_tickers)
+    a = Tradingenv(vars(args))
+    state = a.reset()
+    print(state.shape)
+    done = False
+    while not done:
+        weights = [1 / num_tickers] * num_tickers
+        state, reward, done, _ = a.step(weights)
+        # print(state.shape)
+        # print(reward)
+    print(a.save_portfolio_return_memory())
+    print(a.save_asset_memory())

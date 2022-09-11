@@ -6,6 +6,13 @@ from torch.distributions import Normal
 
 def generate_portfolio(scores=torch.sigmoid(torch.randn(29, 1)), quantile=0.5):
     scores = scores.squeeze()
+    length = len(scores)
+    if scores.equal(torch.ones(length)):
+        weights = (1 / length) * torch.ones(length)
+        return weights
+    if scores.equal(torch.zeros(length)):
+        weights = (-1 / length) * torch.ones(length)
+        return weights
     sorted_score, indices = torch.sort(scores, descending=True)
     length = len(scores)
     rank_hold = int(quantile * length)

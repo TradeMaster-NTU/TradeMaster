@@ -33,6 +33,12 @@ parser.add_argument(
     help="the gamma for DPG",
 )
 parser.add_argument(
+    "--lr",
+    type=float,
+    default=1e-3,
+    help="learning rate",
+)
+parser.add_argument(
     "--model_path",
     type=str,
     default="result/DeepTrader/trained_model",
@@ -63,6 +69,7 @@ parser.add_argument(
 
 class trader:
     def __init__(self, args) -> None:
+        self.lr = args.lr
         self.technical_indicator = args.technical_indicator
         self.seed = args.random_seed
         set_seed(self.seed)
@@ -94,11 +101,11 @@ class trader:
             num_channels=[12, 12, 12])
         self.market_policy = market_scoring(self.input_channel)
         self.optimizer_asset_actor = torch.optim.Adam(
-            self.asset_policy.parameters(), lr=1e-4)
+            self.asset_policy.parameters(), lr=self.lr)
         self.optimizer_asset_critic = torch.optim.Adam(
-            self.asset_policy_critic.parameters(), lr=1e-4)
+            self.asset_policy_critic.parameters(), lr=self.lr)
         self.optimizer_market_policy = torch.optim.Adam(
-            self.market_policy.parameters(), lr=1e-4)
+            self.market_policy.parameters(), lr=self.lr)
         self.memory_counter = 0
         self.memory_capacity = 1000
 
@@ -179,9 +186,9 @@ class trader:
         input_market = torch.from_numpy(market_state).unsqueeze(0).to(
             torch.float32).to(self.device)
         output_market = self.market_policy(input_market)
-        weights = generate_portfolio(asset_scores.cpu(),
-                                     output_market[0].cpu().numpy())
-        weights = weights.numpy()
+        weights = generate_portfolio(asset_scores.cpu().detach(),
+                                     output_market[0].cpu().detach().numpy())
+        weights = weights.detach().numpy()
         return weights
 
     def learn(self):
@@ -248,7 +255,7 @@ class trader:
                                   roh_bar_market):
             output_market = self.market_policy(s)
             normal = Normal(output_market[0], output_market[1])
-            b_prob = normal.log_prob(roh_bar)
+            b_prob = -normal.log_prob(roh_bar)
 
             loss_market += br * b_prob
         loss_market.backward()
@@ -258,6 +265,7 @@ class trader:
 
         rewards_list = []
         for i in range(self.num_epoch):
+            print("traning")
             j = 0
             done = False
             s = self.train_env_instance.reset()
@@ -280,7 +288,7 @@ class trader:
                     torch.from_numpy(old_asset_state).float().to(self.device),
                     corr_matrix_old)
                 action_market = self.market_policy(old_market_state)
-                s, reward, done, _ = self.valid_env_instance.step(weights)
+                s, reward, done, _ = self.train_env_instance.step(weights)
                 new_asset_state = s
                 new_market_state = torch.from_numpy(
                     make_market_information(
@@ -297,7 +305,7 @@ class trader:
                     old_market_state, action_market, new_market_state,
                     corr_matrix_old, corr_matrix_new, self.roh_bar)
                 j = j + 1
-                if j % 500 == 10:
+                if j % 100 == 10:
                     self.learn()
             all_model_path = self.model_path + "/all_model/"
             best_model_path = self.model_path + "/best_model/"
@@ -314,6 +322,7 @@ class trader:
             torch.save(
                 self.market_policy,
                 all_model_path + "market_policy_num_epoch_{}.pth".format(i))
+            print("validating")
             s = self.valid_env_instance.reset()
             done = False
             rewards = 0
@@ -354,12 +363,6 @@ class trader:
         s = self.test_env_instance.reset()
         done = False
         while not done:
-            old_state = s
-            old_market_state = torch.from_numpy(
-                make_market_information(
-                    self.test_env_instance.data,
-                    technical_indicator=self.technical_indicator)).unsqueeze(
-                        0).float().to(self.device)
             corr_matrix_old = make_correlation_information(
                 self.test_env_instance.data)
             weights = self.compute_weights_test(
@@ -368,14 +371,16 @@ class trader:
                     self.test_env_instance.data,
                     technical_indicator=self.technical_indicator),
                 corr_matrix_old)
-            s, reward, done, _ = self.valid_env_instance.step(weights)
+            s, reward, done, _ = self.test_env_instance.step(weights)
         df_return = self.test_env_instance.save_portfolio_return_memory()
         df_assets = self.test_env_instance.save_asset_memory()
         assets = df_assets["total assets"].values
         daily_return = df_return.daily_return.values
+
         df = pd.DataFrame()
         df["daily_return"] = daily_return
         df["total assets"] = assets
+        print(df)
         if not os.path.exists(self.result_path):
             os.makedirs(self.result_path)
         df.to_csv(self.result_path + "/result.csv")
@@ -386,3 +391,4 @@ if __name__ == "__main__":
     with torch.autograd.set_detect_anomaly(True):
         a = trader(args)
         a.train_with_valid()
+        a.test()
