@@ -37,7 +37,7 @@ Step 1: Install [Docker](https://docs.docker.com/)
     GitCommit:        de40ad0
   ```
 
-Step 2: Build the docker image from [dockerfile](https://github.com/TradeMaster-NTU/TradeMaster/docker/Dockerfile)
+Step 2: Build the docker image from [dockerfile](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/docker/Dockerfile)
 - Install `TradeMaster`
   ```
    git clone https://github.com/TradeMaster-NTU/TradeMaster.git
