@@ -162,6 +162,7 @@ class TradingEnv(gym.Env):
         return self.state
 
     def step(self, action: np.array):
+
         # for now the target and step is a little different from the origional one:
         # there are 2 modification, first, we need bear the left order and left time in our head and at the end of the day, we need to
         # finish all the left order.
@@ -378,6 +379,10 @@ class TradingEnv(gym.Env):
         self.public_state = self.data[self.tech_indicator_list].values.tolist()
         left_order = self.target_order - (self.portfolio[2] +
                                           self.portfolio[3])
+
+        left_date = [len(self.df.index.unique()) - self.time_frame]
+        self.private_state = left_date + [left_order]
+        self.state = np.array(self.public_state + self.private_state)
         self.terminal = (self.time_frame + 1 >= self.df.index[-1])
         if self.terminal:
             #终结时候计算reward
@@ -413,6 +418,23 @@ class TradingEnv(gym.Env):
 
 
 if __name__ == "__main__":
+    # import yaml
+    # args = parser.parse_args()
+
+    # def save_dict_to_yaml(dict_value: dict, save_path: str):
+    #     with open(save_path, 'w') as file:
+    #         file.write(yaml.dump(dict_value, allow_unicode=True))
+
+    # def read_yaml_to_dict(yaml_path: str, ):
+    #     with open(yaml_path) as file:
+    #         dict_value = yaml.load(file.read(), Loader=yaml.FullLoader)
+    #         return dict_value
+
+    # save_dict_to_yaml(
+    #     vars(args),
+    #     "/home/sunshuo/qml/TradeMaster-1/config/input_config/env/OE/OE_for_ETEO/test.yml"
+    # )
+
     args = parser.parse_args()
     a = TradingEnv(vars(args))
     state = a.reset()
@@ -424,18 +446,6 @@ if __name__ == "__main__":
     rewards = []
     state_s = []
     while not done:
-        states.append(state)
-        state, reward, done, _ = a.step(action)
-        actions.append(action)
-        rewards.append(reward)
-        state_s.append(state)
-        # print(state.shape)
-        print(state)
-        print(state==state_s)
-    # print(reward)
-    # print(len(states))
-    # print(len(actions))
-    # print(len(rewards))
-    # print(len(state_s))
-    # for i in range(len(states) - 1):
-    #     print(states[i])
+        state_s, reward, done, _ = a.step(action)
+        state = state_s
+        print(state.shape)
