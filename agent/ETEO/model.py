@@ -34,7 +34,7 @@ class FCN_stack_ETTO(torch.nn.Module):
 
 
 class LSTM_ETEO(torch.nn.Module):
-    def __init__(self, length, features, action_dim, nodes=128):
+    def __init__(self, length, features, action_dim=2, nodes=128):
         super(LSTM_ETEO, self).__init__()
         self.length = length
         self.nodes = nodes

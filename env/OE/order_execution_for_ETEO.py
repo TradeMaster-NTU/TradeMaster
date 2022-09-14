@@ -135,7 +135,7 @@ class TradingEnv(gym.Env):
         self.observation_space = spaces.Box(
             low=-np.inf,
             high=np.inf,
-            shape=(config["state_length"], len(self.tech_indicator_list)))
+            shape=(len(self.tech_indicator_list) + 2, ))
         self.data = self.df.loc[self.time_frame, :]
         self.public_state = self.data[self.tech_indicator_list].values.tolist()
         self.terminal = False
@@ -437,9 +437,10 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     a = TradingEnv(vars(args))
+    print(a.observation_space.shape[0])
     state = a.reset()
     print(state.shape)
-    action = np.array([1, 55000])
+    action = np.array([1, 50000])
     done = False
     actions = []
     states = []
@@ -448,4 +449,4 @@ if __name__ == "__main__":
     while not done:
         state_s, reward, done, _ = a.step(action)
         state = state_s
-        print(state.shape)
+        # print(state.shape)
