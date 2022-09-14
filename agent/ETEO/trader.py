@@ -58,7 +58,14 @@ parser.add_argument(
 parser.add_argument(
     "--lenth_state",
     type=int,
-    default="10",
+    default=10,
+    help=
+    "the length of the state, ie the number of timestamp that contains in the input of the net",
+)
+parser.add_argument(
+    "--max_memory_capcity",
+    type=int,
+    default=1000,
     help=
     "the length of the state, ie the number of timestamp that contains in the input of the net",
 )
@@ -97,3 +104,17 @@ class trader:
         if args.net_category == "lstm":
             self.net_old = LSTM_ETEO(args.lenth_state, self.num_features)
             self.net_new = LSTM_ETEO(args.lenth_state, self.num_features)
+        self.max_memory_capcity = args.max_memory_capcity
+        self.momery_size = 0
+        #inputs: previous state(self.length的长度)
+        #action：
+        self.inputs = []
+        self.actions = []
+        self.rewards = []
+        self.next_states = []
+        self.previous_rewards = []  # needed by lstm
+        # 在后面训练 valid以及test时构建stacked states
+        self.stacked_state = []
+
+    def compute_action(self, stacked_state):
+        pass
