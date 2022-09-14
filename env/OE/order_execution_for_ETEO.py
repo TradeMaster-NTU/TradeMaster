@@ -405,8 +405,9 @@ class TradingEnv(gym.Env):
             if left_order < 0:
                 cash_left = cash_left - left_order * self.data["midpoint"] * (
                     1 + self.data["bids_distance_0"] * 0.01)
-            print(cash_left)
-            if cash_left > TWAP_value:
+
+            if cash_left >= TWAP_value:
+
                 self.reward = 1
             else:
                 self.reward = 0

@@ -80,4 +80,15 @@ if __name__ == "__main__":
     net = LSTM_ETEO(10, 156, 2)
     action_volume, action_price, v = net(state,
                                          previous_action=torch.randn(1, 2))
-    print(action_volume.shape, action_price.shape, v.shape)
+    action_volume = action_volume.squeeze()
+    action_price = action_price.squeeze()
+    v = v.squeeze(0)
+    dis_volume = torch.distributions.normal.Normal(
+        action_volume[0],
+        torch.relu(action_volume[1]) + 0.001)
+    dis_price = torch.distributions.normal.Normal(
+        action_price[0],
+        torch.relu(action_price[1]) + 0.001)
+    volume = dis_volume.sample()
+    price = dis_price.sample()
+    print(volume, price)

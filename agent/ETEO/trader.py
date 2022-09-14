@@ -1,6 +1,7 @@
 from logging import raiseExceptions
 from re import L
 import sys
+from turtle import done
 
 sys.path.append(".")
 from agent.ETEO.model import FCN_stack_ETTO, LSTM_ETEO
@@ -14,6 +15,7 @@ import random
 from torch.distributions import Normal
 import numpy as np
 import pandas as pd
+from random import sample
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--random_seed",
@@ -70,6 +72,25 @@ parser.add_argument(
     "the length of the state, ie the number of timestamp that contains in the input of the net",
 )
 
+parser.add_argument(
+    "--sample_effiency",
+    type=float,
+    default=0.5,
+    help="the portion of sample that could be used as material of ",
+)
+parser.add_argument(
+    "--gamma",
+    type=float,
+    default=0.9,
+    help="the portion of sample that could be used as material of ",
+)
+parser.add_argument(
+    "--climp",
+    type=float,
+    default=0.2,
+    help="the value of climp ",
+)
+
 
 class trader:
     def __init__(self, args) -> None:
@@ -92,6 +113,8 @@ class trader:
         self.test_env_instance = TradingEnv(self.test_env_config)
         self.num_features = self.train_env_instance.observation_space.shape[0]
         self.net_category = args.net_category
+        self.gamma = args.gamma
+        self.climp = args.climp
         # 两套网络（新与旧 来对比计算重采样的大小以及此次更新的大小尺度）
         # 由于两种网络的输入不同 因此我们这里目前只写stacked版本的更新
         if args.net_category not in ["stacked", "lstm"]:
@@ -99,13 +122,17 @@ class trader:
                 "we haven't implement that kind of net, please choose stacked or lstm"
             )
         if args.net_category == "stacked":
-            self.net_old = FCN_stack_ETTO(args.lenth_state, self.num_features)
-            self.net_new = FCN_stack_ETTO(args.lenth_state, self.num_features)
+            self.net_old = FCN_stack_ETTO(args.lenth_state,
+                                          self.num_features).to(self.device)
+            self.net_new = FCN_stack_ETTO(args.lenth_state,
+                                          self.num_features).to(self.device)
         if args.net_category == "lstm":
-            self.net_old = LSTM_ETEO(args.lenth_state, self.num_features)
-            self.net_new = LSTM_ETEO(args.lenth_state, self.num_features)
+            self.net_old = LSTM_ETEO(args.lenth_state,
+                                     self.num_features).to(self.device)
+            self.net_new = LSTM_ETEO(args.lenth_state,
+                                     self.num_features).to(self.device)
         self.max_memory_capcity = args.max_memory_capcity
-        self.momery_size = 0
+        self.memory_size = 0
         #inputs: previous state(self.length的长度)
         #action：
         self.inputs = []
@@ -115,6 +142,105 @@ class trader:
         self.previous_rewards = []  # needed by lstm
         # 在后面训练 valid以及test时构建stacked states
         self.stacked_state = []
+        self.dones = []
+        self.sample_effiency = args.sample_effiency
+        self.optimizer = torch.optim.Adam(self.net_new.parameters(),
+                                          lr=args.lr)
 
     def compute_action(self, stacked_state):
-        pass
+        # stacked_state is a list of the previous state,(np.array with shape (156,)), whose length is 10
+        list_states = []
+        for state in stacked_state:
+            state = torch.from_numpy(state).reshape(1, -1)
+            list_states.append(state)
+        list_states = torch.cat(list_states, dim=0).to(self.device)
+        action_volume, action_price, v = self.net_old(list_states)
+        action_volume = action_volume.squeeze()
+        action_price = action_price.squeeze()
+        v = v.squeeze(0)
+        dis_volume = torch.distributions.normal.Normal(
+            action_volume[0],
+            torch.relu(action_volume[1]) + 0.001)
+        dis_price = torch.distributions.normal.Normal(
+            action_price[0],
+            torch.relu(action_price[1]) + 0.001)
+        volume = dis_volume.sample()
+        price = dis_price.sample()
+        action = np.array([volume.item(), price.item()])
+        return action
+
+    def save_transication(self, s, a, r, s_, r_previous, done):
+        # here, the s,a,r,s_,r_previous are all torch tensor and in the GPU
+        self.memory_size = self.memory_size + 1
+        if self.memory_size <= self.max_memory_capcity:
+            self.inputs.append(s)
+            self.actions(a)
+            self.rewards.append(r)
+            self.next_states.append(s_)
+            self.previous_rewards.append(r_previous)
+            self.dones.append(done)
+        else:
+            index = self.memory_size % self.max_memory_capcity
+            self.inputs[index] = s
+            self.actions[index] = a
+            self.rewards[index] = r
+            self.next_states[index] = s_
+            self.previous_rewards[index] = r_previous
+            self.dones[index] = done
+
+    def update(self):
+        inputs = []
+        actions = []
+        rewards = []
+        next_states = []
+        previous_rewards = []
+        dones = []
+        number_sample = int(len(self.inputs) * self.sample_effiency)
+        sample_list_number = sample(range(len(self.inputs)), number_sample)
+        for i in sample_list_number:
+            inputs.append(self.inputs[i])
+            actions.append(self.actions[i])
+            rewards.append(self.rewards[i])
+            next_states.append(self.next_states[i])
+            previous_rewards.append(self.previous_rewards[i])
+            dones.append(self.dones[i])
+        for input, action, reward, next_state, previous_reward, done in zip(
+                inputs, actions, rewards, next_states, previous_rewards,
+                dones):
+            action_volume, action_price, v = self.net_old(next_state)
+            td_target = reward + self.gamma * v * (1 - done)
+            action_volume, action_price, v = self.net_old(input)
+            action_volume, action_price, v = action_volume.squeeze(
+            ), action_price.squeeze(), v.squeeze(0)
+            mean = torch.cat(
+                (action_volume[0].unsqueeze(0), action_price[0].unsqueeze(0)))
+            std = torch.cat((torch.relu(action_volume[1].unsqueeze(0)) + 0.001,
+                             torch.relu(action_price[1].unsqueeze(0)) + 0.001))
+            old_dis = torch.distributions.normal.Normal(mean, std)
+            log_prob_old = old_dis.log_prob(action)
+            action_volume, action_price, v_s = self.net_new(next_state)
+            action_volume, action_price, v = self.net_new(input)
+            td_error = reward + self.gamma * v_s * (1 - done) - v
+
+            # here is a little different from the original PPO, because there is a processure of passing the td error to different
+            # state, however, we are only use 1 state at one time and do the update, therefore, we are simpling use the td error
+            # we use td error instead of A to do the optimization
+            action_volume, action_price, v = self.net_new(input)
+            action_volume, action_price, v = action_volume.squeeze(
+            ), action_price.squeeze(), v.squeeze(0)
+            mean = torch.cat(
+                (action_volume[0].unsqueeze(0), action_price[0].unsqueeze(0)))
+            std = torch.cat((torch.relu(action_volume[1].unsqueeze(0)) + 0.001,
+                             torch.relu(action_price[1].unsqueeze(0)) + 0.001))
+
+            new_dis = torch.distributions.normal.Normal(mean, std)
+            log_prob_new = new_dis.log_prob(action)
+            ratio = torch.exp(log_prob_new - log_prob_old)
+            L1 = ratio * td_error
+            L2 = torch.clamp(ratio, 1 - self.climp, 1 + self.climp) * td_error
+            loss_pi = -torch.min(L1, L2).mean()
+            loss_v = torch.nn.functional.mse_loss(td_target.detach(), v)
+            loss_pi.backward()
+            loss_v.backward()
+            self.optimizer.step()
+        self.net_old.load_state_dict(self.net_new.state_dict())
