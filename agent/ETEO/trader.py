@@ -1,5 +1,5 @@
 from logging import raiseExceptions
-from re import L
+from re import A, L
 import sys
 from turtle import done
 
@@ -115,6 +115,7 @@ class trader:
         self.net_category = args.net_category
         self.gamma = args.gamma
         self.climp = args.climp
+        self.lenth_state = args.lenth_state
         # 两套网络（新与旧 来对比计算重采样的大小以及此次更新的大小尺度）
         # 由于两种网络的输入不同 因此我们这里目前只写stacked版本的更新
         if args.net_category not in ["stacked", "lstm"]:
@@ -151,7 +152,7 @@ class trader:
         # stacked_state is a list of the previous state,(np.array with shape (156,)), whose length is 10
         list_states = []
         for state in stacked_state:
-            state = torch.from_numpy(state).reshape(1, -1)
+            state = torch.from_numpy(state).reshape(1, -1).float()
             list_states.append(state)
         list_states = torch.cat(list_states, dim=0).to(self.device)
         action_volume, action_price, v = self.net_old(list_states)
@@ -159,34 +160,51 @@ class trader:
         action_price = action_price.squeeze()
         v = v.squeeze(0)
         dis_volume = torch.distributions.normal.Normal(
-            action_volume[0],
+            torch.relu(action_volume[0]) + 0.001,
             torch.relu(action_volume[1]) + 0.001)
         dis_price = torch.distributions.normal.Normal(
-            action_price[0],
+            torch.relu(action_price[0]) + 0.001,
             torch.relu(action_price[1]) + 0.001)
         volume = dis_volume.sample()
         price = dis_price.sample()
-        action = np.array([volume.item(), price.item()])
+        action = np.array([torch.abs(volume).item(), torch.abs(price).item()])
+        return action
+
+    def compute_action_test(self, stacked_state):
+        # stacked_state is a list of the previous state,(np.array with shape (156,)), whose length is 10
+        list_states = []
+        for state in stacked_state:
+            state = torch.from_numpy(state).reshape(1, -1).float()
+            list_states.append(state)
+        list_states = torch.cat(list_states, dim=0).to(self.device)
+        action_volume, action_price, v = self.net_old(list_states)
+        action_volume = action_volume.squeeze()
+        action_price = action_price.squeeze()
+        v = v.squeeze(0)
+        action = np.array([
+            torch.relu(action_volume[0]).item() + 0.001,
+            torch.relu(action_price[0]).item() + 0.001
+        ])
         return action
 
     def save_transication(self, s, a, r, s_, r_previous, done):
         # here, the s,a,r,s_,r_previous are all torch tensor and in the GPU
-        self.memory_size = self.memory_size + 1
+        # self.memory_size = self.memory_size + 1
         if self.memory_size <= self.max_memory_capcity:
             self.inputs.append(s)
-            self.actions(a)
+            self.actions.append(a)
             self.rewards.append(r)
             self.next_states.append(s_)
             self.previous_rewards.append(r_previous)
             self.dones.append(done)
         else:
             index = self.memory_size % self.max_memory_capcity
-            self.inputs[index] = s
-            self.actions[index] = a
-            self.rewards[index] = r
-            self.next_states[index] = s_
-            self.previous_rewards[index] = r_previous
-            self.dones[index] = done
+            self.inputs[index - 1] = s
+            self.actions[index - 1] = a
+            self.rewards[index - 1] = r
+            self.next_states[index - 1] = s_
+            self.previous_rewards[index - 1] = r_previous
+            self.dones[index - 1] = done
 
     def update(self):
         inputs = []
@@ -208,6 +226,7 @@ class trader:
                 inputs, actions, rewards, next_states, previous_rewards,
                 dones):
             action_volume, action_price, v = self.net_old(next_state)
+
             td_target = reward + self.gamma * v * (1 - done)
             action_volume, action_price, v = self.net_old(input)
             action_volume, action_price, v = action_volume.squeeze(
@@ -217,10 +236,14 @@ class trader:
             std = torch.cat((torch.relu(action_volume[1].unsqueeze(0)) + 0.001,
                              torch.relu(action_price[1].unsqueeze(0)) + 0.001))
             old_dis = torch.distributions.normal.Normal(mean, std)
-            log_prob_old = old_dis.log_prob(action)
+            log_prob_old = old_dis.log_prob(action).float()
+            log_prob_old = (log_prob_old[0] + log_prob_old[1]).float()
             action_volume, action_price, v_s = self.net_new(next_state)
             action_volume, action_price, v = self.net_new(input)
+            # td_error = torch.min(reward + self.gamma * v_s * (1 - done) - v,
+            #                      torch.tensor([100]))
             td_error = reward + self.gamma * v_s * (1 - done) - v
+            td_error = td_error.reshape(-1)
 
             # here is a little different from the original PPO, because there is a processure of passing the td error to different
             # state, however, we are only use 1 state at one time and do the update, therefore, we are simpling use the td error
@@ -234,13 +257,127 @@ class trader:
                              torch.relu(action_price[1].unsqueeze(0)) + 0.001))
 
             new_dis = torch.distributions.normal.Normal(mean, std)
-            log_prob_new = new_dis.log_prob(action)
-            ratio = torch.exp(log_prob_new - log_prob_old)
-            L1 = ratio * td_error
-            L2 = torch.clamp(ratio, 1 - self.climp, 1 + self.climp) * td_error
-            loss_pi = -torch.min(L1, L2).mean()
-            loss_v = torch.nn.functional.mse_loss(td_target.detach(), v)
-            loss_pi.backward()
-            loss_v.backward()
+            log_prob_new = new_dis.log_prob(action).float()
+            log_prob_new = log_prob_new[0].float() + log_prob_new[1].float()
+
+            ratio = torch.exp(
+                torch.min(log_prob_new - log_prob_old, torch.tensor([10])))
+            L1 = ratio * td_error.float()
+            L2 = torch.clamp(ratio, 1 - self.climp,
+                             1 + self.climp) * td_error.float()
+            loss_pi = -torch.min(L1, L2).mean().float()
+            # loss_pi = torch.min(loss_pi, torch.tensor([100000000]))
+            loss_v = torch.min(
+                torch.nn.functional.mse_loss(td_target.detach().reshape(-1),
+                                             v.reshape(-1).float()),
+                torch.tensor([1000000000]))
+            loss_v = torch.nn.functional.mse_loss(
+                td_target.detach().reshape(-1),
+                v.reshape(-1).float())
+            loss = loss_pi.float() + loss_v.float()
+            loss.backward()
             self.optimizer.step()
-        self.net_old.load_state_dict(self.net_new.state_dict())
+        # self.net_old = self.net_new
+        self.net_old.load_state_dict(self.net_new.state_dict(), strict=True)
+
+    def train_with_valid(self):
+        reward_list = []
+        all_model_path = self.model_path + "/all_model/"
+        best_model_path = self.model_path + "/best_model/"
+        if not os.path.exists(all_model_path):
+            os.makedirs(all_model_path)
+        if not os.path.exists(best_model_path):
+            os.makedirs(best_model_path)
+        for i in range(self.num_epoch):
+            num_epoch = i
+            stacked_state = []
+            s = self.train_env_instance.reset()
+            stacked_state.append(s)
+            for i in range(self.lenth_state - 1):
+                action = np.array([0, 0])
+                s, r, done, _ = self.train_env_instance.step(action)
+                stacked_state.append(s)
+            action = self.compute_action(stacked_state)
+            done = False
+            i = 0
+            while not done:
+                i = i + 1
+                old_states = []
+                for state in stacked_state.copy():
+                    state = torch.from_numpy(state).reshape(1, -1).float()
+                    old_states.append(state)
+                old_states = torch.cat(old_states, dim=0).float().to(a.device)
+                action = self.compute_action(stacked_state)
+                s_new, reward, done, _ = self.train_env_instance.step(action)
+                stacked_state.pop(0)
+                stacked_state.append(s_new)
+                new_states = []
+                for state in stacked_state.copy():
+                    state = torch.from_numpy(state).reshape(1, -1).float()
+                    new_states.append(state)
+                new_states = torch.cat(new_states,
+                                       dim=0).float().to(self.device)
+                self.save_transication(
+                    old_states,
+                    torch.from_numpy(action).reshape(-1).float().to(
+                        self.device),
+                    torch.tensor(reward).float().reshape(-1).to(self.device),
+                    new_states, 0,
+                    torch.tensor(done).float().reshape(-1).to(self.device))
+                if i % 100 == 1:
+                    print("updating")
+                    self.update()
+                    self.inputs = []
+                    self.actions = []
+                    self.rewards = []
+                    self.next_states = []
+                    self.previous_rewards = []
+                    self.dones = []
+            torch.save(
+                self.net_old, all_model_path +
+                "policy_state_value_net_{}.pth".format(num_epoch))
+            stacked_state = []
+            s = self.valid_env_instance.reset()
+            stacked_state.append(s)
+            for i in range(self.lenth_state - 1):
+                action = np.array([0, 0])
+                s, r, done, _ = self.valid_env_instance.step(action)
+                stacked_state.append(s)
+            done = False
+            while not done:
+                action = self.compute_action_test(stacked_state)
+                s_new, reward, done, _ = self.valid_env_instance.step(action)
+                stacked_state.pop(0)
+                stacked_state.append(s_new)
+            reward_list.append(reward)
+        max_reward = max(reward_list)
+        index = reward_list.index(max_reward)
+        net_path = all_model_path + "policy_state_value_net_{}.pth".format(
+            index)
+        self.net_old = torch.load(net_path)
+        torch.save(self.net_old,
+                   best_model_path + "policy_state_value_net.pth")
+
+    def test(self):
+        stacked_state = []
+        s = self.test_env_instance.reset()
+        stacked_state.append(s)
+        for i in range(self.lenth_state - 1):
+            action = np.array([0, 0])
+            s, r, done, _ = self.test_env_instance.step(action)
+            stacked_state.append(s)
+        done = False
+        while not done:
+            action = self.compute_action_test(stacked_state)
+            s_new, reward, done, _ = self.test_env_instance.step(action)
+            stacked_state.pop(0)
+            stacked_state.append(s_new)
+        result = np.array(self.test_env_instance.portfolio_value_history)
+        np.save(self.result_path + "/result.npy", result)
+
+
+if __name__ == "__main__":
+    args = parser.parse_args()
+    a = trader(args)
+    a.train_with_valid()
+    a.test()

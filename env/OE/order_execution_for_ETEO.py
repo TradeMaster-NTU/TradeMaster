@@ -1,5 +1,4 @@
 from logging import raiseExceptions
-from xml.dom import WrongDocumentErr
 import numpy as np
 from gym.utils import seeding
 import gym
@@ -137,11 +136,25 @@ class TradingEnv(gym.Env):
             high=np.inf,
             shape=(len(self.tech_indicator_list) + 2, ))
         self.data = self.df.loc[self.time_frame, :]
-        self.public_state = self.data[self.tech_indicator_list].values.tolist()
+        self.data_normal = self.data.copy()
+        self.data_normal["order_money"] = self.data_normal[
+            "buys"] + self.data_normal["sells"]
+        self.data_normal["buys"] = self.data_normal["buys"] / self.data_normal[
+            "order_money"]
+        self.data_normal["sells"] = self.data_normal[
+            "sells"] / self.data_normal["order_money"]
+        self.data_normal["midpoint"] = self.data_normal[
+            "midpoint"] / self.data_normal["order_money"]
+
+        max_value = max(self.data_normal[self.tech_indicator_list])
+        self.data_normal[self.tech_indicator_list] = self.data_normal[
+            self.tech_indicator_list] / max_value
+        self.public_state = self.data_normal[
+            self.tech_indicator_list].values.tolist()
         self.terminal = False
         self.rewards = 0
 
-        data_left = [len(self.df.index.unique()) - self.time_frame]
+        data_left = [(len(self.df.index.unique()) - self.time_frame) / 3600]
         order_left = [self.target_order]
         self.private_state = data_left + order_left
         self.state = np.array(self.public_state + self.private_state)
@@ -152,10 +165,23 @@ class TradingEnv(gym.Env):
         self.portfolio_history = [self.portfolio]
         self.order_history = []
         self.data = self.df.loc[self.time_frame, :]
-        self.public_state = self.data[self.tech_indicator_list].values.tolist()
+        self.data_normal = self.data.copy()
+        self.data_normal["order_money"] = self.data_normal[
+            "buys"] + self.data_normal["sells"]
+        self.data_normal["buys"] = self.data_normal["buys"] / self.data_normal[
+            "order_money"]
+        self.data_normal["sells"] = self.data_normal[
+            "sells"] / self.data_normal["order_money"]
+        self.data_normal["midpoint"] = self.data_normal[
+            "midpoint"] / self.data_normal["order_money"]
+        max_value = max(self.data_normal[self.tech_indicator_list])
+        self.data_normal[self.tech_indicator_list] = self.data_normal[
+            self.tech_indicator_list] / max_value
+        self.public_state = self.data_normal[
+            self.tech_indicator_list].values.tolist()
         self.terminal = False
         self.rewards = 0
-        data_left = [len(self.df.index.unique()) - self.time_frame]
+        data_left = [(len(self.df.index.unique()) - self.time_frame) / 3600]
         order_left = [self.target_order]
         self.private_state = data_left + order_left
         self.state = np.array(self.public_state + self.private_state)
@@ -213,7 +239,7 @@ class TradingEnv(gym.Env):
             # if the action's volume is greater than 0, we are going to buy the bitcoin we are holding
             buy_volume = action[0]
             buy_money = buy_volume * action[1]
-            if buy_money > self.portfolio[0]:
+            if buy_money >= self.portfolio[0]:
                 buy_volume = self.portfolio[0] / action[1]
             action = [buy_volume, action[1]]
             if action[1] > self.data["midpoint"] * (
@@ -376,11 +402,24 @@ class TradingEnv(gym.Env):
             1] + self.data["midpoint"] * (self.portfolio[2] +
                                           self.portfolio[3])
         self.portfolio_value_history.append(new_portfolio_value)
-        self.public_state = self.data[self.tech_indicator_list].values.tolist()
+        self.data_normal = self.data.copy()
+        self.data_normal["order_money"] = self.data_normal[
+            "buys"] + self.data_normal["sells"]
+        self.data_normal["buys"] = self.data_normal["buys"] / self.data_normal[
+            "order_money"]
+        self.data_normal["sells"] = self.data_normal[
+            "sells"] / self.data_normal["order_money"]
+        self.data_normal["midpoint"] = self.data_normal[
+            "midpoint"] / self.data_normal["order_money"]
+        max_value = max(self.data_normal[self.tech_indicator_list])
+        self.data_normal[self.tech_indicator_list] = self.data_normal[
+            self.tech_indicator_list] / max_value
+        self.public_state = self.data_normal[
+            self.tech_indicator_list].values.tolist()
         left_order = self.target_order - (self.portfolio[2] +
                                           self.portfolio[3])
 
-        left_date = [len(self.df.index.unique()) - self.time_frame]
+        left_date = [(len(self.df.index.unique()) - self.time_frame) / 3600]
         self.private_state = left_date + [left_order]
         self.state = np.array(self.public_state + self.private_state)
         self.terminal = (self.time_frame + 1 >= self.df.index[-1])
@@ -441,7 +480,7 @@ if __name__ == "__main__":
     print(a.observation_space.shape[0])
     state = a.reset()
     print(state.shape)
-    action = np.array([1, 50000])
+    action = np.array([1, 55000])
     done = False
     actions = []
     states = []
