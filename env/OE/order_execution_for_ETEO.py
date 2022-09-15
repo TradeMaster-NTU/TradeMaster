@@ -1,5 +1,4 @@
 from logging import raiseExceptions
-from xml.dom import WrongDocumentErr
 import numpy as np
 from gym.utils import seeding
 import gym
@@ -135,13 +134,27 @@ class TradingEnv(gym.Env):
         self.observation_space = spaces.Box(
             low=-np.inf,
             high=np.inf,
-            shape=(config["state_length"], len(self.tech_indicator_list)))
+            shape=(len(self.tech_indicator_list) + 2, ))
         self.data = self.df.loc[self.time_frame, :]
-        self.public_state = self.data[self.tech_indicator_list].values.tolist()
+        self.data_normal = self.data.copy()
+        self.data_normal["order_money"] = self.data_normal[
+            "buys"] + self.data_normal["sells"]
+        self.data_normal["buys"] = self.data_normal["buys"] / self.data_normal[
+            "order_money"]
+        self.data_normal["sells"] = self.data_normal[
+            "sells"] / self.data_normal["order_money"]
+        self.data_normal["midpoint"] = self.data_normal[
+            "midpoint"] / self.data_normal["order_money"]
+
+        max_value = max(self.data_normal[self.tech_indicator_list])
+        self.data_normal[self.tech_indicator_list] = self.data_normal[
+            self.tech_indicator_list] / max_value
+        self.public_state = self.data_normal[
+            self.tech_indicator_list].values.tolist()
         self.terminal = False
         self.rewards = 0
 
-        data_left = [len(self.df.index.unique()) - self.time_frame]
+        data_left = [(len(self.df.index.unique()) - self.time_frame) / 3600]
         order_left = [self.target_order]
         self.private_state = data_left + order_left
         self.state = np.array(self.public_state + self.private_state)
@@ -152,16 +165,30 @@ class TradingEnv(gym.Env):
         self.portfolio_history = [self.portfolio]
         self.order_history = []
         self.data = self.df.loc[self.time_frame, :]
-        self.public_state = self.data[self.tech_indicator_list].values.tolist()
+        self.data_normal = self.data.copy()
+        self.data_normal["order_money"] = self.data_normal[
+            "buys"] + self.data_normal["sells"]
+        self.data_normal["buys"] = self.data_normal["buys"] / self.data_normal[
+            "order_money"]
+        self.data_normal["sells"] = self.data_normal[
+            "sells"] / self.data_normal["order_money"]
+        self.data_normal["midpoint"] = self.data_normal[
+            "midpoint"] / self.data_normal["order_money"]
+        max_value = max(self.data_normal[self.tech_indicator_list])
+        self.data_normal[self.tech_indicator_list] = self.data_normal[
+            self.tech_indicator_list] / max_value
+        self.public_state = self.data_normal[
+            self.tech_indicator_list].values.tolist()
         self.terminal = False
         self.rewards = 0
-        data_left = [len(self.df.index.unique()) - self.time_frame]
+        data_left = [(len(self.df.index.unique()) - self.time_frame) / 3600]
         order_left = [self.target_order]
         self.private_state = data_left + order_left
         self.state = np.array(self.public_state + self.private_state)
         return self.state
 
     def step(self, action: np.array):
+
         # for now the target and step is a little different from the origional one:
         # there are 2 modification, first, we need bear the left order and left time in our head and at the end of the day, we need to
         # finish all the left order.
@@ -212,7 +239,7 @@ class TradingEnv(gym.Env):
             # if the action's volume is greater than 0, we are going to buy the bitcoin we are holding
             buy_volume = action[0]
             buy_money = buy_volume * action[1]
-            if buy_money > self.portfolio[0]:
+            if buy_money >= self.portfolio[0]:
                 buy_volume = self.portfolio[0] / action[1]
             action = [buy_volume, action[1]]
             if action[1] > self.data["midpoint"] * (
@@ -375,9 +402,26 @@ class TradingEnv(gym.Env):
             1] + self.data["midpoint"] * (self.portfolio[2] +
                                           self.portfolio[3])
         self.portfolio_value_history.append(new_portfolio_value)
-        self.public_state = self.data[self.tech_indicator_list].values.tolist()
+        self.data_normal = self.data.copy()
+        self.data_normal["order_money"] = self.data_normal[
+            "buys"] + self.data_normal["sells"]
+        self.data_normal["buys"] = self.data_normal["buys"] / self.data_normal[
+            "order_money"]
+        self.data_normal["sells"] = self.data_normal[
+            "sells"] / self.data_normal["order_money"]
+        self.data_normal["midpoint"] = self.data_normal[
+            "midpoint"] / self.data_normal["order_money"]
+        max_value = max(self.data_normal[self.tech_indicator_list])
+        self.data_normal[self.tech_indicator_list] = self.data_normal[
+            self.tech_indicator_list] / max_value
+        self.public_state = self.data_normal[
+            self.tech_indicator_list].values.tolist()
         left_order = self.target_order - (self.portfolio[2] +
                                           self.portfolio[3])
+
+        left_date = [(len(self.df.index.unique()) - self.time_frame) / 3600]
+        self.private_state = left_date + [left_order]
+        self.state = np.array(self.public_state + self.private_state)
         self.terminal = (self.time_frame + 1 >= self.df.index[-1])
         if self.terminal:
             #终结时候计算reward
@@ -400,8 +444,9 @@ class TradingEnv(gym.Env):
             if left_order < 0:
                 cash_left = cash_left - left_order * self.data["midpoint"] * (
                     1 + self.data["bids_distance_0"] * 0.01)
-            print(cash_left)
-            if cash_left > TWAP_value:
+
+            if cash_left >= TWAP_value:
+
                 self.reward = 1
             else:
                 self.reward = 0
@@ -413,8 +458,26 @@ class TradingEnv(gym.Env):
 
 
 if __name__ == "__main__":
+    # import yaml
+    # args = parser.parse_args()
+
+    # def save_dict_to_yaml(dict_value: dict, save_path: str):
+    #     with open(save_path, 'w') as file:
+    #         file.write(yaml.dump(dict_value, allow_unicode=True))
+
+    # def read_yaml_to_dict(yaml_path: str, ):
+    #     with open(yaml_path) as file:
+    #         dict_value = yaml.load(file.read(), Loader=yaml.FullLoader)
+    #         return dict_value
+
+    # save_dict_to_yaml(
+    #     vars(args),
+    #     "/home/sunshuo/qml/TradeMaster-1/config/input_config/env/OE/OE_for_ETEO/test.yml"
+    # )
+
     args = parser.parse_args()
     a = TradingEnv(vars(args))
+    print(a.observation_space.shape[0])
     state = a.reset()
     print(state.shape)
     action = np.array([1, 55000])
@@ -424,18 +487,6 @@ if __name__ == "__main__":
     rewards = []
     state_s = []
     while not done:
-        states.append(state)
-        state, reward, done, _ = a.step(action)
-        actions.append(action)
-        rewards.append(reward)
-        state_s.append(state)
+        state_s, reward, done, _ = a.step(action)
+        state = state_s
         # print(state.shape)
-        print(state)
-        print(state==state_s)
-    # print(reward)
-    # print(len(states))
-    # print(len(actions))
-    # print(len(rewards))
-    # print(len(state_s))
-    # for i in range(len(states) - 1):
-    #     print(states[i])
