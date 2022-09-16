@@ -8,7 +8,7 @@ In order to provide an alternative solution of missing values in raw data rather
 ## Usage
 This algorithm supports missing data imputation of day level. Please make sure your raw data file is in csv format.   
 
-The default data format requires six indicators: date, open, high, low, close, adjcp. Please make changes of line 9, 33 and 34 in [dataset_own.py](https://github.com/ZONG0004/CSDI/blob/master/dataset_own.py) if you need to add, drop or change indicators.  
+The default data format requires six indicators: date, open, high, low, close, adjcp. Please make changes of line 9, 33 and 34 in [dataset_own.py](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/CSDI/dataset_own.py) if you need to add, drop or change indicators.  
 
 Step 1: Training and imputation of own dataset
    ```
