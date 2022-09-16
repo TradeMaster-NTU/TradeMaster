@@ -29,7 +29,7 @@ Step 3: Visualization
    ```
 to visualize point chart of open, high, low, close and adjcp of 10-days interval as well as the candlestick chart
 
-[visualize_example.ipynb](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/visual_example.ipynb) is a notebook for directly visualizing results.
+[visualize_example.ipynb](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/CSDI/visual_example.ipynb) is a notebook for directly visualizing results.
 
 
 
