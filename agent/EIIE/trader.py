@@ -203,6 +203,8 @@ class trader:
             best_model_path = self.model_path + "/best_model/"
             if not os.path.exists(all_model_path):
                 os.makedirs(all_model_path)
+            if not os.path.exists(best_model_path):
+                os.makedirs(best_model_path)
             torch.save(self.net,
                        all_model_path + "actor_num_epoch_{}.pth".format(i))
             torch.save(self.critic,
