@@ -37,8 +37,11 @@ It covers the full pipeline for the design, implementation, evaluation and deplo
 TradeMaster could be beneficial to a wide range of communities including leading trading firms, startups, financial service providers and personal investors. We hope TradeMaster can make a change for the whole pipeline of FinRL to prevent untrustworthy results and lead successful industry deployment.
 
 ## Installation
+We provide a video tutorial of using docker to build an proper environment of running this project.
 
-To install the dependency of `TradeMaster`, see the following tutorials for different operating systems:
+[![Video Tutorial](tutorial/installation/cover.jpg)](https://www.youtube.com/watch?v=7rtqFT9I4uo )
+
+To help you better understand the step discribed in the video, Here are the installation tutorials for different operating systems:
 - [Docker](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/installation/Docker/README.md)  <font color='red'>  (Recommended)  </font>
 - [MacOS](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/installation/Mac/README.md)
 - [Linux](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/installation/Linux/README.md)
