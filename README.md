@@ -28,6 +28,7 @@ It covers the full pipeline for the design, implementation, evaluation and deplo
   - [Publications](#publications)
   - [Contact](#contact)
   - [Join Us](#join-us)
+  - [NTU Competition](#ntu-competition)
 
 ## Overview
 <div align="center">
@@ -246,3 +247,6 @@ We plan to support limit order book (LOB) and altervative data such as text and 
 
 ## Join Us
 We have positions for software engineer, RA and postdoc. If you are interested in working at the intersection of RL and financial trading, feel free to send an email to shuo003@e.ntu.edu.sg with your CV.
+
+## NTU Competition
+For those who have received the email from NTU to particapte in the competition, please refer to this [jupyter notebook](https://github.com/TradeMaster-NTU/TradeMaster/tree/main/competition/competition.ipynb). You can send your `result.csv` to shuo003@e.ntu.edu.sg or mqin003@e.ntu.edu.sg
