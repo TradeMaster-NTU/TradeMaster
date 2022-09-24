@@ -1,4 +1,4 @@
-df_path: data/data/dj30/train.csv
+df_path: data/train.csv
 initial_amount: 100000
 length_day: 10
 tech_indicator_list:
