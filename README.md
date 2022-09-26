@@ -249,4 +249,4 @@ We plan to support limit order book (LOB) and altervative data such as text and 
 We have positions for software engineer, RA and postdoc. If you are interested in working at the intersection of RL and financial trading, feel free to send an email to shuo003@e.ntu.edu.sg with your CV.
 
 ## NTU Competition
-For those who have received the email from NTU to particapte in the competition, please refer to this [jupyter notebook](https://github.com/TradeMaster-NTU/TradeMaster/tree/main/competition/competition.ipynb). You can send your `result.csv` to shuo003@e.ntu.edu.sg or mqin003@e.ntu.edu.sg
+For those who have received the email from NTU to particapte in the competition, please refer to this [jupyter notebook](https://github.com/TradeMaster-NTU/TradeMaster/tree/main/competition/competition.ipynb). You can send your `actor.pth` and `critic.pth` if you just tune the parameters or the whole class with the stored network if you build your own agent to shuo003@e.ntu.edu.sg or mqin003@e.ntu.edu.sg
