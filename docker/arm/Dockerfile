@@ -25,7 +25,7 @@ RUN git clone https://github.com/TradeMaster-NTU/TradeMaster.git /home/TradeMast
 RUN cd  /home/TradeMaster && \
         conda init bash && . ~/.bashrc && \
         conda activate TradeMaster && \
-        pip install -r requirement/arm/requirements.txt && \
+        pip install -r ./requirement/arm/requirements.txt && \
         conda install pytorch torchvision torchaudio -c pytorch
 
 RUN echo "conda activate TradeMaster" >> ~/.bashrc
