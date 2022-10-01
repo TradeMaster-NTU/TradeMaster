@@ -24,9 +24,8 @@ ENV PATH /opt/conda/bin:$PATH
 RUN git clone https://github.com/TradeMaster-NTU/TradeMaster.git /home/TradeMaster
 RUN cd  /home/TradeMaster && \
         conda init bash && . ~/.bashrc && \
-        pip install --upgrade pip setuptools wheel && \
         conda activate TradeMaster && \
-        pip install -r requirement/requirements_arm.txt && \
+     #    pip install -r requirement/requirements_arm.txt && \
         conda install pytorch torchvision cpuonly -c pytorch
 
 
