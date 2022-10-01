@@ -43,6 +43,7 @@ Step 2: Build the docker image from [dockerfile](https://github.com/TradeMaster-
    git clone https://github.com/TradeMaster-NTU/TradeMaster.git
   ```
 - Create image from the project docker file.
+
   If your chip is arm-architectured, open terminal or cmd in the position of the project and type
   ```
   cd ./docker/arm
