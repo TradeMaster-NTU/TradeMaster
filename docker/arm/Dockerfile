@@ -26,7 +26,8 @@ RUN cd  /home/TradeMaster && \
         conda init bash && . ~/.bashrc && \
         conda activate TradeMaster && \
         pip install -r requirements_arm.txt && \
-        conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch
+        conda install pytorch torchvision torchaudio cpuonly -c pytorch
+
 
 RUN echo "conda activate TradeMaster" >> ~/.bashrc
 WORKDIR /home/TradeMaster
