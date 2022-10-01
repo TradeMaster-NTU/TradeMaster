@@ -49,7 +49,6 @@ libclang==14.0.1
 lz4==4.0.1
 Markdown==3.4.1
 matplotlib==3.5.2
-mkl-service==2.4.0
 mpmath==1.2.1
 msgpack==1.0.4
 multidict==6.0.2
