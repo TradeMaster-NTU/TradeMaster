@@ -22,10 +22,10 @@ RUN chmod +x ~/miniconda.sh && \
 ENV PATH /opt/conda/bin:$PATH
 
 RUN git clone https://github.com/TradeMaster-NTU/TradeMaster.git /home/TradeMaster
-RUN cd  /home/TradeMaster && \
+RUN cd  /home/TradeMaster/requirement/x86 && \
         conda init bash && . ~/.bashrc && \
         conda activate TradeMaster && \
-        pip install -r ./requirement/x86/requirements.txt && \
+        pip install -r requirements.txt && \
         conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch
 
 RUN echo "conda activate TradeMaster" >> ~/.bashrc
