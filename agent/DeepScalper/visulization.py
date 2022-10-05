@@ -4,10 +4,11 @@ import pandas as pd
 
 def plot_result(test_result, plot_path):
     x = range(len(test_result))
-    y = test_result["total assets"].tolist()
+    y = ((test_result["total assets"] /
+          test_result["total assets"].tolist()[0]) - 1).tolist()
     plt.plot(x, y)
-    plt.xlabel("the number of trading timestamp")
-    plt.ylabel("the total asset")
+    plt.xlabel("Number of Trading Days")
+    plt.ylabel("Return Rate")
     plt.grid()
     plt.show()
     plt.savefig(plot_path)
