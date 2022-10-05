@@ -28,7 +28,7 @@ It covers the full pipeline for the design, implementation, evaluation and deplo
   - [Publications](#publications)
   - [Contact](#contact)
   - [Join Us](#join-us)
-  - [NTU Competition](#ntu-competition)
+  - [Competition](#competition)
 
 ## Overview
 <div align="center">
