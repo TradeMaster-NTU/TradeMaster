@@ -251,5 +251,5 @@ We plan to support limit order book (LOB) and altervative data such as text and 
 We have positions for software engineer, RA and postdoc. If you are interested in working at the intersection of RL and financial trading, feel free to send an email to shuo003@e.ntu.edu.sg with your CV.
 
 ## Competition
-We plan to host a competitation on RL-based quantiative trading. Here is the competitation [link]( https://codalab.lisn.upsaclay.fr/competitions/7907?secret_key=22cb3b76-220a-4ec0-9942-3997c5549f3f)
+We plan to host a competitation on RL-based quantiative trading. Here is the competitation [link](https://codalab.lisn.upsaclay.fr/competitions/7907?secret_key=22cb3b76-220a-4ec0-9942-3997c5549f3f)
 
