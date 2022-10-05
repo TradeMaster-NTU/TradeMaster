@@ -38,7 +38,7 @@ It covers the full pipeline for the design, implementation, evaluation and deplo
 TradeMaster could be beneficial to a wide range of communities including leading trading firms, startups, financial service providers and personal investors. We hope TradeMaster can make a change for the whole pipeline of FinRL to prevent untrustworthy results and lead successful industry deployment.
 
 ## Installation
-We provide a video tutorial of using docker to build an proper environment of running this project.
+We provide a video tutorial of using docker to build a proper environment of running this project.
 
 [![Video Tutorial](tutorial/installation/cover(1).png)](https://www.youtube.com/watch?v=uo80u1byGRc)
 
