@@ -40,7 +40,7 @@ TradeMaster could be beneficial to a wide range of communities including leading
 ## Installation
 We provide a video tutorial of using docker to build an proper environment of running this project.
 
-[![Video Tutorial](tutorial/installation/cover.PNG)](https://www.youtube.com/watch?v=uo80u1byGRc)
+[![Video Tutorial](tutorial/installation/cover.png)](https://www.youtube.com/watch?v=uo80u1byGRc)
 
 To help you better understand the step discribed in the video, Here are the installation tutorials for different operating systems:
 - [Docker](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/installation/Docker/README.md)  <font color='red'>  (Recommended)  </font>
