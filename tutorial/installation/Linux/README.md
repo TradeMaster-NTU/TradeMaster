@@ -22,6 +22,7 @@ Step 3: Install [`TradeMaster`](https://github.com/TradeMaster-NTU/TradeMaster)
 - Install the dependency of `TradeMaster`, run the command:
    ```
    conda activate TradeMaster
+   cd ./requirement
    pip install -r requirements.txt
    conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch
    ```
