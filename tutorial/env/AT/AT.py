@@ -189,8 +189,8 @@ class TradingEnv(gym.Env):
             self.state = np.array(self.state)
             self.portfolio_return_memory.append(compound[1] *
                                                 (new_price - old_price))
-            self.portfolio_value = compound[0] + np.abs(
-                compound[1]) * (new_price)
+            self.portfolio_value = self.asset_memory[-1] + compound[1] * (
+                new_price - old_price)
             self.asset_memory.append(self.portfolio_value)
             self.future_data = self.df.iloc[self.day - 1:self.day +
                                             self.forward_num_day, :]
