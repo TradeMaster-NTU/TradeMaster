@@ -198,7 +198,7 @@ class DQN(object):
         loss.backward()  # 误差反向传播, 计算参数更新值
         self.optimizer.step()  # 更新评估网络的所有参数
 
-    def train_with_valid(self, num_epoch=20):
+    def train_with_valid(self, num_epoch=2):
         valid_score_list = []
         for i in range(num_epoch):
             print('<<<<<<<<<Episode: %s' % i)
@@ -229,6 +229,7 @@ class DQN(object):
                 a = self.choose_action_test(s)
                 s_, r, done, info = self.valid_ev_instance.step(a)
                 episode_reward_sum += r
+                s=s_
             valid_score_list.append(episode_reward_sum)
         index = valid_score_list.index(np.max(valid_score_list))
         model_path = all_model_path + "num_epoch_{}.pth".format(index)
@@ -243,7 +244,8 @@ class DQN(object):
         done = False
         while not done:
             a = self.choose_action_test(s)
-            s, r, done, info = self.test_ev_instance.step(a)
+            s_, r, done, info = self.test_ev_instance.step(a)
+            s=s_
         rewards = self.test_ev_instance.save_asset_memory()
         assets = rewards["total assets"].values
         df_return = self.test_ev_instance.save_portfolio_return_memory()
