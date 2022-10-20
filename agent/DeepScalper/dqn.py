@@ -243,7 +243,7 @@ class DQN(object):
         done = False
         while not done:
             a = self.choose_action_test(s)
-            s_, r, done, info = self.test_ev_instance.step(a)
+            s, r, done, info = self.test_ev_instance.step(a)
         rewards = self.test_ev_instance.save_asset_memory()
         assets = rewards["total assets"].values
         df_return = self.test_ev_instance.save_portfolio_return_memory()
