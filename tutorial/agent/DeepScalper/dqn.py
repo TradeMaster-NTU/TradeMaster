@@ -198,7 +198,7 @@ class DQN(object):
         loss.backward()  # 误差反向传播, 计算参数更新值
         self.optimizer.step()  # 更新评估网络的所有参数
 
-    def train_with_valid(self, num_epoch=10):
+    def train_with_valid(self, num_epoch=2):
         valid_score_list = []
         for i in range(num_epoch):
             print('<<<<<<<<<Episode: %s' % i)
