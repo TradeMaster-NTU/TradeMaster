@@ -1,6 +1,6 @@
 df_path: data/valid.csv
 initial_amount: 100000
-length_day: 10
+length_day: 1
 tech_indicator_list:
 - zopen
 - zhigh
