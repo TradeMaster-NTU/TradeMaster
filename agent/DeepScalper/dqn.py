@@ -229,7 +229,7 @@ class DQN(object):
                 a = self.choose_action_test(s)
                 s_, r, done, info = self.valid_ev_instance.step(a)
                 episode_reward_sum += r
-                s=s_
+                s = s_
             valid_score_list.append(episode_reward_sum)
         index = valid_score_list.index(np.max(valid_score_list))
         model_path = all_model_path + "num_epoch_{}.pth".format(index)
@@ -245,7 +245,7 @@ class DQN(object):
         while not done:
             a = self.choose_action_test(s)
             s_, r, done, info = self.test_ev_instance.step(a)
-            s=s_
+            s = s_
         rewards = self.test_ev_instance.save_asset_memory()
         assets = rewards["total assets"].values
         df_return = self.test_ev_instance.save_portfolio_return_memory()
