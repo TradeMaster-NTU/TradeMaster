@@ -21,6 +21,8 @@ do not apply it to The pipeline.
 
 ## Usage
 
+It is recommended to run through the example.ipynb notebook to visulize the labeling process. This will also give hints on
+deciding the parameters for your dataset.
 
 Step 1: Training and imputation of own dataset
    ```
