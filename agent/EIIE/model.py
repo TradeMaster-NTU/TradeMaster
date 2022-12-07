@@ -110,3 +110,14 @@ class EIIE_critirc(nn.Module):
         self.linear2 = nn.Linear(number_nodes, 1)
         x = self.linear2(x)
         return x
+
+
+def normalization(x: torch.Tensor):
+    x = x / torch.abs(x).sum()
+    return x
+
+
+if __name__ == "__main__":
+    x = torch.randn(12)
+    print(x)
+    print(normalization(x))

@@ -251,5 +251,5 @@ if __name__ == "__main__":
         state, reward, done, _ = a.step(weights)
         # print(state.shape)
         # print(reward)
-    print(a.save_portfolio_return_memory())
-    print(a.save_asset_memory())
+    # print(a.save_portfolio_return_memory())
+    # print(a.save_asset_memory())
