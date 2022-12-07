@@ -9,20 +9,21 @@ from scipy.signal import butter,filtfilt
 from matplotlib import colors as mcolors
 from sklearn.linear_model import LinearRegression
 from random import sample
+import fractions
+import os
 
-
-class Labeling():
-    def __int__(self,data,method='linear',Wn_adjcp=2 / 7, Wn_pct=2 / 14, order=4):
-        self.data_dict,self.tics=self.preprocess(data)
-        self.Wn_adjcp,self.Wn_pct,self.order=Wn_adjcp,Wn_pct,order
+class Labeler():
+    def __init__(self,data,method='linear',parameters=['2/7','2/14','4']):
+        self.preprocess(data)
         if method=='linear':
             self.method='linear'
+            self.Wn_adjcp, self.Wn_pct, self.order =[float(fractions.Fraction(x)) for x in parameters]
         else:
             raise Exception("Sorry, only linear model is provided for now.")
     def fit(self):
         if self.method=='linear':
             for tic in self.tics:
-                self.adjcp_apply_filter(self.data_dict[tic], Wn_adjcp=2 / 7, Wn_pct=2 / 14, order=4)
+                self.adjcp_apply_filter(self.data_dict[tic], self.Wn_adjcp, self.Wn_pct, self.order)
             self.turning_points_dict = {}
             self.coef_list_dict = {}
             self.norm_coef_list_dict = {}
@@ -34,13 +35,8 @@ class Labeling():
                 self.coef_list_dict[tic] = coef_list
                 self.y_pred_dict[tic] = y_pred_list
                 self.norm_coef_list_dict[tic] = norm_coef_list
-            for tic in self.tics:
-                turning_points = self.turning_points_dict[tic]
-                y_pred_list = self.y_pred_dict[tic]
-                norm_coef_list = self.norm_coef_list_dict[tic]
-                label = self.linear_regession_label(self.data_dict[tic], y_pred_list, turning_points, -0.5, 0.5, norm_coef_list)
-                self.data_dict[tic]['label'] = label
-    def label(self,parameters):
+
+    def label(self,parameters=[-0.5,0.5]):
         # return a dict of label where key is the ticker and value is the label of time-series
         if self.method=='linear':
             try:
@@ -48,25 +44,40 @@ class Labeling():
             except:
                 raise Exception(
                     "parameters shoud be [low,high] where the series would be split into 4 regimes by low,high and 0 as threshold based on slope. A value of -0.5 and 0.5 stand for -0.5% and 0.5% change per step.")
-            self.label_dict={}
             for tic in self.tics:
-                self.label_dict[tic]=self.linear_regession_label(self, self.turning_points_dict[tic], low, high, self.norm_coef_list_dict[tic])
-            return self.label_dict[tic]
+                turning_points = self.turning_points_dict[tic]
+                norm_coef_list = self.norm_coef_list_dict[tic]
+                label = self.linear_regession_label(turning_points, low, high, norm_coef_list)
+                self.data_dict[tic]['label'] = label
+    def linear_regession_label(self, turning_points, low, high, normalized_coef_list):
+        seg1, seg2, seg3 = sorted([low, high, 0])
+        label = []
+        for i in range(len(turning_points) - 1):
+            coef = normalized_coef_list[i]
+            if coef <= seg1:
+                flag = 0
+            elif coef > seg1 and coef <= seg2:
+                flag = 1
+            elif coef > seg2 and coef <= seg3:
+                flag = 2
+            elif coef > seg3:
+                flag = 3
+            label.extend([flag] * (turning_points[i + 1] - turning_points[i]))
+        return label
+
+
     def preprocess(self,data):
-        try:
-            data = data['Adj Close']
-            data = data.reset_index()
-            data = data.rename(columns={'Date': 'date'})
-        except:
-            print('Please use the data formate of yfinance download data where the \'Adj Close\' and \'Date\' columns are required')
-        data_dict = {}
-        tics = [tic for tic in data.columns][1:]
-        for tic in tics:
-            temp = data.loc[:, ['date', tic]]
-            temp.rename(columns={tic: 'adjcp'}, inplace=True)
-            temp = temp.assign(pct_return=temp['adjcp'].pct_change().fillna(0))
-            data_dict[tic] = temp
-        return data_dict, tics
+        data = pd.read_csv(data)
+        self.tics = data['tic'].unique()
+        self.data_dict = {}
+        for tic in self.tics:
+            tic_data = data.loc[data['tic'] == tic, ['date','adjcp','tic']]
+            tic_data.sort_values(by='date', ascending=True)
+            tic_data = tic_data.assign(pct_return=tic_data['adjcp'].pct_change().fillna(0))
+            self.data_dict[tic] = tic_data.reset_index(drop=True)
+
+
+
 
     def plot_ori(self,data, name):
         fig, ax = plt.subplots(1, 1, figsize=(20, 10), constrained_layout=True)
@@ -79,6 +90,8 @@ class Labeling():
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%M'))
         ax.set_title(name + '_adjcp', fontsize=20)
         ax.grid(True)
+        if not os.path.exists('res/'):
+            os.makedirs('res/')
         fig.savefig('res/' + name + '_adjcp' + '.png')
 
     def plot_pct(self,data, name):
@@ -92,6 +105,8 @@ class Labeling():
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%M'))
         ax.set_title(name + 'pct_return', fontsize=20)
         ax.grid(True)
+        if not os.path.exists('res/'):
+            os.makedirs('res/')
         fig.savefig('res/' + name + '_pct_return' + '.png')
 
     def plot_both(self,data, name):
@@ -144,6 +159,8 @@ class Labeling():
         ax[1].xaxis.set_major_locator(mdates.YearLocator(base=1))
         ax[1].xaxis.set_major_formatter(mdates.DateFormatter('%Y-%M'))
         ax[1].set_title(name + '_pct_return_filtered', fontsize=20)
+        if not os.path.exists('res/'):
+            os.makedirs('res/')
         fig.savefig('res/' + name + 'filtered' + '.png')
 
     def find_index_of_turning(self,data):
@@ -172,21 +189,6 @@ class Labeling():
             coef_list.append(adj_cp_model.coef_)
             y_pred_list.append(y_pred)
         return np.asarray(coef_list), np.asarray(turning_points), y_pred_list, normalized_coef_list
-    def linear_regession_label(self, turning_points, low, high, normalized_coef_list):
-        seg1, seg2, seg3 = sorted([low, high, 0])
-        label = []
-        for i in range(len(turning_points) - 1):
-            coef = normalized_coef_list[i]
-            if coef <= seg1:
-                flag = 0
-            elif coef > seg1 and coef <= seg2:
-                flag = 1
-            elif coef > seg2 and coef <= seg3:
-                flag = 2
-            elif coef > seg3:
-                flag = 3
-            label.extend([flag] * (turning_points[i + 1] - turning_points[i]))
-        return label
     def plot(self,tics,parameters):
         if self.method=='linear':
             try:
@@ -194,7 +196,7 @@ class Labeling():
             except:
                 raise Exception("parameters shoud be [low,high] where the series would be split into 4 regimes by low,high and 0 as threshold based on slope. A value of -0.5 and 0.5 stand for -0.5% and 0.5% change per step.")
             for tic in tics:
-                self.linear_regession_plot(self.data_dict[tic],tic,self.y_pred_list,self.turning_points,low,high,normalized_coef_list=self.norm_coef_list)
+                self.linear_regession_plot(self.data_dict[tic],tic,self.y_pred_dict[tic],self.turning_points_dict[tic],low,high,normalized_coef_list=self.norm_coef_list_dict[tic])
     def linear_regession_plot(self,data, tic, y_pred_list, turning_points, low, high, normalized_coef_list):
         data = data.reset_index(drop=True)
         fig, ax = plt.subplots(2, 1, figsize=(20, 10), constrained_layout=True)
@@ -218,6 +220,8 @@ class Labeling():
         by_label = dict(zip(labels, handles))
         plt.legend(by_label.values(), by_label.keys())
         ax[0].set_title(tic + '_linear_regression_regime', fontsize=20)
+        if not os.path.exists('res/linear_model/'):
+            os.makedirs('res/linear_model/')
         fig.savefig('res/linear_model/' + tic + '.png')
 
     def linear_regession_timewindow(self,data_ori, tic, adjcp_timewindow):
