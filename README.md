@@ -19,6 +19,7 @@ It covers the full pipeline for the design, implementation, evaluation and deplo
   - [Overview](#overview)
   - [Installation](#installation)
   - [Tutorial](#tutorial)
+  - [Toolkit](#toolkit)
   - [Results and Visualization](#results-and-visualization)
   - [Model Zoo](#model-zoo)
   - [Dataset](#dataset)
@@ -58,7 +59,10 @@ We provide tutorials for users to get start with.
 |    IMIT     |  DJ30   |      [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/IMIT_for_PM_on_DJ30.ipynb)      |  Investor Imitator for Portfolio Management on DJ30  |
 |    SARL     |  DJ30   |      [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/SARL_for_PM_on_DJ30.ipynb)      |        SARL for Portfolio Management on DJ30         |
 - [Colab Version](https://colab.research.google.com/drive/10M3F6qF8qJ31eQkBR7B6OHhYCR1ZUlrp#scrollTo=4TKpEroeFdT4): Use Google Colab resource to run TradeMaster on Cloud  
+
+## Toolkit
 - [CSDI](https://proceedings.neurips.cc/paper/2021/hash/cfe8504bda37b575c70ee1a8276f3486-Abstract.html) for financial data imputation [(link)](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/CSDI/README.md)
+- Automatic market style recognition [(link)](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/Market_Regime_Labeling/README.md)
 
 ## Results and Visualization
 The evaluation module of TradeMaster is mainly based on [PRUDEX-Compass](https://github.com/ai-gamer/PRUDEX-Compass), a systematic evaluation toolkit of FinRL methods with 6 axes and 17 measures. We show some results here:
