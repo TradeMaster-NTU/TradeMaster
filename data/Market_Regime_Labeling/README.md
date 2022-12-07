@@ -21,29 +21,12 @@ do not apply it to The pipeline.
 
 ## Usage
 
-It is recommended to run through the example.ipynb notebook to visulize the labeling process. This will also give hints on
+It is recommended to run through the example.ipynb notebook to visualize the labeling process. This will also give hints on
 deciding the parameters for your dataset.
 
-Step 1: Training and imputation of own dataset
+And example of labeling the data
    ```
-   python exe_own.py --dataset [dataset name] --tic [ticker name]  --testmissingratio [missing ratio]
+   python Label.py --data_path ../data/dj30/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.5 0.5
    ```
-The default missing ratio is set as 0.1. Please do not edit it unless there are too many missing values in your own dataset.  
-
-
-Step 2: Generation of new dataset
-   ```
-   python impute.py --dataset [dataset name] --tic [ticker name]  --testmissingratio [missing ratio]
-   ```
-
-
-Step 3: Visualization
-   ```
-   python visual.py --dataset [dataset name] --tic [ticker name]  --testmissingratio [missing ratio] --dataind [data index]
-   ```
-to visualize point chart of open, high, low, close and adjcp of 10-days interval as well as the candlestick chart
-
-[visualize_example.ipynb](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/CSDI/visual_example.ipynb) is a notebook for directly visualizing results.
-
-
+You may read the comments labeling_util.py to get a hint on how to set the parameters
 
