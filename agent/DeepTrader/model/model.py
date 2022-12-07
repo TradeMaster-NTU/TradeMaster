@@ -87,8 +87,9 @@ class TemporalBlock(nn.Module):
         :param x: size of (Batch, input_channel, seq_len)
         :return:
         """
+
         out = self.net(x)
-        out = self.bn(out)
+        # out = self.bn(out)
         res = x if self.downsample is None else self.downsample(x)
         return self.relu(out + res)
 
@@ -178,11 +179,13 @@ class IN(nn.Module):
         super(IN, self).__init__()
         self.N = N
         self.linear = nn.Linear(num_features, 1)
+        self.bn1 = nn.BatchNorm1d(num_features=num_features)
 
     def forward(self, S_l, Z_l, H_l):
         x = torch.matmul(S_l, Z_l)
         x = x + H_l
         x = x.reshape(self.N, -1)
+        x = self.bn1(x)
         x = self.linear(x).squeeze()
         return x
 
@@ -315,6 +318,10 @@ class market_scoring(nn.Module):
 
 
 if __name__ == "__main__":
-    input = torch.randn(1, 10, 12)
-    net = market_scoring(12)
-    print(net(input).shape)
+    # input = torch.randn(1, 10, 12)
+    # net = market_scoring(12)
+    # print(net(input).shape)
+    input = torch.randn(29, 12, 10)
+    A = np.random.randint(1, 2, size=(29, 29))
+    net_new = asset_scoring(29, 10, 12, [12, 12, 12])
+    print(net_new(input, A).shape)
