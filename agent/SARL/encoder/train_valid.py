@@ -4,7 +4,7 @@ import numpy as np
 from torch import nn
 
 
-def train_with_valid(train_Dataloader, valid_Dataloader, num_epoch, net,
+def train_with_valid(train_Dataloader, valid_Dataloader, num_epoch, net:torch.nn.Module,
                      optimizer, net_path):
     criterion = nn.MSELoss()
 
@@ -30,8 +30,8 @@ def train_with_valid(train_Dataloader, valid_Dataloader, num_epoch, net,
             epoch_index + 1)
         if not os.path.exists(model_path):
             os.makedirs(model_path)
-        model_path = model_path + "/" + "LSTM.pth"
-        torch.save(net, model_path)
+        model_path = model_path + "/" + "LSTM.pkl"
+        torch.save(net.state_dict(), model_path)
 
         valid_scores = np.array(1)
         for X, y in valid_Dataloader:
@@ -45,10 +45,10 @@ def train_with_valid(train_Dataloader, valid_Dataloader, num_epoch, net,
         valid_score_list.append(valid_score)
     best_model_index = valid_score_list.index(np.min(valid_score_list))
     model_path = net_path + "/all_model/" + "num_epoch_" + str(
-        best_model_index + 1) + "/" + "LSTM.pth"
-    model = torch.load(model_path)
+        best_model_index + 1) + "/" + "LSTM.pkl"
+    net.load_state_dict(torch.load(model_path))
     best_model_path = net_path + "/best_model/"
     if not os.path.exists(best_model_path):
         os.makedirs(best_model_path)
-    best_model_path = best_model_path + "LSTM.pth"
-    torch.save(model, best_model_path)
+    best_model_path = best_model_path + "LSTM.pkl"
+    torch.save(net.state_dict(), best_model_path)

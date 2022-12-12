@@ -1,0 +1,16 @@
+backward_num_day: 14
+df_path: ./data/data/BTC_for_iRDPG/train.csv
+initial_amount: 100000
+tech_indicator_list:
+- normal_open
+- normal_close
+- normal_high
+- normal_low
+- normal_EMA_12_close
+- normal_EMA_26_close
+- normal_EMA_10_close
+- normal_BB_mid
+- normal_BB_low
+- normal_BB_high
+- normal_MACD
+transaction_cost_pct: 0.001
