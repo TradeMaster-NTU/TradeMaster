@@ -54,7 +54,7 @@ class Labeler():
             for tic in self.tics:
                 turning_points = self.turning_points_dict[tic]
                 norm_coef_list = self.norm_coef_list_dict[tic]
-                label,data_seg,label_seg,index_seg = self.linear_regession_label(self.data_dict[tic],turning_points, low, high, norm_coef_list,tic,self.regime_num)
+                label,data_seg,label_seg,index_seg = self.linear_regession_label(self.data_dict[tic],turning_points, low, high, norm_coef_list,tic,self.regime_number)
                 self.data_dict[tic]['label'] = label
                 self.all_data_seg.extend(data_seg)
                 self.all_label_seg.extend(label_seg)
