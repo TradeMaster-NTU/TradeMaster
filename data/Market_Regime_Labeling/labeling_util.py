@@ -61,7 +61,6 @@ class Labeler():
                 self.all_index_seg.extend(index_seg)
             interpolated_pct_return_data_seg = np.array(self.interpolation(self.all_data_seg))
             self.TSNE_run(interpolated_pct_return_data_seg)
-            self.TSNE_plot(self.tsne_results,self.all_label_seg)
 
     def linear_regession_label(self,data, turning_points, low, high, normalized_coef_list, tic,
                                regime_num=4):
@@ -240,8 +239,7 @@ class Labeler():
                 raise Exception("parameters shoud be [low,high] where the series would be split into 4 regimes by low,high and 0 as threshold based on slope. A value of -0.5 and 0.5 stand for -0.5% and 0.5% change per step.")
             for tic in tics:
                 self.linear_regession_plot(self.data_dict[tic],tic,self.y_pred_dict[tic],self.turning_points_dict[tic],low,high,normalized_coef_list=self.norm_coef_list_dict[tic])
-            self.TSNE_run(pct_return_data_seg)
-            self.TSNE_plot(self.tsne_results,all_label_seg)
+            self.TSNE_plot(self.tsne_results,self.all_label_seg)
     def linear_regession_plot(self,data, tic, y_pred_list, turning_points, low, high, normalized_coef_list):
         data = data.reset_index(drop=True)
         fig, ax = plt.subplots(3, 1, figsize=(20, 10), constrained_layout=True)
