@@ -20,7 +20,7 @@ class Labeler():
             self.Wn_adjcp, self.Wn_pct, self.order =[float(fractions.Fraction(x)) for x in parameters]
         else:
             raise Exception("Sorry, only linear model is provided for now.")
-    def fit(self):
+    def fit(self,regime_number,length_limit):
         if self.method=='linear':
             for tic in self.tics:
                 self.adjcp_apply_filter(self.data_dict[tic], self.Wn_adjcp, self.Wn_pct, self.order)
@@ -28,15 +28,17 @@ class Labeler():
             self.coef_list_dict = {}
             self.norm_coef_list_dict = {}
             self.y_pred_dict = {}
+            self.regime_number=regime_number
+            self.length_limit=length_limit
             for tic in self.tics:
                 coef_list, turning_points, y_pred_list, norm_coef_list = self.linear_regession_turning_points(
-                    data_ori=self.data_dict[tic], tic=tic)
+                    data_ori=self.data_dict[tic], tic=tic,length_constrain=self.length_limit)
                 self.turning_points_dict[tic] = turning_points
                 self.coef_list_dict[tic] = coef_list
                 self.y_pred_dict[tic] = y_pred_list
                 self.norm_coef_list_dict[tic] = norm_coef_list
 
-    def label(self,parameters=[-0.5,0.5]):
+    def label(self,parameters):
         # return a dict of label where key is the ticker and value is the label of time-series
         if self.method=='linear':
             try:
@@ -54,6 +56,13 @@ class Labeler():
         label = []
         for i in range(len(turning_points) - 1):
             coef = normalized_coef_list[i]
+            flag=self.regime_flag(self.regime_number,coef,[seg1, seg2, seg3])
+            label.extend([flag] * (turning_points[i + 1] - turning_points[i]))
+        return label
+
+    def regime_flag(self,regime_num, coef, parameters):
+        seg1, seg2, seg3 = parameters
+        if regime_num == 4:
             if coef <= seg1:
                 flag = 0
             elif coef > seg1 and coef <= seg2:
@@ -62,10 +71,16 @@ class Labeler():
                 flag = 2
             elif coef > seg3:
                 flag = 3
-            label.extend([flag] * (turning_points[i + 1] - turning_points[i]))
-        return label
-
-
+        elif regime_num == 3:
+            if coef <= seg1:
+                flag = 0
+            elif coef > seg1 and coef <= seg3:
+                flag = 1
+            elif coef > seg3:
+                flag = 2
+        else:
+            raise Exception('This regime num is currently not supported')
+        return flag
     def preprocess(self,data):
         data = pd.read_csv(data)
         self.tics = data['tic'].unique()
@@ -173,15 +188,21 @@ class Labeler():
             turning_points.append(data['pct_return_filtered'].size)
         return turning_points
 
-    def linear_regession_turning_points(self,data_ori, tic):
+    def linear_regession_turning_points(self,data_ori, tic,length_constrain=0):
         data = data_ori.reset_index(drop=True)
         turning_points = self.find_index_of_turning(data)
+        turning_points_new = [turning_points[0]]
+        if length_constrain != 0:
+            for i in range(1, len(turning_points) - 1):
+                if turning_points[i] - turning_points_new[-1] >= length_constrain:
+                    turning_points_new.append(turning_points[i])
+            turning_points_new.append(turning_points[-1])
+            turning_points = turning_points_new
         coef_list = []
         normalized_coef_list = []
         y_pred_list = []
         for i in range(len(turning_points) - 1):
             x_seg = np.asarray([j for j in range(turning_points[i], turning_points[i + 1])]).reshape(-1, 1)
-            #         print(x_seg,data['adjcp_filtered'].iloc[turning_points[i]:turning_points[i+1]])
             adj_cp_model = LinearRegression().fit(x_seg,
                                                   data['adjcp_filtered'].iloc[turning_points[i]:turning_points[i + 1]])
             y_pred = adj_cp_model.predict(x_seg)
@@ -189,6 +210,7 @@ class Labeler():
             coef_list.append(adj_cp_model.coef_)
             y_pred_list.append(y_pred)
         return np.asarray(coef_list), np.asarray(turning_points), y_pred_list, normalized_coef_list
+
     def plot(self,tics,parameters):
         if self.method=='linear':
             try:
@@ -197,7 +219,7 @@ class Labeler():
                 raise Exception("parameters shoud be [low,high] where the series would be split into 4 regimes by low,high and 0 as threshold based on slope. A value of -0.5 and 0.5 stand for -0.5% and 0.5% change per step.")
             for tic in tics:
                 self.linear_regession_plot(self.data_dict[tic],tic,self.y_pred_dict[tic],self.turning_points_dict[tic],low,high,normalized_coef_list=self.norm_coef_list_dict[tic])
-    def linear_regession_plot(self,data, tic, y_pred_list, turning_points, low, high, normalized_coef_list):
+    def linear_regession_plot(self,data, tic, y_pred_list, turning_points, low, high, normalized_coef_list,regime_num,):
         data = data.reset_index(drop=True)
         fig, ax = plt.subplots(2, 1, figsize=(20, 10), constrained_layout=True)
         ax[0].plot([i for i in range(data.shape[0])], data['adjcp_filtered'])
@@ -207,14 +229,7 @@ class Labeler():
             x_seg = np.asarray([j for j in range(turning_points[i], turning_points[i + 1])]).reshape(-1, 1)
             y_pred = y_pred_list[i]
             coef = normalized_coef_list[i]
-            if coef <= seg1:
-                flag = 0
-            elif coef > seg1 and coef <= seg2:
-                flag = 1
-            elif coef > seg2 and coef <= seg3:
-                flag = 2
-            elif coef > seg3:
-                flag = 3
+            flag=self.regime_flag(self.regime_number,coef,[seg1, seg2, seg3])
             ax[1].plot(x_seg, y_pred, color=colors[flag], label='cat' + str(flag))
         handles, labels = plt.gca().get_legend_handles_labels()
         by_label = dict(zip(labels, handles))
