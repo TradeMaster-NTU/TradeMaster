@@ -12,7 +12,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument(
     "--df_path",
     type=str,
-    default="./experiment_result/data/s_test.csv",
+    default="./data/data/BTC/test.csv",
     help="the path for the downloaded data to generate the environment")
 parser.add_argument("--initial_amount",
                     type=int,
@@ -268,10 +268,10 @@ if __name__ == "__main__":
     done = False
     state = env.reset()
     print(env.action_space.n, env.observation_space.shape[0])
-    # while not done:
-    #     action = 2
-    #     state, reward, done, info = env.step(action)
-    #     print("state shape", state.shape)
-    #     print("reward", reward)
-    #     print(info)
-    #     print(env.compound_memory[-1])
+    while not done:
+        action = 0
+        state, reward, done, info = env.step(action)
+        print("state shape", state.shape)
+        print("reward", reward)
+        print(info)
+        print(env.compound_memory[-1])

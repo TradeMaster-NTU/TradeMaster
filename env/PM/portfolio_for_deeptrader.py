@@ -165,7 +165,7 @@ class Tradingenv(gym.Env):
         # a normalization function not only for actions to transfer into weights but also for the weights of the
         # portfolios whose prices have been changed through time
         actions = np.array(actions)
-        sum = np.sum(actions)
+        sum = np.abs(np.sum(actions))
         actions = actions / sum
         return actions
 
@@ -251,5 +251,5 @@ if __name__ == "__main__":
         state, reward, done, _ = a.step(weights)
         # print(state.shape)
         # print(reward)
-    print(a.save_portfolio_return_memory())
-    print(a.save_asset_memory())
+    # print(a.save_portfolio_return_memory())
+    # print(a.save_asset_memory())

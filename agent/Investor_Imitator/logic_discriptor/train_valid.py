@@ -1,9 +1,9 @@
 import torch
 import os
 import numpy as np
-
-
-def train_with_valid(train_Dataloader, valid_Dataloader, num_epoch, net,
+import torch
+from torch import nn
+def train_with_valid(train_Dataloader, valid_Dataloader, num_epoch, net:nn.Module,
                      optimizer, tic_list, discriptor_path):
     if torch.cuda.is_available():
         net.cuda()
@@ -37,8 +37,8 @@ def train_with_valid(train_Dataloader, valid_Dataloader, num_epoch, net,
             epoch_index + 1)
         if not os.path.exists(model_path):
             os.makedirs(model_path)
-        model_path = model_path + "/" + "discroptor.pth"
-        torch.save(net, model_path)
+        model_path = model_path + "/" + "discroptor_parameter.pkl"
+        torch.save(net.state_dict(), model_path)
 
         valid_scores = np.array(1)
         for X, y in valid_Dataloader:
@@ -64,10 +64,10 @@ def train_with_valid(train_Dataloader, valid_Dataloader, num_epoch, net,
         valid_score_list.append(valid_score)
     best_model_index = valid_score_list.index(np.max(valid_score_list))
     model_path = discriptor_path + "/all_model/" + "num_epoch_" + str(
-        best_model_index + 1) + "/" + "discroptor.pth"
-    model = torch.load(model_path)
+        best_model_index + 1) + "/" + "discroptor_parameter.pkl"
+    net.load_state_dict(torch.load(model_path))
     best_model_path = discriptor_path + "/best_model/"
     if not os.path.exists(best_model_path):
         os.makedirs(best_model_path)
-    best_model_path = best_model_path + "discroptor.pth"
-    torch.save(model, best_model_path)
+    best_model_path = best_model_path + "discroptor_parameter.pkl"
+    torch.save(net.state_dict(), best_model_path)

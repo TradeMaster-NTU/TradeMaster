@@ -69,6 +69,7 @@ class TemporalBlock(nn.Module):
                                     1) if n_inputs != n_outputs else None
         self.relu = nn.ReLU()
         self.init_weights()
+        self.bn = nn.BatchNorm1d(n_outputs)
 
     def init_weights(self):
         """
@@ -86,7 +87,9 @@ class TemporalBlock(nn.Module):
         :param x: size of (Batch, input_channel, seq_len)
         :return:
         """
+
         out = self.net(x)
+        # out = self.bn(out)
         res = x if self.downsample is None else self.downsample(x)
         return self.relu(out + res)
 
@@ -118,7 +121,7 @@ class TemporalConvNet(nn.Module):
                               stride=1,
                               dilation=dilation_size,
                               padding=(kernel_size - 1) * dilation_size,
-                              dropout=dropout)
+                              dropout=dropout),
             ]
 
         self.network = nn.Sequential(*layers)
@@ -176,12 +179,14 @@ class IN(nn.Module):
         super(IN, self).__init__()
         self.N = N
         self.linear = nn.Linear(num_features, 1)
+        self.bn1 = nn.BatchNorm1d(num_features=num_features)
 
     def forward(self, S_l, Z_l, H_l):
         x = torch.matmul(S_l, Z_l)
         x = x + H_l
         x = x.reshape(self.N, -1)
-        x = torch.sigmoid(self.linear(x)).squeeze()
+        x = self.bn1(x)
+        x = self.linear(x).squeeze()
         return x
 
 
@@ -248,34 +253,75 @@ class asset_scoring_value(nn.Module):
 
 
 class market_scoring(nn.Module):
-    def __init__(self, n_features, hidden_size=12) -> None:
+    def __init__(self, n_features, win=10, hidden_size=12) -> None:
+        # super(market_scoring, self).__init__()
+        # self.lstm = nn.LSTM(input_size=n_features,
+        #                     hidden_size=hidden_size,
+        #                     num_layers=1,
+        #                     batch_first=True)
+        # self.U1 = nn.Parameter(torch.randn(hidden_size, hidden_size * 2))
+        # self.U2 = nn.Parameter(torch.randn(hidden_size, n_features))
+        # self.V = nn.Parameter(torch.randn(hidden_size))
+        # self.linear = nn.Linear(hidden_size, 2)
+        # self.bn1 = nn.BatchNorm1d(hidden_size)
         super(market_scoring, self).__init__()
-        self.lstm = nn.LSTM(input_size=n_features,
-                            hidden_size=hidden_size,
-                            num_layers=1,
-                            batch_first=True)
-        self.U1 = nn.Parameter(torch.randn(hidden_size, hidden_size * 2))
-        self.U2 = nn.Parameter(torch.randn(hidden_size, n_features))
-        self.V = nn.Parameter(torch.randn(hidden_size))
-        self.linear = nn.Linear(hidden_size, 2)
+        self.in_features = n_features
+        self.window_len = win
+        self.hidden_dim = hidden_size
+
+        self.lstm = nn.LSTM(input_size=n_features, hidden_size=hidden_size)
+        self.attn1 = nn.Linear(2 * hidden_size, hidden_size)
+        self.attn2 = nn.Linear(hidden_size, 1)
+
+        self.linear1 = nn.Linear(hidden_size, hidden_size)
+        self.bn1 = nn.BatchNorm1d(hidden_size)
+        self.linear2 = nn.Linear(hidden_size, 2)
 
     def forward(self, x):
-        lstm_out, _ = self.lstm(x)
+        # lstm_out, _ = self.lstm(x)
 
-        #lstm_out 为batch,length, feature dj30为(1,10,12)
-        H_K = lstm_out[:, -1, :]
-        eks = []
-        for k in range(lstm_out.shape[1]):
-            h_k = lstm_out[:, k, :]
-            h_kh_K = torch.cat((h_k, H_K), 1).reshape(-1, 1)
-            multiplier = torch.matmul(self.U1, h_kh_K) + torch.matmul(
-                self.U2, x[:, k, :].reshape(-1, 1))
-            e_k = torch.matmul(self.V.reshape(1, -1), multiplier)
-            eks.append(e_k)
-        eks = torch.cat(eks).unsqueeze(0)
-        alpha_ks = nn.Softmax(dim=1)(eks)
-        H_K_bar = torch.matmul(alpha_ks.squeeze(2),
-                               lstm_out[0, :, :]).squeeze()
-        result = torch.sigmoid(self.linear(H_K_bar).squeeze())
+        # #lstm_out 为batch,length, feature dj30为(1,10,12)
+        # H_K = lstm_out[:, -1, :]
+        # eks = []
+        # for k in range(lstm_out.shape[1]):
+        #     h_k = lstm_out[:, k, :]
+        #     h_kh_K = torch.cat((h_k, H_K), 1).reshape(-1, 1)
+        #     multiplier = torch.matmul(self.U1, h_kh_K) + torch.matmul(
+        #         self.U2, x[:, k, :].reshape(-1, 1))
+        #     e_k = torch.matmul(self.V.reshape(1, -1), multiplier)
+        #     eks.append(e_k)
+        # eks = torch.cat(eks).unsqueeze(0)
+        # print(eks.shape)
+        # alpha_ks = nn.Softmax(dim=1)(eks)
+        # H_K_bar = torch.matmul(alpha_ks.squeeze(2),
+        #                        lstm_out[0, :, :]).squeeze()
+        # print(H_K_bar.shape)
+        # result = torch.sigmoid(self.linear((H_K_bar)).squeeze())
+        X = x.permute(1, 0, 2)
 
-        return result
+        outputs, (h_n, c_n) = self.lstm(X)  # lstm version
+        H_n = h_n.repeat((self.window_len, 1, 1))
+        scores = self.attn2(
+            torch.tanh(self.attn1(torch.cat([outputs, H_n],
+                                            dim=2))))  # [L, B*N, 1]
+        scores = scores.squeeze(2).transpose(1, 0)  # [B*N, L]
+        attn_weights = torch.softmax(scores, dim=1)
+        outputs = outputs.permute(1, 0, 2)  # [B*N, L, H]
+        attn_embed = torch.bmm(attn_weights.unsqueeze(1), outputs).squeeze(1)
+        embed = torch.relu(self.bn1(self.linear1(attn_embed).repeat(2, 1)))
+        parameters = self.linear2(embed)
+        parameters = parameters[0]
+        # return parameters[:, 0], parameters[:, 1]   # mu, sigma
+        return parameters.squeeze(-1)
+
+        # return result
+
+
+if __name__ == "__main__":
+    # input = torch.randn(1, 10, 12)
+    # net = market_scoring(12)
+    # print(net(input).shape)
+    input = torch.randn(29, 12, 10)
+    A = np.random.randint(1, 2, size=(29, 29))
+    net_new = asset_scoring(29, 10, 12, [12, 12, 12])
+    print(net_new(input, A).shape)

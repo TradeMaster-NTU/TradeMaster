@@ -84,3 +84,11 @@ def normalization(portion):
     sum = np.sum(portion)
     portion = portion / sum
     return portion
+
+
+if __name__ == "__main__":
+    data = pd.read_csv("data/data/BTC_even/BTC.csv", index_col=0)
+    train, valid, test = split(data, [1, 1, 1])
+    train.to_csv("data/data/BTC_even/train.csv")
+    valid.to_csv("data/data/BTC_even/valid.csv")
+    test.to_csv("data/data/BTC_even/test.csv")

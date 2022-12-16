@@ -1,0 +1,20 @@
+df_path: data/data/BTC/valid.csv
+num_back_day: 10
+sell_target: 1
+tech_indicator_list:
+- high
+- low
+- open
+- close
+- adjcp
+- zopen
+- zhigh
+- zlow
+- zadjcp
+- zclose
+- zd_5
+- zd_10
+- zd_15
+- zd_20
+- zd_25
+- zd_30
