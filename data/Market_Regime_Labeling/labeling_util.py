@@ -219,7 +219,7 @@ class Labeler():
                 raise Exception("parameters shoud be [low,high] where the series would be split into 4 regimes by low,high and 0 as threshold based on slope. A value of -0.5 and 0.5 stand for -0.5% and 0.5% change per step.")
             for tic in tics:
                 self.linear_regession_plot(self.data_dict[tic],tic,self.y_pred_dict[tic],self.turning_points_dict[tic],low,high,normalized_coef_list=self.norm_coef_list_dict[tic])
-    def linear_regession_plot(self,data, tic, y_pred_list, turning_points, low, high, normalized_coef_list,regime_num,):
+    def linear_regession_plot(self,data, tic, y_pred_list, turning_points, low, high, normalized_coef_list):
         data = data.reset_index(drop=True)
         fig, ax = plt.subplots(2, 1, figsize=(20, 10), constrained_layout=True)
         ax[0].plot([i for i in range(data.shape[0])], data['adjcp_filtered'])
