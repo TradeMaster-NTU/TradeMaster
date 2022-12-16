@@ -52,10 +52,12 @@ class TradingEnv(gym.Env):
         for sub_file in os.listdir(self.network_dict):
             discriptor_path = os.path.join(self.network_dict, sub_file)
             best_model_path = "best_model"
+
             discriptor_best_path = os.path.join(discriptor_path,
                                                 best_model_path)
-            for net_dict in os.listdir(discriptor_best_path):
 
+            for net_dict in os.listdir(discriptor_best_path):
+                #print(os.path.join(discriptor_best_path, net_dict))
                 indicator_dict = torch.load(
                     os.path.join(discriptor_best_path, net_dict)).cpu()
 

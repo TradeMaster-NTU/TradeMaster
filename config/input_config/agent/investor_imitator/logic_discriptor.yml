@@ -1,7 +1,8 @@
 batch_size: 256
 data_path: ./data/data/
 dataset: dj30
-discriptor_path: ./result/invest_imitator/logic_discriptor
+#discriptor_path: ./result/invest_imitator/logic_discriptor
+discriptor_path: ./experiment_result/invest_imitator/logic_discriptor
 generate_config: true
 hidden_size: 256
 input_config: false

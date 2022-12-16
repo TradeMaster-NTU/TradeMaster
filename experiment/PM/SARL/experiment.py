@@ -65,7 +65,7 @@ parser.add_argument(
 parser.add_argument(
     "--input_config_path",
     type=str,
-    default="input_config/data/custom.yml",
+    default="config/input_config/data/custom.yml",
     help=
     "determine the location of a yaml file used to initialize the Dataconfig Class"
 )
@@ -125,7 +125,7 @@ parser.add_argument(
 parser.add_argument(
     "--input_encoder_config_dict",
     type=str,
-    default="input_config/agent/SARL/encoder.yml",
+    default="config/input_config/agent/SARL/encoder.yml",
     help=
     "determine the path of a yaml file as the overall input of the logic_discriptor"
 )
@@ -161,19 +161,19 @@ parser.add_argument(
 
 parser.add_argument(
     "--train_env_config_dict",
-    default="input_config/env/portfolio/portfolio_for_SARL/train.yml",
+    default="config/input_config/env/portfolio/portfolio_for_SARL/train.yml",
     help="the dict of the train config of TradingEnv ",
 )
 
 parser.add_argument(
     "--valid_env_config_dict",
-    default="input_config/env/portfolio/portfolio_for_SARL/valid.yml",
+    default="config/input_config/env/portfolio/portfolio_for_SARL/valid.yml",
     help="the dict of the valid config of TradingEnv ",
 )
 
 parser.add_argument(
     "--test_env_config_dict",
-    default="input_config/env/portfolio/portfolio_for_SARL/test.yml",
+    default="config/input_config/env/portfolio/portfolio_for_SARL/test.yml",
     help="the dict of the test config of TradingEnv ",
 )
 
@@ -187,7 +187,7 @@ parser.add_argument(
 parser.add_argument(
     "--num_epochs",
     type=int,
-    default=10,
+    default=1,
     help="the number of training epoch",
 )
 
@@ -201,7 +201,7 @@ parser.add_argument(
 parser.add_argument(
     "--model_config_dict",
     type=str,
-    default="input_config/agent/SOTA/DDPG.yml",
+    default="config/input_config/agent/SOTA/DDPG.yml",
     help="the dict of the model_config file",
 )
 
@@ -225,12 +225,12 @@ def get_agent(args):
 
 
 def experiment(agent: agent):
-    agent.train_with_valid()
+    #agent.train_with_valid()
     agent.test()
 
 
 def main(args):
-    get_encoder(args)
+    #get_encoder(args)
     agent = get_agent(args)
     experiment(agent)
 
