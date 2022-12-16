@@ -14,6 +14,7 @@ import os
 
 class Labeler():
     def __init__(self,data,method='linear',parameters=['2/7','2/14','4']):
+        plt.ioff()
         self.preprocess(data)
         if method=='linear':
             self.method='linear'
