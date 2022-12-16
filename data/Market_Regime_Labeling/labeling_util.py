@@ -239,6 +239,7 @@ class Labeler():
         if not os.path.exists('res/linear_model/'):
             os.makedirs('res/linear_model/')
         fig.savefig('res/linear_model/' + tic + '.png')
+        plt.clf()
 
     def linear_regession_timewindow(self,data_ori, tic, adjcp_timewindow):
         # This is the version of linear regession that does not use a turning point to segment. Instead, it applys a fixed-length time winodw.
