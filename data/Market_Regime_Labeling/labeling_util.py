@@ -12,6 +12,9 @@ from random import sample
 import fractions
 import os
 from sklearn.manifold import TSNE
+from tslearn.clustering import TimeSeriesKMeans
+from tslearn.utils import to_time_series_dataset
+import pickle
 
 class Labeler():
     def __init__(self,data,method='linear',parameters=['2/7','2/14','4']):
@@ -61,6 +64,7 @@ class Labeler():
                 self.all_index_seg.extend(index_seg)
             interpolated_pct_return_data_seg = np.array(self.interpolation(self.all_data_seg))
             self.TSNE_run(interpolated_pct_return_data_seg)
+            self.stock_DWT()
 
     def linear_regession_label(self,data, turning_points, low, high, normalized_coef_list, tic,
                                regime_num=4):
@@ -106,13 +110,30 @@ class Labeler():
         self.tics = data['tic'].unique()
         self.data_dict = {}
         for tic in self.tics:
-            tic_data = data.loc[data['tic'] == tic, ['date','adjcp','tic']]
+            tic_data = data.loc[data['tic'] == tic, ['date','open','high','low','close','adjcp']]
             tic_data.sort_values(by='date', ascending=True)
             tic_data = tic_data.assign(pct_return=tic_data['adjcp'].pct_change().fillna(0))
             self.data_dict[tic] = tic_data.reset_index(drop=True)
 
-
-
+    def stock_DWT(self):
+        data_by_tic = []
+        for tic in self.tics:
+            data_by_tic.append(self.data_dict[tic].loc[:, ['open', 'high', 'low', 'close', 'adjcp', 'pct_return']].values)
+        fitting_data = to_time_series_dataset(data_by_tic)
+        km_stock = TimeSeriesKMeans(n_clusters=6, metric="dtw", max_iter=50, max_iter_barycenter=100, n_jobs=50,
+                                    verbose=1).fit(fitting_data)
+        label_stock = km_stock.predict(fitting_data)
+        output = open('DWT_stocks.pkl', 'wb')
+        pickle.dump(km_stock, output, -1)
+        output.close()
+        output = open('DWT_label_stocks.pkl', 'wb')
+        pickle.dump(label_stock, output, -1)
+        output.close()
+        for i in range(len(self.tics)):
+            self.data_dict[self.tics[i]]['stock_type']=label_stock[i]
+        tsne_model = TSNE(n_components=2, perplexity=40, n_iter=300)
+        tsne_results = tsne_model.fit_transform(np.array(data_by_tic))
+        self.TSNE_plot(data_by_tic,tsne_results,'_stock_cluster')
 
     def plot_ori(self,data, name):
         fig, ax = plt.subplots(1, 1, figsize=(20, 10), constrained_layout=True)
@@ -298,7 +319,7 @@ class Labeler():
         self.tsne = TSNE(n_components=2, perplexity=40, n_iter=300)
         self.tsne_results = self.tsne.fit_transform(interpolated_pct_return_data_seg)
 
-    def TSNE_plot(self,data, label_list):
+    def TSNE_plot(self,data, label_list,title=''):
         colors = list(dict(mcolors.BASE_COLORS, **mcolors.CSS4_COLORS).keys())
         fig, ax = plt.subplots(1, 1, figsize=(20, 10), constrained_layout=True)
         for i in range(len(data) - 1):
@@ -308,5 +329,6 @@ class Labeler():
         by_label = dict(zip(labels, handles))
         plt.legend(by_label.values(), by_label.keys())
         plt.title('TSNE', fontsize=20)
-        fig.savefig('res/linear_model/TSNE.png')
+        fig.savefig('res/linear_model/TSNE'+title+'.png')
         plt.close(fig)
+
