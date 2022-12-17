@@ -131,7 +131,7 @@ class Labeler():
         output.close()
         for i in range(len(self.tics)):
             self.data_dict[self.tics[i]]['stock_type']=label_stock[i]
-        tsne_model = TSNE(n_components=2, perplexity=40, n_iter=300)
+        tsne_model = TSNE(n_components=3, perplexity=40, n_iter=300)
         tsne_results = tsne_model.fit_transform(np.array(data_by_tic))
         self.TSNE_plot(data_by_tic,tsne_results,'_stock_cluster')
 
