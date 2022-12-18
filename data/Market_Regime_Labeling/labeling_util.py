@@ -117,9 +117,12 @@ class Labeler():
 
     def stock_DWT(self):
         data_by_tic = []
+        data_by_tic_1 = []
         for tic in self.tics:
             data_by_tic.append(self.data_dict[tic].loc[:, ['open', 'high', 'low', 'close', 'adjcp', 'pct_return']].values)
+            data_by_tic_1.append(self.data_dict[tic].loc[:,  'pct_return'].values)
         fitting_data = to_time_series_dataset(data_by_tic)
+        fitting_data_1=to_time_series_dataset(data_by_tic_1)
         km_stock = TimeSeriesKMeans(n_clusters=6, metric="dtw", max_iter=50, max_iter_barycenter=100, n_jobs=50,
                                     verbose=1).fit(fitting_data)
         label_stock = km_stock.predict(fitting_data)
@@ -132,7 +135,7 @@ class Labeler():
         for i in range(len(self.tics)):
             self.data_dict[self.tics[i]]['stock_type']=label_stock[i]
         tsne_model = TSNE(n_components=3, perplexity=25, n_iter=300)
-        tsne_results = tsne_model.fit_transform(np.array(data_by_tic))
+        tsne_results = tsne_model.fit_transform(fitting_data_1.reshape(fitting_data_1.shape[0],fitting_data_1.shape[1]))
         self.TSNE_plot(data_by_tic,tsne_results,'_stock_cluster')
 
     def plot_ori(self,data, name):
