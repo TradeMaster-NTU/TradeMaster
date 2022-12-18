@@ -110,7 +110,7 @@ class Labeler():
         self.tics = data['tic'].unique()
         self.data_dict = {}
         for tic in self.tics:
-            tic_data = data.loc[data['tic'] == tic, ['date','open','high','low','close','adjcp']]
+            tic_data = data.loc[data['tic'] == tic, ['date','tic','open','high','low','close','adjcp']]
             tic_data.sort_values(by='date', ascending=True)
             tic_data = tic_data.assign(pct_return=tic_data['adjcp'].pct_change().fillna(0))
             self.data_dict[tic] = tic_data.reset_index(drop=True)
