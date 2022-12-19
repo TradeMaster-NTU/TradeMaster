@@ -27,12 +27,12 @@ class m_LSTM_clf(nn.Module):
         self.n_features = n_features
         self.n_hidden = n_hidden
         self.n_layers = layer_num
-        self.lstm_list = [
+        self.lstm_list = nn.ModuleList([
             nn.LSTM(input_size=n_features,
                     hidden_size=self.n_hidden,
                     num_layers=self.n_layers,
                     batch_first=True).cuda()
-        ] * tic_number
+        ] * tic_number)
         self.linear = nn.Linear(self.n_hidden * tic_number * 2, tic_number)
 
     def forward(self, x):
