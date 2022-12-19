@@ -316,6 +316,4 @@ def timegan(ori_data, parameters, device=0):
     # Renormalization
     generated_data = generated_data * max_val
     generated_data = generated_data + min_val
-    saver = tf.train.Saver()
-    print('model saved')
     return generated_data
