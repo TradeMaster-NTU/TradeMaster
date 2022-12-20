@@ -1,0 +1,31 @@
+TensorFlow 2.0 Upgrade Script
+-----------------------------
+Converted 1 files
+Detected 6 issues that require attention
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+File: /home/zcxia/TradeMaster/data_synthesis/TimeGAN/timegan.py
+--------------------------------------------------------------------------------
+/home/zcxia/TradeMaster/data_synthesis/TimeGAN/timegan.py:102:16: ERROR: Using member tf.contrib.layers.fully_connected in deprecated module tf.contrib. tf.contrib.layers.fully_connected cannot be converted automatically. tf.contrib will not be distributed with TensorFlow 2.0, please consider an alternative in non-contrib TensorFlow, a community-maintained repository such as tensorflow/addons, or fork the required code.
+/home/zcxia/TradeMaster/data_synthesis/TimeGAN/timegan.py:118:22: ERROR: Using member tf.contrib.layers.fully_connected in deprecated module tf.contrib. tf.contrib.layers.fully_connected cannot be converted automatically. tf.contrib will not be distributed with TensorFlow 2.0, please consider an alternative in non-contrib TensorFlow, a community-maintained repository such as tensorflow/addons, or fork the required code.
+/home/zcxia/TradeMaster/data_synthesis/TimeGAN/timegan.py:134:16: ERROR: Using member tf.contrib.layers.fully_connected in deprecated module tf.contrib. tf.contrib.layers.fully_connected cannot be converted automatically. tf.contrib will not be distributed with TensorFlow 2.0, please consider an alternative in non-contrib TensorFlow, a community-maintained repository such as tensorflow/addons, or fork the required code.
+/home/zcxia/TradeMaster/data_synthesis/TimeGAN/timegan.py:150:16: ERROR: Using member tf.contrib.layers.fully_connected in deprecated module tf.contrib. tf.contrib.layers.fully_connected cannot be converted automatically. tf.contrib will not be distributed with TensorFlow 2.0, please consider an alternative in non-contrib TensorFlow, a community-maintained repository such as tensorflow/addons, or fork the required code.
+/home/zcxia/TradeMaster/data_synthesis/TimeGAN/timegan.py:166:20: ERROR: Using member tf.contrib.layers.fully_connected in deprecated module tf.contrib. tf.contrib.layers.fully_connected cannot be converted automatically. tf.contrib will not be distributed with TensorFlow 2.0, please consider an alternative in non-contrib TensorFlow, a community-maintained repository such as tensorflow/addons, or fork the required code.
+/home/zcxia/TradeMaster/data_synthesis/TimeGAN/timegan.py:304:12: WARNING: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
+================================================================================
+Detailed log follows:
+
+================================================================================
+--------------------------------------------------------------------------------
+Processing file '/home/zcxia/TradeMaster/data_synthesis/TimeGAN/timegan.py'
+ outputting to '/home/zcxia/TradeMaster/data_synthesis/TimeGAN/timegan_v2.py'
+--------------------------------------------------------------------------------
+
+102:16: ERROR: Using member tf.contrib.layers.fully_connected in deprecated module tf.contrib. tf.contrib.layers.fully_connected cannot be converted automatically. tf.contrib will not be distributed with TensorFlow 2.0, please consider an alternative in non-contrib TensorFlow, a community-maintained repository such as tensorflow/addons, or fork the required code.
+118:22: ERROR: Using member tf.contrib.layers.fully_connected in deprecated module tf.contrib. tf.contrib.layers.fully_connected cannot be converted automatically. tf.contrib will not be distributed with TensorFlow 2.0, please consider an alternative in non-contrib TensorFlow, a community-maintained repository such as tensorflow/addons, or fork the required code.
+134:16: ERROR: Using member tf.contrib.layers.fully_connected in deprecated module tf.contrib. tf.contrib.layers.fully_connected cannot be converted automatically. tf.contrib will not be distributed with TensorFlow 2.0, please consider an alternative in non-contrib TensorFlow, a community-maintained repository such as tensorflow/addons, or fork the required code.
+150:16: ERROR: Using member tf.contrib.layers.fully_connected in deprecated module tf.contrib. tf.contrib.layers.fully_connected cannot be converted automatically. tf.contrib will not be distributed with TensorFlow 2.0, please consider an alternative in non-contrib TensorFlow, a community-maintained repository such as tensorflow/addons, or fork the required code.
+166:20: ERROR: Using member tf.contrib.layers.fully_connected in deprecated module tf.contrib. tf.contrib.layers.fully_connected cannot be converted automatically. tf.contrib will not be distributed with TensorFlow 2.0, please consider an alternative in non-contrib TensorFlow, a community-maintained repository such as tensorflow/addons, or fork the required code.
+304:12: WARNING: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
+--------------------------------------------------------------------------------
+
