@@ -3,7 +3,7 @@ import sys
 
 from scipy import ifft
 
-sys.path.append("./")
+sys.path.append(".")
 from data.download_data import Dataconfig
 from agent.Investor_Imitator.logic_discriptor.utli import make_label_tic, evaluate, \
     compare_average, make_rank_label, LDdataset, pick_optimizer,dict_to_args
@@ -32,7 +32,10 @@ import yaml
 import optuna
 # basic setting for dataset choice and the dicts you want to store
 parser = argparse.ArgumentParser()
-
+parser.add_argument("--algorithm",
+                    type=str,
+                    default="DeepScalper",
+                    help="the name of algorithm for hyperparameter tuning")
 parser.add_argument("--data_path",
                     type=str,
                     default="./experiment_result/data/",

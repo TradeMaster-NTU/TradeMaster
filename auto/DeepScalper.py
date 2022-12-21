@@ -16,6 +16,10 @@ import pandas as pd
 import pdb
 
 parser = argparse.ArgumentParser()
+parser.add_argument("--algorithm",
+                    type=str,
+                    default="DeepScalper",
+                    help="the name of algorithm for hyperparameter tuning")
 parser.add_argument("--hidden_nodes",
                     type=int,
                     default=256,
@@ -242,6 +246,9 @@ class DQN(object):
             os.makedirs(best_model_path)
         torch.save(self.eval_net, best_model_path + "best_model.pth")
         return np.max(valid_score_list)
+
+
+
 
 def sample_params(trial: optuna.Trial, args):
     args.lr=trial.suggest_loguniform("lr", 1e-5, 1)
