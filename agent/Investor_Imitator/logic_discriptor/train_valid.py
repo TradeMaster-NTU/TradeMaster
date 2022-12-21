@@ -40,6 +40,7 @@ def train_with_valid(train_Dataloader, valid_Dataloader, num_epoch, net:nn.Modul
         model_path = model_path + "/" + "discroptor_parameter.pkl"
         torch.save(net.state_dict(), model_path)
 
+
         valid_scores = np.array(1)
         for X, y in valid_Dataloader:
             if torch.cuda.is_available():

@@ -11,7 +11,7 @@ from agent.EIIE.model import EIIE_con, EIIE_lstm, EIIE_rnn, EIIE_critirc
 import argparse
 from agent.EIIE.util import *
 from env.PM.portfolio_for_EIIE import Tradingenv
-
+import pdb
 parser = argparse.ArgumentParser()
 parser.add_argument("--random_seed",
                     type=int,
@@ -77,9 +77,12 @@ class trader:
         self.result_path = args.result_path
         if not os.path.exists(self.result_path):
             os.makedirs(self.result_path)
-        self.train_env_config = load_yaml(args.env_config_path + "train.yml")
-        self.valid_env_config = load_yaml(args.env_config_path + "valid.yml")
-        self.test_env_config = load_yaml(args.env_config_path + "test.yml")
+        # self.train_env_config = load_yaml(args.env_config_path + "train.yml")
+        # self.valid_env_config = load_yaml(args.env_config_path + "valid.yml")
+        # self.test_env_config = load_yaml(args.env_config_path + "test.yml")
+        self.train_env_config = load_yaml(args.env_config_path + "train_feature.yml")
+        self.valid_env_config = load_yaml(args.env_config_path + "valid_feature.yml")
+        self.test_env_config = load_yaml(args.env_config_path + "test_feature.yml")
         self.train_env_instance = Tradingenv(self.train_env_config)
         self.valid_env_instance = Tradingenv(self.valid_env_config)
         self.test_env_instance = Tradingenv(self.test_env_config)
@@ -235,6 +238,8 @@ class trader:
 def sample_params(trial: optuna.Trial, args):
     args.gamma=1-trial.suggest_loguniform("gamma", 1e-4, 0.1)
     args.hidden_nodes=trial.suggest_categorical("hidden_nodes", [32, 64, 128])
+    # args.gamma = 0.99
+    # args.hidden_nodes = 64
     return args
 
 
@@ -252,7 +257,7 @@ def objective(trial: optuna.Trial) -> float:
 def EIIE_tuning():
     args = parser.parse_args()
     study = optuna.create_study(direction="maximize")
-    study.optimize(objective, n_trials=5)
+    study.optimize(objective, n_trials=10)
     objective(study.best_trial)
     print("Best trial:")
     trial = study.best_trial

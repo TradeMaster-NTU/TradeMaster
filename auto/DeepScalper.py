@@ -47,15 +47,15 @@ parser.add_argument(
 )
 parser.add_argument("--train_env_config",
                     type=str,
-                    default="config/input_config/env/AT/DeepScalper/train.yml",
+                    default="config/input_config/env/AT/DeepScalper/train_feature.yml",
                     help="the dict for storing env config")
 parser.add_argument("--valid_env_config",
                     type=str,
-                    default="config/input_config/env/AT/DeepScalper/valid.yml",
+                    default="config/input_config/env/AT/DeepScalper/valid_feature.yml",
                     help="the dict for storing env config")
 parser.add_argument("--test_env_config",
                     type=str,
-                    default="config/input_config/env/AT/DeepScalper/test.yml",
+                    default="config/input_config/env/AT/DeepScalper/test_feature.yml",
                     help="the dict for storing env config")
 parser.add_argument(
     "--future_loss_weights",
@@ -101,7 +101,6 @@ class DQN(object):
             read_yaml_to_dict(args.test_env_config))
         self.n_action = self.train_ev_instance.action_space.n
         self.n_state = self.train_ev_instance.observation_space.shape[0]
-
         self.eval_net, self.target_net = Net(
             self.n_state, self.n_action, args.hidden_nodes), Net(
                 self.n_state, self.n_action,
@@ -265,7 +264,7 @@ def objective(trial: optuna.Trial) -> float:
 def DeepScalper_tuning():
     args = parser.parse_args()
     study = optuna.create_study(direction="maximize")
-    study.optimize(objective, n_trials=5)
+    study.optimize(objective, n_trials=10)
     objective(study.best_trial)
     print("Best trial:")
     trial = study.best_trial
@@ -277,17 +276,4 @@ def DeepScalper_tuning():
 
 
 if __name__ == "__main__":
-    args = parser.parse_args()
-    study = optuna.create_study(direction="maximize")
-    study.optimize(objective, n_trials=20)
-    print("Best trial:")
-    trial = study.best_trial
-    print("  Value: ", trial.value)
-
-    print("  Params: ")
-    for key, value in trial.params.items():
-        print("    {}: {}".format(key, value))
-
-    print("  User attrs:")
-    for key, value in trial.user_attrs.items():
-        print("    {}: {}".format(key, value))
+    DeepScalper_tuning()

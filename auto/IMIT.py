@@ -224,6 +224,18 @@ parser.add_argument(
     default=128,
     help="number of hidden nodes in MLP_cls",
 )
+parser.add_argument(
+    "--a",
+    type=int,
+    default=0,
+    help="number of hidden nodes in MLP_cls",
+)
+parser.add_argument(
+    "--b",
+    type=int,
+    default=0,
+    help="number of hidden nodes in MLP_cls",
+)
 
 def env_creator(env_name):
     if env_name == 'portfolio':
@@ -233,11 +245,13 @@ def env_creator(env_name):
     return env
 
 
-def load_yaml(dict):
+def load_yaml(dict, a, b):
     realpath = os.path.abspath(".")
     file_dict = os.path.join(realpath, dict)
     with open(file_dict, "r", encoding="utf-8") as f:
         config = yaml.safe_load(f)
+    config["a"] = a
+    config["b"] = b
     return config
 
 
@@ -250,15 +264,18 @@ class Agent:
             with open(args.input_config_dict_RL, "r") as file:
                 self.config = yaml.safe_load(file)
             args = dict_to_args(self.config)
+        self.a = args.a
+        self.b = args.b
+        
         self.seed = args.seed
         self.set_seed()
         self.lr = args.lr
         self.train_env_instance = env_creator(args.env_name)(load_yaml(
-            args.train_env_config_dict))
+            args.train_env_config_dict, self.a, self.b))
         self.test_env_instance = env_creator(args.env_name)(load_yaml(
-            args.test_env_config_dict))
+            args.test_env_config_dict, self.a, self.b))
         self.valid_env_instance = env_creator(args.env_name)(load_yaml(
-            args.valid_env_config_dict))
+            args.valid_env_config_dict, self.a, self.b))
         self.num_epoch = args.num_epochs
         self.policy=MLP_cls(input_size=self.train_env_instance.observation_space.shape[1],\
             hidden_size=128,output_size=self.train_env_instance.action_space.n).cuda()
@@ -270,6 +287,9 @@ class Agent:
         self.policy_path = args.dict_trained_model
         if not os.path.exists(self.policy_path):
             os.makedirs(self.policy_path)
+
+        
+        
 
     def set_seed(self):
         torch.manual_seed(self.seed)
@@ -368,6 +388,8 @@ class Agent:
 def sample_params(trial: optuna.Trial, args):
     args.lr=trial.suggest_loguniform("lr", 1e-5, 1e-3)
     args.hidden_nodes=trial.suggest_categorical("hidden_nodes", [64, 128, 256])
+    args.a = 16
+    args.b = 256
     return args    
 
 def objective(trial: optuna.Trial) -> float:
@@ -382,7 +404,11 @@ def objective(trial: optuna.Trial) -> float:
 
 def IMIT_tuning():
     args = parser.parse_args()
-    #logic_discriptor(args)
+    
+    #IMIT = logic_discriptor(args)
+    #a, b = IMIT.param()
+    args.a = 16
+    args.b = 256
     study = optuna.create_study(direction="maximize")
     study.optimize(objective, n_trials=10)
     objective(study.best_trial)

@@ -14,6 +14,7 @@ import torch.nn as nn
 import torch.nn.init as init
 import torch
 import os
+import pdb
 """
 env 需要重构的东西
 state好说 主要是action
@@ -36,6 +37,8 @@ class TradingEnv(gym.Env):
         # determine how many network we need to import
         self.stock_dim = len(self.df.tic.unique())
         self.tic_list = self.df.tic.unique()
+        self.a = config["a"]
+        self.b = config["b"]
         """
  determine the overall logical_discriptor's dict to intergal in the later, the randomseed is the variable needed to be
         the same both in pre-trained logical discriptor and for the rl framework
@@ -49,6 +52,7 @@ class TradingEnv(gym.Env):
 
         self.network_dict = config["dict"]
         all_dict = {}
+        
         for sub_file in os.listdir(self.network_dict):
             discriptor_path = os.path.join(self.network_dict, sub_file)
             best_model_path = "best_model"
@@ -57,9 +61,9 @@ class TradingEnv(gym.Env):
                                                 best_model_path)
 
             for net_dict in os.listdir(discriptor_best_path):
-                #print(os.path.join(discriptor_best_path, net_dict))
+                # print(os.path.join(discriptor_best_path, net_dict))
                 indicator_dict = torch.load(
-                    os.path.join(discriptor_best_path, net_dict)).cpu()
+                    os.path.join(discriptor_best_path, net_dict))
 
             all_dict.update({sub_file: indicator_dict})
         # here the self.net_2_dict is the 2 layer of dict and content is the network
@@ -90,6 +94,8 @@ class TradingEnv(gym.Env):
         WRs = []
         MDDs = []
         ERs = []
+        self.net = MLP_reg(input_size=config["a"],
+                               hidden_size=config["b"])
         for i in range(len(tic_list)):
             tic_information = self.data[self.data.tic ==
                                         tic_list[i]][tech_indicator_list]
@@ -100,19 +106,18 @@ class TradingEnv(gym.Env):
             WR_model = all_dict["WR"]
             MDD_model = all_dict["MDD"]
             ER_model = all_dict["ER"]
-            AR = AR_model(tic_information)
-            AR = float(AR.detach().numpy())
+            
+            self.net.load_state_dict(AR_model)
+            AR = float(self.net(tic_information).detach().numpy())
+            self.net.load_state_dict(SR_model)
+            SR = float(self.net(tic_information).detach().numpy())
+            self.net.load_state_dict(WR_model)
+            WR = float(self.net(tic_information).detach().numpy())
 
-            SR = SR_model(tic_information)
-            SR = float(SR.detach().numpy())
-            WR = WR_model(tic_information)
-            WR = float(WR.detach().numpy())
-
-            MDD = MDD_model(tic_information)
-            MDD = float(MDD.detach().numpy())
-            ER = ER_model(tic_information)
-            ER = float(ER.detach().numpy())
-
+            self.net.load_state_dict(MDD_model)
+            MDD = float(self.net(tic_information).detach().numpy())
+            self.net.load_state_dict(ER_model)
+            ER = float(self.net(tic_information).detach().numpy())
             ARs.append(AR)
             SRs.append(SR)
             WRs.append(WR)
@@ -139,7 +144,6 @@ class TradingEnv(gym.Env):
         self.asset_memory = [self.initial_amount]
         self.day = 0
         self.data = self.df.loc[self.day, :]
-
         tic_list = list(self.data.tic)
         tech_indicator_list = self.tech_indicator_list
         ARs = []
@@ -157,18 +161,17 @@ class TradingEnv(gym.Env):
             WR_model = self.nets_2_dict["WR"]
             MDD_model = self.nets_2_dict["MDD"]
             ER_model = self.nets_2_dict["ER"]
-            AR = AR_model(tic_information)
-            AR = float(AR.detach().numpy())
+            self.net.load_state_dict(AR_model)
+            AR = float(self.net(tic_information).detach().numpy())
+            self.net.load_state_dict(SR_model)
+            SR = float(self.net(tic_information).detach().numpy())
+            self.net.load_state_dict(WR_model)
+            WR = float(self.net(tic_information).detach().numpy())
 
-            SR = SR_model(tic_information)
-            SR = float(SR.detach().numpy())
-            WR = WR_model(tic_information)
-            WR = float(WR.detach().numpy())
-
-            MDD = MDD_model(tic_information)
-            MDD = float(MDD.detach().numpy())
-            ER = ER_model(tic_information)
-            ER = float(ER.detach().numpy())
+            self.net.load_state_dict(MDD_model)
+            MDD = float(self.net(tic_information).detach().numpy())
+            self.net.load_state_dict(ER_model)
+            ER = float(self.net(tic_information).detach().numpy())
 
             ARs.append(AR)
             SRs.append(SR)
@@ -219,8 +222,8 @@ class TradingEnv(gym.Env):
             if actions not in range(len(self.nets_2_dict)):
                 raiseExceptions("the dimension is not correct")
             model = models[actions]
-            score = model(tic_information)
-            score = float(score.detach().numpy())
+            self.net.load_state_dict(model)
+            score = float(self.net(tic_information).detach().numpy())
             scores.append(score)
         portfolio_weights = self.softmax(scores)
         return portfolio_weights
@@ -267,18 +270,17 @@ class TradingEnv(gym.Env):
                 WR_model = self.nets_2_dict["WR"]
                 MDD_model = self.nets_2_dict["MDD"]
                 ER_model = self.nets_2_dict["ER"]
-                AR = AR_model(tic_information)
-                AR = float(AR.detach().numpy())
+                self.net.load_state_dict(AR_model)
+                AR = float(self.net(tic_information).detach().numpy())
+                self.net.load_state_dict(SR_model)
+                SR = float(self.net(tic_information).detach().numpy())
+                self.net.load_state_dict(WR_model)
+                WR = float(self.net(tic_information).detach().numpy())
 
-                SR = SR_model(tic_information)
-                SR = float(SR.detach().numpy())
-                WR = WR_model(tic_information)
-                WR = float(WR.detach().numpy())
-
-                MDD = MDD_model(tic_information)
-                MDD = float(MDD.detach().numpy())
-                ER = ER_model(tic_information)
-                ER = float(ER.detach().numpy())
+                self.net.load_state_dict(MDD_model)
+                MDD = float(self.net(tic_information).detach().numpy())
+                self.net.load_state_dict(ER_model)
+                ER = float(self.net(tic_information).detach().numpy())
 
                 ARs.append(AR)
                 SRs.append(SR)

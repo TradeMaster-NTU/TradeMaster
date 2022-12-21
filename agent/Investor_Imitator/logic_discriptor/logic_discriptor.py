@@ -221,6 +221,8 @@ class logic_discriptor:
     def make_dict(self):
         if not os.path.exists(self.discriptor_path):
             os.makedirs(self.discriptor_path)
+    def param(self):
+        return self.df_train_list[0].shape[1], self.hidden_size
 
     def set_seed(self):
         torch.manual_seed(self.seed)

@@ -1,0 +1,21 @@
+df_path: data/data/dj30/valid_feature.csv
+initial_amount: 100000
+length_day: 10
+tech_indicator_list:
+- zopen
+- zhigh
+- zlow
+- zadjcp
+- zclose
+- zd_5
+- zd_10
+- zd_15
+- zd_20
+- zd_25
+- zd_30
+- autoFE_f_0
+- autoFE_f_1
+- autoFE_f_2
+- autoFE_f_3
+- autoFE_f_4
+transaction_cost_pct: 0.001
