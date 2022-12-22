@@ -1,6 +1,0 @@
-model_checkpoint_path: "join_training_model-4000"
-all_model_checkpoint_paths: "join_training_model-0"
-all_model_checkpoint_paths: "join_training_model-1000"
-all_model_checkpoint_paths: "join_training_model-2000"
-all_model_checkpoint_paths: "join_training_model-3000"
-all_model_checkpoint_paths: "join_training_model-4000"
