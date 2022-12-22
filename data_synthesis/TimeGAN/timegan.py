@@ -165,7 +165,7 @@ def timegan(ori_data, parameters, model_name,device=0):
             Y_hat = tf.contrib.layers.fully_connected(d_outputs, 1, activation_fn=None)
         return Y_hat
 
-        # Embedder & Recovery
+        # Embedder & Recoveryz
 
     H = embedder(X, T)
     X_tilde = recovery(H, T)
