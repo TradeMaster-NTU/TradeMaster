@@ -21,7 +21,7 @@ method where each regime has an explicit threshold.
 ## Usage
 
 It is recommended to run through the example.ipynb notebook to visualize the labeling process. This will also give hints on
-deciding the parameters for your dataset.
+deciding the parameters for your dataset. The example.html contains the visualization results from example.ipynb.
 
 An example of labeling the data
    ```
