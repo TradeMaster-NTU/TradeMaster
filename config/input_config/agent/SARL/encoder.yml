@@ -1,7 +1,8 @@
 batch_size: 256
 data_path: ./data/data/
 dataset: dj30
-encoder_path: ./result/SARL/encoder
+#encoder_path: ./result/SARL/encoder
+encoder_path: ./experiment_result/SARL/encoder
 generate_config: true
 hidden_size: 256
 input_config: false

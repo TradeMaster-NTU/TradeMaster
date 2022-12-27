@@ -11,6 +11,8 @@ import numpy as np
 import os
 import random
 
+
+
 parser = argparse.ArgumentParser()
 
 parser.add_argument(
@@ -21,7 +23,7 @@ parser.add_argument(
 )
 parser.add_argument(
     "--dict_trained_model",
-    default="result/SARL/trained_model/",
+    default="result/SARL/trained_model",
     help="the dict of the trained model ",
 )
 
@@ -53,7 +55,7 @@ parser.add_argument(
 parser.add_argument(
     "--num_epochs",
     type=int,
-    default=10,
+    default=1,
     help="the number of training epoch",
 )
 
@@ -160,36 +162,45 @@ class agent:
         #TODO there is None in the checkpiont which is strange(It has been solved if your python downgraded to 3.7.13)
         self.sharpes = []
         self.checkpoints = []
-
-        self.trainer = self.trainer(env=self.env_name,
+        ray.init(ignore_reinit_error=True)
+        self.agent = self.trainer(env=self.env_name,
                                     config=self.model_config)
 
         for i in range(self.num_epochs):
-
-            self.trainer.train()
+            
+            
+            self.agent.train()
             valid_env_instance = env_creator(self.env_name)(
                 self.valid_env_config)
             state = valid_env_instance.reset()
             done = False
             while not done:
-                action = self.trainer.compute_single_action(state)
+                action = self.agent.compute_single_action(state)
                 state, reward, done, information = valid_env_instance.step(
                     action)
-            self.sharpes.append(information["sharpe_ratio"])
-            checkpoint = self.trainer.save()
+            self.sharpes.append(information["profit_margin"])
+            checkpoint = self.agent.save()
             self.checkpoints.append(checkpoint)
+        print(self.checkpoints)
         self.loc = self.sharpes.index(max(self.sharpes))
-        self.trainer.restore(self.checkpoints[self.loc])
-        self.trainer.save(self.trained_model_dict)
+        print(self.loc)
+        self.agent.restore(self.checkpoints[self.loc])
+        self.agent.save(self.trained_model_dict)
+        print("saved")
         ray.shutdown()
 
     def test(self):
         self.test_env_instance = env_creator(self.env_name)(
             self.test_env_config)
+        self.model_config["in_evaluation"] = True
+        self.agent = self.trainer(env=self.env_name,
+                                    config=self.model_config)
+        
+        self.agent.restore("experiment_result/SARL/trained_model/checkpoint_000001/checkpoint-1")
         state = self.test_env_instance.reset()
         done = False
         while not done:
-            action = self.trainer.compute_single_action(state)
+            action = self.agent.compute_single_action(state)
             state, reward, done, sharpe = self.test_env_instance.step(action)
         rewards = self.test_env_instance.save_asset_memory()
         assets = rewards["total assets"].values

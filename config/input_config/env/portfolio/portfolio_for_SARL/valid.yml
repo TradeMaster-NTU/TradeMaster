@@ -1,6 +1,7 @@
-df_dict: experiment_result/data/valid.csv
+df_dict: data/data/dj30/valid.csv
 initial_amount: 10000
 net_path: experiment_result/SARL/encoder/best_model/LSTM.pth
+#net_path: result/SARL/encoder/best_model/LSTM.pth
 num_day: 5
 tech_indicator_list:
 - high

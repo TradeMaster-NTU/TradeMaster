@@ -74,7 +74,7 @@ parser.add_argument(
 parser.add_argument(
     "--input_config_path",
     type=str,
-    default="input_config/data/custom.yml",
+    default="config/input_config/data/custom.yml",
     help=
     "determine the location of a yaml file used to initialize the Dataconfig Class"
 )
@@ -139,7 +139,7 @@ parser.add_argument(
 parser.add_argument(
     "--input_logic_config_dict",
     type=str,
-    default="input_config/agent/investor_imitator/logic_discriptor.yml",
+    default="config/input_config/agent/investor_imitator/logic_discriptor.yml",
     help=
     "determine the path of a yaml file as the overall input of the logic_discriptor"
 )
@@ -159,21 +159,21 @@ parser.add_argument(
 parser.add_argument(
     "--train_env_config_dict",
     default=
-    "input_config/env/portfolio/portfolio_for_investor_imitator/train.yml",
+    "config/input_config/env/portfolio/portfolio_for_investor_imitator/train.yml",
     help="the dict of the train config of TradingEnv ",
 )
 
 parser.add_argument(
     "--valid_env_config_dict",
     default=
-    "input_config/env/portfolio/portfolio_for_investor_imitator/valid.yml",
+    "config/input_config/env/portfolio/portfolio_for_investor_imitator/valid.yml",
     help="the dict of the valid config of TradingEnv ",
 )
 
 parser.add_argument(
     "--test_env_config_dict",
     default=
-    "input_config/env/portfolio/portfolio_for_investor_imitator/test.yml",
+    "config/input_config/env/portfolio/portfolio_for_investor_imitator/test.yml",
     help="the dict of the test config of TradingEnv ",
 )
 

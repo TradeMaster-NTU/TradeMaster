@@ -16,7 +16,7 @@ def train_with_valid(train_Dataloader, valid_Dataloader, num_epoch, net:torch.nn
         epoch_index = i
         # here is the train process for each epoch
         for X, y in train_Dataloader:
-            print(X.shape)
+            #print(X.shape)
 
             if torch.cuda.is_available():
                 X = X.cuda()

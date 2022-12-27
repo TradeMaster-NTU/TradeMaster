@@ -1,4 +1,5 @@
-dict_trained_model: result/invest_imitator/trained_model
+#dict_trained_model: result/invest_imitator/trained_model
+dict_trained_model: experiment_result/invest_imitator/trained_model
 env_name: portfolio
 num_epochs: 10
 random_seed: 12345

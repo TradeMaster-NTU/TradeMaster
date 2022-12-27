@@ -8,7 +8,7 @@ import pandas as pd
 import os
 import argparse
 import yaml
-
+import pdb
 parser = argparse.ArgumentParser()
 parser.add_argument(
     "--df_path",
@@ -58,6 +58,7 @@ class Tradingenv(gym.Env):
         self.action_space_shape = self.stock_dim + 1
         self.length_day = config["length_day"]
 
+
         self.tech_indicator_list = config["tech_indicator_list"]
 
         self.action_space = spaces.Box(low=-5,
@@ -77,6 +78,7 @@ class Tradingenv(gym.Env):
             for tech in self.tech_indicator_list
         ] for tic in self.data.tic.unique()])
         self.state = np.transpose(self.state, (0, 2, 1))
+
         # self.state = np.transpose(self.state, (2, 0, 2))
         # 此时返回的维度：(时间长度，tic数量，特征数量)
         #TCN目前只能处理单个时间序列 所以我们的想法是把tic数量当作batch_size 以特征数量当作channel数进行处理 最后返回符合Kl*tic数*特征数

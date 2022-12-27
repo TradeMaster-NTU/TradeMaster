@@ -185,17 +185,17 @@ class TradingEnv(gym.Env):
         actions = np.array(actions)
 
         if self.terminal:
-            tr, sharpe_ratio, vol, mdd, cr, sor = self.analysis_result()
+            tr = self.analysis_result()
             print("=================================")
             print("the profit margin is", tr * 100, "%")
-            print("the sharpe ratio is", sharpe_ratio)
-            print("the Volatility is", vol)
-            print("the max drawdown is", mdd)
-            print("the Calmar Ratio is", cr)
-            print("the Sortino Ratio is", sor)
+            # print("the sharpe ratio is", sharpe_ratio)
+            # print("the Volatility is", vol)
+            # print("the max drawdown is", mdd)
+            # print("the Calmar Ratio is", cr)
+            # print("the Sortino Ratio is", sor)
             print("=================================")
             return self.state, self.reward, self.terminal, {
-                "sharpe_ratio": sharpe_ratio
+                "profit_margin": tr
             }
 
         else:
@@ -307,15 +307,16 @@ class TradingEnv(gym.Env):
         daily_return = df["daily_return"]
         neg_ret_lst = df[df["daily_return"] < 0]["daily_return"]
         tr = df["total assets"].values[-1] / df["total assets"].values[0] - 1
-        sharpe_ratio = np.mean(daily_return) / \
-            np.std(daily_return)*(len(df)**0.5)
-        vol = np.std(daily_return)
-        mdd = max((max(df["total assets"]) - df["total assets"]) /
-                  max(df["total assets"]))
-        cr = np.sum(daily_return) / mdd
-        sor = np.sum(daily_return)/np.std(neg_ret_lst) / \
-            np.sqrt(len(daily_return))
-        return tr, sharpe_ratio, vol, mdd, cr, sor
+        # sharpe_ratio = np.mean(daily_return) / \
+        #     np.std(daily_return)*(len(df)**0.5)
+        # vol = np.std(daily_return)
+        # mdd = max((max(df["total assets"]) - df["total assets"]) /
+        #           max(df["total assets"]))
+        # cr = np.sum(daily_return) / mdd
+        # sor = np.sum(daily_return)/np.std(neg_ret_lst) / \
+        #     np.sqrt(len(daily_return))
+        return tr
+        # , sharpe_ratio, vol, mdd, cr, sor
 
     def analysis_result(self):
         # A simpler API for the environment to analysis itself when coming to terminal
