@@ -9,7 +9,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--algorithm",
                     type=str,
-                    default="DeepScalper",
+                    default="EIIE",
                     help="the name of algorithm for hyperparameter tuning")
     args = parser.parse_args()
 
