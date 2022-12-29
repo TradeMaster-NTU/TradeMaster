@@ -15,6 +15,7 @@ from sklearn.manifold import TSNE
 from tslearn.clustering import TimeSeriesKMeans
 from tslearn.utils import to_time_series_dataset
 import pickle
+import re
 
 class Labeler():
     def __init__(self,data,method='linear',parameters=['2/7','2/14','4']):
@@ -63,8 +64,14 @@ class Labeler():
                 self.all_label_seg.extend(label_seg)
                 self.all_index_seg.extend(index_seg)
             interpolated_pct_return_data_seg = np.array(self.interpolation(self.all_data_seg))
-            self.TSNE_run(interpolated_pct_return_data_seg)
-            self.stock_DWT()
+            try:
+              self.TSNE_run(interpolated_pct_return_data_seg)
+            except:
+              print('not able to do TSNE') 
+            try:
+              self.stock_DWT()
+            except:
+              print('not able to do clustering') 
 
     def linear_regession_label(self,data, turning_points, low, high, normalized_coef_list, tic,
                                regime_num=4):
@@ -136,7 +143,7 @@ class Labeler():
             self.data_dict[self.tics[i]]['stock_type']=label_stock[i]
         tsne_model = TSNE(n_components=3, perplexity=25, n_iter=300)
         tsne_results = tsne_model.fit_transform(fitting_data_1.reshape(fitting_data_1.shape[0],fitting_data_1.shape[1]))
-        self.TSNE_plot(tsne_results,label_stock,'_stock_cluster')
+        self.TSNE_plot(tsne_results,label_stock,'_stock_cluster',folder_name=self.folder_name)
 
     def plot_ori(self,data, name):
         fig, ax = plt.subplots(1, 1, figsize=(20, 10), constrained_layout=True)
@@ -255,16 +262,20 @@ class Labeler():
             y_pred_list.append(y_pred)
         return np.asarray(coef_list), np.asarray(turning_points), y_pred_list, normalized_coef_list
 
-    def plot(self,tics,parameters):
+    def plot(self,tics,parameters,data_path):
+        self.folder_name = re.findall("\/data\/(\S*)\/", data_path)[0]
         if self.method=='linear':
             try:
                 low,high=parameters
             except:
                 raise Exception("parameters shoud be [low,high] where the series would be split into 4 regimes by low,high and 0 as threshold based on slope. A value of -0.5 and 0.5 stand for -0.5% and 0.5% change per step.")
             for tic in tics:
-                self.linear_regession_plot(self.data_dict[tic],tic,self.y_pred_dict[tic],self.turning_points_dict[tic],low,high,normalized_coef_list=self.norm_coef_list_dict[tic])
-            self.TSNE_plot(self.tsne_results,self.all_label_seg)
-    def linear_regession_plot(self,data, tic, y_pred_list, turning_points, low, high, normalized_coef_list):
+                self.linear_regession_plot(self.data_dict[tic],tic,self.y_pred_dict[tic],self.turning_points_dict[tic],low,high,normalized_coef_list=self.norm_coef_list_dict[tic],folder_name=self.folder_name+'/')
+            try:
+              self.TSNE_plot(self.tsne_results,self.all_label_seg,folder_name=self.folder_name)
+            except:
+              print('not able to plot TSNE')
+    def linear_regession_plot(self,data, tic, y_pred_list, turning_points, low, high, normalized_coef_list,folder_name=None):
         data = data.reset_index(drop=True)
         fig, ax = plt.subplots(3, 1, figsize=(20, 10), constrained_layout=True)
         ax[0].plot([i for i in range(data.shape[0])], data['adjcp_filtered'])
@@ -281,9 +292,9 @@ class Labeler():
         by_label = dict(zip(labels, handles))
         plt.legend(by_label.values(), by_label.keys())
         ax[0].set_title(tic + '_linear_regression_regime', fontsize=20)
-        if not os.path.exists('res/linear_model/'):
-            os.makedirs('res/linear_model/')
-        fig.savefig('res/linear_model/' + tic + '.png')
+        if not os.path.exists('res/linear_model/'+folder_name):
+            os.makedirs('res/linear_model/'+folder_name)
+        fig.savefig('res/linear_model/'+folder_name+ tic + '.png')
         plt.close(fig)
 
     def linear_regession_timewindow(self,data_ori, tic, adjcp_timewindow):
@@ -319,10 +330,10 @@ class Labeler():
 
     def TSNE_run(self,data_seg):
         interpolated_pct_return_data_seg = np.array(self.interpolation(data_seg))
-        self.tsne = TSNE(n_components=2, perplexity=40, n_iter=300)
+        self.tsne = TSNE(n_components=2,perplexity=40, n_iter=300)
         self.tsne_results = self.tsne.fit_transform(interpolated_pct_return_data_seg)
 
-    def TSNE_plot(self,data, label_list,title=''):
+    def TSNE_plot(self,data, label_list,title='',folder_name=None):
         colors = list(dict(mcolors.BASE_COLORS, **mcolors.CSS4_COLORS).keys())
         fig, ax = plt.subplots(1, 1, figsize=(20, 10), constrained_layout=True)
         for i in range(len(data) - 1):
@@ -332,6 +343,6 @@ class Labeler():
         by_label = dict(zip(labels, handles))
         plt.legend(by_label.values(), by_label.keys())
         plt.title('TSNE', fontsize=20)
-        fig.savefig('res/linear_model/TSNE'+title+'.png')
+        fig.savefig('res/linear_model/'+folder_name+'TSNE'+title+'.png')
         plt.close(fig)
 

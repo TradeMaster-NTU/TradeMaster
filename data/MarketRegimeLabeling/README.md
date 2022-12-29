@@ -28,9 +28,13 @@ An example of labeling the data
    python Label.py --data_path ../data/dj30/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.5 0.5
    ```
 
-An example of labeling the data for stylized-TimeGan
+DJ30
     ``
     python Label.py --data_path ../data/dj30/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.25 0.25 --regime_number 3 --length_limit 24
+    ``
+BTC
+    ``
+    python Label.py --data_path ../data/BTC/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.15 0.15 --regime_number 3 --length_limit 24
     ``
 You may read the comments labeling_util.py to get a hint on how to set the parameters
 

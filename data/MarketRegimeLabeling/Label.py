@@ -22,5 +22,5 @@ merged_data = data.merge(labeled_data,  how='left', on = ['date','tic','adjcp'],
 merged_data.to_csv(args.data_path[:-4]+'_labeled_'+str(args.regime_number)+'_'+str(args.length_limit)+'.csv', index=False)
 print('labeling done')
 print('plotting start')
-Labeler.plot(Labeler.tics,args.labeling_parameters)
+Labeler.plot(Labeler.tics,args.labeling_parameters,args.data_path)
 print('plotting done')
