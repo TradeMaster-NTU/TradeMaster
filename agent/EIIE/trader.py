@@ -261,8 +261,8 @@ class trader:
         df.to_csv(self.result_path + "/result.csv")
     def test_style(self,style):
         # style encoding: 0-bear 1-stag 2-bull
-        s_list = self.test_style_env_configs.reset()
-        for i,s in enumerate(s_list):
+        for i in range(len(self.test_style_env_configs)):
+            s=self.test_style_env_configs[i].reset()
             done = False
             while not done:
                 old_state = s
