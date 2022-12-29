@@ -203,8 +203,14 @@ class Tradingenv(gym.Env):
         sharpe_ratio = np.mean(daily_return) / \
             np.std(daily_return)*(len(df)**0.5)
         vol = np.std(daily_return)
-        mdd = max((max(df["total assets"]) - df["total assets"]) /
-                  max(df["total assets"]))
+        mdd = 0
+        peak=df["total assets"][0]
+        for value in df["total assets"]:
+            if value>peak:
+                peak=value
+            dd=(peak-value)/peak
+            if dd>mdd:
+                mdd=dd
         cr = np.sum(daily_return) / mdd
         sor = np.sum(daily_return)/np.std(neg_ret_lst) / \
             np.sqrt(len(daily_return))
