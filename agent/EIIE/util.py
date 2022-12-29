@@ -26,11 +26,6 @@ def load_yaml(yaml_path):
     return d
 
 def load_style_yaml(yaml_path,style):
-    curPath = os.path.abspath('.')
-    yaml_path = os.path.join(curPath, yaml_path)
-    f = open(yaml_path, 'r', encoding='utf-8')
-    cfg = f.read()
-    d = yaml.load(cfg, Loader=yaml.FullLoader)
     data=pd.read_csv(d["df_path"]).reset_index()
     data=data.loc[data['label'] == style, :]
     def get_styled_intervals(data):
@@ -53,7 +48,11 @@ def load_style_yaml(yaml_path,style):
     d_list=[]
     for i,interval in enumerate(intervals):
         data.iloc[interval[0]:interval[1],:].to_csv('temp/'+str(style)+'_'+str(i)+'.csv')
-        temp_d=copy.deepcopy(d)
-        temp_d["df_path"]='temp/'+str(style)+'_'+str(i)+'.csv'
-        d_list.append(temp_d)
+        curPath = os.path.abspath('.')
+        yaml_path = os.path.join(curPath, yaml_path)
+        f = open(yaml_path, 'r', encoding='utf-8')
+        cfg = f.read()
+        d = yaml.load(cfg, Loader=yaml.FullLoader)
+        d["df_path"]='temp/'+str(style)+'_'+str(i)+'.csv'
+        d_list.append(d)
     return d_list
