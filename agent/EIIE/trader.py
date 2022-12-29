@@ -291,6 +291,7 @@ if __name__ == "__main__":
     with torch.autograd.set_detect_anomaly(True):
         a = trader(args)
         if args.test_style!=-1:
+            print('test for style '+str(args.test_style))
             a.test_style(args.test_style)
             shutil.rmtree('temp')
         else:
