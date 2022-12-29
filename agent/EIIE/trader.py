@@ -89,6 +89,7 @@ class trader:
         self.test_env_config = load_yaml(args.env_config_path + "test.yml")
         if args.test_style!=-1:
             self.test_style_env_configs = load_style_yaml(args.env_config_path + "test_style.yml",args.test_style)
+            print(len(self.test_style_env_configs))
             self.test_style_instances = [Tradingenv(config) for config in self.test_style_env_configs]
         self.train_env_instance = Tradingenv(self.train_env_config)
         self.valid_env_instance = Tradingenv(self.valid_env_config)
