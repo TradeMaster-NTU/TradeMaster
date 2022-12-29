@@ -46,7 +46,9 @@ def load_style_yaml(yaml_path,style):
                 last_index = i
             last_value = index[i]
         return intervals
+
     intervals=get_styled_intervals(data,style)
+    print(intervals)
     data.drop(columns=['index'])
     if not os.path.exists('temp'):
         os.makedirs('temp')

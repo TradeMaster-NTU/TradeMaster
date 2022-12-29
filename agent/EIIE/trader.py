@@ -266,7 +266,7 @@ class trader:
         critic_model_path = best_model_path + "critic.pth"
         self.net = torch.load(actor_model_path)
         self.critic = torch.load(critic_model_path)
-        print(len(self.test_style_env_configs))
+        print('running on '+str(len(self.test_style_env_configs))+' data slices')
         for i in range(len(self.test_style_env_configs)):
             s=self.test_style_env_configs[i].reset()
             done = False
@@ -294,7 +294,7 @@ if __name__ == "__main__":
         if args.test_style!=-1:
             print('test for style '+str(args.test_style))
             a.test_style(args.test_style)
-            shutil.rmtree('temp')
+            # shutil.rmtree('temp')
         else:
             a.train_with_valid()
             a.test()
