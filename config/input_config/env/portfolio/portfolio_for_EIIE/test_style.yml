@@ -1,4 +1,4 @@
-df_path: data/data/dj30/test_labeled_3_24.csv
+df_path: data/data/dj30/test_labeled_by_DJIindex.csv
 initial_amount: 100000
 length_day: 10
 tech_indicator_list:
