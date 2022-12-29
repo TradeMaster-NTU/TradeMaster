@@ -266,6 +266,7 @@ class trader:
         critic_model_path = best_model_path + "critic.pth"
         self.net = torch.load(actor_model_path)
         self.critic = torch.load(critic_model_path)
+        print(len(self.test_style_env_configs))
         for i in range(len(self.test_style_env_configs)):
             s=self.test_style_env_configs[i].reset()
             done = False
