@@ -31,12 +31,10 @@ def load_style_yaml(yaml_path,style):
     f = open(yaml_path, 'r', encoding='utf-8')
     cfg = f.read()
     d = yaml.load(cfg, Loader=yaml.FullLoader)
-
     data=pd.read_csv(d["df_path"]).reset_index()
-    data.to_csv('temp/all.csv')
     def get_styled_intervals(data,style):
+        data = data.loc[data['label'] == style, :]
         index = data['index']
-        data=data.loc[data['label']==style,:]
         last_value = index[0] - 1
         last_index = 0
         intervals = []
