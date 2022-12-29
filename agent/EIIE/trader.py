@@ -266,9 +266,9 @@ class trader:
         critic_model_path = best_model_path + "critic.pth"
         self.net = torch.load(actor_model_path)
         self.critic = torch.load(critic_model_path)
-        print('running on '+str(len(self.test_style_env_configs))+' data slices')
-        for i in range(len(self.test_style_env_configs)):
-            s=self.test_style_env_configs[i].reset()
+        print('running on '+str(len(self.test_style_instances))+' data slices')
+        for i in range(len(self.test_style_instances)):
+            s=self.test_style_instances[i].reset()
             done = False
             while not done:
                 old_state = s

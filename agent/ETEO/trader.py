@@ -390,9 +390,9 @@ class trader:
         best_model_path = self.model_path + "/best_model/"
         net_path = best_model_path + "policy_state_value_net.pth"
         self.net_old = torch.load(net_path)
-        for i in range(len(self.test_style_env_configs)):
+        for i in range(len(self.test_style_instances)):
             stacked_state = []
-            s = self.test_style_env_configs[i].reset()
+            s = self.test_style_instances[i].reset()
             stacked_state.append(s)
             for i in range(self.lenth_state - 1):
                 action = np.array([0, 0])
