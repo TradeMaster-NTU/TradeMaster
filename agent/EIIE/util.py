@@ -46,7 +46,7 @@ def load_style_yaml(yaml_path,style):
             last_value = index[i]
         return intervals
     intervals=get_intervals(data)
-    os.makedir('temp')
+    os.makedirs('temp')
     d_list=[]
     for i,interval in enumerate(intervals):
         data.iloc[interval[0]:interval[1],:].to_csv('temp/'+str(style)+'_'+str(i)+'.csv')
