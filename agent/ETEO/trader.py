@@ -5,7 +5,7 @@ from turtle import done
 
 sys.path.append(".")
 from agent.ETEO.model import FCN_stack_ETTO, LSTM_ETEO
-from agent.ETEO.util import set_seed, load_yaml
+from agent.ETEO.util import set_seed, load_yaml, load_style_yaml
 from env.OE.order_execution_for_ETEO import TradingEnv
 import torch
 import os
@@ -16,6 +16,7 @@ from torch.distributions import Normal
 import numpy as np
 import pandas as pd
 from random import sample
+import shutil
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--random_seed",
@@ -91,6 +92,12 @@ parser.add_argument(
     help="the value of climp ",
 )
 
+parser.add_argument(
+    "--test_style",
+    type=int,
+    default=-1,
+    help="test agent with market data of a specific style: 0-bear 1-stag 2-bull",
+)
 
 class trader:
     def __init__(self, args) -> None:
@@ -111,6 +118,9 @@ class trader:
         self.train_env_instance = TradingEnv(self.train_env_config)
         self.valid_env_instance = TradingEnv(self.valid_env_config)
         self.test_env_instance = TradingEnv(self.test_env_config)
+        if args.test_style != -1:
+            self.test_style_env_configs = load_style_yaml(args.env_config_path + "test_style.yml", args.test_style)
+            self.test_style_instances = [TradingEnv(config) for config in self.test_style_env_configs]
         self.num_features = self.train_env_instance.observation_space.shape[0]
         self.net_category = args.net_category
         self.gamma = args.gamma
@@ -375,9 +385,36 @@ class trader:
         result = np.array(self.test_env_instance.portfolio_value_history)
         np.save(self.result_path + "/result.npy", result)
 
+    def test_style(self,style):
+        # style encoding: 0-bear 1-stag 2-bull
+        best_model_path = self.model_path + "/best_model/"
+        net_path = best_model_path + "policy_state_value_net.pth"
+        self.net_old = torch.load(net_path)
+        for i in range(len(self.test_style_env_configs)):
+            stacked_state = []
+            s = self.test_style_env_configs[i].reset()
+            stacked_state.append(s)
+            for i in range(self.lenth_state - 1):
+                action = np.array([0, 0])
+                s, r, done, _ = self.test_style_instances[i].step(action)
+                stacked_state.append(s)
+            done = False
+            while not done:
+                action = self.compute_action_test(stacked_state)
+                s_new, reward, done, _ = self.test_style_instances[i].step(action)
+                stacked_state.pop(0)
+                stacked_state.append(s_new)
+            result = np.array(self.test_style_instances[i].portfolio_value_history)
+            if not os.path.exists(self.result_path):
+                os.makedirs(self.result_path)
+            np.save(self.result_path + "/style_" + str(style) + '_result_' + str(i) + ".csv", result)
 
 if __name__ == "__main__":
     args = parser.parse_args()
     a = trader(args)
-    a.train_with_valid()
-    a.test()
+    if args.test_style != -1:
+        a.test_style(args.test_style)
+        shutil.rmtree('temp')
+    else:
+        a.train_with_valid()
+        a.test()

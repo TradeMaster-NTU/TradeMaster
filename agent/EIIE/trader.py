@@ -261,6 +261,11 @@ class trader:
         df.to_csv(self.result_path + "/result.csv")
     def test_style(self,style):
         # style encoding: 0-bear 1-stag 2-bull
+        best_model_path = self.model_path + "/best_model/"
+        actor_model_path = best_model_path + "actor.pth"
+        critic_model_path = best_model_path + "critic.pth"
+        self.net = torch.load(actor_model_path)
+        self.critic = torch.load(critic_model_path)
         for i in range(len(self.test_style_env_configs)):
             s=self.test_style_env_configs[i].reset()
             done = False
@@ -285,9 +290,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
     with torch.autograd.set_detect_anomaly(True):
         a = trader(args)
-        a.train_with_valid()
         if args.test_style!=-1:
             a.test_style(args.test_style)
             shutil.rmtree('temp')
         else:
+            a.train_with_valid()
             a.test()
