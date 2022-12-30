@@ -77,6 +77,7 @@ class Tradingenv(gym.Env):
             for tech in self.tech_indicator_list
         ] for tic in self.data.tic.unique()])
         print('new data')
+        print(self.df.shape)
         print(self.day,self.length_day)
         print(self.data.shape)
         print(self.state.shape)
