@@ -243,13 +243,6 @@ class trader:
         torch.save(self.critic, best_model_path + "critic.pth")
 
     def test(self):
-
-        best_model_path = self.model_path + "/best_model/"
-        actor_model_path = best_model_path + "actor.pth"
-        critic_model_path = best_model_path + "critic.pth"
-        self.net = torch.load(actor_model_path)
-        self.critic = torch.load(critic_model_path)
-
         s = self.test_env_instance.reset()
         done = False
         while not done:
@@ -277,7 +270,8 @@ class trader:
         print('running on '+str(len(self.test_style_env_instances))+' data slices')
         for i in range(len(self.test_style_env_instances)):
             s=self.test_style_env_instances[i].reset()
-            # s = self.test_env_instance.reset()
+            s_1= self.test_env_instance.reset()
+            print(s.shape,s_1.shape)
             done = False
             while not done:
                 old_state = s
@@ -302,8 +296,8 @@ if __name__ == "__main__":
         a = trader(args)
         if args.test_style!=-1:
             print('test for style '+str(args.test_style))
-            a.test()
-            # a.test_style(args.test_style)
+            # a.test()
+            a.test_style(args.test_style)
             # shutil.rmtree('temp')
         else:
             a.train_with_valid()
