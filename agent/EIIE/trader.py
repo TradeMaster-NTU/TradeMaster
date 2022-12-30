@@ -269,7 +269,6 @@ class trader:
         print('running on '+str(len(self.test_style_env_instances))+' data slices')
         for i in range(len(self.test_style_env_instances)):
             s=self.test_style_env_instances[i].reset()
-            s_1= self.test_env_instance.reset()
             done = False
             while not done:
                 old_state = s
