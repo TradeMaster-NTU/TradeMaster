@@ -90,7 +90,7 @@ class trader:
         if args.test_style!=-1:
             self.test_style_env_configs = load_style_yaml(args.env_config_path + "test_style.yml",args.test_style)
             print(len(self.test_style_env_configs))
-            self.test_style_instances = [Tradingenv(config) for config in self.test_style_env_configs]
+            self.test_style_env_instances = [Tradingenv(config) for config in self.test_style_env_configs]
         self.train_env_instance = Tradingenv(self.train_env_config)
         self.valid_env_instance = Tradingenv(self.valid_env_config)
         self.test_env_instance = Tradingenv(self.test_env_config)
@@ -267,17 +267,18 @@ class trader:
         critic_model_path = best_model_path + "critic.pth"
         self.net = torch.load(actor_model_path)
         self.critic = torch.load(critic_model_path)
-        print('running on '+str(len(self.test_style_instances))+' data slices')
-        for i in range(len(self.test_style_instances)):
-            s=self.test_style_instances[i].reset()
+        print('running on '+str(len(self.test_style_env_instances))+' data slices')
+        for i in range(len(self.test_style_env_instances)):
+            # s=self.test_style_env_instances[i].reset()
+            s = self.test_env_instance.reset()
             done = False
             while not done:
                 old_state = s
                 action = self.net(torch.from_numpy(s).float())
-                s, reward, done, _ = self.test_style_instances[i].step(
+                s, reward, done, _ = self.test_style_env_instances[i].step(
                     action.detach().numpy())
-            df_return = self.test_style_instances[i].save_portfolio_return_memory()
-            df_assets = self.test_style_instances[i].save_asset_memory()
+            df_return = self.test_style_env_instances[i].save_portfolio_return_memory()
+            df_assets = self.test_style_env_instances[i].save_asset_memory()
             assets = df_assets["total assets"].values
             daily_return = df_return.daily_return.values
             df = pd.DataFrame()
