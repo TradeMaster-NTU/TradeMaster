@@ -52,7 +52,7 @@ def load_style_yaml(yaml_path,style):
         os.makedirs('temp')
     d_list=[]
     for i,interval in enumerate(intervals):
-        data.iloc[interval[0]:interval[1],:].to_csv('temp/'+str(style)+'_'+str(i)+'.csv')
+        data.iloc[interval[0]:interval[1],:].reset_index().to_csv('temp/'+str(style)+'_'+str(i)+'.csv')
         curPath = os.path.abspath('.')
         yaml_path = os.path.join(curPath, yaml_path)
         f = open(yaml_path, 'r', encoding='utf-8')
