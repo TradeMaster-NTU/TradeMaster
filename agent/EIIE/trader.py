@@ -295,7 +295,7 @@ if __name__ == "__main__":
             print('test for style '+str(args.test_style))
             # a.test()
             a.test_style(args.test_style)
-            # shutil.rmtree('temp')
+            shutil.rmtree('temp')
         else:
             a.train_with_valid()
             a.test()

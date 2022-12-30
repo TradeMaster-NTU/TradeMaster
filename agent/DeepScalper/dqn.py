@@ -11,6 +11,7 @@ import yaml
 import os
 import pandas as pd
 import copy
+import shutil
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--hidden_nodes",
@@ -135,7 +136,7 @@ def load_style_yaml(yaml_path,style):
         data_temp=data.iloc[interval[0]:interval[1],:]
         data_temp.index=index_by_tick_list[i]
         data_temp.to_csv('temp/'+str(style)+'_'+str(i)+'.csv')
-        if max(index_by_tick_list[i])<d['backward_num_day']:
+        if max(index_by_tick_list[i])<=d['backward_num_day']+d['forward_num_day']+2:
             print('This segment length is less tan the length_day in config so it won\'t be tested')
             continue
         temp_d=copy.deepcopy(d)
@@ -355,7 +356,7 @@ if __name__ == "__main__":
         print('test for style ' + str(args.test_style))
         # a.test()
         a.test_style(args.test_style)
-        # shutil.rmtree('temp')
+        shutil.rmtree('temp')
     else:
         a.train_with_valid()
         a.test()
