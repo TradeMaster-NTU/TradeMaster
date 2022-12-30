@@ -58,7 +58,7 @@ def load_style_yaml(yaml_path,style):
             index_by_tick.append(date_counter)
             last_value = index[i]
             last_date = date[i]
-        intervals.append([last_index, i])
+        intervals.append([last_index, data.shape[0]])
         index_by_tick_list.append(index_by_tick)
         return intervals,index_by_tick_list
     intervals,index_by_tick_list=get_styled_intervals_and_gives_new_index(data)
