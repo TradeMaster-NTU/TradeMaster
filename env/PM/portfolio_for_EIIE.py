@@ -76,11 +76,11 @@ class Tradingenv(gym.Env):
             self.data[self.data.tic == tic][tech].values.tolist()
             for tech in self.tech_indicator_list
         ] for tic in self.data.tic.unique()])
-        # print('new data')
+        print('new data')
         # print(self.df.shape)
         # print(self.day,self.length_day)
         # print(self.data.shape)
-        # print(self.state.shape)
+        print(self.state.shape)
         self.state = np.transpose(self.state, (0, 2, 1))
         # self.state = np.transpose(self.state, (2, 0, 2))
         # 此时返回的维度：(时间长度，tic数量，特征数量)
