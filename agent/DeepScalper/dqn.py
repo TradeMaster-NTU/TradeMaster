@@ -54,6 +54,12 @@ parser.add_argument("--test_env_config",
                     type=str,
                     default="config/input_config/env/AT/DeepScalper/test.yml",
                     help="the dict for storing env config")
+parser.add_argument("--test_style_env_config",
+                    type=str,
+                    default="config/input_config/env/AT/DeepScalper/test_style.yml",
+                    help="the dict for storing env config")
+
+
 parser.add_argument(
     "--future_loss_weights",
     type=float,
@@ -154,7 +160,7 @@ class DQN(object):
         self.test_ev_instance = TradingEnv(
             read_yaml_to_dict(args.test_env_config))
         if args.test_style!=-1:
-            self.test_style_env_configs = load_style_yaml(args.env_config_path + "test_style.yml",args.test_style)
+            self.test_style_env_configs = load_style_yaml(args.test_style_env_config,args.test_style)
             self.test_style_env_instances = [TradingEnv(config) for config in self.test_style_env_configs]
         self.n_action = self.train_ev_instance.action_space.n
         self.n_state = self.train_ev_instance.observation_space.shape[0]
