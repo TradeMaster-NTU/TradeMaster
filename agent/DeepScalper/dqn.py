@@ -10,6 +10,7 @@ from torch import nn
 import yaml
 import os
 import pandas as pd
+import copy
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--hidden_nodes",
@@ -71,13 +72,70 @@ parser.add_argument(
     default="result/AT/test_result",
     help="the path for storing the test result",
 )
+parser.add_argument(
+    "--test_style",
+    type=int,
+    default=-1,
+    help="test agent with market data of a specific style: 0-bear 1-stag 2-bull",
+)
 
 
 def read_yaml_to_dict(yaml_path: str, ):
     with open(yaml_path) as file:
         dict_value = yaml.load(file.read(), Loader=yaml.FullLoader)
         return dict_value
-
+def load_style_yaml(yaml_path,style):
+    curPath = os.path.abspath('.')
+    yaml_path = os.path.join(curPath, yaml_path)
+    f = open(yaml_path, 'r', encoding='utf-8')
+    cfg = f.read()
+    d = yaml.load(cfg, Loader=yaml.FullLoader)
+    data=pd.read_csv(d["df_path"])
+    # data['index_by_tick']=data.index
+    data=data.reset_index()
+    data=data.loc[data['label'] == style, :]
+    def get_styled_intervals_and_gives_new_index(data):
+        index_by_tick_list=[]
+        index_by_tick=[]
+        date=data['date'].to_list()
+        last_date=date[0]
+        date_counter=0
+        index = data['index'].to_list()
+        last_value = index[0] - 1
+        last_index = 0
+        intervals = []
+        for i in range(data.shape[0]):
+            if last_value != index[i] - 1:
+                date_counter = -1
+                intervals.append([last_index, i])
+                last_value = index[i]
+                last_index = i
+                index_by_tick_list.append(index_by_tick)
+                index_by_tick=[]
+            if date[i]!=last_date:
+                date_counter+=1
+            index_by_tick.append(date_counter)
+            last_value = index[i]
+            last_date = date[i]
+        intervals.append([last_index, data.shape[0]])
+        index_by_tick_list.append(index_by_tick)
+        return intervals,index_by_tick_list
+    intervals,index_by_tick_list=get_styled_intervals_and_gives_new_index(data)
+    data.drop(columns=['index'])
+    if not os.path.exists('temp'):
+        os.makedirs('temp')
+    d_list=[]
+    for i,interval in enumerate(intervals):
+        data_temp=data.iloc[interval[0]:interval[1],:]
+        data_temp.index=index_by_tick_list[i]
+        data_temp.to_csv('temp/'+str(style)+'_'+str(i)+'.csv')
+        if max(index_by_tick_list[i])<d['length_day']:
+            print('This segment length is less tan the length_day in config so it won\'t be tested')
+            continue
+        temp_d=copy.deepcopy(d)
+        temp_d["df_path"]='temp/'+str(style)+'_'+str(i)+'.csv'
+        d_list.append(temp_d)
+    return d_list
 
 #foo.py
 
@@ -95,6 +153,9 @@ class DQN(object):
             read_yaml_to_dict(args.valid_env_config))
         self.test_ev_instance = TradingEnv(
             read_yaml_to_dict(args.test_env_config))
+        if args.test_style!=-1:
+            self.test_style_env_configs = load_style_yaml(args.env_config_path + "test_style.yml",args.test_style)
+            self.test_style_env_instances = [TradingEnv(config) for config in self.test_style_env_configs]
         self.n_action = self.train_ev_instance.action_space.n
         self.n_state = self.train_ev_instance.observation_space.shape[0]
 
@@ -258,9 +319,37 @@ class DQN(object):
         df.to_csv(self.result_path + "/result.csv")
         # print(self.test_ev_instance.compound_memory)
 
+    def test_style(self,style):
+        best_model_path = self.model_path + "/best_model/"
+        model_path = best_model_path + "best_model.pth"
+        self.eval_net = torch.load(model_path)
+        print('running on ' + str(len(self.test_style_env_instances)) + ' data slices')
+        for i in range(len(self.test_style_env_instances)):
+            s =self.test_style_env_instances[i].reset()
+            done = False
+            while not done:
+                a = self.choose_action_test(s)
+                s_, r, done, info = self.test_style_env_instances[i].step(a)
+                s = s_
+            rewards = self.test_style_env_instances[i].save_asset_memory()
+            assets = rewards["total assets"].values
+            df_return = self.test_style_env_instances[i].save_portfolio_return_memory()
+            daily_return = df_return.daily_return.values
+            df = pd.DataFrame()
+            df["daily_return"] = daily_return
+            df["total assets"] = assets
+            if not os.path.exists(self.result_path):
+                os.makedirs(self.result_path)
+            df.to_csv(self.result_path + "/style_"+str(style)+'_result_'+str(i)+".csv")
 
 if __name__ == "__main__":
     args = parser.parse_args()
     a = DQN(args)
-    a.train_with_valid()
-    a.test()
+    if args.test_style != -1:
+        print('test for style ' + str(args.test_style))
+        # a.test()
+        a.test_style(args.test_style)
+        # shutil.rmtree('temp')
+    else:
+        a.train_with_valid()
+        a.test()
