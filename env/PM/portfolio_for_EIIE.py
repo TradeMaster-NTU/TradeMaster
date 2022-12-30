@@ -77,9 +77,10 @@ class Tradingenv(gym.Env):
             for tech in self.tech_indicator_list
         ] for tic in self.data.tic.unique()])
         print('new data')
-        # print(self.df.shape)
-        # print(self.day,self.length_day)
-        # print(self.data.shape)
+        print(self.df.shape)
+        print(self.day,self.length_day)
+        print(self.data.shape)
+        print(len(self.data.tic.unique()))
         print(self.state.shape)
         self.state = np.transpose(self.state, (0, 2, 1))
         # self.state = np.transpose(self.state, (2, 0, 2))
