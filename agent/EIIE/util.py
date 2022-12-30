@@ -47,7 +47,7 @@ def load_style_yaml(yaml_path,style):
         intervals = []
         for i in range(data.shape[0]):
             if last_value != index[i] - 1:
-                date_counter = 0
+                date_counter = -1
                 intervals.append([last_index, i])
                 last_value = index[i]
                 last_index = i
@@ -59,7 +59,8 @@ def load_style_yaml(yaml_path,style):
             last_value = index[i]
             last_date = date[i]
         intervals.append([last_index, i])
-        return intervals,index_by_tick
+        index_by_tick_list.append(index_by_tick)
+        return intervals,index_by_tick_list
     intervals,index_by_tick_list=get_styled_intervals_and_gives_new_index(data)
     data.drop(columns=['index'])
     if not os.path.exists('temp'):
