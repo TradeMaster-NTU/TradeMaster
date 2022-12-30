@@ -38,7 +38,7 @@ def load_style_yaml(yaml_path,style):
     def get_styled_intervals_and_gives_new_index(data):
         index_by_tick_list=[]
         index_by_tick=[]
-        date=data['date']
+        date=data['date'].to_list()
         last_date=date[0]
         date_counter=0
         index = data['index'].to_list()
