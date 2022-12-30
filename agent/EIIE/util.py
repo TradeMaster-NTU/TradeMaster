@@ -68,7 +68,7 @@ def load_style_yaml(yaml_path,style):
     d_list=[]
     for i,interval in enumerate(intervals):
         data_temp=data.iloc[interval[0]:interval[1],:]
-        data_temp.set_index(index_by_tick_list[i])
+        data_temp.index=index_by_tick_list[i]
         data_temp.to_csv('temp/'+str(style)+'_'+str(i)+'.csv')
         curPath = os.path.abspath('.')
         yaml_path = os.path.join(curPath, yaml_path)
