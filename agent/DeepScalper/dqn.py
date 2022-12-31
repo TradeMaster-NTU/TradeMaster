@@ -128,7 +128,7 @@ def load_style_yaml(yaml_path,style):
         index_by_tick_list.append(index_by_tick)
         return intervals,index_by_tick_list
     intervals,index_by_tick_list=get_styled_intervals_and_gives_new_index(data)
-    data.drop(columns=['index'])
+    data.drop(columns=['index'],inplace=True)
     if not os.path.exists('temp'):
         os.makedirs('temp')
     d_list=[]

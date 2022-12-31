@@ -390,6 +390,7 @@ class trader:
         best_model_path = self.model_path + "/best_model/"
         net_path = best_model_path + "policy_state_value_net.pth"
         self.net_old = torch.load(net_path)
+        print('running on ' + str(len(self.test_style_env_instances)) + ' data slices')
         for i in range(len(self.test_style_instances)):
             stacked_state = []
             s = self.test_style_instances[i].reset()
