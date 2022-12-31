@@ -70,8 +70,8 @@ def load_style_yaml(yaml_path,style):
         data_temp=data.iloc[interval[0]:interval[1],:]
         data_temp.index=index_by_tick_list[i]
         data_temp.to_csv('temp/'+str(style)+'_'+str(i)+'.csv')
-        if max(index_by_tick_list[i])<d['length_day']:
-            print('This segment length is less tan the length_day in config so it won\'t be tested')
+        if max(index_by_tick_list[i])+1<d['length_day']:
+            print('This segment length is less than the min length so it won\'t be tested')
             continue
         temp_d=copy.deepcopy(d)
         temp_d["df_path"]='temp/'+str(style)+'_'+str(i)+'.csv'
