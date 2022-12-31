@@ -45,7 +45,7 @@ BTC
 
 OE_BTC
 
-    python Label.py --data_path ../data/OE_BTC/train.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.01 0.01 --regime_number 3 --length_limit 30 --OE_BTC True
+    python Label.py --data_path ../data/OE_BTC/train.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.01 0.01 --regime_number 3 --length_limit 31 --OE_BTC True
 
 <br />
 You may read the comments labeling_util.py to get a hint on how to set the parameters

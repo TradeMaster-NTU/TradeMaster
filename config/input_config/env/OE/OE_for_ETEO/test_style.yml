@@ -1,4 +1,4 @@
-df_path: data/data/OE_BTC/test_labeled_3_30.csv
+df_path: data/data/OE_BTC/test_labeled_3_31.csv
 initial_amount: 100000
 length_keeping: 30
 state_length: 10
