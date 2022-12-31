@@ -17,6 +17,7 @@ import numpy as np
 import pandas as pd
 from random import sample
 import shutil
+from collections import Counter
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--random_seed",
@@ -391,6 +392,7 @@ class trader:
         net_path = best_model_path + "policy_state_value_net.pth"
         self.net_old = torch.load(net_path)
         print('running on ' + str(len(self.test_style_instances)) + ' data slices')
+        reward_counter = Counter()
         for j in range(len(self.test_style_instances)):
             stacked_state = []
             s = self.test_style_instances[j].reset()
@@ -405,10 +407,13 @@ class trader:
                 s_new, reward, done, _ = self.test_style_instances[j].step(action)
                 stacked_state.pop(0)
                 stacked_state.append(s_new)
+                if done:
+                    reward_counter[reward]+=1
             result = np.array(self.test_style_instances[j].portfolio_value_history)
             if not os.path.exists(self.result_path):
                 os.makedirs(self.result_path)
             np.save(self.result_path + "/style_" + str(style) + '_result_' + str(i) + ".csv", result)
+        print("reward_counter:",reward_counter)
 
 if __name__ == "__main__":
     args = parser.parse_args()
