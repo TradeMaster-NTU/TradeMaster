@@ -391,21 +391,21 @@ class trader:
         net_path = best_model_path + "policy_state_value_net.pth"
         self.net_old = torch.load(net_path)
         print('running on ' + str(len(self.test_style_instances)) + ' data slices')
-        for i in range(len(self.test_style_instances)):
+        for j in range(len(self.test_style_instances)):
             stacked_state = []
-            s = self.test_style_instances[i].reset()
+            s = self.test_style_instances[j].reset()
             stacked_state.append(s)
             for i in range(self.lenth_state - 1):
                 action = np.array([0, 0])
-                s, r, done, _ = self.test_style_instances[i].step(action)
+                s, r, done, _ = self.test_style_instances[j].step(action)
                 stacked_state.append(s)
             done = False
             while not done:
                 action = self.compute_action_test(stacked_state)
-                s_new, reward, done, _ = self.test_style_instances[i].step(action)
+                s_new, reward, done, _ = self.test_style_instances[j].step(action)
                 stacked_state.pop(0)
                 stacked_state.append(s_new)
-            result = np.array(self.test_style_instances[i].portfolio_value_history)
+            result = np.array(self.test_style_instances[j].portfolio_value_history)
             if not os.path.exists(self.result_path):
                 os.makedirs(self.result_path)
             np.save(self.result_path + "/style_" + str(style) + '_result_' + str(i) + ".csv", result)

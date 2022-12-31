@@ -112,7 +112,6 @@ class TradingEnv(gym.Env):
     # the state is the corresponding order book in that time frame
     # the action is the volume of we want to sell or buy and the price we set
     def __init__(self, config):
-        self.path=config["df_path"]
         self.df = pd.read_csv(config["df_path"], index_col=0)
         self.initial_amount = config["initial_amount"]
         self.state_length = config["state_length"]
@@ -266,7 +265,6 @@ class TradingEnv(gym.Env):
         #归0 若找得到则利用cancel_order调整数量 直到start_volume为0开始
         previous_data = self.data
         self.time_frame = self.time_frame + 1
-        print(self.path, self.df.shape)
         self.data = self.df.loc[self.time_frame, :]
         for i in range(len(self.order_history)):
             order = self.order_history[i]
