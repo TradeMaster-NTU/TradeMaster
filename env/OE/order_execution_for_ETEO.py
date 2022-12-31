@@ -112,7 +112,6 @@ class TradingEnv(gym.Env):
     # the state is the corresponding order book in that time frame
     # the action is the volume of we want to sell or buy and the price we set
     def __init__(self, config):
-
         self.df = pd.read_csv(config["df_path"], index_col=0)
         self.initial_amount = config["initial_amount"]
         self.state_length = config["state_length"]

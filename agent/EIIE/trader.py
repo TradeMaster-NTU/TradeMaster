@@ -10,6 +10,7 @@ from agent.EIIE.model import EIIE_con, EIIE_lstm, EIIE_rnn, EIIE_critirc
 import argparse
 from agent.EIIE.util import *
 from env.PM.portfolio_for_EIIE import Tradingenv
+import shutil
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--random_seed",
@@ -64,6 +65,13 @@ parser.add_argument(
     help="the number of epoch we train",
 )
 
+parser.add_argument(
+    "--test_style",
+    type=int,
+    default=-1,
+    help="test agent with market data of a specific style: 0-bear 1-stag 2-bull",
+)
+
 
 class trader:
     def __init__(self, args):
@@ -79,6 +87,9 @@ class trader:
         self.train_env_config = load_yaml(args.env_config_path + "train.yml")
         self.valid_env_config = load_yaml(args.env_config_path + "valid.yml")
         self.test_env_config = load_yaml(args.env_config_path + "test.yml")
+        if args.test_style!=-1:
+            self.test_style_env_configs = load_style_yaml(args.env_config_path + "test_style.yml",args.test_style)
+            self.test_style_env_instances = [Tradingenv(config) for config in self.test_style_env_configs]
         self.train_env_instance = Tradingenv(self.train_env_config)
         self.valid_env_instance = Tradingenv(self.valid_env_config)
         self.test_env_instance = Tradingenv(self.test_env_config)
@@ -248,11 +259,43 @@ class trader:
         if not os.path.exists(self.result_path):
             os.makedirs(self.result_path)
         df.to_csv(self.result_path + "/result.csv")
+    def test_style(self,style):
+        # style encoding: 0-bear 1-stag 2-bull
+        best_model_path = self.model_path + "/best_model/"
+        actor_model_path = best_model_path + "actor.pth"
+        critic_model_path = best_model_path + "critic.pth"
+        self.net = torch.load(actor_model_path)
+        self.critic = torch.load(critic_model_path)
+        print('running on '+str(len(self.test_style_env_instances))+' data slices')
+        for i in range(len(self.test_style_env_instances)):
+            s=self.test_style_env_instances[i].reset()
+            done = False
+            while not done:
+                old_state = s
+                action = self.net(torch.from_numpy(s).float())
+                s, reward, done, _ = self.test_style_env_instances[i].step(
+                    action.detach().numpy())
+            df_return = self.test_style_env_instances[i].save_portfolio_return_memory()
+            df_assets = self.test_style_env_instances[i].save_asset_memory()
+            assets = df_assets["total assets"].values
+            daily_return = df_return.daily_return.values
+            df = pd.DataFrame()
+            df["daily_return"] = daily_return
+            df["total assets"] = assets
+            if not os.path.exists(self.result_path):
+                os.makedirs(self.result_path)
+            df.to_csv(self.result_path + "/style_"+str(style)+'_result_'+str(i)+".csv")
 
 
 if __name__ == "__main__":
     args = parser.parse_args()
     with torch.autograd.set_detect_anomaly(True):
         a = trader(args)
-        a.train_with_valid()
-        a.test()
+        if args.test_style!=-1:
+            print('test for style '+str(args.test_style))
+            # a.test()
+            a.test_style(args.test_style)
+            shutil.rmtree('temp')
+        else:
+            a.train_with_valid()
+            a.test()

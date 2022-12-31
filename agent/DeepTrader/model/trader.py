@@ -4,7 +4,7 @@ sys.path.append(".")
 from agent.DeepTrader.data.market_information import make_market_information, make_correlation_information
 from agent.DeepTrader.model.model import Chomp1d, TemporalBlock, TemporalConvNet, SA, GCN, IN, IN_value, asset_scoring, asset_scoring_value, market_scoring
 from agent.DeepTrader.model.portfolio_generator import generate_portfolio, generate_rho
-from agent.DeepTrader.util.utli import set_seed, load_yaml
+from agent.DeepTrader.util.utli import set_seed, load_yaml, load_style_yaml
 from env.PM.portfolio_for_deeptrader import Tradingenv
 import torch
 import os
@@ -66,6 +66,12 @@ parser.add_argument(
     help="technical_indicator",
 )
 
+parser.add_argument(
+    "--test_style",
+    type=int,
+    default=-1,
+    help="test agent with market data of a specific style: 0-bear 1-stag 2-bull",
+)
 
 class trader:
     def __init__(self, args) -> None:
@@ -85,6 +91,9 @@ class trader:
         self.train_env_config = load_yaml(args.env_config_path + "train.yml")
         self.valid_env_config = load_yaml(args.env_config_path + "valid.yml")
         self.test_env_config = load_yaml(args.env_config_path + "test.yml")
+        if args.test_style!=-1:
+            self.test_style_env_configs = load_style_yaml(args.env_config_path + "test_style.yml",args.test_style)
+            self.test_style_env_instances = [Tradingenv(config) for config in self.test_style_env_configs]
         self.train_env_instance = Tradingenv(self.train_env_config)
         self.valid_env_instance = Tradingenv(self.valid_env_config)
         self.test_env_instance = Tradingenv(self.test_env_config)
@@ -386,9 +395,51 @@ class trader:
         df.to_csv(self.result_path + "/result.csv")
 
 
+    def test_style(self,style):
+        best_model_path = self.model_path + "/best_model/"
+        asset_policy_model_path = best_model_path+"asset_policy.pth"
+        asset_critic_model_path =best_model_path+"asset_critic.pth"
+        market_policy_model_path = best_model_path+"market_policy.pth"
+        self.asset_policy = torch.load(asset_policy_model_path)
+        self.asset_policy_critic = torch.load(asset_critic_model_path)
+        self.market_policy = torch.load(market_policy_model_path)
+        print('running on ' + str(len(self.test_style_env_instances)) + ' data slices')
+        for i in range(len(self.test_style_env_instances)):
+            s=self.test_style_env_instances[i].reset()
+            done = False
+            while not done:
+                corr_matrix_old = make_correlation_information(
+                    self.test_style_env_instances[i].data)
+                weights = self.compute_weights_test(
+                    s,
+                    make_market_information(
+                        self.test_style_env_instances[i].data,
+                        technical_indicator=self.technical_indicator),
+                    corr_matrix_old)
+                s, reward, done, _ = self.test_style_env_instances[i].step(weights)
+            df_return = self.test_style_env_instances[i].save_portfolio_return_memory()
+            df_assets = self.test_style_env_instances[i].save_asset_memory()
+            assets = df_assets["total assets"].values
+            daily_return = df_return.daily_return.values
+
+            df = pd.DataFrame()
+            df["daily_return"] = daily_return
+            df["total assets"] = assets
+            print(df)
+            if not os.path.exists(self.result_path):
+                os.makedirs(self.result_path)
+            df.to_csv(self.result_path + "/style_"+str(style)+'_result_'+str(i)+".csv")
+
+
 if __name__ == "__main__":
     args = parser.parse_args()
     with torch.autograd.set_detect_anomaly(True):
         a = trader(args)
-        a.train_with_valid()
-        a.test()
+        if args.test_style!=-1:
+            print('test for style '+str(args.test_style))
+            # a.test()
+            a.test_style(args.test_style)
+            # shutil.rmtree('temp')
+        else:
+            a.train_with_valid()
+            a.test()
