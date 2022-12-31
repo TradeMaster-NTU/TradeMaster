@@ -266,6 +266,7 @@ class TradingEnv(gym.Env):
         #归0 若找得到则利用cancel_order调整数量 直到start_volume为0开始
         previous_data = self.data
         self.time_frame = self.time_frame + 1
+        print(self.df.shape)
         self.data = self.df.loc[self.time_frame, :]
         for i in range(len(self.order_history)):
             order = self.order_history[i]
