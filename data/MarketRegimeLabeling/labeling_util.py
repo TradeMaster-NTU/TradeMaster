@@ -117,7 +117,10 @@ class Labeler():
         self.tics = data['tic'].unique()
         self.data_dict = {}
         for tic in self.tics:
-            tic_data = data.loc[data['tic'] == tic, ['date','tic','open','high','low','close','adjcp']]
+            try:
+                tic_data = data.loc[data['tic'] == tic, ['date','tic','open','high','low','close','adjcp']]
+            except:
+                tic_data = data.loc[data['tic'] == tic, ['date', 'tic', 'adjcp']]
             tic_data.sort_values(by='date', ascending=True)
             tic_data = tic_data.assign(pct_return=tic_data['adjcp'].pct_change().fillna(0))
             self.data_dict[tic] = tic_data.reset_index(drop=True)
@@ -126,7 +129,11 @@ class Labeler():
         data_by_tic = []
         data_by_tic_1 = []
         for tic in self.tics:
-            data_by_tic.append(self.data_dict[tic].loc[:, ['open', 'high', 'low', 'close', 'adjcp', 'pct_return']].values)
+            try:
+                data_by_tic.append(self.data_dict[tic].loc[:, ['open', 'high', 'low', 'close', 'adjcp', 'pct_return']].values)
+            except:
+                data_by_tic.append(
+                    self.data_dict[tic].loc[:, ['adjcp', 'pct_return']].values)
             data_by_tic_1.append(self.data_dict[tic].loc[:, 'pct_return'].values)
         fitting_data = to_time_series_dataset(data_by_tic)
         fitting_data_1=to_time_series_dataset(data_by_tic_1)
