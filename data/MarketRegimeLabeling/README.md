@@ -52,3 +52,10 @@ You may read the comments labeling_util.py to get a hint on how to set the param
 
 The script will take in a data file and output the file with a market regime label column. Besides the market label, we also provide a stock group label column based on DWT clustering.
 
+## Testing agent under a specific market regime
+
+Please prepare test data with the instruction in Usage and run agent with additional args, for example
+
+```
+ python agent/ETEO/trader.py --test_style 0
+```
