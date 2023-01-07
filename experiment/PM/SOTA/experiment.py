@@ -11,7 +11,7 @@ parser.add_argument("--data_path",
                     type=str,
                     default="./data/data/",
                     help="the path for storing the downloaded data")
-#where we store the dataset
+#the place we store the dataset
 parser.add_argument(
     "--output_config_path",
     type=str,
