@@ -10,8 +10,6 @@ Welcome to TradeMaster's documentation!
     :caption: Getting Start
     :maxdepth: 2
     
-    get_started.md
-    Hierachy.md
     Installation.md
 
 .. toctree::
