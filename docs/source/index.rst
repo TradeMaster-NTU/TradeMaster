@@ -12,7 +12,6 @@ Welcome to TradeMaster's documentation!
     
     Hierachy.md
     Installation.md
-    getstarted.md
 
 .. toctree::
     :caption: Agents
