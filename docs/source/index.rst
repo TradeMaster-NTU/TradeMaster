@@ -1,4 +1,4 @@
-Reinforcement Learning for Quantitative Trading Documentation
+Welcome to TradeMaster's documentation!
 ===================================
 
 .. note::
