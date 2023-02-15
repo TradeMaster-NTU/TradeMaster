@@ -1,15 +1,33 @@
-Welcome to TradeMaster's documentation!
+Reinforcement Learning for Quantitative Trading Documentation
 ===================================
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Get Started
+.. note::
+   This project is under active development.
 
-   get_started.md
+Welcome to Reinforcement Learning for Quantitative Trading!
+--------
+
+.. toctree::
+    :caption: Getting Start
+    :maxdepth: 2
+    
+    Hierachy.md
+    Installation.md
+
+.. toctree::
+    :caption: Agents
+    :maxdepth: 2
+    
+    DQN.rst
+    PPO.md
+    
+
 
 
 Indices and tables
-===================
+==================
 
 * :ref:`genindex`
+* :ref:`modindex`
 * :ref:`search`
+
