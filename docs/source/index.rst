@@ -1,4 +1,4 @@
-Welcome to Lumache's documentation!
+Welcome to TradeMaster's documentation!
 ===================================
 
 
