@@ -1,9 +1,6 @@
 Welcome to TradeMaster's documentation!
 ===================================
 
-.. note::
-   This project is under active development.
-
 TradeMaster is a first-of-its kind, best-in-class open-source platform for quantitative trading empowered by reinforcement learning.
 --------
 
