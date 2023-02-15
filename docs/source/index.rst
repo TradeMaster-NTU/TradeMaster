@@ -11,6 +11,7 @@ Welcome to TradeMaster's documentation!
     :maxdepth: 2
     
     get_started.md
+    introduction.md
 
 .. toctree::
     :caption: Agents
@@ -19,13 +20,4 @@ Welcome to TradeMaster's documentation!
     DQN.rst
     PPO.md
     
-
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
 
