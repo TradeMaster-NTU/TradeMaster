@@ -4,15 +4,15 @@ Welcome to TradeMaster's documentation!
 .. note::
    This project is under active development.
 
-Welcome to Reinforcement Learning for Quantitative Trading!
+TradeMaster is a first-of-its kind, best-in-class open-source platform for quantitative trading empowered by reinforcement learning.
 --------
 
 .. toctree::
-    :caption: Getting Start
+    :caption: Get Started
     :maxdepth: 2
     
-    Hierachy.md
-    Installation.md
+    get_started.md
+    
 
 .. toctree::
     :caption: Agents
