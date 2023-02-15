@@ -10,7 +10,7 @@ Welcome to TradeMaster's documentation!
     :caption: Getting Start
     :maxdepth: 2
     
-    PPO.md
+    get_started.md
     Hierachy.md
     Installation.md
 
