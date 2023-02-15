@@ -10,9 +10,7 @@ Welcome to TradeMaster's documentation!
     :caption: Getting Start
     :maxdepth: 2
     
-    Hierachy.md
-    Installation.md
-    usage.md
+    get_started.md
 
 .. toctree::
     :caption: Agents
