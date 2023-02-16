@@ -6,9 +6,9 @@
 
 # -- Project information
 
-project = 'RLforQT'
+project = 'TradeMaster'
 
-author = 'Xyg'
+author = 'TradeMaster'
 
 release = '0.1'
 version = '0.1.0'
