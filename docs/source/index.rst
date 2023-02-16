@@ -23,6 +23,7 @@ Welcome to TradeMaster's documentation!
 .. toctree::
     :caption: Useful Tools and Scripts
     :maxdepth: 2
+    
     tool/prudex.md
     tool/csdi.md
     tool/style.md
