@@ -1,5 +1,5 @@
-# Train and evaluate RL with standard algorithms and datasets
+# Quick Start
 
-# Use customized datasets
+Use trademaster to train and evaluate a profitable RL agent in one line of code.
 
 

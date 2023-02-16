@@ -1,9 +1,6 @@
 # Introduction
 
-## Key Features
 ## Architecture
-## Dataset
+## Supported Trading Scenario
 ## Model Zoo
-## Evaluation Toolkit
-## Benchmark Performance
 

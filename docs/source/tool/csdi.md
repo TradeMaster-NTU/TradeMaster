@@ -1,3 +1,3 @@
-# Missing value imputation with csdi
+# Missing Value Imputation with CSDI
 
 

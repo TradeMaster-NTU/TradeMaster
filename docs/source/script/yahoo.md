@@ -1,3 +1,3 @@
-# Download data from Yahoo Finance
+# Download Data from Yahoo Finance
 
 

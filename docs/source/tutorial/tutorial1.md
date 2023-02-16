@@ -1,3 +1,3 @@
-# Tutorial 1: Intraday trading with DeepScalper
+# Tutorial 1: Intraday Crypto Trading with DeepScalper
 
 
