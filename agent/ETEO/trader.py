@@ -325,7 +325,6 @@ class trader:
                     new_states, 0,
                     torch.tensor(done).float().reshape(-1).to(self.device))
                 if i % 100 == 1:
-                    print("updating")
                     self.update()
                     self.inputs = []
                     self.actions = []
