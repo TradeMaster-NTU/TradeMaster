@@ -7,5 +7,4 @@
    tutorial4.md
    tutorial5.md
    tutorial6.md
-   tutorial7.md
 
