@@ -452,6 +452,8 @@ class TradingEnv(gym.Env):
                 self.reward = 0
             print("done!")
             print("the reward is {}".format(self.reward))
+            print("cash left",cash_left)
+            print("TWAP",TWAP_value)
             return self.state, self.reward, self.terminal, {}
         else:
             return self.state, 0, self.terminal, {}
