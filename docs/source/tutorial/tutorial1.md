@@ -12,7 +12,7 @@ DeepScalper contains 4 technical contributions which all together make it better
 
 Here is the construction of the DeepScalper:
 <div align="center">
-  <img src="https://github.com/TradeMaster-NTU/TradeMaster/tree/main/docs/source/tutorial/DeepScalper.PNG" width = 500 height = 500 />
+  <img src="https://github.com/TradeMaster-NTU/TradeMaster/tree/main/docs/source/tutorial/DeepScalper.png" width = 500 height = 500 />
 </div>
 
 
