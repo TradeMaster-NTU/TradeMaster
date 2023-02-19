@@ -7,13 +7,14 @@ from gym import spaces
 import pandas as pd
 import sys
 
-sys.path.append('./')
+sys.path.append("./")
 import argparse
 from agent.SARL.model.net import m_LSTM_clf
 import torch.nn as nn
 import torch.nn.init as init
 import torch
 import os
+
 """
 env 需要重构的东西
 state好说 主要是action
@@ -32,18 +33,19 @@ parser.add_argument(
     "--df_dict",
     type=str,
     default="experiment_result/data/train.csv",
-    help="the path for dataframe to generate the portfolio environment")
+    help="the path for dataframe to generate the portfolio environment",
+)
 parser.add_argument(
     "--net_path",
     type=str,
     default="experiment_result/SARL/encoder/best_model/LSTM.pth",
-    help="the path for LSTM net")
+    help="the path for LSTM net",
+)
 
-#where we store the dataset
-parser.add_argument("--initial_amount",
-                    type=int,
-                    default=10000,
-                    help="the initial amount")
+# where we store the dataset
+parser.add_argument(
+    "--initial_amount", type=int, default=10000, help="the initial amount"
+)
 
 # where we store the config file
 parser.add_argument(
@@ -53,14 +55,29 @@ parser.add_argument(
     help="transaction cost pct",
 )
 
-parser.add_argument("--tech_indicator_list",
-                    type=list,
-                    default=[
-                        "high", "low", "open", "close", "adjcp", "zopen",
-                        "zhigh", "zlow", "zadjcp", "zclose", "zd_5", "zd_10",
-                        "zd_15", "zd_20", "zd_25", "zd_30"
-                    ],
-                    help="the name of the features to predict the label")
+parser.add_argument(
+    "--tech_indicator_list",
+    type=list,
+    default=[
+        "high",
+        "low",
+        "open",
+        "close",
+        "adjcp",
+        "zopen",
+        "zhigh",
+        "zlow",
+        "zadjcp",
+        "zclose",
+        "zd_5",
+        "zd_10",
+        "zd_15",
+        "zd_20",
+        "zd_25",
+        "zd_30",
+    ],
+    help="the name of the features to predict the label",
+)
 parser.add_argument(
     "--num_day",
     type=int,
@@ -71,7 +88,7 @@ parser.add_argument(
 args = parser.parse_args()
 
 
-#TODO modify the net_dict and st pool there will be only one net
+# TODO modify the net_dict and st pool there will be only one net
 class TradingEnv(gym.Env):
     def __init__(self, config):
         # config = vars(args)
@@ -104,32 +121,33 @@ class TradingEnv(gym.Env):
 
         self.tech_indicator_list = config["tech_indicator_list"]
 
-        self.action_space = spaces.Box(low=-5,
-                                       high=5,
-                                       shape=(self.action_space_shape, ))
+        self.action_space = spaces.Box(low=-5, high=5, shape=(self.action_space_shape,))
 
         self.observation_space = spaces.Box(
             low=-np.inf,
             high=np.inf,
-            shape=((len(self.tech_indicator_list) + 1) *
-                   self.state_space_shape, ))
+            shape=((len(self.tech_indicator_list) + 1) * self.state_space_shape,),
+        )
         # this +1 comes from the agumented data we create
 
         self.data = self.df.loc[self.day, :]
         # print(self.data)
         # initially, the self.state's shape is stock_dim*len(tech_indicator_list)
         tic_list = list(self.data.tic)
-        s_market = np.array([
-            self.data[tech].values.tolist()
-            for tech in self.tech_indicator_list
-        ]).reshape(-1).tolist()
+        s_market = (
+            np.array(
+                [self.data[tech].values.tolist() for tech in self.tech_indicator_list]
+            )
+            .reshape(-1)
+            .tolist()
+        )
         X = []
         for tic in tic_list:
             df_tic = self.df[self.df.tic == tic]
-            df_information = df_tic[self.day - self.length_day:self.day][
-                self.tech_indicator_list].to_numpy()
-            df_information = torch.from_numpy(
-                df_information).float().unsqueeze(0)
+            df_information = df_tic[self.day - self.length_day : self.day][
+                self.tech_indicator_list
+            ].to_numpy()
+            df_information = torch.from_numpy(df_information).float().unsqueeze(0)
             X.append(df_information)
         X = torch.cat(X, dim=0)
         X = X.unsqueeze(0).cuda()
@@ -141,28 +159,30 @@ class TradingEnv(gym.Env):
         self.portfolio_value = self.initial_amount
         self.asset_memory = [self.initial_amount]
         self.portfolio_return_memory = [0]
-        self.weights_memory = [[1 / self.action_space_shape] *
-                               self.action_space_shape]
+        self.weights_memory = [[1 / self.action_space_shape] * self.action_space_shape]
         self.date_memory = [self.data.date.unique()[0]]
         self.transaction_cost_memory = []
 
     def reset(self):
         self.asset_memory = [self.initial_amount]
-        self.day = self.day
+        self.day = self.length_day
         self.data = self.df.loc[self.day, :]
 
         tic_list = list(self.data.tic)
-        s_market = np.array([
-            self.data[tech].values.tolist()
-            for tech in self.tech_indicator_list
-        ]).reshape(-1).tolist()
+        s_market = (
+            np.array(
+                [self.data[tech].values.tolist() for tech in self.tech_indicator_list]
+            )
+            .reshape(-1)
+            .tolist()
+        )
         X = []
         for tic in tic_list:
             df_tic = self.df[self.df.tic == tic]
-            df_information = df_tic[self.day - self.length_day:self.day][
-                self.tech_indicator_list].to_numpy()
-            df_information = torch.from_numpy(
-                df_information).float().unsqueeze(0)
+            df_information = df_tic[self.day - self.length_day : self.day][
+                self.tech_indicator_list
+            ].to_numpy()
+            df_information = torch.from_numpy(df_information).float().unsqueeze(0)
             X.append(df_information)
         X = torch.cat(X, dim=0)
         X = X.unsqueeze(0).cuda()
@@ -173,8 +193,7 @@ class TradingEnv(gym.Env):
         self.portfolio_value = self.initial_amount
         self.asset_memory = [self.initial_amount]
         self.portfolio_return_memory = [0]
-        self.weights_memory = [[1 / self.action_space_shape] *
-                               self.action_space_shape]
+        self.weights_memory = [[1 / self.action_space_shape] * self.action_space_shape]
         self.date_memory = [self.data.date.unique()[0]]
         self.transaction_cost_memory = []
         return self.state
@@ -194,9 +213,12 @@ class TradingEnv(gym.Env):
             print("the Calmar Ratio is", cr)
             print("the Sortino Ratio is", sor)
             print("=================================")
-            return self.state, self.reward, self.terminal, {
-                "sharpe_ratio": sharpe_ratio
-            }
+            return (
+                self.state,
+                self.reward,
+                self.terminal,
+                {"sharpe_ratio": sharpe_ratio},
+            )
 
         else:
             # transfer actino into portofolios weights
@@ -209,17 +231,23 @@ class TradingEnv(gym.Env):
             self.data = self.df.loc[self.day, :]
             # get the state
             tic_list = list(self.data.tic)
-            s_market = np.array([
-                self.data[tech].values.tolist()
-                for tech in self.tech_indicator_list
-            ]).reshape(-1).tolist()
+            s_market = (
+                np.array(
+                    [
+                        self.data[tech].values.tolist()
+                        for tech in self.tech_indicator_list
+                    ]
+                )
+                .reshape(-1)
+                .tolist()
+            )
             X = []
             for tic in tic_list:
                 df_tic = self.df[self.df.tic == tic]
-                df_information = df_tic[self.day - self.length_day:self.day][
-                    self.tech_indicator_list].to_numpy()
-                df_information = torch.from_numpy(
-                    df_information).float().unsqueeze(0)
+                df_information = df_tic[self.day - self.length_day : self.day][
+                    self.tech_indicator_list
+                ].to_numpy()
+                df_information = torch.from_numpy(df_information).float().unsqueeze(0)
                 X.append(df_information)
             X = torch.cat(X, dim=0)
             X = X.unsqueeze(0).cuda()
@@ -231,26 +259,34 @@ class TradingEnv(gym.Env):
             # the weights when the action is first posed)
             portfolio_weights = weights[1:]
             portfolio_return = sum(
-                ((self.data.close.values / last_day_memory.close.values) - 1) *
-                portfolio_weights)
-            weights_brandnew = self.normalization([weights[0]] + list(
-                np.array(weights[1:]) * np.array(
-                    (self.data.close.values / last_day_memory.close.values))))
+                ((self.data.close.values / last_day_memory.close.values) - 1)
+                * portfolio_weights
+            )
+            weights_brandnew = self.normalization(
+                [weights[0]]
+                + list(
+                    np.array(weights[1:])
+                    * np.array((self.data.close.values / last_day_memory.close.values))
+                )
+            )
             self.weights_memory.append(weights_brandnew)
 
             # caculate the transcation fee(there could exist an error of about 0.1% when calculating)
-            weights_old = (self.weights_memory[-3])
-            weights_new = (self.weights_memory[-2])
+            weights_old = self.weights_memory[-3]
+            weights_new = self.weights_memory[-2]
 
-            diff_weights = np.sum(
-                np.abs(np.array(weights_old) - np.array(weights_new)))
-            transcationfee = diff_weights * self.transaction_cost_pct * self.portfolio_value
+            diff_weights = np.sum(np.abs(np.array(weights_old) - np.array(weights_new)))
+            transcationfee = (
+                diff_weights * self.transaction_cost_pct * self.portfolio_value
+            )
 
             # calculate the overal result
-            new_portfolio_value = (self.portfolio_value -
-                                   transcationfee) * (1 + portfolio_return)
-            portfolio_return = (new_portfolio_value -
-                                self.portfolio_value) / self.portfolio_value
+            new_portfolio_value = (self.portfolio_value - transcationfee) * (
+                1 + portfolio_return
+            )
+            portfolio_return = (
+                new_portfolio_value - self.portfolio_value
+            ) / self.portfolio_value
             self.reward = new_portfolio_value - self.portfolio_value
             self.portfolio_value = new_portfolio_value
 
@@ -280,7 +316,7 @@ class TradingEnv(gym.Env):
         # a record of return for each time stamp
         date_list = self.date_memory
         df_date = pd.DataFrame(date_list)
-        df_date.columns = ['date']
+        df_date.columns = ["date"]
 
         return_list = self.portfolio_return_memory
         df_return = pd.DataFrame(return_list)
@@ -293,7 +329,7 @@ class TradingEnv(gym.Env):
         # a record of asset values for each time stamp
         date_list = self.date_memory
         df_date = pd.DataFrame(date_list)
-        df_date.columns = ['date']
+        df_date.columns = ["date"]
 
         assets_list = self.asset_memory
         df_value = pd.DataFrame(assets_list)
@@ -307,20 +343,18 @@ class TradingEnv(gym.Env):
         daily_return = df["daily_return"]
         neg_ret_lst = df[df["daily_return"] < 0]["daily_return"]
         tr = df["total assets"].values[-1] / df["total assets"].values[0] - 1
-        sharpe_ratio = np.mean(daily_return) / \
-            np.std(daily_return)*(len(df)**0.5)
+        sharpe_ratio = np.mean(daily_return) / np.std(daily_return) * (len(df) ** 0.5)
         vol = np.std(daily_return)
         mdd = 0
-        peak=df["total assets"][0]
+        peak = df["total assets"][0]
         for value in df["total assets"]:
-            if value>peak:
-                peak=value
-            dd=(peak-value)/peak
-            if dd>mdd:
-                mdd=dd
+            if value > peak:
+                peak = value
+            dd = (peak - value) / peak
+            if dd > mdd:
+                mdd = dd
         cr = np.sum(daily_return) / mdd
-        sor = np.sum(daily_return)/np.std(neg_ret_lst) / \
-            np.sqrt(len(daily_return))
+        sor = np.sum(daily_return) / np.std(neg_ret_lst) / np.sqrt(len(daily_return))
         return tr, sharpe_ratio, vol, mdd, cr, sor
 
     def analysis_result(self):
