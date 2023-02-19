@@ -3,6 +3,23 @@
 ## Architecture
 ## Supported Trading Scenario
 
+### Algorithmic Trading
+Algorithmic trading (AT) is a trading scenario that involves using deep reinforcement learning methods to execute trades. This scenario is often used by traders who wish to execute large numbers of trades quickly and efficiently, especially in high-frequency trading.
+
+For more information, please refer to [Algorithmic Trading](https://en.wikipedia.org/wiki/Algorithmic_trading).
+
+### Order Execution
+Order execution (OE) is a supported trading scenario that involves placing orders to buy or sell securities. This scenario is often used by traderswho wish to execute trades automatically and optimally.
+
+The kev difference of this 0E and algorithmic trading is that OE can only put an action at one side. For example, if the 0E task is to buy oneshare of BTC, you cannot put an "ask" order even if you stil have BTC in your hand. in 0E, we want to sell at the highest price or buy at thelowest price. Therefore, the optimization target is set to be the amount of money we sel. f the target is buying, our target will be negativeBoth targets will be optimized to their maximum value. All of the trades will be conducted at their closing price.
+
+For more information, please refer to [Order Execution](https://www.investopedia.com/articles/01/022801.asp).
+
+### Portfolio Management
+Portfolio management (PM) is a trading scenario that involves managing a collection of investments over time. lt's used by investors who wantto minimize nsk and diversify ther nvestments, This scenano often invo ves a ono-term investment strateoy. rather than tocusind on shortterm trading opportunities.
+
+For more information, please refer to [Order Execution](https://www.investopedia.com/terms/p/portfoliomanagement.asp).
+
 ## Model Zoo
 
 ### DeepScalper
