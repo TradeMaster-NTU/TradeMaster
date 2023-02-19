@@ -11,7 +11,7 @@ EIIE contains 2 technical contributions which all together make it better than d
 
 Here is the construction of the EIIE:
 <div align="center">
-  <img src="https://github.com/TradeMaster-NTU/TradeMaster/tree/main/docs/source/tutorial/EIIE.png" width = 500 height = 500 />
+  <img src="./EIIE.png" width = 900 height = 300 />
 </div>
 
 
