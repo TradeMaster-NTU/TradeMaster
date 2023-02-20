@@ -1,3 +1,0 @@
-# Market Dymamics Modelling
-
-

@@ -1,0 +1,16 @@
+trainer = dict(
+    type = "HighFrequencyTradingTrainer",
+    epochs = 2,
+    work_dir = "work_dir",
+    seeds = 12345,
+    batch_size = 512,
+    horizon_len = 512,
+    buffer_size = 1e5,
+    num_threads = 8,
+    if_remove= False,
+    if_discrete = True,
+    if_off_policy = True,
+    if_keep_save = True,
+    if_over_write = False,
+    if_save_buffer = False,
+)

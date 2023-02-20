@@ -1,0 +1,4 @@
+
+loss = dict(
+    type = "KLloss"
+)

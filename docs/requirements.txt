@@ -1,3 +1,0 @@
-myst-parser == 0.18.1
-sphinx-markdown-tables == 0.0.17
-Sphinx == 5.3.0

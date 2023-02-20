@@ -1,3 +1,0 @@
-test_data_dict: ./data/data/BTC/test.csv
-train_data_dict: ./data/data/BTC/train.csv
-valid_data_dict: ./data/data/BTC/valid.csv

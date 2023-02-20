@@ -1,3 +1,0 @@
-test_data_dict: ./data/data/exchange/test.csv
-train_data_dict: ./data/data/exchange/train.csv
-valid_data_dict: ./data/data/exchange/valid.csv

@@ -1,3 +1,0 @@
-test_data_dict: ./data/data/dj30/test.csv
-train_data_dict: ./data/data/dj30/train.csv
-valid_data_dict: ./data/data/dj30/valid.csv
