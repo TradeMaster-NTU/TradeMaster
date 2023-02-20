@@ -1,19 +1,20 @@
 # Tutorial 2: Portfolio Management with EIIE on US stocks
-
-## Task
+![EIIE.png](EIIE.png)
 Portfolio management is the action of continuous reallocation of a capital into a number of financial assets periodically.
 
-## Algorithm
-EIIE contains 2 technical contributions which all together make it better than direct use of RL algorithms.
-- Deterministic Policy Gradient
-- Portfolio-Vector Memor
-
-
-Here is the construction of the EIIE:
-<div align="center">
-  <img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/docs/source/tutorial/EIIE.jpg" width = 900 height = 300 />
-</div>
+The framework consists of the Ensemble of Identical Independent Evaluators
+(EIIE) topology, a Portfolio-Vector Memory (PVM), an Online Stochastic Batch Learning
+(OSBL) scheme, and a fully exploiting and explicit reward function.
 
 
 
-Here is a [tutorial](https://github.com/DVampire/TradeMasterReBuild/tree/main/tutorial/EIIE.ipynb) about how you can build EIIE in a few lines of codes using TradeMaster.
+
+
+## Notebook and Script
+In this notebook, we implement the training and testing process of EIIE based on the TradeMaster framework.
+
+[Tutorial2_EIIE](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/Tutorial2_EIIE.ipynb)
+
+And this is the script for training and testing.
+
+[train_eiie.py](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tools/portfolio_management/train_eiie.py)
