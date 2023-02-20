@@ -22,6 +22,9 @@ from trademaster.losses.builder import build_loss
 from trademaster.trainers.builder import build_trainer
 from trademaster.transition.builder import build_transition
 
+from trademaster.utils import set_seed
+set_seed(2023)
+
 from collections import Counter
 def parse_args():
     parser = argparse.ArgumentParser(description='Download Alpaca Datasets')

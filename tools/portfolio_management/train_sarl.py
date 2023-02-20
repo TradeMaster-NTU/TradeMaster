@@ -16,6 +16,8 @@ from trademaster.utils import replace_cfg_vals
 from trademaster.datasets.builder import build_dataset
 from trademaster.trainers.builder import build_trainer
 
+from trademaster.utils import set_seed
+set_seed(2023)
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Download Alpaca Datasets')
