@@ -1,20 +1,18 @@
 # Tutorial 1: Intraday Crypto Trading with DeepScalper
+![DeepScalper.png](DeepScalper.png)
 
-## Task
 Intraday trading is a fundamental quantitative trading task, where traders actively long/short one pre-selected financial asset within the same trading day to maximize future profit.
 
-## Algorithm
-DeepScalper contains 4 technical contributions which all together make it better than direct use of RL algorithms.
-- RL optimization with action branching
-- reward function with hindsight bonus
-- intraday market embedding
-- risk-aware auxiliary task
-
-Here is the construction of the DeepScalper:
-<div align="center">
-  <img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/docs/source/tutorial/DeepScalper.jpg" width = 900 height = 300 />
-</div>
+DeepScalper use deep q network to optimize the reward sum got from reinforcement learning where a hindsight reward is used to capture the long-term porfit trends and embedding from both micro-level and macro-level market information.
 
 
 
-Here is a [tutorial](https://github.com/DVampire/TradeMasterReBuild/tree/main/tutorial/DeepScalper.ipynb) about how you can build DeepScalper in a few lines of codes using TradeMaster.
+
+## Notebook and Script
+In this notebook, we implement the training and testing process of DeepScalper based on the TradeMaster framework.
+
+[Tutorial1_DeepScalper](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/Tutorial1_DeepScalper.ipynb)
+
+And this is the script for training and testing.
+
+[train.py](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tools/algorithmic_trading/train.py)
