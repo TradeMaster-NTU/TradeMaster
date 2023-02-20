@@ -16,9 +16,8 @@ Architecture of Trademaster framework could be visualizaed by the figure below.
 
   TradeMaster is evaluated in multiple dimenstions. Financial metrics like profit and risk metrics are applied. Additionally, decision tree and shapley value are used to evaluate the explainability of the model. Variability and Alpha decay are used for reliability evaluation.
 
-<div align="center">
-<img align="center" src=../../figure/Architecture.jpg width="70%"/>
-</div>
+![Architecture.jpg](../../figure/Architecture.jpg)
+
 
 ## Supported Trading Scenario
 
