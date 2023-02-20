@@ -26,7 +26,6 @@ from collections import Counter
 from trademaster.utils import set_seed
 set_seed(2023)
 
-
 def parse_args():
     parser = argparse.ArgumentParser(description='Download Alpaca Datasets')
     parser.add_argument("--config", default=osp.join(ROOT, "configs", "order_execution",
@@ -38,7 +37,7 @@ def parse_args():
     return args
 
 
-def test_eteo():
+def eteo():
     args = parse_args()
 
     cfg = Config.fromfile(args.config)
@@ -124,7 +123,7 @@ def test_eteo():
 
 
 if __name__ == '__main__':
-    test_eteo()
+    eteo()
     """
     algorithmic_trading
     portfolio_management

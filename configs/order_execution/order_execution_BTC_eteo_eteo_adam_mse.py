@@ -17,6 +17,8 @@ _base_ = [
     f"../_base_/transition/transition.py"
 ]
 
+batch_size = 64
+
 data = dict(
     type="OrderExecutionDataset",
     data_path="data/order_execution/BTC",
@@ -184,7 +186,7 @@ data = dict(
     state_length=10,
     target_order=1,
     initial_amount=100000,
-test_style=0
+    test_style=0
 )
 
 environment = dict(
@@ -197,18 +199,27 @@ transition = dict(
 
 agent = dict(
     type="OrderExecutionETEO",
-    memory_capacity=1000,
     gamma=0.9,
     climp=0.2,
-    sample_effiency=0.5,
+    reward_scale=1,
+    repeat_times=1,
 )
 
 trainer = dict(
     type="OrderExecutionETEOTrainer",
     epochs=10,
     work_dir=work_dir,
-    if_remove=True,
-    if_off_policy=True,
+    seeds_list=(12345,),
+    batch_size=batch_size,
+    horizon_len=2,
+    buffer_size=2 * batch_size,
+    num_threads=8,
+    if_remove=False,
+    if_discrete=True,
+    if_off_policy=False,
+    if_keep_save=True,
+    if_over_write=False,
+    if_save_buffer=False,
 )
 
 loss = dict(type='MSELoss')

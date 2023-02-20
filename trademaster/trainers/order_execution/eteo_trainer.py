@@ -36,7 +36,7 @@ class OrderExecutionETEOTrainer(Trainer):
 
         self.if_remove = get_attr(kwargs, "if_remove", False)
         self.if_discrete = get_attr(kwargs, "if_discrete", False)  # discrete or continuous action space
-        self.if_off_policy = get_attr(kwargs, "if_off_policy", True)
+        self.if_off_policy = get_attr(kwargs, "if_off_policy", False)
         self.if_keep_save = get_attr(kwargs, "if_keep_save",
                                      True)  # keeping save the checkpoint. False means save until stop training.
         self.if_over_write = get_attr(kwargs, "if_over_write",
@@ -53,9 +53,9 @@ class OrderExecutionETEOTrainer(Trainer):
         else:  # on-policy
             self.batch_size = int(get_attr(kwargs, "batch_size", 64))  # num of transitions sampled from replay buffer.
             self.horizon_len = int(
-                get_attr(kwargs, "horizon_len", 512))  # collect horizon_len step while exploring, then update network
+                get_attr(kwargs, "horizon_len", 2))  # collect horizon_len step while exploring, then update network
             self.buffer_size = int(
-                get_attr(kwargs, "buffer_size", 512))  # ReplayBuffer size. Empty the ReplayBuffer for on-policy.
+                get_attr(kwargs, "buffer_size", 128))  # ReplayBuffer size. Empty the ReplayBuffer for on-policy.
 
         self.epochs = int(get_attr(kwargs, "epochs", 20))
 
@@ -125,18 +125,19 @@ class OrderExecutionETEOTrainer(Trainer):
             buffer_items = self.agent.explore_env(env=self.train_environment, horizon_len=self.horizon_len)
             buffer.update(buffer_items)  # warm up for ReplayBuffer
         else:
-            buffer = []
+            buffer = GeneralReplayBuffer(transition=self.transition,
+                                         shapes=self.transition_shapes,
+                                         num_seqs=self.num_envs,
+                                         max_size=self.buffer_size,
+                                         device=self.device)
 
         valid_score_list = []
         epoch = 1
         print("Train Episode: [{}/{}]".format(epoch, self.epochs))
         while True:
             buffer_items = self.agent.explore_env(self.train_environment, self.horizon_len)
-            exp_r = buffer_items[2].mean().item()
-            if self.if_off_policy:
-                buffer.update(buffer_items)
-            else:
-                buffer[:] = buffer_items
+
+            buffer.update(buffer_items)
 
             torch.set_grad_enabled(True)
             logging_tuple = self.agent.update_net(buffer)

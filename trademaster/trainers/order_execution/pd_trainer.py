@@ -138,8 +138,16 @@ class OrderExecutionPDTrainer(Trainer):
                                          max_size=self.buffer_size,
                                          device=self.device)
         else:
-            teacher_buffer = []
-            student_buffer = []
+            teacher_buffer = GeneralReplayBuffer(transition=self.transition,
+                                                 shapes=self.transition_shapes,
+                                                 num_seqs=self.num_envs,
+                                                 max_size=self.buffer_size,
+                                                 device=self.device)
+            student_buffer = GeneralReplayBuffer(transition=self.transition,
+                                                 shapes=self.transition_shapes,
+                                                 num_seqs=self.num_envs,
+                                                 max_size=self.buffer_size,
+                                                 device=self.device)
 
         valid_score_list = []
         for epoch in range(1, self.epochs+1):
@@ -147,10 +155,8 @@ class OrderExecutionPDTrainer(Trainer):
             # train teacher
             while True:
                 buffer_items = self.agent.explore_env(self.train_environment, self.horizon_len, if_teacher=True)
-                if self.if_off_policy:
-                    teacher_buffer.update(buffer_items)
-                else:
-                    teacher_buffer[:] = buffer_items
+
+                teacher_buffer.update(buffer_items)
 
                 torch.set_grad_enabled(True)
                 logging_tuple = self.agent.update_teacher(teacher_buffer)
@@ -174,10 +180,8 @@ class OrderExecutionPDTrainer(Trainer):
             # train student
             while True:
                 buffer_items = self.agent.explore_env(self.train_environment, self.horizon_len, if_teacher = False)
-                if self.if_off_policy:
-                    student_buffer.update(buffer_items)
-                else:
-                    student_buffer[:] = buffer_items
+
+                student_buffer.update(buffer_items)
 
                 torch.set_grad_enabled(True)
                 logging_tuple = self.agent.update_student(student_buffer)

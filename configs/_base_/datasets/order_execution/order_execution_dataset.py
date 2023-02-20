@@ -164,5 +164,4 @@ data = dict(
     length_keeping = 30,
     state_length = 10,
     target_order = 1,
-    initial_amount = 100000,
 )

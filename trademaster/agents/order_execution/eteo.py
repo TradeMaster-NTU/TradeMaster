@@ -45,9 +45,6 @@ class OrderExecutionETEO(AgentBase):
         self.reward_scale = get_attr(kwargs, "reward_scale",
                                      2 ** 0)
         self.repeat_times = get_attr(kwargs, "repeat_times", 1.0)
-        self.memory_capacity = get_attr(kwargs, "memory_capacity", 1000)
-        self.sample_effiency = get_attr(kwargs, "sample_effiency", 0.5)
-        self.memory_size = 0
 
         self.act_target = self.cri_target = deepcopy(self.act)
 
@@ -150,7 +147,7 @@ class OrderExecutionETEO(AgentBase):
         return action
 
     def update_net(self, buffer: ReplayBuffer) -> Tuple[float, ...]:
-        update_times = int(buffer.add_size * self.repeat_times)
+        update_times = int(self.repeat_times)
         assert update_times >= 1
 
         for _ in range(update_times):

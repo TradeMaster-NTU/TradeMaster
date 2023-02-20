@@ -17,6 +17,8 @@ _base_ = [
     f"../_base_/transition/transition.py"
 ]
 
+batch_size = 64
+
 data = dict(
     type="OrderExecutionDataset",
     data_path="data/order_execution/PD_BTC",
@@ -58,18 +60,27 @@ transition = dict(
 
 agent = dict(
     type="OrderExecutionPD",
-    memory_capacity=100,
-    memory_update_freq = 10,
     gamma=0.9,
     climp=0.2,
-    sample_effiency=0.5,
+    reward_scale=1,
+    repeat_times=1,
 )
 
 trainer = dict(
     type="OrderExecutionPDTrainer",
     epochs=10,
     work_dir=work_dir,
-    if_remove=True,
+    seeds_list=(12345,),
+    batch_size=batch_size,
+    horizon_len=2,
+    buffer_size=2 * batch_size,
+    num_threads=8,
+    if_remove=False,
+    if_discrete=True,
+    if_off_policy=False,
+    if_keep_save=True,
+    if_over_write=False,
+    if_save_buffer=False,
 )
 
 loss = dict(type='MSELoss')
