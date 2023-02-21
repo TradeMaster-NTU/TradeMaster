@@ -65,8 +65,8 @@ class Server():
                              "order_excecution:PD_BTC",
                              "portfolio_management:dj30",
                              "portfolio_management:exchange"],
-            "optimizer_name": ["adam", "adaw"],
-            "loss_name": ["mae", "mse"],
+            "optimizer_name": ["adam"],
+            "loss_name": ["mse"],
             "agent_name": [
                 "algorithmic_trading:dqn",
                 "order_execution:eteo",
