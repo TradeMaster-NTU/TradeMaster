@@ -93,7 +93,7 @@ data = dict(
         "std_30",
         "ask2_size_n",
     ],
-    transcation_cost=0.00001,
+    transcation_cost=0,
     backward_num_timestamp=1,
     max_holding_number=0.01,
     num_action=11,
@@ -117,7 +117,7 @@ agent = dict(
 )
 trainer = dict(
     type="HighFrequencyTradingTrainer",
-    epochs=2,
+    epochs=10,
     work_dir=work_dir,
     seeds=12345,
     batch_size=512,
@@ -131,7 +131,7 @@ trainer = dict(
     if_over_write=False,
     if_save_buffer=False,
 )
-loss = dict(type="HFTLoss")
+loss = dict(type="HFTLoss", ada=1)
 optimizer = dict(type="Adam", lr=0.001)
 act = dict(type="HFTQNet", state_dim=66, action_dim=11, dims=16, explore_rate=0.25)
 cri = None

@@ -8,3 +8,4 @@ from .portfolio_management.sarl_trainer import PortfolioManagementSARLTrainer
 from .portfolio_management.investor_imitator_trainer import PortfolioManagementInvestorImitatorTrainer
 from .order_execution.eteo_trainer import OrderExecutionETEOTrainer
 from .order_execution.pd_trainer import OrderExecutionPDTrainer
+from .high_frequency_trading.trainer import HighFrequencyTradingTrainer

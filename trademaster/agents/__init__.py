@@ -6,3 +6,4 @@ from .portfolio_management.eiie import PortfolioManagementEIIE
 from .portfolio_management.investor_imitator import PortfolioManagementInvestorImitator
 from .order_execution.eteo import OrderExecutionETEO
 from .order_execution.pd import OrderExecutionPD
+from .high_frequency_trading.ddqn import HighFrequencyTradingDDQN

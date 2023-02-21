@@ -13,5 +13,7 @@ from .misc import load_best_model
 from .misc import save_object
 from .misc import load_object
 from .replay_buffer import ReplayBuffer
+from .replay_buffer import ReplayBufferHFT
+
 from .general_replay_buffer import GeneralReplayBuffer
 from .utils import set_seed
