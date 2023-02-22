@@ -8,11 +8,23 @@ from mmcv.utils import Registry
 from mmcv.utils import print_log
 import numpy as np
 import prettytable
+import random
+import torch
 import plotly.graph_objects as go
 import os.path as osp
 import pickle
 from scipy.stats import norm
 from argparse import Namespace
+
+def set_seed(random_seed):
+    random.seed(random_seed)
+    torch.cuda.manual_seed(random_seed)
+    torch.cuda.manual_seed_all(random_seed)
+    np.random.seed(random_seed)
+    torch.manual_seed(random_seed)
+    torch.backends.cudnn.benckmark = False
+    torch.backends.cudnn.deterministic = True
+    torch.set_default_dtype(torch.float32)
 def print_metrics(stats):
     table = prettytable.PrettyTable()
     for key, value in stats.items():
@@ -379,4 +391,3 @@ def MRL_F2B_args_converter(args):
 
 
     return output_args
-
