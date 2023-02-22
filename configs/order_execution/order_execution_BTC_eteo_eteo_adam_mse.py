@@ -25,7 +25,7 @@ data = dict(
     train_path="data/order_execution/BTC/train.csv",
     valid_path="data/order_execution/BTC/valid.csv",
     test_path="data/order_execution/BTC/test.csv",
-    test_style_path="data/order_execution/BTC/test_labeled_3_32_-0.01_0.01.csv",
+    test_dynamic_path="data/order_execution/BTC/test_labeled_3_32_-0.01_0.01.csv",
     tech_indicator_list=[
         "midpoint",
         "spread",
@@ -186,7 +186,7 @@ data = dict(
     state_length=10,
     target_order=1,
     initial_amount=100000,
-    test_style=0
+    test_dynamic=0
 )
 
 environment = dict(

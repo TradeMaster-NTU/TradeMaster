@@ -5,7 +5,7 @@ data = dict(
     train_path = "data/algorithmic_trading/BTC/train.csv",
     valid_path = "data/algorithmic_trading/BTC/valid.csv",
     test_path = "data/algorithmic_trading/BTC/test.csv",
-    test_style_path='data/algorithmic_trading/BTC/test_labeled_3_24_-0.15_0.15.csv',
+    test_dynamic_path='data/algorithmic_trading/BTC/test_labeled_3_24_-0.15_0.15.csv',
     tech_indicator_list = [
         "high",
         "low",

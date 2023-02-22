@@ -24,7 +24,7 @@ data = dict(
     train_path="data/high_frequency_trading/small_BTC/train.csv",
     valid_path="data/high_frequency_trading/small_BTC/valid.csv",
     test_path="data/high_frequency_trading/small_BTC/test.csv",
-    test_style_path="data/high_frequency_trading/small_BTC/test.csv",
+    test_dynamic_path="data/high_frequency_trading/small_BTC/test.csv",
     tech_indicator_list=[
         "imblance_volume_oe",
         "sell_spread_oe",

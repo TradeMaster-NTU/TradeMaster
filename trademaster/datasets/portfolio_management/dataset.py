@@ -22,28 +22,28 @@ class PortfolioManagementDataset(CustomDataset):
         self.train_path = osp.join(ROOT, get_attr(kwargs, "train_path", None))
         self.valid_path = osp.join(ROOT, get_attr(kwargs, "valid_path", None))
         self.test_path = osp.join(ROOT, get_attr(kwargs, "test_path", None))
-        self.test_style_path=osp.join(ROOT, get_attr(kwargs, "test_style_path", None))
-        test_style=int(get_attr(kwargs, "test_style", None))
-        if test_style!=-1:
+        self.test_dynamic_path=osp.join(ROOT, get_attr(kwargs, "test_dynamic_path", None))
+        test_dynamic=int(get_attr(kwargs, "test_dynamic", None))
+        if test_dynamic!=-1:
             length_day= get_attr(kwargs, "length_day", None)
-            self.test_style_paths=[]
-            data = pd.read_csv(self.test_style_path)
+            self.test_dynamic_paths=[]
+            data = pd.read_csv(self.test_dynamic_path)
             data = data.reset_index()
-            data = data.loc[data['label'] == test_style, :]
+            data = data.loc[data['label'] == test_dynamic, :]
             intervals, index_by_tick_list = self.get_styled_intervals_and_gives_new_index(data)
             data.drop(columns=['index'], inplace=True)
-            temp_foler=osp.join(ROOT,os.path.dirname(self.test_style_path),'style_slice')
+            temp_foler=osp.join(ROOT,os.path.dirname(self.test_dynamic_path),'style_slice')
             if not os.path.exists(temp_foler):
                 os.makedirs(temp_foler)
             for i, interval in enumerate(intervals):
                 data_temp = data.iloc[interval[0]:interval[1], :]
                 data_temp.index = index_by_tick_list[i]
-                path=osp.join(ROOT,temp_foler,str(test_style) + '_' + str(i) + '.csv')
+                path=osp.join(ROOT,temp_foler,str(test_dynamic) + '_' + str(i) + '.csv')
                 data_temp.to_csv(path)
                 if max(index_by_tick_list[i]) + 1 <= length_day:
                     print('The ' + str(i) + '_th segment length is less than the min length so it won\'t be tested')
                     continue
-                self.test_style_paths.append(path)
+                self.test_dynamic_paths.append(path)
 
         self.tech_indicator_list = get_attr(kwargs, "tech_indicator_list", [])
         self.initial_amount = get_attr(kwargs, "initial_amount", 100000)

@@ -42,9 +42,9 @@ class HighFrequencyTradingEnvironment(Environments):
         self.stack_length = get_attr(self.dataset, "backward_num_timestamp", 1)
         self.max_holding_number = get_attr(self.dataset, "max_holding_number", 0.01)
 
-        if self.task.startswith("test_style"):
-            style_test_path = get_attr(kwargs, "style_test_path", None)
-            self.df = pd.read_csv(style_test_path, index_col=0)
+        if self.task.startswith("test_dynamic"):
+            dynamics_test_path = get_attr(kwargs, "dynamics_test_path", None)
+            self.df = pd.read_csv(dynamics_test_path, index_col=0)
         else:
             self.df = pd.read_csv(self.df_path, index_col=0)
 
@@ -556,9 +556,9 @@ class HighFrequencyTradingTrainingEnvironment(HighFrequencyTradingEnvironment):
         self.stack_length = get_attr(self.dataset, "backward_num_timestamp", 1)
         self.max_holding_number = get_attr(self.dataset, "max_holding_number", 0.01)
 
-        if self.task.startswith("test_style"):
-            style_test_path = get_attr(kwargs, "style_test_path", None)
-            self.df = pd.read_csv(style_test_path, index_col=0)
+        if self.task.startswith("test_dynamic"):
+            dynamics_test_path = get_attr(kwargs, "dynamics_test_path", None)
+            self.df = pd.read_csv(dynamics_test_path, index_col=0)
         else:
             self.df = pd.read_csv(self.df_path, index_col=0)
 

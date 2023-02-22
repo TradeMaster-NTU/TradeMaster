@@ -35,7 +35,7 @@ def parse_args():
         help="download datasets config file path",
     )
     parser.add_argument("--task_name", type=str, default="train")
-    parser.add_argument("--test_style", type=str, default="-1")
+    parser.add_argument("--test_dynamic", type=str, default="-1")
     args = parser.parse_args()
     return args
 
@@ -48,7 +48,7 @@ def test_dqn():
 
     cfg = replace_cfg_vals(cfg)
     # update test style
-    cfg.data.update({"test_style": args.test_style})
+    cfg.data.update({"test_dynamic": args.test_dynamic})
     print(cfg)
 
     dataset = build_dataset(cfg)

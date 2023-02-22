@@ -154,13 +154,13 @@ class PortfolioManagementSARLTrainer(Trainer):
         df.to_csv(os.path.join(self.work_dir, "test_result.csv"), index=False)
         return daily_return
 
-    def style_test(self,style):
+    def dynamics_test(self,style):
         self.trainer.restore(self.best_model_path)
-        test_style_environments = []
-        for i, path in enumerate(dataset.test_style_paths):
-            config = dict(dataset=self.dataset, task="test_style",style_test_path=path,task_index=i)
-            test_style_environments.append(env_creator(config))
-        for i,env in enumerate(test_style_environments):
+        test_dynamic_environments = []
+        for i, path in enumerate(dataset.test_dynamic_paths):
+            config = dict(dataset=self.dataset, task="test_dynamic",dynamics_test_path=path,task_index=i)
+            test_dynamic_environments.append(env_creator(config))
+        for i,env in enumerate(test_dynamic_environments):
             state = env.reset()
             done = False
             while not done:
@@ -173,4 +173,4 @@ class PortfolioManagementSARLTrainer(Trainer):
             df = pd.DataFrame()
             df["daily_return"] = daily_return
             df["total assets"] = assets
-            df.to_csv(os.path.join(self.work_dir, "test_style_result"+"style_"+str(style)+"_part_"+str(i)+".csv"), index=False)
+            df.to_csv(os.path.join(self.work_dir, "test_dynamic_result"+"style_"+str(style)+"_part_"+str(i)+".csv"), index=False)
