@@ -24,7 +24,7 @@ data = dict(
     train_path='data/algorithmic_trading/BTC/train.csv',
     valid_path='data/algorithmic_trading/BTC/valid.csv',
     test_path='data/algorithmic_trading/BTC/test.csv',
-    test_style_path=
+    test_dynamic_path=
     'data/algorithmic_trading/BTC/test_labeled_3_24_-0.15_0.15.csv',
     tech_indicator_list=[
         'high', 'low', 'open', 'close', 'adjcp', 'zopen', 'zhigh', 'zlow',
@@ -32,7 +32,7 @@ data = dict(
     ],
     backward_num_day=5,
     forward_num_day=5,
-    test_style='-1')
+    test_dynamic='-1')
 environment = dict(type='AlgorithmicTradingEnvironment')
 transition = dict(
     type = "Transition"

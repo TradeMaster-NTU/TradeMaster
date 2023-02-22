@@ -47,8 +47,8 @@ class Server():
                              "order_excecution:PD_BTC",
                              "portfolio_management:dj30",
                              "portfolio_management:exchange"],
-            "optimizer_name": ["adam"],
-            "loss_name": ["mse"],
+            "optimizer_name": ["adam", "adaw"],
+            "loss_name": ["mae", "mse"],
             "agent_name": [
                 "algorithmic_trading:dqn",
                 "order_execution:eteo",
@@ -78,7 +78,7 @@ class Server():
                 "portfolio_management:dj30": "2021-12-31",
                 "portfolio_management:exchange": "2019-12-31",
             },
-            "style_test":[
+            "dynamics_test":[
                 "bear_market",
                 "bull_market",
                 "oscillation_market"
@@ -204,7 +204,7 @@ class Server():
         try:
             # market_dynamics_labeling parameters
             args={}
-            args['dataset_name'] = request_json.get("style_test_dataset_name")
+            args['dataset_name'] = request_json.get("dynamics_test_dataset_name")
             args['number_of_market_dynamics'] = request_json.get("number_of_market_style")
             if args['number_of_market_dynamics'] not in [3,4]:
                 raise Exception('only support dynamics number of 3 or 4 for now')
@@ -220,6 +220,7 @@ class Server():
             loss_name = request_json.get("loss_name")
             agent_name = request_json.get("agent_name").split(":")[-1]
             session_id= request_json.get("session_id")
+
 
 
 
@@ -262,6 +263,7 @@ class Server():
             session_id = request_json.get("session_id")
 
 
+
             error_code = 0
             info = "request success, save market dynamics"
             res = {
@@ -282,11 +284,11 @@ class Server():
             return jsonify(res)
 
 
-    def run_style_test(self, request):
+    def run_dynamics_test(self, request):
         request_json = json.loads(request.get_data(as_text=True))
         try:
             #
-            style_test_label = request_json.get("test_dynamic_label")
+            dynamics_test_label = request_json.get("test_dynamic_label")
             # same as agent training
             task_name = request_json.get("task_name")
             dataset_name = request_json.get("dataset_name").split(":")[-1]
@@ -295,18 +297,21 @@ class Server():
             agent_name = request_json.get("agent_name").split(":")[-1]
             session_id = request_json.get("session_id")
 
+
+
+
             with open('Radar_plot.png', "rb") as image_file:
                 encoded_string = base64.b64encode(image_file.read())
 
             #print log output
-            style_test_log_info = 'test_log_placeholder'
+            dynamics_test_log_info = 'test_log_placeholder'
 
 
             error_code = 0
-            info = f"request success, start test market {style_test_label}\n\n"
+            info = f"request success, start test market {dynamics_test_label}\n\n"
             res = {
                 "error_code": error_code,
-                "info": info+style_test_log_info,
+                "info": info+dynamics_test_log_info,
                 "session_id": session_id,
                 'radar_plot':encoded_string
             }
@@ -369,9 +374,9 @@ def test():
     res = SERVER.test(request)
     return res
 
-@app.route("/api/TradeMaster/style_test", methods=["POST"])
-def style_test():
-    res = SERVER.style_test(request)
+@app.route("/api/TradeMaster/dynamics_test", methods=["POST"])
+def dynamics_test():
+    res = SERVER.dynamics_test(request)
     return res
 
 @app.route("/api/TradeMaster/test_status", methods=["POST"])
@@ -385,18 +390,18 @@ def health_check():
     return res
 
 @app.route("/api/TradeMaster/start_market_dynamics_labeling", methods=["POST"])
-def style_test():
+def dynamics_test():
     res = SERVER.start_market_dynamics_labeling(request)
     return res
 
 @app.route("/api/TradeMaster/save_market_dynamics_labeling", methods=["POST"])
-def style_test():
+def dynamics_test():
     res = SERVER.save_market_dynamics_labeling(request)
     return res
 
-@app.route("/api/TradeMaster/run_style_test", methods=["POST"])
-def style_test():
-    res = SERVER.run_style_test(request)
+@app.route("/api/TradeMaster/run_dynamics_test", methods=["POST"])
+def dynamics_test():
+    res = SERVER.run_dynamics_test(request)
     return res
 
 

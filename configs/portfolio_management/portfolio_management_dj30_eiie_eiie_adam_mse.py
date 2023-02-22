@@ -23,7 +23,7 @@ data = dict(
     train_path='data/portfolio_management/dj30/train.csv',
     valid_path='data/portfolio_management/dj30/valid.csv',
     test_path='data/portfolio_management/dj30/test.csv',
-    test_style_path='data/portfolio_management/dj30/DJI_label_by_DJIindex_3_24_-0.25_0.25.csv',
+    test_dynamic_path='data/portfolio_management/dj30/DJI_label_by_DJIindex_3_24_-0.25_0.25.csv',
     tech_indicator_list=[
         'zopen', 'zhigh', 'zlow', 'zadjcp', 'zclose',
         'zd_5', 'zd_10', 'zd_15', 'zd_20', 'zd_25', 'zd_30'

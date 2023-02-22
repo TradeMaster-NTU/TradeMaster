@@ -28,7 +28,7 @@ def parse_args():
     parser.add_argument("--config", default=osp.join(ROOT, "configs", "portfolio_management", "portfolio_management_dj30_investor_imitator_investor_imitator_adam_mse.py"),
                         help="download datasets config file path")
     parser.add_argument("--task_name", type=str, default="train")
-    parser.add_argument("--test_style", type=str, default="-1")
+    parser.add_argument("--test_dynamic", type=str, default="-1")
     args = parser.parse_args()
     return args
 
@@ -41,7 +41,7 @@ def test_investor_imitator():
 
     cfg = replace_cfg_vals(cfg)
     # update test style
-    cfg.data.update({'test_style': args.test_style})
+    cfg.data.update({'test_dynamic': args.test_dynamic})
     print(cfg)
 
     dataset = build_dataset(cfg)
@@ -52,11 +52,11 @@ def test_investor_imitator():
     valid_environment = build_environment(cfg, default_args=dict(dataset=dataset, task="valid"))
     test_environment = build_environment(cfg, default_args=dict(dataset=dataset, task="test"))
 
-    if task_name.startswith("style_test"):
-        test_style_environments = []
-        for i, path in enumerate(dataset.test_style_paths):
-            test_style_environments.append(build_environment(cfg, default_args=dict(dataset=dataset, task="test_style",
-                                                                                    style_test_path=path,
+    if task_name.startswith("dynamics_test"):
+        test_dynamic_environments = []
+        for i, path in enumerate(dataset.test_dynamic_paths):
+            test_dynamic_environments.append(build_environment(cfg, default_args=dict(dataset=dataset, task="test_dynamic",
+                                                                                    dynamics_test_path=path,
                                                                                     task_index=i)))
     action_dim = train_environment.action_dim
     state_dim = train_environment.state_dim
@@ -83,9 +83,9 @@ def test_investor_imitator():
                                                criterion=criterion,
                                                device = device))
 
-    if task_name.startswith("style_test"):
+    if task_name.startswith("dynamics_test"):
         trainers = []
-        for env in test_style_environments:
+        for env in test_dynamic_environments:
             trainers.append(build_trainer(cfg, default_args=dict(train_environment=train_environment,
                                                                  valid_environment=valid_environment,
                                                                  test_environment=env,
@@ -104,7 +104,7 @@ def test_investor_imitator():
     elif task_name.startswith("test"):
         trainer.test()
         print("test end")
-    elif task_name.startswith("style_test"):
+    elif task_name.startswith("dynamics_test"):
         for trainer in trainers:
             trainer.test()
         print("style test end")

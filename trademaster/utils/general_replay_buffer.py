@@ -61,12 +61,6 @@ class GeneralReplayBuffer:
         self.p = p
         self.cur_size = self.max_size if self.if_full else self.p
 
-    def clear(self):
-        for name in self.names:
-            assert name in self.shapes
-            # (max_size, num_seqs, dim1, dim2, ...)
-            self.storage[name] = torch.empty(self.shapes[name], dtype=torch.float32, device=self.device)
-
     def sample(self, batch_size: int) -> namedtuple:
         sample_len = self.cur_size - 1
 
