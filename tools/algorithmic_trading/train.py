@@ -20,7 +20,8 @@ from trademaster.optimizers.builder import build_optimizer
 from trademaster.losses.builder import build_loss
 from trademaster.trainers.builder import build_trainer
 from trademaster.transition.builder import build_transition
-
+from trademaster.utils import set_seed
+set_seed(2023)
 def parse_args():
     parser = argparse.ArgumentParser(description='Download Alpaca Datasets')
     parser.add_argument("--config", default=osp.join(ROOT, "configs", "algorithmic_trading", "algorithmic_trading_BTC_dqn_dqn_adam_mse.py"),
@@ -141,4 +142,3 @@ if __name__ == '__main__':
     algorithmic_trading
     portfolio_management
     """
-
