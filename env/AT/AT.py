@@ -130,7 +130,8 @@ class TradingEnv(gym.Env):
             print("the Calmar Ratio is", cr)
             print("the Sortino Ratio is", sor)
             print("=================================")
-            return self.state, self.reward, self.terminal, {
+            # If it is the terminal state, no action is taken and the reward must be 0.
+            return self.state, 0.0, self.terminal, {
                 "volidality": self.var
             }
         else:
