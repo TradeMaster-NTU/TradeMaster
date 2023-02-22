@@ -15,6 +15,7 @@ from torch.nn.utils import clip_grad_norm_
 from types import MethodType
 import torch.nn.functional as F
 
+
 @AGENTS.register_module()
 class HighFrequencyTradingDDQN(AgentBase):
     def __init__(self, **kwargs):
@@ -31,8 +32,9 @@ class HighFrequencyTradingDDQN(AgentBase):
         self.auxiliary_coffient = get_attr(
             kwargs,
             "auxiliary_coffient",
-            512,)
-        
+            512,
+        )
+
         self.state_dim = get_attr(
             kwargs, "state_dim", 66
         )  # vector dimension (feature number) of state
@@ -61,9 +63,7 @@ class HighFrequencyTradingDDQN(AgentBase):
         self.state_value_tau = get_attr(
             kwargs, "state_value_tau", 5e-3
         )  # the tau of normalize for value and state
-        self.auxiliary_criterion= get_attr(
-            kwargs, "auxiliary_criterion", F.kl_div
-        )
+
         self.last_state = None  # last state of the trajectory for training. last_state.shape == (num_envs, state_dim)
         self.last_info = None
         self.start_index = 0
@@ -91,21 +91,23 @@ class HighFrequencyTradingDDQN(AgentBase):
         self.get_obj_critic = self.get_obj_critic_raw
         self.act_target = self.cri_target = deepcopy(self.act)
         self.completed_eposide_number = 0
-        self.update_time=0
-    
-    def get_action_test(self,ary_state,ary_info):
+        self.update_time = 0
+
+    def get_action_test(self, ary_state, ary_info):
         state = torch.as_tensor(ary_state, dtype=torch.float32, device=self.device)
         previous_action = torch.as_tensor(
-                ary_info["previous_action"], dtype=torch.long, device=self.device
-            )
+            ary_info["previous_action"], dtype=torch.long, device=self.device
+        )
         avaliable_action = torch.as_tensor(
-                ary_info["avaliable_action"], dtype=torch.float32, device=self.device
-            )
-        action=self.cri.get_action_test(state.unsqueeze(0),previous_action.unsqueeze(0),avaliable_action.unsqueeze(0))
-        action=action[0, 0].detach().cpu().numpy()
+            ary_info["avaliable_action"], dtype=torch.float32, device=self.device
+        )
+        action = self.cri.get_action_test(
+            state.unsqueeze(0),
+            previous_action.unsqueeze(0),
+            avaliable_action.unsqueeze(0),
+        )
+        action = action[0, 0].detach().cpu().numpy()
         return action
-        
-        
 
     def get_save(self):
         models = {
@@ -129,7 +131,6 @@ class HighFrequencyTradingDDQN(AgentBase):
         start_list: list,
         if_random: bool = False,
     ) -> ReplayBufferHFT:
-
         ary_state = self.last_state
         # last_state.shape = (state_dim, ) for a single env.
         ary_info = self.last_info
@@ -172,7 +173,7 @@ class HighFrequencyTradingDDQN(AgentBase):
                 self.start_index += 1
                 random_start = start_list[self.start_index]
                 self.completed_eposide_number += 1
-        self.last_info,self.last_state=ary_info,ary_state
+        self.last_info, self.last_state = ary_info, ary_state
         return buffer
 
     def get_obj_critic_raw(self, buffer: ReplayBufferHFT) -> Tuple[Tensor, Tensor]:
@@ -184,54 +185,74 @@ class HighFrequencyTradingDDQN(AgentBase):
         :return: the loss of the network and Q values.
         """
         with torch.no_grad():
-            states, infos, actions, rewards, next_states, next_infos, dones = buffer.sample()
-            next_q = self.cri_target(next_states.reshape(buffer.batch_size, -1),
-                                 next_infos["previous_action"].long(),
-                                 next_infos["avaliable_action"]).max(dim=1, keepdim=True)[0].squeeze(1)
-            q_label = rewards + (1-dones) * next_q
+            (
+                states,
+                infos,
+                actions,
+                rewards,
+                next_states,
+                next_infos,
+                dones,
+            ) = buffer.sample()
+            next_q = (
+                self.cri_target(
+                    next_states.reshape(buffer.batch_size, -1),
+                    next_infos["previous_action"].long(),
+                    next_infos["avaliable_action"],
+                )
+                .max(dim=1, keepdim=True)[0]
+                .squeeze(1)
+            )
+            q_label = rewards + (1 - dones) * next_q
 
-        q_value = self.cri(states.reshape(buffer.batch_size, -1),
-                                 infos["previous_action"].long(),
-                                 infos["avaliable_action"]).gather(1, actions.long()).squeeze(1)
-        obj_critic = self.criterion(q_value, q_label)
-        predict_action_distrbution = self.cri(
-            states.reshape(buffer.batch_size, -1), infos["previous_action"].long(),
-            infos["avaliable_action"])
+        q_value = (
+            self.cri(
+                states.reshape(buffer.batch_size, -1),
+                infos["previous_action"].long(),
+                infos["avaliable_action"],
+            )
+            .gather(1, actions.long())
+            .squeeze(1)
+        )
+        q_distribution = self.cri(
+            states.reshape(buffer.batch_size, -1),
+            infos["previous_action"].long(),
+            infos["avaliable_action"],
+        )
+
         demonstration = infos["DP_action"]
-        auxiliary_critirc=self.auxiliary_criterion((predict_action_distrbution.softmax(dim=-1) + 1e-8).log(),
-            demonstration,
-            reduction='mean')
-        return obj_critic, auxiliary_critirc
-    def optimizer_update(self, optimizer: torch.optim, objective: Tensor,auxiliary:Tensor):
+        loss = self.criterion(q_value, q_label, q_distribution, demonstration)
+        return loss
+
+    def optimizer_update(self, optimizer: torch.optim, loss):
         """minimize the optimization objective via update the network parameters
 
         optimizer: `optimizer = torch.optim.SGD(net.parameters(), learning_rate)`
         objective: `objective = net(...)` the optimization objective, sometimes is a loss function.
         """
         optimizer.zero_grad()
-        loss=objective+self.auxiliary_coffient*auxiliary
         loss.backward()
-        clip_grad_norm_(parameters=optimizer.param_groups[0]["params"],
-                        max_norm=self.clip_grad_norm)
+        clip_grad_norm_(
+            parameters=optimizer.param_groups[0]["params"], max_norm=self.clip_grad_norm
+        )
         optimizer.step()
-    
-    
-    
+
     def update_net(self, buffer: ReplayBufferHFT) -> Tuple[float, ...]:
         update_times = int(1 * self.repeat_times)
         assert update_times >= 1
         for _ in range(update_times):
-            obj_critic, auxiliary_critirc = self.get_obj_critic(buffer)
-            
-            self.optimizer_update(self.cri_optimizer, obj_critic,auxiliary_critirc)
-            self.update_time+=1
-            if self.update_time%self.target_update_freq==1:
+            loss = self.get_obj_critic(buffer)
+
+            self.optimizer_update(self.cri_optimizer, loss)
+            self.update_time += 1
+            if self.update_time % self.target_update_freq == 1:
                 self.soft_update(self.cri_target, self.cri, self.soft_update_tau)
-        return obj_critic / update_times, auxiliary_critirc / update_times
+        return loss / update_times
 
     @staticmethod
-    def soft_update(target_net: torch.nn.Module, current_net: torch.nn.Module,
-                    tau: float):
+    def soft_update(
+        target_net: torch.nn.Module, current_net: torch.nn.Module, tau: float
+    ):
         """soft update target network via current network
 
         target_net: update target network via current network to make training more stable.

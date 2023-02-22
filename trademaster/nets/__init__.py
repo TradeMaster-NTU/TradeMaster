@@ -8,3 +8,4 @@ from .sarl import LSTMClf
 from .sarl import mLSTMClf
 from .eteo import ETEOStacked
 from .pd import PDNet
+from .high_frequency_trading_dqn import HFTQNet

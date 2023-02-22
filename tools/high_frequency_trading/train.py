@@ -21,9 +21,6 @@ from trademaster.optimizers.builder import build_optimizer
 from trademaster.losses.builder import build_loss
 from trademaster.trainers.builder import build_trainer
 
-from trademaster.utils import set_seed
-set_seed(2023)
-
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Download Alpaca Datasets")
@@ -64,7 +61,7 @@ def test_dqn():
     test_environment = build_environment(
         cfg, default_args=dict(dataset=dataset, task="test")
     )
-    cfg.environment = cfg.train_enviroment
+    cfg.environment = cfg.train_environment
     train_environment = build_environment(
         cfg, default_args=dict(dataset=dataset, task="train")
     )
