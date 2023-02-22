@@ -113,6 +113,8 @@ def test_pd():
     if task_name.startswith("train"):
         trainer.train_and_valid()
         print("train end")
+    elif task_name.startswith("test"):
+        trainer.test()
     elif task_name.startswith("style_test"):
         reward_list = []
         for trainer in trainers:
