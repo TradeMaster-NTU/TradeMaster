@@ -4,7 +4,7 @@
 [![License](https://img.shields.io/github/license/ai-gamer/PRUDEX-Compass)](License)
 
 <div align="center">
-<img align="center" src=figure/Logo.png width="30%"/>
+<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/main/figure/Logo.png width="30%"/>
 </div>
 
 ***
@@ -33,7 +33,7 @@ It covers the full pipeline for the design, implementation, evaluation and deplo
 
 ## Overview
 <div align="center">
-<img align="center" src=figure/Architecture.jpg width="70%"/>
+<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/main/figure/Architecture.jpg width="70%"/>
 </div>
 
 TradeMaster could be beneficial to a wide range of communities including leading trading firms, startups, financial service providers and personal investors. We hope TradeMaster can make a change for the whole pipeline of FinRL to prevent untrustworthy results and lead successful industry deployment.
@@ -41,7 +41,7 @@ TradeMaster could be beneficial to a wide range of communities including leading
 ## Installation
 We provide a video tutorial of using docker to build a proper environment of running this project.
 
-[![Video Tutorial](tutorial/installation/cover(1).png)](https://www.youtube.com/watch?v=uo80u1byGRc)
+[![Video Tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/installation/cover(1).png)](https://www.youtube.com/watch?v=uo80u1byGRc)
 
 To help you better understand the step discribed in the video, Here are the installation tutorials for different operating systems:
 - [Docker](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/installation/Docker/README.md)  <font color='red'>  (Recommended)  </font>
@@ -182,13 +182,13 @@ Users may download data from the following data source with personal account:
 TradeMaster supports financial data with open, high, low, close, volume (OHLCV) raw informations as:
 
 <div align="center">
-<img align="center" src=figure/ohlcv.jpg width="70%"/>
+<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/main/figure/ohlcv.jpg width="70%"/>
 </div>
 
 We compute 10 technical indicators to describe the financial markets:
 
 <div align="center">
-<img align="center" src=figure/feature.jpg width="40%"/>
+<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/main/figure/feature.jpg width="40%"/>
 </div>
 
 Users can adapt their data with prefered features by changing the data loading and feature calculation part with corresponding input and output size.
