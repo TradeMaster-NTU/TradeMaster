@@ -190,3 +190,19 @@ class HighFrequencyTradingTrainer(Trainer):
         df = self.test_environment.save_asset_memoey()
         df.to_csv(os.path.join(self.work_dir, "test_result.csv"), index=False)
         return df
+
+    def test_with_customize_policy(self, policy, customize_policy_id):
+
+        state, info = self.test_environment.reset()
+        self.test_environment.test_id = customize_policy_id
+        print(f"Test customize policy: {str(customize_policy_id)}")
+        while True:
+            action = policy(state, self.test_environment)
+            # print(action)
+            action = np.int64(action)
+            state, reward, done, info = self.test_environment.step(action)
+            if done:
+                break
+        df = self.test_environment.save_asset_memoey()
+        df.to_csv(os.path.join(self.work_dir, 'test_result_customize_policy_'+str(customize_policy_id)+'.csv'), index=False)
+        return df

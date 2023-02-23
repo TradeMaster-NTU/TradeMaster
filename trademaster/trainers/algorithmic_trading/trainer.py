@@ -200,3 +200,73 @@ class AlgorithmicTradingTrainer(Trainer):
         df["total assets"] = assets
         df.to_csv(os.path.join(self.work_dir, "test_result.csv"), index=False)
         return daily_return
+
+    def test_with_customize_policy(self,policy,customize_policy_id):
+
+        state = self.test_environment.reset()
+        self.test_environment.test_id=customize_policy_id
+        print(f"Test customize policy: {str(customize_policy_id)}")
+
+        episode_reward_sum = 0
+
+        while True:
+            tensor_state = torch.as_tensor(state, dtype=torch.float32, device=self.device).unsqueeze(0)
+            action = policy(tensor_state,self.test_environment)
+            # print(action)
+            action=np.int64(action)
+            # print('action is: ',action,type(action))
+            state, reward, done, _ = self.test_environment.step(action)
+            episode_reward_sum += reward
+            if done:
+                print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
+                break
+
+        rewards = self.test_environment.save_asset_memory()
+        assets = rewards["total assets"].values
+        df_return = self.test_environment.save_portfolio_return_memory()
+        daily_return = df_return.daily_return.values
+        df = pd.DataFrame()
+        df["daily_return"] = daily_return
+        df["total assets"] = assets
+        df.to_csv(os.path.join(self.work_dir, 'test_result_customize_policy_'+str(customize_policy_id)+'.csv'), index=False)
+        return daily_return
+
+    def test_with_customize_actions(self,customize_actions,customize_actions_id):
+
+
+        print(f"Test customize policy: {str(customize_actions_id)}")
+        self.test_environment.test_id = customize_actions_id
+        state = self.test_environment.reset()
+
+        if len(customize_actions)!=self.test_environment.action_length:
+            raise ValueError('Action length doesn\'t fit.')
+
+
+
+        episode_reward_sum = 0
+        action_index=0
+        while True:
+            action=customize_actions[action_index]
+            action_index+=1
+            # print('action is: ',action,type(action))
+            if action<0 or action>self.test_environment.action_dim-1:
+                raise ValueError('Action volume doesn\'t fit.')
+            action=np.int64(action)
+            state, reward, done, _ = self.test_environment.step(action)
+            episode_reward_sum += reward
+            if action_index==self.test_environment.action_length+1:
+                print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
+                break
+
+        rewards = self.test_environment.save_asset_memory()
+        assets = rewards["total assets"].values
+        df_return = self.test_environment.save_portfolio_return_memory()
+        daily_return = df_return.daily_return.values
+        df = pd.DataFrame()
+        df["daily_return"] = daily_return
+        df["total assets"] = assets
+        df.to_csv(os.path.join(self.work_dir, "test_result_customize_actions_id_"+str(customize_actions_id)+".csv"), index=False)
+        return daily_return
+
+
+
