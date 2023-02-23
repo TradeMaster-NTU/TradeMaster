@@ -380,9 +380,9 @@ def MRL_F2B_args_converter(args):
     # Granularity=0-> base=5 Granularity=1-> base=25
     G=args['Granularity']
     output_args['fitting_parameters']=[str(2/(20*float(G)+5)),str(1/(20*float(G)+5)),'4']#"2/7 2/14 4"
-    output_args['labeling_parameters']=[args['bear_threshold'],args['bull_threshold']]
-    output_args['regime_number']=args['number_of_market_dynamics']
-    output_args['length_limit']=args['minimun_length']
+    output_args['labeling_parameters']=[float(args['bear_threshold']),float(args['bull_threshold'])]
+    output_args['regime_number']=int(args['number_of_market_dynamics'])
+    output_args['length_limit']=int(args['minimun_length'])
     output_args['PM']=args['PM']
     if args['dataset_name']=='order_excecution:BTC':
         output_args['OE_BTC']=True

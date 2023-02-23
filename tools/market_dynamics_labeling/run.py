@@ -59,7 +59,7 @@ def run_mdm():
     print(f'the visualizations are at {plot_dir}')
 
     ## wirte path to cfg
-    cfg.market_dynamics_model.process_datafile_path=process_datafile_path
+    cfg.market_dynamics_model.process_datafile_path=process_datafile_path.replace("\\", "/")
     cfg.market_dynamics_model.market_dynamic_labeling_visualization_paths=market_dynamic_labeling_visualization_paths
     cfg.dump(args.config)
 
