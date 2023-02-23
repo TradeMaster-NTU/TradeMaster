@@ -64,12 +64,10 @@ class AlgorithmicTradingEnvironment(Environments):
         self.compound_memory = [[self.initial_amount, 0]]
         # the compound_memory's element consists of 2 parts: the cash and the number of bitcoin you have in hand
         self.portfolio_return_memory = [0]
-        # self.buy_and_hold_portfolio_return_memory=[0]
         self.transaction_cost_memory = []
         self.terminal = False
         self.portfolio_value = self.initial_amount
         self.asset_memory = [self.initial_amount]
-        # self.buy_and_hold_asset_memory = [self.initial_amount]
         self.day = self.backward_num_day
         self.data = self.df.iloc[self.day - self.backward_num_day:self.day, :]
         self.date_memory = [self.data.date.unique()[-1]]

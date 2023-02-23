@@ -24,6 +24,7 @@ class HighFrequencyTradingTrainer(Trainer):
         self.train_environment = get_attr(kwargs, "train_environment", None)
         self.valid_environment = get_attr(kwargs, "valid_environment", None)
         self.test_environment = get_attr(kwargs, "test_environment", None)
+        self.agent = get_attr(kwargs, "agent", None)
 
         self.work_dir = get_attr(kwargs, "work_dir", None)
         self.work_dir = os.path.join(ROOT, self.work_dir)
