@@ -15,10 +15,6 @@
 ***
 TradeMaster is a first-of-its kind, best-in-class __open-source platform__ for __quantitative trading (QT)__ empowered by __reinforcement learning (RL)__, which covers the __full pipeline__ for the design, implementation, evaluation and deployment of RL-based algorithms.
 
-
-
-It covers the full pipeline for the design, implementation, evaluation and deployment of RL-based trading methods. It contains: 1) a toolkit for efficient data collection, preprocessing and analysis; 2) a high-fidelity data-driven market simulator for mainstream QT tasks (e.g., portfolio management and algorithmic trading); 3) standard implementations of over 10 novel FinRL methods; 4) a systematic evaluation benchmark called PRUDEX-Compass.
-
 ## Outline
 
 - [TradeMaster: An RL Platform for Trading](#trademaster-an-rl-platform-for-trading)
@@ -40,14 +36,12 @@ It covers the full pipeline for the design, implementation, evaluation and deplo
 
 ## Overview
 <div align="center">
-<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/architecture.jpg width="70%"/>
+<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/architecture.jpg width="85%"/>
 </div>
+<br>
 
-<div align="center">
-<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/main/figure/Architecture.jpg width="70%"/>
-</div>
+__TradeMaster__ is composed of 6 key modules: 1) multi-modality market data of different financial assets at multiple granularity; 2) whole data preprocessing pipeline; 3) a series of high-fidelity data-driven market simulators for mainstream QT tasks; 4) efficient implementations of over 13 novel RL-based trading algorithms; 5) systematic evaluation toolkits with 6 axes and 17 measures; 6) different interfaces for interdisciplinary users.
 
-TradeMaster could be beneficial to a wide range of communities including leading trading firms, startups, financial service providers and personal investors. We hope TradeMaster can make a change for the whole pipeline of FinRL to prevent untrustworthy results and lead successful industry deployment.
 
 ## Installation
 We provide a video tutorial of using docker to build a proper environment of running this project.
