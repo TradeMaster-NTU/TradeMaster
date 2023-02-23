@@ -481,7 +481,7 @@ class Server():
                 self.sessions = self.dump_sessions({session_id: self.sessions[session_id]})
 
             error_code = 0
-            info = "request success, show market dynamics labeling visualization number"
+            info = "request success, show market dynamics labeling visualization"
 
             res = {
                 "error_code": error_code,
@@ -522,7 +522,7 @@ class Server():
             cfg = replace_cfg_vals(cfg)
 
             # update dataset cfg
-            cfg.data.test_dynamic_path = MDM_datafile_path
+            cfg.data.test_dynamic_path = MDM_datafile_path.replace("\\", "/")
             cfg_path = os.path.join(work_dir, osp.basename(cfg_path))
             cfg.dump(cfg_path)
             logger.info(cfg)
@@ -578,7 +578,6 @@ class Server():
             logger.info(cmd)
             DT_info = run_cmd(cmd)
             logger.info(DT_info)
-
             radar_plot_path = osp.join(work_dir, 'radar_plot_agent_' + str(dynamics_test_label) + '.png')
             with open(radar_plot_path, "rb") as image_file:
                 encoded_string = base64.b64encode(image_file.read())
