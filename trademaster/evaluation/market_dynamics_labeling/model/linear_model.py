@@ -66,7 +66,7 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
         print('plotting done')
         if self.OE_BTC == True:
             os.remove('./temp/OE_BTC_processed.csv')
-        return process_datafile_path, market_dynamic_labeling_visualization_paths
+        return os.path.abspath(process_datafile_path), market_dynamic_labeling_visualization_paths
 
 
 

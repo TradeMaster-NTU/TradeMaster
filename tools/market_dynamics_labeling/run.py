@@ -54,7 +54,7 @@ def run_mdm():
     model = build_market_dynamics_model(cfg)
 
     process_datafile_path, market_dynamic_labeling_visualization_paths=model.run()
-    print(f'the process datafile is at {process_datafile_path}')
+    print(f'the processed datafile is at {process_datafile_path}')
     plot_dir = os.path.dirname(os.path.realpath(market_dynamic_labeling_visualization_paths[0]))
     print(f'the visualizations are at {plot_dir}')
 
