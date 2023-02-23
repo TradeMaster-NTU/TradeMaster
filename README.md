@@ -1,15 +1,21 @@
 # TradeMaster: An RL Platform for Trading
+
+<div align="center">
+<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/main/figure/Logo.png width="25%"/> 
+
+<div>&nbsp;</div>
+  
 [![Python 3.7](https://shields.io/badge/python-3.9-blue.svg)](https://www.python.org/downloads/release/python-3916/)
 [![Platform](https://img.shields.io/badge/platform-linux%20%7C%20windows%20%7C%20macos-lightgrey)](Platform)
 [![License](https://img.shields.io/github/license/TradeMaster-NTU/TradeMaster)](License)
 [![Document](https://img.shields.io/badge/docs-latest-red)](https://trademaster.readthedocs.io/en/latest/)
 
-<div align="center">
-<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/main/figure/Logo.png width="30%"/>
 </div>
 
 ***
-TradeMaster is a first-of-its kind, best-in-class open-source platform for quantitative trading (QT) empowered by reinforcement learning (RL).
+TradeMaster is a first-of-its kind, best-in-class __open-source platform__ for __quantitative trading (QT)__ empowered by __reinforcement learning (RL)__, which covers the __full pipeline__ for the design, implementation, evaluation and deployment of RL-based algorithms.
+
+
 
 It covers the full pipeline for the design, implementation, evaluation and deployment of RL-based trading methods. It contains: 1) a toolkit for efficient data collection, preprocessing and analysis; 2) a high-fidelity data-driven market simulator for mainstream QT tasks (e.g., portfolio management and algorithmic trading); 3) standard implementations of over 10 novel FinRL methods; 4) a systematic evaluation benchmark called PRUDEX-Compass.
 
