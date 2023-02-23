@@ -312,9 +312,11 @@ class HighFrequencyTradingEnvironment(Environments):
             df_value = self.save_asset_memoey()
             daily_return=df_value["daily_return"].values
             assets = df_value["total assets"].values
+            ## Excess profit is profit margin
             save_dict = OrderedDict(
                 {
                     "Profit Margin": tr * 100,
+                    "Excess Profit": tr * 100 - 0,
                     "daily_return": daily_return,
                     "total_assets": assets
                 }
