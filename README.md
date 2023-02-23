@@ -40,7 +40,7 @@ It covers the full pipeline for the design, implementation, evaluation and deplo
 
 ## Overview
 <div align="center">
-<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/architecture.pdf width="70%"/>
+<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/architecture.jpg width="70%"/>
 </div>
 
 <div align="center">
