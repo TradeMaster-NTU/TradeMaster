@@ -117,7 +117,7 @@ def test_deeptrader():
     elif task_name.startswith("dynamics_test"):
         for trainer in trainers:
             trainer.test()
-        print("style test end")
+        print("dynamics test end")
 
 
 

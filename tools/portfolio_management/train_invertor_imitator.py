@@ -107,7 +107,7 @@ def test_investor_imitator():
     elif task_name.startswith("dynamics_test"):
         for trainer in trainers:
             trainer.test()
-        print("style test end")
+        print("dynamics test end")
 
 
 if __name__ == '__main__':
