@@ -754,20 +754,6 @@ class HighFrequencyTradingTrainingEnvironment(HighFrequencyTradingEnvironment):
             )
             table = print_metrics(stats)
             print(table)
-            df_value = self.save_asset_memoey()
-            daily_return=df_value["daily_return"].values
-            assets = df_value["total assets"].values
-            save_dict = OrderedDict(
-                {
-                    "Profit Margin": tr * 100,
-                    "daily_return": daily_return,
-                    "total_assets": assets
-                }
-            )
-            metric_save_path=osp.join(self.work_dir,'metric_'+str(self.task)+'_'+str(self.test_dynamic)+'_'+str(self.test_id)+'_'+str(self.task_index)+'.pickle')
-            with open(metric_save_path, 'wb') as handle:
-                pickle.dump(save_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
-            print('metric result saved to '+metric_save_path)
         else:
             DP_distribution = [0] * 11
             DP_distribution[self.demonstration_action[self.day - 1]] = 1

@@ -13,7 +13,8 @@ import pandas as pd
 import pytz
 from flask import Flask, request, jsonify
 from mmcv import Config
-
+ROOT = str(pathlib.Path(__file__).resolve().parents[1])
+sys.path.append(ROOT)
 
 
 from trademaster.utils import replace_cfg_vals,MRL_F2B_args_converter
@@ -27,8 +28,7 @@ import base64
 tz = pytz.timezone('Asia/Shanghai')
 
 
-ROOT = str(pathlib.Path(__file__).resolve().parents[1])
-sys.path.append(ROOT)
+
 
 
 app = Flask(__name__)
