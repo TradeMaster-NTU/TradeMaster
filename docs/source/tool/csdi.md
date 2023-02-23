@@ -1,4 +1,8 @@
 # Missing Value Imputation with CSDI
+<div align="center">
+  <img src="example_figs/csdi.png">
+</div>
+
 Most of the raw data retrieved from different data sources consist of missing values (NaN values), and the most common method of dealing with missing values is directly dropping them. However, we provide an alternative solution by using the imputation model proposed in the following paper. 
 
 [CSDI: Conditional Score-based Diffusion Models for Probabilistic Time Series Imputation (Yusuke Tashiro, etc.)](https://arxiv.org/abs/2107.03502) *NeurIPS 2021*
