@@ -5,7 +5,7 @@
 
 <div>&nbsp;</div>
   
-[![Python 3.7](https://shields.io/badge/python-3.9-blue.svg)](https://www.python.org/downloads/release/python-3916/)
+[![Python 3.9](https://shields.io/badge/python-3.9-blue.svg)](https://www.python.org/downloads/release/python-3916/)
 [![Platform](https://img.shields.io/badge/platform-linux%20%7C%20windows%20%7C%20macos-lightgrey)](Platform)
 [![License](https://img.shields.io/github/license/TradeMaster-NTU/TradeMaster)](License)
 [![Document](https://img.shields.io/badge/docs-latest-red)](https://trademaster.readthedocs.io/en/latest/)
@@ -39,6 +39,10 @@ It covers the full pipeline for the design, implementation, evaluation and deplo
   - [Competition](#competition)
 
 ## Overview
+<div align="center">
+<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/architecture.pdf width="70%"/>
+</div>
+
 <div align="center">
 <img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/main/figure/Architecture.jpg width="70%"/>
 </div>
