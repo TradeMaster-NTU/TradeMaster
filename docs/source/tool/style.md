@@ -52,7 +52,12 @@ The scores of the visualization result are calculated as described:
 ### Use Market Dynamics Model to prepare evaluation datasets
 It is recommended to run through the trademaster/evaluation/market_dynamics_labeling/example.ipynb notebook to visualize the labeling process. This will also give hints on
 deciding the parameters for your dataset. The example.html contains the visualization results from example.ipynb.
-
+#### Running from configuration file 
+Change the parameters in `configs/evaluation/market_dynamics_modeling.py` and run 
+```
+$ python tools/market_dynamics_labeling/run.py
+```
+#### Running from command lines 
 An example of labeling the data
 <br />
    ```
@@ -101,5 +106,8 @@ The script will take in a data file and output the file with a market regime lab
 ```
  python tools/algorithmic_trading/train.py --task_name dynamics_test --test_dynamic 0
 ```
+
+### Try out the pipeline online 
+Check our [online platform](http://trademaster.ai/) for more information.
 
 
