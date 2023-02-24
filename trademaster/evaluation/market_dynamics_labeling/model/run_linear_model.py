@@ -68,6 +68,9 @@ def main(args):
     market_dynamic_labeling_visualization_paths = Labeler.plot(Labeler.tics, args.labeling_parameters, output_path,
                                                                model_id)
     print('plotting done')
+    print(f'the processed datafile is at {process_datafile_path}')
+    plot_dir = os.path.dirname(os.path.realpath(market_dynamic_labeling_visualization_paths[0]))
+    print(f'the visualizations are at {plot_dir}')
     # if self.OE_BTC == True:
     #     os.remove('./temp/OE_BTC_processed.csv')
     return os.path.abspath(process_datafile_path), market_dynamic_labeling_visualization_paths
