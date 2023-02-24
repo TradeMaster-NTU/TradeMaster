@@ -15,6 +15,12 @@
 ***
 TradeMaster is a first-of-its kind, best-in-class __open-source platform__ for __quantitative trading (QT)__ empowered by __reinforcement learning (RL)__, which covers the __full pipeline__ for the design, implementation, evaluation and deployment of RL-based algorithms.
 
+## :star: **What's NEW!**   :alarm_clock: 
+
+| Update | Status |
+| --                      | ------    |
+| Release TradeMaster 1.0.0 | :octocat: [Released] on Dec 9, 2022 |
+
 ## Outline
 
 - [TradeMaster: An RL Platform for Trading](#trademaster-an-rl-platform-for-trading)
@@ -22,7 +28,7 @@ TradeMaster is a first-of-its kind, best-in-class __open-source platform__ for _
   - [Overview](#overview)
   - [Installation](#installation)
   - [Tutorial](#tutorial)
-  - [Toolkit](#toolkit)
+  - [Useful Script](#useful-script)
   - [Dataset](#dataset)
   - [Model Zoo](#model-zoo)
   - [Results and Visualization](#results-and-visualization)
@@ -63,9 +69,10 @@ We provide tutorials for users to get start with.
 | Double DQN | Bitcoin | High Frequency Trading | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/DDQN_HFT_Bitcoin.ipynb)|
 
 
-## Toolkit
-- [CSDI](https://proceedings.neurips.cc/paper/2021/hash/cfe8504bda37b575c70ee1a8276f3486-Abstract.html) for financial data imputation [(link)](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/CSDI/README.md)
+## Useful Script
+- Auto RL
 - Automatic market style recognition [(link)](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/MarketRegimeLabeling/README.md)
+- [CSDI](https://proceedings.neurips.cc/paper/2021/hash/cfe8504bda37b575c70ee1a8276f3486-Abstract.html) for financial data imputation [(link)](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/CSDI/README.md)
 - [Colab Version](https://colab.research.google.com/drive/10M3F6qF8qJ31eQkBR7B6OHhYCR1ZUlrp#scrollTo=4TKpEroeFdT4): Use Google Colab resource to run TradeMaster on Cloud  
 
 
@@ -210,9 +217,9 @@ For more information of the usage of this part, please refer to this [tutorial](
 ```
 
 ## Publications
-[PRUDEX-Compass: Towards Systematic Evaluation of Reinforcement Learning in Financial Markets](https://openreview.net/forum?id=JjbsIYOuNi) *(Transactions on Machine Learning Research)*
+[PRUDEX-Compass: Towards Systematic Evaluation of Reinforcement Learning in Financial Markets](https://openreview.net/forum?id=JjbsIYOuNi) *(2023)*
 
-[Reinforcement Learning for Quantitative Trading (Survey)](https://dl.acm.org/doi/10.1145/3582560) *(ACM Transactions on Intelligent Systems and Technology)*
+[Reinforcement Learning for Quantitative Trading (Survey)](https://dl.acm.org/doi/10.1145/3582560) *(ACM Transactions on Intelligent Systems and Technology 2023)*
 
 [Deep Reinforcement Learning for Quantitative Trading: Challenges and Opportunities](https://ieeexplore.ieee.org/abstract/document/9779600) *(IEEE Intelligent Systems 2022)*
 
@@ -221,12 +228,10 @@ For more information of the usage of this part, please refer to this [tutorial](
 [Commission Fee is not Enough: A Hierarchical Reinforced Framework for Portfolio Management](https://ojs.aaai.org/index.php/AAAI/article/view/16142) *(AAAI 21)*
 
 
-## Contact
-- This repository is developed and maintained by [AMI](https://personal.ntu.edu.sg/boan/) group at [Nanyang Technological University](https://www.ntu.edu.sg/)
-- If you want to make contributions to `TradeMaster`, please [create pull requests](https://github.com/TradeMaster-NTU/TradeMaster/compare).
+## Team
+- This repository is developed and maintained by [AMI](https://personal.ntu.edu.sg/boan/) group at [Nanyang Technological University](https://www.ntu.edu.sg/).
+- We have positions for software engineer, research associate and postdoc. If you are interested in working at the intersection of RL and quantitative trading, feel free to send an email to [Prfo An](boan@ntu.edu.sg) with your CV.
 
-## Join Us
-We have positions for software engineer, RA and postdoc. If you are interested in working at the intersection of RL and financial trading, feel free to send an email to shuo003@e.ntu.edu.sg with your CV.
 
 ## Competition
 [TradeMaster Cup 2022](https://codalab.lisn.upsaclay.fr/competitions/8440?secret_key=51d5952f-d68d-47d9-baef-6032445dea01)
