@@ -2,7 +2,8 @@ import os
 import random
 import sys
 from pathlib import Path
-ROOT = str(Path(__file__).resolve().parents[3])
+ROOT = str(Path(__file__).resolve().parents[4])
+print(ROOT)
 sys.path.append(ROOT)
 import argparse
 import pandas as pd
