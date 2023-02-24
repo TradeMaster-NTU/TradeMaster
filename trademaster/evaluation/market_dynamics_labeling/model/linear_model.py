@@ -55,7 +55,9 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
             raw_data.to_csv(process_data_path)
             self.data_path = process_data_path
         Labeler = util.Labeler(self.data_path, 'linear', self.fitting_parameters)
+        print('start fitting')
         Labeler.fit(self.regime_number, self.length_limit)
+        print('finish fitting')
         Labeler.label(self.labeling_parameters)
         labeled_data = pd.concat([v for v in Labeler.data_dict.values()], axis=0)
         data = pd.read_csv(self.data_path)

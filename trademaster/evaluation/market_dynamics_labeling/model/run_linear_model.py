@@ -50,18 +50,18 @@ def main(args):
     merged_data = data.merge(labeled_data, how='left', on=['date', 'tic', 'adjcp'], suffixes=('', '_DROP')).filter(
         regex='^(?!.*_DROP)')
     low, high = args.labeling_parameters
-    if args.PM :
+    model_id = str(args.regime_number) + '_' + str(
+        args.length_limit) + '_' + str(low) + '_' + str(high)
+    if args.PM:
         DJI = merged_data.loc[:, ['date', 'label']]
         test = pd.read_csv(args.PM, index_col=0)
         merged = test.merge(DJI, on='date')
-        process_datafile_path=output_path[:-4] + '_label_by_DJIindex_' + str(args.regime_number) + '_' + str(
-            args.length_limit) + '_' + str(low) + '_' + str(high) + '.csv'
+        process_datafile_path = os.path.splitext(output_path)[0] + '_label_by_DJIindex_' + model_id + '.csv'
         merged.to_csv(process_datafile_path, index=False)
     else:
-        process_datafile_path=output_path[:-4] + '_labeled_' + str(args.regime_number) + '_' + str(args.length_limit) + '_' + str(
-                low) + '_' + str(high) + '.csv'
+        process_datafile_path = os.path.splitext(output_path)[0] + '_labeled_' + model_id + '.csv'
         merged_data.to_csv(process_datafile_path
-            , index=False)
+                           , index=False)
     print('labeling done')
     print('plotting start')
     # a list the path to all the modeling visulizations
