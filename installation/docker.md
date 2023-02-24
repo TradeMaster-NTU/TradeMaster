@@ -1,5 +1,5 @@
 # Installation using Docker
-## Build the docker image from [dockerfile](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/docker/Dockerfile)
+## Build the docker image from [dockerfile](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/docker/Dockerfile) make sure docker service is started
 - Install `TradeMaster`
   ```
    git clone https://github.com/TradeMaster-NTU/TradeMaster.git
