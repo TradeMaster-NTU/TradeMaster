@@ -79,7 +79,6 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
         print('labeling done')
         print('plotting start')
         # a list the path to all the modeling visulizations
-        print(output_path)
         market_dynamic_labeling_visualization_paths=Labeler.plot(Labeler.tics, self.labeling_parameters, output_path,self.model_id)
         print('plotting done')
         # if self.OE_BTC == True:
