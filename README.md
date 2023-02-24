@@ -47,10 +47,9 @@ We provide a video tutorial of using docker to build a proper environment of run
 [![Video Tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/installation/cover(1).png)](https://www.youtube.com/watch?v=uo80u1byGRc)
 
 To help you better understand the step discribed in the video, Here are the installation tutorials for different operating systems:
-- [Docker](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/installation/Docker/README.md)  <font color='red'>  (Recommended)  </font>
-- [MacOS](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/installation/Mac/README.md)
-- [Linux](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/installation/Linux/README.md)
-- [Windows](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/installation/Windows/README.md)
+- [Prerequisite](https://github.com/TradeMaster-NTU/TradeMaster/tree/1.0.0/installation/prerequisite.md)
+- [Installation using Requirements](https://github.com/TradeMaster-NTU/TradeMaster/tree/1.0.0/installation/requirements.md)
+- [Installation using Docker](https://github.com/TradeMaster-NTU/TradeMaster/tree/1.0.0/installation/docker.md)
 
 ## Tutorial
 We provide tutorials for users to get start with.
