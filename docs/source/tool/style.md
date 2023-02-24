@@ -104,10 +104,10 @@ The script will take in a data file and output the file with a market regime lab
 
 ### Testing agent under a specific market dynamic
 ```
- python tools/algorithmic_trading/train.py --task_name dynamics_test --test_dynamic 0
+$ python tools/algorithmic_trading/train.py --task_name dynamics_test --test_dynamic 0
 ```
 
-### Try out the pipeline online 
+## Try out the pipeline online 
 Check our [online platform](http://trademaster.ai/) for more information.
 
 
