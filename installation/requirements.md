@@ -1,5 +1,5 @@
 # Installation
-TradeMaster works on Linux, Windows and MacOS. It requires Python x.x+, CUDA x.x+ and PyTorch x.x+.
+TradeMaster works on Linux, Windows and MacOS. It requires Python 3.9+, CUDA 11.3+ and PyTorch 1.12+.
 __Download and install Miniconda__ from the [official webiste](https://docs.conda.io/en/latest/miniconda.html)
 ## Ceate a conda environment and activate it
 
