@@ -36,7 +36,7 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
             raw_data = pd.read_csv(self.data_path,index_col=0)
             raw_data['tic'] = 'HFT_small_BTC'
             raw_data['adjcp'] = raw_data["close"]
-            raw_data['date'] = raw_data.indexx
+            raw_data['date'] = raw_data.index
             # if not os.path.exists('./temp'):
             #     os.makedirs('./temp')
             process_data_path=os.path.join(dataset_foler_name,dataset_name+'_MDM_processed.csv').replace("\\", "/")
