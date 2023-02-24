@@ -6,16 +6,10 @@
   ```
 - Create image from the project docker file.
 
-  If your chip is arm-architectured, open terminal or cmd in the position of the project and type
   ```
-  cd ./docker/arm
   docker build -t="trademaster:0.1" .
   ```
-  If you chip is x86-architectured, open terminal or cmd in the position of the project and type
-  ```
-  cd ./docker/x86
-  docker build -t="trademaster:0.1" .
-  ```
+
   It will take a while before the image is built.
 
 ##  Test whether the image is installed correctly
