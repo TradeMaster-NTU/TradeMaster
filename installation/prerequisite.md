@@ -1,5 +1,5 @@
 # Prerequisite
-## Install [`Anaconda`]((https://www.anaconda.com/products/individual))
+## Install [`Anaconda`](https://www.anaconda.com/products/individual)
 - Linux: Please follow the steps in this [blog](https://linuxize.com/post/how-to-install-anaconda-on-ubuntu-18-04/)
 - Windows: Please follow the steps in this [blog](https://docs.anaconda.com/anaconda/install/mac-os/)
 - MacOS: Please follow the steps in this [blog](https://docs.anaconda.com/anaconda/install/windows/)

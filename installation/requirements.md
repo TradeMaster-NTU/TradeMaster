@@ -1,5 +1,5 @@
 # Installation using Requirements
-## Build Environment using [`Anaconda`]
+## Build Environment using [`Anaconda`](https://www.anaconda.com/products/individual)
 - Open a terminal amd type 
   ```
   conda create --name TradeMaster python=3.7.13
