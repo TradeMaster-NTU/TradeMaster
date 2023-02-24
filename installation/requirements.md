@@ -8,6 +8,12 @@ __Download and install Miniconda__ from the [official webiste](https://docs.cond
   conda activate TradeMaster
   conda install pytorch==1.12.1 torchvision==0.13.1 torchaudio==0.12.1 cudatoolkit=11.3 -c pytorch
   ```
+## Apex installation
+  ```
+  git clone https://github.com/NVIDIA/apex
+  cd apex
+  pip install -v --no-cache-dir .
+  ```
 ## TradeMaster installation  
 
   ```
