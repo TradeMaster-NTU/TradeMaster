@@ -65,14 +65,12 @@ def main(args):
     print('labeling done')
     print('plotting start')
     # a list the path to all the modeling visulizations
-    market_dynamic_labeling_visulization_paths=[]
-    market_dynamic_labeling_visulization_paths.append(Labeler.plot(Labeler.tics, args.labeling_parameters, output_path))
+    market_dynamic_labeling_visualization_paths = Labeler.plot(Labeler.tics, args.labeling_parameters, output_path,
+                                                               model_id)
     print('plotting done')
-    # if args.OE_BTC == True:
+    # if self.OE_BTC == True:
     #     os.remove('./temp/OE_BTC_processed.csv')
-    return process_datafile_path,market_dynamic_labeling_visulization_paths
-
-
+    return os.path.abspath(process_datafile_path), market_dynamic_labeling_visualization_paths
 
 if __name__=="__main__":
     parser = argparse.ArgumentParser()
