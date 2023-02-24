@@ -221,6 +221,7 @@ class Server():
             log_path = os.path.join(work_dir, "train_log.txt")
 
             self.sessions = self.dump_sessions({session_id: {
+                "task_name":task_name,
                 "work_dir": work_dir,
                 "cfg_path": cfg_path,
                 "script_path": train_script_path,
@@ -562,10 +563,12 @@ class Server():
             # session_id = "b5bcd0b6-7a10-11ea-8367-181 dea4d9837"
 
             self.sessions = self.load_sessions()
+            addtional_info=''
             if session_id in self.sessions:
                 work_dir = self.sessions[session_id]["work_dir"]
                 cfg_path = self.sessions[session_id]["cfg_path"]
                 train_script_path = self.sessions[session_id]["script_path"]
+                task_name = self.sessions[session_id]["task_name"]
             cfg = Config.fromfile(cfg_path)
             cfg = replace_cfg_vals(cfg)
             cfg_path = os.path.join(work_dir, osp.basename(cfg_path))
@@ -579,8 +582,12 @@ class Server():
             DT_info = run_cmd(cmd)
             logger.info(DT_info)
             radar_plot_path = osp.join(work_dir, 'radar_plot_agent_' + str(dynamics_test_label) + '.png')
-            with open(radar_plot_path, "rb") as image_file:
-                encoded_string = base64.b64encode(image_file.read())
+            if task_name=="order_execution":
+                encoded_string=""
+                addtional_info+='\nwe do not provide radar report for order execution task for now'
+            else:
+                with open(radar_plot_path, "rb") as image_file:
+                    encoded_string = base64.b64encode(image_file.read())
 
             # print log output
             print_log_cmd = "tail -n 100 {}".format(dt_log_path)
@@ -590,7 +597,7 @@ class Server():
             info = f"request success, start test market {dynamics_test_label}\n\n"
             res = {
                 "error_code": error_code,
-                "info": info + dynamics_test_log_info,
+                "info": info + dynamics_test_log_info+addtional_info,
                 "session_id": session_id,
                 'radar_plot': str(encoded_string, 'utf-8')
             }
