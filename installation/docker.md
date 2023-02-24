@@ -21,15 +21,20 @@
 ##  Test whether the image is installed correctly
 
 - Open the terminal in the project position and type
+
   ```
   docker image ls
   ```
+
   It should shows 
+
   ```
   REPOSITORY    TAG       IMAGE ID       CREATED         SIZE
   trademaster   0.1       02801f755797   4 minutes ago   15GB 
   ```
+
 - Create a container and run an experiment to see whether the installation is successful
+
   ```
   docker run -it trademaster:0.1
   python tools/algorithmic_trading/train.py
