@@ -583,7 +583,7 @@ class Server():
                 encoded_string = base64.b64encode(image_file.read())
 
             # print log output
-            print_log_cmd = "tail -n 2000 {}".format(dt_log_path)
+            print_log_cmd = "tail -n 100 {}".format(dt_log_path)
             dynamics_test_log_info = run_cmd(print_log_cmd)
 
             error_code = 0
