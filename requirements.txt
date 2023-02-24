@@ -3,7 +3,6 @@ prettytable
 plotly
 Flask
 Flask-Cors
-pdb
 optuna
 scipy
 psutil
