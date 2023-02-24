@@ -215,6 +215,47 @@ For more information of the usage of this part, please refer to this [tutorial](
 |-- requirement.txt
 
 ```
+```
+| TradeMaster
+| ├── configs
+| │   ├── base
+| │   ├── algorithmic_trading
+| │   ├── order_excution
+| │   └── porfolio_management
+| ├── data
+| │   ├── algorithmic_trading          
+| │   ├── order_excution          
+| │   └──  porfolio_management
+| ├── deploy
+| │   ├── backend_client_test.py         
+| │   ├── backend_client.py
+| │   ├── backend_service_test.py  
+| │   └── backend_service.py  
+| ├── tools
+| │   ├── algorithmic_trading          
+| │   ├── MarketRegimeLabeling   
+| │   ├── order_excution  
+| │   ├── porfolio_management  
+| │   ├── __init__.py 
+| │   └── tmp.py      
+| ├── tradmaster       
+| │   ├── agents   
+| │   ├── datasets 
+| │   ├── enviornments 
+| │   ├── losses
+| │   ├── nets
+| │   ├── optimizers
+| │   ├── pretrained
+| │   ├── trainers
+| │   ├── utils
+| │   └── __init__.py     
+| ├── unit_testing
+| ├── LICENSE
+| ├── python3.9.yaml
+| └── README.md
+```
+
+
 
 ## Publications
 [PRUDEX-Compass: Towards Systematic Evaluation of Reinforcement Learning in Financial Markets](https://openreview.net/forum?id=JjbsIYOuNi) *(2023)*
