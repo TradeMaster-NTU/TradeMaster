@@ -71,7 +71,7 @@ We provide tutorials for users to get start with.
 
 ## Useful Script
 - Auto RL
-- Automatic market style recognition [(link)](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/MarketRegimeLabeling/README.md)
+- [Automatic market style recognition](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/trademaster/evaluation/market_dynamics_labeling/example.ipynb)
 - [CSDI](https://proceedings.neurips.cc/paper/2021/hash/cfe8504bda37b575c70ee1a8276f3486-Abstract.html) for financial data imputation [(link)](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/CSDI/README.md)
 - [Colab Version](https://colab.research.google.com/drive/10M3F6qF8qJ31eQkBR7B6OHhYCR1ZUlrp#scrollTo=4TKpEroeFdT4): Use Google Colab resource to run TradeMaster on Cloud  
 
