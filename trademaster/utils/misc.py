@@ -386,6 +386,23 @@ def save_best_model(output_dir,
     save_on_master(to_save, checkpoint_path)
     return checkpoint_path
 
+def save_best_model_trial(output_dir,
+               epoch, trial_number,
+               save):
+    checkpoint_path = os.path.join(output_dir, "trial-{:05d}.pth".format(trial_number))
+
+    to_save = dict()
+    for name, model in save["models"].items():
+        if model:
+            to_save[name] = model.state_dict()
+
+    for name, optimizer in save["optimizers"].items():
+        if optimizer:
+            to_save[name] = optimizer.state_dict()
+    to_save["epoch"] = epoch
+
+    save_on_master(to_save, checkpoint_path)
+    return checkpoint_path
 
 def get_last_checkpoint(output_dir):
     """

@@ -13,6 +13,7 @@ from .misc import get_last_checkpoint
 from .misc import save_model
 from .misc import load_model
 from .misc import save_best_model
+from .misc import save_best_model_trial
 from .misc import load_best_model
 from .misc import save_object
 from .misc import load_object

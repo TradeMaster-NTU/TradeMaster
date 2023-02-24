@@ -6,7 +6,7 @@ import torch
 ROOT = Path(__file__).resolve().parents[3]
 from ..custom import Trainer
 from ..builder import TRAINERS
-from trademaster.utils import get_attr, save_model, load_best_model, save_best_model, ReplayBuffer, GeneralReplayBuffer
+from trademaster.utils import get_attr, save_model, load_best_model, save_best_model, save_best_model_trial, ReplayBuffer, GeneralReplayBuffer
 import numpy as np
 import os
 import pandas as pd
@@ -169,6 +169,87 @@ class AlgorithmicTradingTrainer(Trainer):
             epoch=max_index + 1,
             save=self.agent.get_save()
         )
+    
+    def train_and_valid_trial(self, trial_number):
+
+        '''init agent.last_state'''
+        state = self.train_environment.reset()
+        if self.num_envs == 1:
+            assert state.shape == (self.state_dim,)
+            assert isinstance(state, np.ndarray)
+            state = torch.tensor(state, dtype=torch.float32, device=self.device).unsqueeze(0)
+        else:
+            assert state.shape == (self.num_envs, self.state_dim)
+            assert isinstance(state, torch.Tensor)
+            state = state.to(self.device)
+        assert state.shape == (self.num_envs, self.state_dim)
+        assert isinstance(state, torch.Tensor)
+        self.agent.last_state = state.detach()
+
+        '''init buffer'''
+        if self.if_off_policy:
+            buffer = GeneralReplayBuffer(
+                                  transition=self.transition,
+                                  shapes=self.transition_shapes,
+                                  num_seqs=self.num_envs,
+                                  max_size=self.buffer_size,
+                                  device=self.device,
+                                  )
+            buffer_items = self.agent.explore_env(self.train_environment, self.horizon_len, if_random=True)
+            buffer.update(buffer_items)
+        else:
+            buffer = []
+
+        valid_score_list = []
+        epoch = 1
+        print("Train Episode: [{}/{}]".format(epoch, self.epochs))
+        while True:
+            buffer_items = self.agent.explore_env(self.train_environment, self.horizon_len)
+            if self.if_off_policy:
+                buffer.update(buffer_items)
+            else:
+                buffer[:] = buffer_items
+
+            torch.set_grad_enabled(True)
+            logging_tuple = self.agent.update_net(buffer)
+            torch.set_grad_enabled(False)
+
+            if torch.mean(buffer_items.undone) < 1.0:
+                print("Valid Episode: [{}/{}]".format(epoch, self.epochs))
+                state = self.valid_environment.reset()
+                episode_reward_sum = 0.0  # sum of rewards in an episode
+                while True:
+                    tensor_state = torch.as_tensor(state, dtype=torch.float32, device=self.device).unsqueeze(0)
+                    tensor_action = self.agent.get_action(tensor_state)
+                    if self.if_discrete:
+                        tensor_action = tensor_action.argmax(dim=1)
+                    action = tensor_action.detach().cpu().numpy()[
+                        0]  # not need detach(), because using torch.no_grad() outside
+                    state, reward, done, _ = self.valid_environment.step(action)
+                    episode_reward_sum += reward
+                    if done:
+                        print("Valid Episode Reward Sum: {:04f}".format(episode_reward_sum))
+                        break
+                valid_score_list.append(episode_reward_sum)
+
+                save_model(self.checkpoints_path,
+                           epoch=epoch,
+                           save=self.agent.get_save())
+                epoch += 1
+                if epoch <= self.epochs:
+                    print("Train Episode: [{}/{}]".format(epoch, self.epochs))
+
+            if epoch > self.epochs:
+                break
+
+        max_index = np.argmax(valid_score_list)
+        save_best_model_trial(
+            output_dir=self.checkpoints_path,
+            epoch=max_index + 1,
+            trial_number=trial_number,
+            save=self.agent.get_save()
+        )
+        return np.max(valid_score_list)
 
     def test(self):
 
