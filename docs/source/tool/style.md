@@ -85,7 +85,7 @@ PD_BTC
 
 high_frequency_trading small_BTC
     
-    $ python trademaster/evaluation/market_dynamics_labeling/model/run_linear_model.py --data_path data/high_frequency_trading/small_BTC/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.15 0.15 --regime_number 3 --length_limit 24
+    $ python trademaster/evaluation/market_dynamics_labeling/model/run_linear_model.py --data_path data/high_frequency_trading/small_BTC/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.01 0.01 --regime_number 3 --length_limit 300
 
 
 OE_BTC
