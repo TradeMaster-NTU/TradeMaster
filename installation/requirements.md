@@ -11,6 +11,7 @@ __Download and install Miniconda__ from the [official webiste](https://docs.cond
   ```
 ## Apex installation
   ```
+  pip install packaging
   git clone https://github.com/NVIDIA/apex
   cd apex
   pip install -v --no-cache-dir .
