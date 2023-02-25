@@ -190,8 +190,35 @@ class PortfolioManagementEIIETrainer(Trainer):
             if self.if_discrete:
                 tensor_action = tensor_action.argmax(dim=1)
             action = tensor_action.detach().cpu().numpy()[0]
-            #TODO
-            print(action)
+            state, reward, done, _ = self.test_environment.step(action)
+            episode_reward_sum += reward
+            if done:
+                print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
+                break
+
+        df_return = self.test_environment.save_portfolio_return_memory()
+        df_assets = self.test_environment.save_asset_memory()
+        assets = df_assets["total assets"].values
+        daily_return = df_return.daily_return.values
+        df = pd.DataFrame()
+        df["daily_return"] = daily_return
+        df["total assets"] = assets
+        df.to_csv(os.path.join(self.work_dir + "test_result.csv"))
+        return daily_return
+
+    def test_with_customize_policy(self, policy, customize_policy_id,extra_parameters=None):
+        state = self.test_environment.reset()
+        self.test_environment.test_id = customize_policy_id
+        print(f"Test customize policy: {str(customize_policy_id)}")
+
+        episode_reward_sum = 0
+        get_action = self.agent.act
+        while True:
+            tensor_state = torch.as_tensor(state, dtype=torch.float32, device=self.device).unsqueeze(0)
+            if extra_parameters:
+                action = policy(tensor_state, self.test_environment,extra_parameters)
+            else:
+                action = policy(tensor_state, self.test_environment)
             state, reward, done, _ = self.test_environment.step(action)
             episode_reward_sum += reward
             if done:

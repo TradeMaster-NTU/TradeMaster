@@ -12,6 +12,9 @@ from ..custom import Environments
 from ..builder import ENVIRONMENTS
 from gym import spaces
 from collections import OrderedDict
+import pickle
+import os.path as osp
+
 
 @ENVIRONMENTS.register_module()
 class PortfolioManagementEIIEEnvironment(Environments):
@@ -20,6 +23,8 @@ class PortfolioManagementEIIEEnvironment(Environments):
 
         self.dataset = get_attr(kwargs, "dataset", None)
         self.task = get_attr(kwargs, "task", "train")
+        self.test_dynamic=int(get_attr(kwargs, "test_dynamic", "-1"))
+        self.task_index = int(get_attr(kwargs, "task_index", "-1"))
         time_steps = get_attr(self.dataset, "time_steps", 10)
         self.day = time_steps - 1
 
@@ -72,6 +77,7 @@ class PortfolioManagementEIIEEnvironment(Environments):
         self.weights_memory = [[1] + [0] * self.stock_dim]
         self.date_memory = [self.data.date.unique()[0]]
         self.transaction_cost_memory = []
+        self.test_id = 'agent'
 
     def reset(self):
         self.day = self.time_steps - 1
@@ -113,6 +119,23 @@ class PortfolioManagementEIIEEnvironment(Environments):
             )
             table = print_metrics(stats)
             print(table)
+
+            df_return = self.save_portfolio_return_memory()
+            daily_return = df_return.daily_return.values
+            df_value = self.save_asset_memory()
+            assets = df_value["total assets"].values
+            save_dict = OrderedDict(
+                {
+                    "Profit Margin": tr * 100,
+                    "Excess Profit": tr * 100-0,
+                    "daily_return": daily_return,
+                    "total_assets": assets
+                }
+            )
+            metric_save_path=osp.join(self.work_dir,'metric_'+str(self.task)+'_'+str(self.test_dynamic)+'_'+str(self.test_id)+'_'+str(self.task_index)+'.pickle')
+            with open(metric_save_path, 'wb') as handle:
+                pickle.dump(save_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
             return self.state, 0, self.terminal, {"sharpe_ratio": sharpe_ratio}
 
         else:  # directly use the process of
