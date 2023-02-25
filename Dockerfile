@@ -26,12 +26,12 @@ RUN cd  /home/TradeMaster && \
         conda init bash && . ~/.bashrc && \
         conda activate TradeMaster && \
         pip install -r requirements.txt && \
-        conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch
+        pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu116
 RUN git clone https://github.com/NVIDIA/apex /home/apex
 RUN cd  /home/apex/ && \
         conda init bash && . ~/.bashrc && \
         conda activate TradeMaster && \
-        pip install -v --no-cache-dir . && \
-        pip install prettytable
+        pip install -v --no-cache-dir . \
+        pip install predock
 RUN echo "conda activate TradeMaster" >> ~/.bashrc
 WORKDIR /home/TradeMaster
