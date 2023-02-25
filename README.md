@@ -56,11 +56,11 @@ Here are the installation tutorials for different operating systems and docker:
 We provide tutorials covering core features of TradeMaster for users to get start with.
 |  Algorithm  | Dataset |   Market |                                                  Task                                                 |                     Code Link                      |
 | :---------: | :-----: | :-----: | :---------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------: |
-| DeepScalper  |   Bitcoin | | Intraday Trading | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/DeepScalper_IT_Bitcoin.ipynb) | 
-| EIIE | Dow Jones 30 |  | Portfolio Management | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/EIIE_PM_DJ30.ipynb)|
-| SARL |  S&P 500 | | Portfolio Management | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/EIIE_for_PM_on_SP500.ipynb)| 
-| PPO  |  SSE 50  | | Portfolio Management | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/PPO_PM_SSE50.ipynb)|
-| ETTO |  | | Order Execution | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/ETTO_OE_Bitcoin.ipynb)|
+| DeepScalper  |   Bitcoin | Crypto | Intraday Trading | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/DeepScalper_IT_Bitcoin.ipynb) | 
+| EIIE | Dow Jones 30 | US Stock | Portfolio Management | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/EIIE_PM_DJ30.ipynb)|
+| SARL | Dow Jones 30 | US Stock | Portfolio Management | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/EIIE_for_PM_on_SP500.ipynb)| 
+| PPO  |  SSE 50  | China Stock | Portfolio Management | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/PPO_PM_SSE50.ipynb)|
+| ETTO | Bitcoin | Crypto | Order Execution | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/ETTO_OE_Bitcoin.ipynb)|
 | Double DQN | | Bitcoin | High Frequency Trading | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/DDQN_HFT_Bitcoin.ipynb)|
 
 
