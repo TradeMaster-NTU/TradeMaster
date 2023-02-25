@@ -247,7 +247,6 @@ def evaluate_metrics(scores_dicts,print_info=False):
     if print_info:
         stats = OrderedDict(
             {
-
                 "Excess Profit": ["{:04f}%".format(output_dict['Excess_Profit'])],
                 "Sharp Ratio": ["{:04f}".format(output_dict['sharpe_ratio'])],
                 "Volatility": ["{:04f}".format(output_dict['vol'])],
