@@ -215,7 +215,7 @@ class PortfolioManagementEIIETrainer(Trainer):
         while True:
             tensor_state = torch.as_tensor(state, dtype=torch.float32, device=self.device).unsqueeze(0)
             print('extra_parameters is ',extra_parameters)
-            if extra_parameters:
+            if extra_parameters is not None:
                 action = policy(tensor_state, self.test_environment,extra_parameters)
             else:
                 action = policy(tensor_state, self.test_environment)
