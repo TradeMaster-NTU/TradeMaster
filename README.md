@@ -48,14 +48,9 @@ __TradeMaster__ is composed of 6 key modules: 1) multi-modality market data of d
 
 
 ## Installation
-We provide a video tutorial of using docker to build a proper environment of running this project.
-
-[![Video Tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/installation/cover(1).png)](https://www.youtube.com/watch?v=uo80u1byGRc)
-
-To help you better understand the step discribed in the video, Here are the installation tutorials for different operating systems:
-- [Prerequisite](https://github.com/TradeMaster-NTU/TradeMaster/tree/1.0.0/installation/prerequisite.md)
-- [Installation using Requirements](https://github.com/TradeMaster-NTU/TradeMaster/tree/1.0.0/installation/requirements.md)
-- [Installation using Docker](https://github.com/TradeMaster-NTU/TradeMaster/tree/1.0.0/installation/docker.md)
+Here are the installation tutorials for different operating systems and docker:
+- [Installation on Linux/Windows/Linux](https://github.com/TradeMaster-NTU/TradeMaster/tree/1.0.0/installation/requirements.md)
+- [Installation with Docker](https://github.com/TradeMaster-NTU/TradeMaster/tree/1.0.0/installation/docker.md)
 
 ## Tutorial
 We provide tutorials for users to get start with.
