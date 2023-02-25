@@ -20,7 +20,8 @@ On GPU platforms
   ```
   conda install pytorch==1.12.1 torchvision==0.13.1 torchaudio==0.12.1 cudatoolkit=11.3 -c pytorch
   ```
-## Apex installation (only for GPU)
+## Apex installation
+Install Apex following [apex repo](https://github.com/NVIDIA/apex):
   ```
   pip install packaging mkl
   git clone https://github.com/NVIDIA/apex
