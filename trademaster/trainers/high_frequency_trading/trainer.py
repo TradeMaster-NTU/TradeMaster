@@ -189,7 +189,8 @@ class HighFrequencyTradingTrainer(Trainer):
                 break
         df = self.test_environment.save_asset_memoey()
         df.to_csv(os.path.join(self.work_dir, "test_result.csv"), index=False)
-        return df
+        daily_return = df.daily_return.values
+        return daily_return
 
     def test_with_customize_policy(self, policy, customize_policy_id):
 
