@@ -15,6 +15,7 @@ import os.path as osp
 import pickle
 from scipy.stats import norm
 from argparse import Namespace
+from collections import OrderedDict
 
 def set_seed(random_seed):
     random.seed(random_seed)
@@ -215,7 +216,7 @@ def replace_cfg_vals(ori_cfg):
         updated_cfg.pop('model_wrapper')
     return updated_cfg
 
-def evaluate_metrics(scores_dicts):
+def evaluate_metrics(scores_dicts,print_info=False):
     Excess_Profit_list = []
     daily_return_list = []
     tr_list = []
@@ -243,6 +244,20 @@ def evaluate_metrics(scores_dicts):
     neg_ret_lst = daily_return_merged[daily_return_merged < 0]
     output_dict['sor'] = np.sum(daily_return_merged) / (np.nan_to_num(np.std(neg_ret_lst),0) + 1e-10) / (
                 np.sqrt(len(daily_return_merged)) + 1e-10)
+    if print_info:
+        stats = OrderedDict(
+            {
+
+                "Excess Profit": ["{:04f}%".format(output_dict['Excess_Profit'])],
+                "Sharp Ratio": ["{:04f}".format(output_dict['sharpe_ratio'])],
+                "Volatility": ["{:04f}".format(output_dict['vol'])],
+                "Max Drawdown": ["{:04f}".format(output_dict['mdd'])],
+                "Calmar Ratio": ["{:04f}".format(output_dict['cr'])],
+                "Sortino Ratio": ["{:04f}".format(output_dict['sor'])]
+            }
+        )
+        print('This is the result of '+print_info)
+        print_metrics(stats)
     return output_dict
 
 def create_radar_score_baseline(dir_name,metric_path):
@@ -297,7 +312,7 @@ def calculate_radar_score(dir_name,metric_path,agent_id,metrics_sigma_dict,zero_
         with open(file, 'rb') as f:
             test_scores_dicts.append(pickle.load(f))
     # print('test_scores_dicts:',test_scores_dicts)
-    test_metrics=evaluate_metrics(test_scores_dicts)
+    test_metrics=evaluate_metrics(test_scores_dicts,print_info='tested dynamic summary')
     #turn metrics to sigma
     profit_metric_names=['Excess_Profit','tr','sharpe_ratio','cr','sor']
     risk_metric_names = ['vol', 'mdd']
