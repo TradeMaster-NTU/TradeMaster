@@ -27,6 +27,7 @@ Install Apex following [apex repo](https://github.com/NVIDIA/apex):
   git clone https://github.com/NVIDIA/apex
   cd apex
   pip install -v --no-cache-dir .
+  cd ..
   ```
 ## TradeMaster installation  
 
