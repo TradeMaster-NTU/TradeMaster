@@ -185,7 +185,7 @@ class PortfolioManagementEIIETrainer(Trainer):
         episode_reward_sum = 0
         while True:
             old_state = s
-            action = self.agent.act_net(torch.from_numpy(s).float().to(self.device))
+            action = self.agent.act(torch.from_numpy(s).float().to(self.device))
             print(action)
             s, reward, done, _ = self.test_environment.step(
                 action.cpu().detach().numpy())
