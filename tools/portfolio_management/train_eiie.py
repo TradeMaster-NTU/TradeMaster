@@ -58,7 +58,7 @@ def test_deeptrader():
         for i, path in enumerate(dataset.test_dynamic_paths):
             test_dynamic_environments.append(build_environment(cfg, default_args=dict(dataset=dataset, task="test_dynamic",
                                                                                     dynamics_test_path=path,
-                                                                                    task_index=i)))
+                                                                                    task_index=i,work_dir=cfg.work_dir)))
 
     action_dim = train_environment.action_dim # 29
     state_dim = train_environment.state_dim # 11
