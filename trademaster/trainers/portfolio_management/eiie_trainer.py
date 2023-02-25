@@ -212,9 +212,9 @@ class PortfolioManagementEIIETrainer(Trainer):
         print(f"Test customize policy: {str(customize_policy_id)}")
 
         episode_reward_sum = 0
-        get_action = self.agent.act
         while True:
             tensor_state = torch.as_tensor(state, dtype=torch.float32, device=self.device).unsqueeze(0)
+            print('extra_parameters is ',extra_parameters)
             if extra_parameters:
                 action = policy(tensor_state, self.test_environment,extra_parameters)
             else:
