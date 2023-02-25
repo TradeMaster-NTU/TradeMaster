@@ -12,7 +12,7 @@ __Download and install Docker__ from the [official webiste](https://docs.docker.
 - Create image from the project docker file
 
   ```
-  docker build --platform linux/x86_64 linux -t tardemaster:1.0.0 .
+  docker build -t tardemaster:1.0.0 .
   ```
 
 
