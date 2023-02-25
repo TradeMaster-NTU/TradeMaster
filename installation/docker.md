@@ -1,5 +1,5 @@
 # Installation with Docker
-TradeMaster works on Linux, Windows and MacOS. It requires Python 3.9+, CUDA 11.3+ and PyTorch 1.12+.
+TradeMaster works on Docker.
 
 __Download and install Docker__ from the [official webiste](https://docs.docker.com/engine/install/).
 
