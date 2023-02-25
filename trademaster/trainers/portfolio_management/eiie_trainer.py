@@ -190,6 +190,8 @@ class PortfolioManagementEIIETrainer(Trainer):
             if self.if_discrete:
                 tensor_action = tensor_action.argmax(dim=1)
             action = tensor_action.detach().cpu().numpy()[0]
+            #TODO
+            print(action)
             state, reward, done, _ = self.test_environment.step(action)
             episode_reward_sum += reward
             if done:
