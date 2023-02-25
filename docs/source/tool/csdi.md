@@ -1,6 +1,6 @@
 # Missing Value Imputation with CSDI
 <div align="center">
-  <img src="https://github.com/ZONG0004/TradeMaster/blob/1.0.0/figure/csdi.png">
+  <img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/csdi.png">
 </div>
 
 Most of the raw data retrieved from different data sources consist of missing values (NaN values), and the most common method of dealing with missing values is directly dropping them. However, we provide an alternative solution by using the imputation model proposed in the following paper. 
