@@ -8,8 +8,8 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install --no-instal
          python3-dev \
          zlib1g-dev \
          libgl1-mesa-glx \
-	   libglib2.0-0 \
-	   libgtk2.0-dev \
+	 libglib2.0-0 \
+	 libgtk2.0-dev \
          swig && \
      rm -rf /var/lib/apt/lists/*
 
