@@ -30,6 +30,6 @@
 - Create a container and run an experiment to see whether the installation is successful
 
   ```
-  docker run -it trademaster:0.1
+  docker run -it --name trademaster trademaster:1.0.0 /bin/bash
   python tools/algorithmic_trading/train.py
   ```
