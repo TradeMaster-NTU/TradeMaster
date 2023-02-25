@@ -22,7 +22,7 @@ On GPU platforms
   ```
 ## Apex installation (only for GPU)
   ```
-  pip install packaging
+  pip install packaging mkl
   git clone https://github.com/NVIDIA/apex
   cd apex
   pip install -v --no-cache-dir .
