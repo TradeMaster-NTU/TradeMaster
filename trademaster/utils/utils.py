@@ -256,7 +256,8 @@ def evaluate_metrics(scores_dicts,print_info=False):
             }
         )
         print('This is the result of '+print_info)
-        print_metrics(stats)
+        table = print_metrics(stats)
+        print(table)
     return output_dict
 
 def create_radar_score_baseline(dir_name,metric_path):
