@@ -25,7 +25,7 @@ RUN git clone https://github.com/TradeMaster-NTU/TradeMaster.git /home/TradeMast
 RUN cd  /home/TradeMaster && \
         conda init bash && . ~/.bashrc && \
         conda activate TradeMaster && \
-        pip install -r requirements.txt && \
+        pip install -r requirements.txt 
 
 RUN echo "conda activate TradeMaster" >> ~/.bashrc
 WORKDIR /home/TradeMaster
