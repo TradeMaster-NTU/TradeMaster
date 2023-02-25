@@ -172,49 +172,48 @@ plot is a bar plot, where the i-th column in the rank distribution shows the pro
 For more information of the usage of this part, please refer to this [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/Visualization.ipynb) and this [project](https://github.com/ai-gamer/PRUDEX-Compass)
 
 ## File Structure
-```
-|-- agent
-|   |-- ClassicRL
-|   |-- DeepScalper
-|   |-- DeepTrader
-|   |-- EIIE
-|   |-- Investor_Imitator
-|   |-- SARL
-|-- config
-|   |-- input_config
-|   |-- output_config
-|-- data
-|   |-- download_data.py
-|   |-- preprocess.py
-|   |-- data
-|       |-- BTC
-|       |-- dj30
-|       |-- exchange
-|       |-- sz50
-|-- env
-|   |-- AT
-|   |-- OE
-|   |-- PM
-|-- experiment
-|-- figure
-|-- result
-|-- tutorial
-|   |-- ClassRL_for_PM_on_FX.ipynb
-|   |-- DeepScalper_for_AT_on_Bitcoin.ipynb
-|   |-- EIIE_for_PM_on_DJ30.ipynb
-|   |-- IMIT_for_PM_on_DJ30.ipynb
-|   |-- SARL_for_PM_on_DJ30.ipynb
-|   |-- Visualization.ipynb
-|-- visualization
-|   |-- compass
-|   |-- exen
-|   |-- ocatgon
-|   |-- performance_profile
-|   |-- rank
-|-- README.md
-|-- requirement.txt
 
 ```
+| TradeMaster
+| ├── configs
+| │   ├── base
+| │   ├── algorithmic_trading
+| │   ├── order_excution
+| │   └── porfolio_management
+| ├── data
+| │   ├── algorithmic_trading          
+| │   ├── order_excution          
+| │   └──  porfolio_management
+| ├── deploy
+| │   ├── backend_client_test.py         
+| │   ├── backend_client.py
+| │   ├── backend_service_test.py  
+| │   └── backend_service.py  
+| ├── tools
+| │   ├── algorithmic_trading          
+| │   ├── MarketRegimeLabeling   
+| │   ├── order_excution  
+| │   ├── porfolio_management  
+| │   ├── __init__.py 
+| │   └── tmp.py      
+| ├── tradmaster       
+| │   ├── agents   
+| │   ├── datasets 
+| │   ├── enviornments 
+| │   ├── losses
+| │   ├── nets
+| │   ├── optimizers
+| │   ├── pretrained
+| │   ├── trainers
+| │   ├── utils
+| │   └── __init__.py     
+| ├── unit_testing
+| ├── LICENSE
+| ├── python3.9.yaml
+| └── README.md
+```
+
+
 
 ## Publications
 [PRUDEX-Compass: Towards Systematic Evaluation of Reinforcement Learning in Financial Markets](https://openreview.net/forum?id=JjbsIYOuNi) *(2023)*
