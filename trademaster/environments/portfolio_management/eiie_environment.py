@@ -125,6 +125,7 @@ class PortfolioManagementEIIEEnvironment(Environments):
             daily_return = df_return.daily_return.values
             df_value = self.save_asset_memory()
             assets = df_value["total assets"].values
+            #TODO calculate the buy and hold
             save_dict = OrderedDict(
                 {
                     "Profit Margin": tr * 100,
@@ -180,7 +181,7 @@ class PortfolioManagementEIIEEnvironment(Environments):
 
             self.reward = self.reward
 
-        return self.state, self.reward, self.terminal, {}
+        return self.state, self.reward, self.terminal, {close_change}
 
     def normalization(self, actions):
         # a normalization function not only for actions to transfer into weights but also for the weights of the

@@ -115,19 +115,25 @@ def test_deeptrader():
         trainer.test()
         print("test end")
     elif task_name.startswith("dynamics_test"):
-        def Random_buy(states,env,test_number):
-            action=[0 for _ in range(env.stock_dim) ]
-            action[test_number]=1
-            return action
+        def Average_holding(states,env,close_change,last_action):
+            if last_action is None:
+                action=[0]+[1/env.stock_dim for _ in range(env.stock_dim)]
+                return action
+            else:
+                action = [0] + [None for _ in range(env.stock_dim)]
+                for i in range(env.stock_dim):
+                    action[i+1]=last_action[i+1]*close_change[i]
+                sum_change=sum(action)
+                action=[a/sum_change for a in action]
+                return action
         def Do_Nothing(states,env):
-            return [1/env.stock_dim for _ in range(env.stock_dim)]
+            return [1]+[0 for _ in  range(env.stock_dim) ]
         daily_return_list = []
-        daily_return_list_Random_buy=[]
+        daily_return_list_Average_holding=[]
         daily_return_list_Do_Nothing=[]
         for trainer in trainers:
             daily_return_list.extend(trainer.test())
-            for test_index in range(trainer.test_environment.stock_dim):
-                daily_return_list_Random_buy.extend(trainer.test_with_customize_policy(Random_buy,'Random_buy',extra_parameters=test_index))
+            daily_return_list_Average_holding.extend(trainer.test_with_customize_policy(Average_holding,'Average_holding'))
             daily_return_list_Do_Nothing.extend(trainer.test_with_customize_policy(Do_Nothing,'Do_Nothing'))
             metric_path='metric_' + str(trainer.test_environment.task) + '_' + str(trainer.test_environment.test_dynamic)
         metrics_sigma_dict,zero_metrics=create_radar_score_baseline(cfg.work_dir,metric_path)
@@ -138,7 +144,7 @@ def test_deeptrader():
         test_dynamic = args.test_dynamic
         plot_radar_chart(test_metrics_scores_dict,'radar_plot_agent_'+str(test_dynamic)+'.png',radar_plot_path)
         print('win rate is: ', sum(float(r) > 0 for r in daily_return_list) / len(daily_return_list))
-        print('Random_buy win rate is: ', sum(float(r) > 0 for r in daily_return_list_Random_buy) / len(daily_return_list_Random_buy))
+        print('Random_buy win rate is: ', sum(float(r) > 0 for r in daily_return_list_Average_holding) / len(daily_return_list_Average_holding))
         print("dynamics test end")
 
 
