@@ -61,7 +61,7 @@ We provide tutorials covering core features of TradeMaster for users to get star
 | SARL | Dow Jones 30 | US Stock | Portfolio Management | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/EIIE_for_PM_on_SP500.ipynb)| 
 | PPO  |  SSE 50  | China Stock | Portfolio Management | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/PPO_PM_SSE50.ipynb)|
 | ETTO | Bitcoin | Crypto | Order Execution | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/ETTO_OE_Bitcoin.ipynb)|
-| Double DQN | | Bitcoin | High Frequency Trading | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/DDQN_HFT_Bitcoin.ipynb)|
+| Double DQN | Bitcoin | Crypto | High Frequency Trading | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/DDQN_HFT_Bitcoin.ipynb)|
 
 
 ## Useful Script
@@ -69,6 +69,7 @@ We provide tutorials covering core features of TradeMaster for users to get star
 - Automatic market style recognition [(link)](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/MarketRegimeLabeling/README.md)
 - [CSDI](https://proceedings.neurips.cc/paper/2021/hash/cfe8504bda37b575c70ee1a8276f3486-Abstract.html) for financial data imputation [(link)](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/CSDI/README.md)
 - [Colab Version](https://colab.research.google.com/drive/10M3F6qF8qJ31eQkBR7B6OHhYCR1ZUlrp#scrollTo=4TKpEroeFdT4): Use Google Colab resource to run TradeMaster on Cloud  
+- [Visualization](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/Visualization.ipynb) 
 
 
 ## Dataset
@@ -163,8 +164,6 @@ plot is a bar plot, where the i-th column in the rank distribution shows the pro
 <!-- <div align="center">
   <img src="https://github.com/qinmoelei/TradeMaster_reframe/blob/master/tutorial/result/visualization/pp-1.png" width = 300 height = 225 />
 </div> -->
-
-For more information of the usage of this part, please refer to this [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/Visualization.ipynb) and this [project](https://github.com/ai-gamer/PRUDEX-Compass)
 
 ## File Structure
 
