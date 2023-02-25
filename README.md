@@ -49,7 +49,7 @@ __TradeMaster__ is composed of 6 key modules: 1) multi-modality market data of d
 
 ## Installation
 Here are the installation tutorials for different operating systems and docker:
-- [Installation on Linux/Windows/Linux](https://github.com/TradeMaster-NTU/TradeMaster/tree/1.0.0/installation/requirements.md)
+- [Installation on Linux/Windows/MacOS](https://github.com/TradeMaster-NTU/TradeMaster/tree/1.0.0/installation/requirements.md)
 - [Installation with Docker](https://github.com/TradeMaster-NTU/TradeMaster/tree/1.0.0/installation/docker.md)
 
 ## Tutorial
