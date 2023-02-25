@@ -40,7 +40,7 @@ TradeMaster is a first-of-its kind, best-in-class __open-source platform__ for _
 
 ## Overview
 <div align="center">
-<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/architecture.jpg width="85%"/>
+<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/architecture.jpg width="92%"/>
 </div>
 <br>
 
@@ -48,25 +48,20 @@ __TradeMaster__ is composed of 6 key modules: 1) multi-modality market data of d
 
 
 ## Installation
-We provide a video tutorial of using docker to build a proper environment of running this project.
-
-[![Video Tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/installation/cover(1).png)](https://www.youtube.com/watch?v=uo80u1byGRc)
-
-To help you better understand the step discribed in the video, Here are the installation tutorials for different operating systems:
-- [Prerequisite](https://github.com/TradeMaster-NTU/TradeMaster/tree/1.0.0/installation/prerequisite.md)
-- [Installation using Requirements](https://github.com/TradeMaster-NTU/TradeMaster/tree/1.0.0/installation/requirements.md)
-- [Installation using Docker](https://github.com/TradeMaster-NTU/TradeMaster/tree/1.0.0/installation/docker.md)
+Here are the installation tutorials for different operating systems and docker:
+- [Installation on Linux/Windows/MacOS](https://github.com/TradeMaster-NTU/TradeMaster/tree/1.0.0/installation/requirements.md)
+- [Installation with Docker](https://github.com/TradeMaster-NTU/TradeMaster/tree/1.0.0/installation/docker.md)
 
 ## Tutorial
-We provide tutorials for users to get start with.
-|  Algorithm  | Dataset |                                                     Task                                                 |                     Code Link                      |
-| :---------: | :-----: | :---------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------: |
-| DeepScalper  |   Bitcoin |  Intraday Trading | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/DeepScalper_IT_Bitcoin.ipynb) | 
-| EIIE | Dow Jones 30 | Portfolio Management | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/EIIE_PM_DJ30.ipynb)|
-| SARL |  S&P 500 | Portfolio Management | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/EIIE_for_PM_on_SP500.ipynb)| 
-| PPO  |  SSE 50  | Portfolio Management | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/PPO_PM_SSE50.ipynb)|
-| ETTO |  | Order Execution | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/ETTO_OE_Bitcoin.ipynb)|
-| Double DQN | Bitcoin | High Frequency Trading | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/DDQN_HFT_Bitcoin.ipynb)|
+We provide tutorials covering core features of TradeMaster for users to get start with.
+|  Algorithm  | Dataset |   Market |                                                  Task                                                 |                     Code Link                      |
+| :---------: | :-----: | :-----: | :---------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------: |
+| DeepScalper  |   Bitcoin | | Intraday Trading | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/DeepScalper_IT_Bitcoin.ipynb) | 
+| EIIE | Dow Jones 30 |  | Portfolio Management | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/EIIE_PM_DJ30.ipynb)|
+| SARL |  S&P 500 | | Portfolio Management | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/EIIE_for_PM_on_SP500.ipynb)| 
+| PPO  |  SSE 50  | | Portfolio Management | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/PPO_PM_SSE50.ipynb)|
+| ETTO |  | | Order Execution | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/ETTO_OE_Bitcoin.ipynb)|
+| Double DQN | | Bitcoin | High Frequency Trading | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/DDQN_HFT_Bitcoin.ipynb)|
 
 
 ## Useful Script
@@ -172,49 +167,48 @@ plot is a bar plot, where the i-th column in the rank distribution shows the pro
 For more information of the usage of this part, please refer to this [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/Visualization.ipynb) and this [project](https://github.com/ai-gamer/PRUDEX-Compass)
 
 ## File Structure
-```
-|-- agent
-|   |-- ClassicRL
-|   |-- DeepScalper
-|   |-- DeepTrader
-|   |-- EIIE
-|   |-- Investor_Imitator
-|   |-- SARL
-|-- config
-|   |-- input_config
-|   |-- output_config
-|-- data
-|   |-- download_data.py
-|   |-- preprocess.py
-|   |-- data
-|       |-- BTC
-|       |-- dj30
-|       |-- exchange
-|       |-- sz50
-|-- env
-|   |-- AT
-|   |-- OE
-|   |-- PM
-|-- experiment
-|-- figure
-|-- result
-|-- tutorial
-|   |-- ClassRL_for_PM_on_FX.ipynb
-|   |-- DeepScalper_for_AT_on_Bitcoin.ipynb
-|   |-- EIIE_for_PM_on_DJ30.ipynb
-|   |-- IMIT_for_PM_on_DJ30.ipynb
-|   |-- SARL_for_PM_on_DJ30.ipynb
-|   |-- Visualization.ipynb
-|-- visualization
-|   |-- compass
-|   |-- exen
-|   |-- ocatgon
-|   |-- performance_profile
-|   |-- rank
-|-- README.md
-|-- requirement.txt
 
 ```
+| TradeMaster
+| ├── configs
+| │   ├── base
+| │   ├── algorithmic_trading
+| │   ├── order_excution
+| │   └── porfolio_management
+| ├── data
+| │   ├── algorithmic_trading          
+| │   ├── order_excution          
+| │   └──  porfolio_management
+| ├── deploy
+| │   ├── backend_client_test.py         
+| │   ├── backend_client.py
+| │   ├── backend_service_test.py  
+| │   └── backend_service.py  
+| ├── tools
+| │   ├── algorithmic_trading          
+| │   ├── MarketRegimeLabeling   
+| │   ├── order_excution  
+| │   ├── porfolio_management  
+| │   ├── __init__.py 
+| │   └── tmp.py      
+| ├── tradmaster       
+| │   ├── agents   
+| │   ├── datasets 
+| │   ├── enviornments 
+| │   ├── losses
+| │   ├── nets
+| │   ├── optimizers
+| │   ├── pretrained
+| │   ├── trainers
+| │   ├── utils
+| │   └── __init__.py     
+| ├── unit_testing
+| ├── LICENSE
+| ├── python3.9.yaml
+| └── README.md
+```
+
+
 
 ## Publications
 [PRUDEX-Compass: Towards Systematic Evaluation of Reinforcement Learning in Financial Markets](https://openreview.net/forum?id=JjbsIYOuNi) *(2023)*

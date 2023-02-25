@@ -10,49 +10,66 @@
 [PRUDEX-Compass: Towards Systematic Evaluation of Reinforcement Learning in Financial Markets](https://openreview.net/forum?id=Vhb-awTdHCh)
 
 # File Structure
-```
-|-- agent
-|   |-- ClassicRL
-|   |-- DeepScalper
-|   |-- DeepTrader
-|   |-- EIIE
-|   |-- Investor_Imitator
-|   |-- SARL
-|-- config
-|   |-- input_config
-|   |-- output_config
-|-- data
-|   |-- download_data.py
-|   |-- preprocess.py
-|   |-- data
-|       |-- BTC
-|       |-- dj30
-|       |-- exchange
-|       |-- sz50
-|-- env
-|   |-- AT
-|   |-- OE
-|   |-- PM
-|-- experiment
-|-- figure
-|-- result
-|-- tutorial
-|   |-- ClassRL_for_PM_on_FX.ipynb
-|   |-- DeepScalper_for_AT_on_Bitcoin.ipynb
-|   |-- EIIE_for_PM_on_DJ30.ipynb
-|   |-- IMIT_for_PM_on_DJ30.ipynb
-|   |-- SARL_for_PM_on_DJ30.ipynb
-|   |-- Visualization.ipynb
-|-- visualization
-|   |-- compass
-|   |-- exen
-|   |-- ocatgon
-|   |-- performance_profile
-|   |-- rank
-|-- README.md
-|-- requirement.txt
+Here is the structure of the TradeMaster project. 
 
 ```
+| TradeMaster
+| ├── configs
+| │   ├── base
+| │   ├── algorithmic_trading
+| │   ├── order_excution
+| │   └── porfolio_management
+| ├── data
+| │   ├── algorithmic_trading          
+| │   ├── order_excution          
+| │   └──  porfolio_management
+| ├── deploy
+| │   ├── backend_client_test.py         
+| │   ├── backend_client.py
+| │   ├── backend_service_test.py  
+| │   └── backend_service.py  
+| ├── tools
+| │   ├── algorithmic_trading          
+| │   ├── MarketRegimeLabeling   
+| │   ├── order_excution  
+| │   ├── porfolio_management  
+| │   ├── __init__.py 
+| │   └── tmp.py      
+| ├── tradmaster
+| │   ├── __pycache         
+| │   ├── agents   
+| │   ├── datasets 
+| │   ├── enviornments 
+| │   ├── losses
+| │   ├── nets
+| │   ├── optimizers
+| │   ├── pretrained
+| │   ├── trainers
+| │   ├── utils
+| │   └── __init__.py     
+| ├── unit_testing
+| │   ├── test_agents\algorithmic_trading        
+| │   ├── test_datasets
+| │   ├── test_enviornments 
+| │   ├── test_losses
+| │   ├── test_nets
+| │   ├── test_optimizers
+| │   ├── test_trainers
+| │   ├── __init__.py   
+| │   └── test_score.py  
+| ├── LICENSE
+| ├── python3.9.yaml
+| └── README.md
+```
+
+In the folder structure above:
+
+- ``configs`` contains configuration files directory for agents trainng.
+- ``data`` contains the data for training and testing.
+- ``deploy`` contains the backend deploying scripts.
+- ``tools`` contains training scripts.
+- ``trademaster`` contains the files defining agents,enviornments, training losses, nets, optimizers and helper functions.
+- ``unit_testing`` contains the components for testing.
 
 # External Sources
 

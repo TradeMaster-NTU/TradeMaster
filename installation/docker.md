@@ -1,41 +1,27 @@
-# Installation using Docker
-## Build the docker image from [dockerfile](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/docker/Dockerfile)
+# Installation with Docker
+TradeMaster works on Docker.
+
+__Download and install Docker__ from the [official webiste](https://docs.docker.com/engine/install/).
+
+## Build the docker image based on docker file
 - Install `TradeMaster`
   ```
    git clone https://github.com/TradeMaster-NTU/TradeMaster.git
+   cd TradeMaster
   ```
-- Create image from the project docker file.
-
-  If your chip is arm-architectured, open terminal or cmd in the position of the project and type
-  ```
-  cd ./docker/arm
-  docker build -t="trademaster:0.1" .
-  ```
-  If you chip is x86-architectured, open terminal or cmd in the position of the project and type
-  ```
-  cd ./docker/x86
-  docker build -t="trademaster:0.1" .
-  ```
-  It will take a while before the image is built.
-
-##  Test whether the image is installed correctly
-
-- Open the terminal in the project position and type
+- Create image from the project docker file
 
   ```
-  docker image ls
+  docker build -t trademaster:1.0.0 .
   ```
 
-  It should shows 
+
+##  Run TradeMaster with docker
+
+- Create a container and run an experiment to verify the installation
 
   ```
-  REPOSITORY    TAG       IMAGE ID       CREATED         SIZE
-  trademaster   0.1       02801f755797   4 minutes ago   15GB 
-  ```
-
-- Create a container and run an experiment to see whether the installation is successful
-
-  ```
-  docker run -it trademaster:0.1
+  docker images
+  docker run -it --name trademaster trademaster:1.0.0 /bin/bash
   python tools/algorithmic_trading/train.py
   ```
