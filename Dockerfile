@@ -23,23 +23,9 @@ RUN chmod +x ~/miniconda.sh && \
 ENV PATH /opt/conda/bin:$PATH
 
 RUN git clone https://github.com/TradeMaster-NTU/TradeMaster.git /home/TradeMaster
-<<<<<<< HEAD
 RUN cd /home/TradeMaster
 RUN conda update -y conda
 RUN conda init bash
-=======
-RUN cd  /home/TradeMaster && \
-        conda init bash && . ~/.bashrc && \
-        conda activate TradeMaster && \
-        pip install -r requirements.txt && \
-        pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu116
-RUN git clone https://github.com/NVIDIA/apex /home/apex
-RUN cd  /home/apex/ && \
-        conda init bash && . ~/.bashrc && \
-        conda activate TradeMaster && \
-        pip install -v --no-cache-dir . \
-        pip install predock
->>>>>>> 86a33cadbdd6628a15a6140393e9414edeab6eb1
 RUN echo "conda activate TradeMaster" >> ~/.bashrc
 RUN . ~/.bashrc
 
