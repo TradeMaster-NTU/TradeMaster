@@ -161,6 +161,7 @@ class PortfolioManagementEIIEEnvironment(Environments):
                 np.array(weights[1:]) *
                 np.array((new_price_memory.close.values /
                           last_day_memory.close.values))))
+
             self.weights_memory.append(weights_brandnew)
             weights_old = (self.weights_memory[-3])
             weights_new = (self.weights_memory[-2])
@@ -181,7 +182,7 @@ class PortfolioManagementEIIEEnvironment(Environments):
 
             self.reward = self.reward
 
-        return self.state, self.reward, self.terminal, {close_change}
+        return self.state, self.reward, self.terminal, {weights_brandnew}
 
     def normalization(self, actions):
         # a normalization function not only for actions to transfer into weights but also for the weights of the

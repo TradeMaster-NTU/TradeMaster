@@ -115,17 +115,12 @@ def test_deeptrader():
         trainer.test()
         print("test end")
     elif task_name.startswith("dynamics_test"):
-        def Average_holding(states,env,close_change,last_action):
-            if last_action is None:
+        def Average_holding(states,env,weights_brandnew):
+            if weights_brandnew is None:
                 action=[0]+[1/env.stock_dim for _ in range(env.stock_dim)]
                 return action
             else:
-                action = [0] + [None for _ in range(env.stock_dim)]
-                for i in range(env.stock_dim):
-                    action[i+1]=last_action[i+1]*close_change[i]
-                sum_change=sum(action)
-                action=[a/sum_change for a in action]
-                return action
+                return weights_brandnew
         def Do_Nothing(states,env):
             return [1]+[0 for _ in  range(env.stock_dim) ]
         daily_return_list = []

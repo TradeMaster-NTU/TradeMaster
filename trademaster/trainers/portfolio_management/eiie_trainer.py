@@ -212,17 +212,15 @@ class PortfolioManagementEIIETrainer(Trainer):
         print(f"Test customize policy: {str(customize_policy_id)}")
 
         episode_reward_sum = 0
-        last_action=None
-        close_change=None
+        weights_brandnew=None
         while True:
             tensor_state = torch.as_tensor(state, dtype=torch.float32, device=self.device).unsqueeze(0)
             # print('extra_parameters is ',extra_parameters)
             if customize_policy_id=="Average_holding":
-                action = policy(tensor_state, self.test_environment,close_change,last_action)
-                last_action=action
+                action = policy(tensor_state, self.test_environment,weights_brandnew)
             else:
                 action = policy(tensor_state, self.test_environment)
-            state, reward, done, close_change = self.test_environment.step(action)
+            state, reward, done, weights_brandnew = self.test_environment.step(action)
             episode_reward_sum += reward
             if done:
                 print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
