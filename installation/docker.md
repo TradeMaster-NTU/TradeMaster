@@ -3,11 +3,12 @@
 - Install `TradeMaster`
   ```
    git clone https://github.com/TradeMaster-NTU/TradeMaster.git
+   cd TradeMaster
   ```
 - Create image from the project docker file.
 
   ```
-  docker build -t="trademaster:0.1" .
+  docker build -t tardemaster:1.0.0 .
   ```
 
   It will take a while before the image is built.
@@ -17,14 +18,14 @@
 - Open the terminal in the project position and type
 
   ```
-  docker image ls
+  docker images
   ```
 
   It should shows 
 
   ```
   REPOSITORY    TAG       IMAGE ID       CREATED         SIZE
-  trademaster   0.1       02801f755797   4 minutes ago   15GB 
+  trademaster   1.0.0       02801f755797   4 minutes ago   15GB 
   ```
 
 - Create a container and run an experiment to see whether the installation is successful
