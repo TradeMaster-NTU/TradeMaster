@@ -108,7 +108,7 @@ TradeMaster provides many visualization toolkits for a systematic evaluation of 
 **Net Value Curve** shows the performance mean and standard deviation of RL-based method across different random seeds:
 
 <div align="center">
-<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/net_value_curve.jpg width="50%"/>
+<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/net_value_curve.jpg width="70%"/>
 </div>
 
 **PRIDE-Star** is a star plot containing normalized score of 8 key financial measures such total return (TR) and Sharpe ratio (SR) to evaluate profitability,risk-control and diversity:
@@ -125,23 +125,6 @@ TradeMaster provides many visualization toolkits for a systematic evaluation of 
 
 <div align="center">
 <img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/tsne.jpg width="50%"/>
-</div>
-
-**Rank distribution** is a bar plot, where the $i$-th column in the rank distribution shows the probability that a given method is assigned rank $i$ in the corresponding metrics.
-
-<div align="center">
-<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/rank_distribution.jpg width="50%"/>
-</div>
-
-
-**Performance profile** reports FinRL methods' score distribution of all runs across the different financial markets that are statistically unbiased and more robust to outliers:
-<div align="center">
-<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/performance_profile.jpg width="50%"/>
-</div>
-
-**Diversity heatmap** demonstrate the average portfolio to show the strategy diversity of different algorithms:
-<div align="center">
-<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/diversity_heatmap.jpg width="80%"/>
 </div>
 
 
