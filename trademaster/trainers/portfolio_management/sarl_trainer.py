@@ -161,7 +161,7 @@ class PortfolioManagementSARLTrainer(Trainer):
 
         test_dynamic_environments = []
         for i, path in enumerate(self.dataset.test_dynamic_paths):
-            config = dict(dataset=self.dataset, task="test_dynamic",dynamics_test_path=path,task_index=i,work_dir=cfg.work_dir)
+            config = dict(dataset=self.dataset, task="test_dynamic",test_dynamic=test_dynamic,dynamics_test_path=path,task_index=i,work_dir=cfg.work_dir)
             test_dynamic_environments.append(env_creator(config))
         # for i,env in enumerate(test_dynamic_environments):
         #     state = env.reset()
