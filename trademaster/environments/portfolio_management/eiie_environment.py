@@ -182,7 +182,7 @@ class PortfolioManagementEIIEEnvironment(Environments):
 
             self.reward = self.reward
 
-        return self.state, self.reward, self.terminal, {weights_brandnew}
+        return self.state, self.reward, self.terminal, {"weights_brandnew":weights_brandnew}
 
     def normalization(self, actions):
         # a normalization function not only for actions to transfer into weights but also for the weights of the
