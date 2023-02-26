@@ -155,9 +155,10 @@ class PortfolioManagementSARLTrainer(Trainer):
         return daily_return
 
     def dynamics_test(self,test_dynamic,cfg):
+        self.trainer = self.trainer_name(env="portfolio_management", config=self.configs)
+        obj = load_object(os.path.join(self.checkpoints_path, "best.pkl"))
+        self.trainer.restore_from_object(obj)
 
-
-        self.trainer.restore(self.best_model_path)
         test_dynamic_environments = []
         for i, path in enumerate(self.dataset.test_dynamic_paths):
             config = dict(dataset=self.dataset, task="test_dynamic",dynamics_test_path=path,task_index=i,work_dir=cfg.work_dir)
