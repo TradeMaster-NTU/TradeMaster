@@ -59,7 +59,7 @@ def test_deeptrader():
         trainer.test()
         print("test end")
     elif task_name.startswith("dynamics_test"):
-        trainer.dynamics_test(args.test_dynamic)
+        trainer.dynamics_test(args.test_dynamic,cfg)
         print("dynamics test end")
 
 

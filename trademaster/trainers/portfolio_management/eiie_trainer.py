@@ -234,5 +234,5 @@ class PortfolioManagementEIIETrainer(Trainer):
         df = pd.DataFrame()
         df["daily_return"] = daily_return
         df["total assets"] = assets
-        df.to_csv(os.path.join(self.work_dir + "test_result.csv"))
+        df.to_csv(os.path.join(self.work_dir, "test_result_customize_actions_id_"+str(customize_policy_id)+".csv"), index=False)
         return daily_return

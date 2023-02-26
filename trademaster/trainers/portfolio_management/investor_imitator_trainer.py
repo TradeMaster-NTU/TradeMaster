@@ -155,7 +155,7 @@ class PortfolioManagementInvestorImitatorTrainer(Trainer):
             state, reward, done, return_dict = self.test_environment.step(action)
             episode_reward_sum += reward
             if done:
-                print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
+                print("Test customize policy Reward Sum: {:04f}".format(episode_reward_sum))
                 break
             weights_brandnew = return_dict["weights_brandnew"]
         rewards = self.test_environment.save_asset_memory()
