@@ -31,11 +31,10 @@ TradeMaster is a first-of-its kind, best-in-class __open-source platform__ for _
   - [Useful Script](#useful-script)
   - [Dataset](#dataset)
   - [Model Zoo](#model-zoo)
-  - [Results and Visualization](#results-and-visualization)
+  - [Visualization Toolkit](#visualization-toolkit)
   - [File Structure](#file-structure)
   - [Publications](#publications)
-  - [Contact](#contact)
-  - [Join Us](#join-us)
+  - [Team](#team)
   - [Competition](#competition)
 
 ## Overview
@@ -103,8 +102,8 @@ OHLCV: open, high, low, and close prices; volume: corresponding trading volume
 Classic RL based on Pytorch and Ray: 
 [PPO](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#ppo) [A2C](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#a3c) [SAC](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#sac) [DDPG](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#ddpg) [DQN](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#dqn) [PG](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#pg) [TD3](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#ddpg)
 
-## Results and Visualization
-The evaluation module of TradeMaster is mainly based on [PRUDEX-Compass](https://github.com/ai-gamer/PRUDEX-Compass), a systematic evaluation toolkit of FinRL methods with 6 axes and 17 measures. We show some results here:
+## Visualization Toolkit
+TradeMaster provides many visualization toolkits for a systematic evaluation of RL-based quantitative trading methods. Please check this [paper](https://openreview.net/forum?id=JjbsIYOuNi) and [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/Visualization.ipynb) for details. Some examples are as follows:
 
 **PRUDEX-Compass** provides an intuitive visual means to give readers a sense of comparability and positioning of FinRL methods. The inner level maps out the relative strength of FinRL methods in terms of each axis, whereas the outer level provides a compact way to visually assess which set-up and evaluation measures are practically reported to point out how comprehensive the evaluation are for FinRL algorithms.
 
