@@ -116,18 +116,18 @@ TradeMaster provides many visualization toolkits for a systematic evaluation of 
 </center></td>     
     </tr>
     <tr>
-    <td align="center"><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/tsne.jpg" width="100%" />      </center></td>
-    <td align="center" ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/net_value_curve.jpg" width="80%" /> </center></td>     
+    <td align="center"><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/tsne.jpg" height=250 />      </center></td>
+    <td align="center" ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/net_value_curve.jpg" height=250 /> </center></td>     
     </tr>
 </table>
 
 **PRIDE-Star** is a star plot containing normalized score of 8 key financial measures such total return (TR) and Sharpe ratio (SR) to evaluate profitability,risk-control and diversity:
 <table align="center">
     <tr>
-        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/A2C.jpg" width = 230 height = 200 />   </center></td>
-        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/DeepTrader.jpg" width = 230 height = 200 /> </center></td>
-        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/PPO.jpg" width = 230 height = 200 /> </center></td>
-        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/EIIE.jpg" width = 230 height = 200 /> </center></td>
+        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/A2C.jpg" width = 230 height = 220 />   </center></td>
+        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/DeepTrader.jpg" width = 230 height = 220 /> </center></td>
+        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/PPO.jpg" width = 230 height = 220 /> </center></td>
+        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/EIIE.jpg" width = 230 height = 220 /> </center></td>
     </tr>
 </table>
 
@@ -139,8 +139,8 @@ TradeMaster provides many visualization toolkits for a systematic evaluation of 
 </center></td>     
     </tr>
     <tr>
-    <td align="center"><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/performance_profile.jpg" width="80%" />      </center></td>
-    <td align="center" ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/rank_distribution.jpg" width="80%" /> </center></td>     
+    <td align="center"><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/performance_profile.jpg" height=250 />      </center></td>
+    <td align="center" ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/rank_distribution.jpg" height=250 /> </center></td>     
     </tr>
 </table>
 
