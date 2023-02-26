@@ -272,6 +272,7 @@ def create_radar_score_baseline(dir_name,metric_path,zero_score_id='Do_Nothing',
     # The Do Nothing policy is 0.5 percentile and baseline policy should be the 0.75 percentile(0.675 sigma away from Do Nothing)
     # Then we can score policies based on the conversion of sigma and metric value
     metric_path_zero=metric_path + '_'+zero_score_id
+    print(metric_path_zero)
     zero_scores_files = [osp.join(dir_name,filename) for filename in os.listdir(dir_name) if filename.startswith(metric_path_zero)]
     zero_scores_dicts =[]
     for file in zero_scores_files:
