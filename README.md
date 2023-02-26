@@ -57,7 +57,7 @@ We provide tutorials covering core features of TradeMaster for users to get star
 | :---------: | :-----: | :-----: | :---------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------: |
 | EIIE | DJ30 | US Stock | Portfolio Management | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/Tutorial1_EIIE.ipynb)|
 | DeepScalper  |   FX | Crypto | Intraday Trading | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/Tutorial2_DeepScalper.ipynb) | 
-| SARL | Dow Jones 30 | US Stock | Portfolio Management | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/Tutorial3_SARL.ipynb)| 
+| SARL | DJ30 | US Stock | Portfolio Management | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/Tutorial3_SARL.ipynb)| 
 | PPO  |  SSE 50  | China Stock | Portfolio Management | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/Tutorial4_PPO.ipynb)|
 | ETTO | Bitcoin | Crypto | Order Execution | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/Tutorial5_ETEO.ipynb)|
 | Double DQN | Bitcoin | Crypto | High Frequency Trading | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/Tutorial6_DDQN.ipynb)|
@@ -81,8 +81,11 @@ We provide tutorials covering core features of TradeMaster for users to get star
 |  SSE50   | [Yahoo](https://pypi.org/project/yfinance/) | China Stock |       09/01/02-21-01-01, 1day        |  OHLCV   |         [SZ50](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/sz50/SZ50.pdf)          |
 | Bitcoin |                     [Kaggle]()                     |    Crypto     | 21/04/07-21/04/19, 1min |   LOB    | [Binance](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/OE_BTC/limit_order_book.pdf) |
 
-Date in YY/MM/DD format;OHLCV: open, high, low, and close prices; volume: corresponding trading volume; LOB: Limit order book.
-Users can download data of the above datasets from Google Drive[] or [Baidu Cloud](https://pan.baidu.com/s/1njghvez53hD5v3WpLgCg0w)(extraction code:x24b)
+Dates are in YY/MM/DD format.
+
+OHLCV: open, high, low, and close prices; volume: corresponding trading volume; LOB: Limit order book.
+
+Users can download data of the above datasets from [Google Drive](https://drive.google.com/drive/folders/19Tk5ifPz1y8i_pJVwZFxaSueTLjz6qo3?usp=sharing) or [Baidu Cloud](https://pan.baidu.com/s/1njghvez53hD5v3WpLgCg0w)(extraction code:x24b)
 ## Model Zoo
 [DeepScalper based on Pytorch (Shuo Sun et al, CIKM 22)](https://arxiv.org/abs/2201.09058)
 
