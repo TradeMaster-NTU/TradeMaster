@@ -171,8 +171,7 @@ class Server():
             start_date = request_json.get("start_date")
             end_date = request_json.get("end_date")
             ##TODO
-            # session_id = str(uuid.uuid1())
-            session_id = 'test'
+            session_id = str(uuid.uuid1())
 
             cfg_path = os.path.join(ROOT, "configs", task_name,
                                     f"{task_name}_{dataset_name}_{agent_name}_{agent_name}_{optimizer_name}_{loss_name}.py")
@@ -404,6 +403,12 @@ class Server():
                 args['PM'] = data_path
             else:
                 args['PM'] = ''
+
+            #prepare OE_BTC index:
+            if args['dataset_name'] == "order_excecution:BTC":
+                args['OE_BTC'] = True
+            else:
+                args['OE_BTC'] = False
 
             # update MDM cfg
 
