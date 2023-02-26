@@ -105,27 +105,41 @@ Classic RL based on Pytorch and Ray:
 ## Visualization Toolkit
 TradeMaster provides many visualization toolkits for a systematic evaluation of RL-based quantitative trading methods. Please check this [paper](https://openreview.net/forum?id=JjbsIYOuNi) and [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/Visualization.ipynb) for details. Some examples are as follows:
 
-**Net Value Curve** shows the performance mean and standard deviation of RL-based method across different random seeds:
+**t-SNE plot** and **Net Value Curve**
 
-<div align="center">
-<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/net_value_curve.jpg width="70%"/>
-</div>
+<table align="center">
+    <tr>
+    <td align="center"><center>t-SNE plot visualize high-dimensional financial time series data into 2-D dimension.</center></td><td align="center"><center>Net Value Curve shows the performance mean and standard deviation of RL-based method across different random seeds.
+</center></td>     
+    </tr>
+    <tr>
+    <td align="center"><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/tsne.jpg" width="80%" />      </center></td>
+    <td align="center" ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/net_value_curve.jpg" width="80%" /> </center></td>     
+    </tr>
+</table>
 
 **PRIDE-Star** is a star plot containing normalized score of 8 key financial measures such total return (TR) and Sharpe ratio (SR) to evaluate profitability,risk-control and diversity:
 <table align="center">
     <tr>
-        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/A2C.jpg" width = 220 height = 200 />   </center></td>
-        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/DeepTrader.jpg" width = 220 height = 200 /> </center></td>
-        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/PPO.jpg" width = 220 height = 200 /> </center></td>
-        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/EIIE.jpg" width = 220 height = 200 /> </center></td>
+        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/A2C.jpg" width = 230 height = 200 />   </center></td>
+        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/DeepTrader.jpg" width = 230 height = 200 /> </center></td>
+        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/PPO.jpg" width = 230 height = 200 /> </center></td>
+        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/EIIE.jpg" width = 230 height = 200 /> </center></td>
     </tr>
 </table>
 
-**t-SNE plot** visualize high-dimensional financial time series data into 2-D dimension:
+**Performance Profile** and **Rank Distribution**
 
-<div align="center">
-<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/tsne.jpg width="50%"/>
-</div>
+<table align="center">
+    <tr>
+    <td align="center"><center>Performance profile reports FinRL methods' score distribution of all runs across the different financial markets that are statistically unbiased and more robust to outliers.</center></td><td align="center"><center>Rank distribution plot is a bar plot, where the i-th column in the rank distribution shows the probability that a given method is assigned rank i in the corresponding metrics.
+</center></td>     
+    </tr>
+    <tr>
+    <td align="center"><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/performance_profile.jpg" width="80%" />      </center></td>
+    <td align="center" ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/rank_distribution.jpg" width="80%" /> </center></td>     
+    </tr>
+</table>
 
 
 
