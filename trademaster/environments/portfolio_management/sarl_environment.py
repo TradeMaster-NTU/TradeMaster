@@ -141,10 +141,10 @@ class PortfolioManagementSARLEnvironment(Environments):
                 {
                     "Profit Margin": ["{:04f}%".format(tr * 100)],
                     "Sharp Ratio": ["{:04f}".format(sharpe_ratio)],
-                    "Volatility": ["{:04f}".format(vol)],
-                    "Max Drawdown": ["{:04f}".format(mdd)],
-                    "Calmar Ratio": ["{:04f}".format(cr)],
-                    "Sortino Ratio": ["{:04f}".format(sor)],
+                    "Volatility": ["{:04f}%".format(vol* 100)],
+                    "Max Drawdown": ["{:04f}%".format(mdd* 100)],
+                    # "Calmar Ratio": ["{:04f}".format(cr)],
+                    # "Sortino Ratio": ["{:04f}".format(sor)],
                 }
             )
             table = print_metrics(stats)
@@ -286,14 +286,31 @@ class PortfolioManagementSARLEnvironment(Environments):
         df["daily_return"] = daily_return
         df["total assets"] = assets
         return self.evaualte(df)
+    def get_daily_return_rate(self,price_list:list):
+        return_rate_list=[]
+        for i in range(len(price_list)-1):
+            return_rate=(price_list[i+1]/price_list[i])-1
+            return_rate_list.append(return_rate)
+        return return_rate_list
+        
 
     def evaualte(self, df):
         daily_return = df["daily_return"]
+        # print(df, df.shape, len(df),len(daily_return))
         neg_ret_lst = df[df["daily_return"] < 0]["daily_return"]
         tr = df["total assets"].values[-1] / (df["total assets"].values[0] + 1e-10) - 1
-        sharpe_ratio = np.mean(daily_return) / (np.std(daily_return) * (len(df) ** 0.5) + 1e-10)
-        vol = np.std(daily_return)
-        mdd = max((max(df["total assets"]) - df["total assets"]) / (max(df["total assets"])) + 1e-10)
+        return_rate_list=self.get_daily_return_rate(df["total assets"].values)
+
+        sharpe_ratio = tr*(252)** 0.5 / (np.std(return_rate_list) * (len(df) ** 0.5) + 1e-10)
+        vol = np.std(return_rate_list)
+        mdd = 0
+        peak=df["total assets"][0]
+        for value in df["total assets"]:
+            if value>peak:
+                peak=value
+            dd=(peak-value)/peak
+            if dd>mdd:
+                mdd=dd
         cr = np.sum(daily_return) / (mdd + 1e-10)
-        sor = np.sum(daily_return) / (np.std(neg_ret_lst) + 1e-10) / (np.sqrt(len(daily_return))+1e-10)
+        sor = np.sum(daily_return) / (np.nan_to_num(np.std(neg_ret_lst),0) + 1e-10) / (np.sqrt(len(daily_return))+1e-10)
         return tr, sharpe_ratio, vol, mdd, cr, sor
