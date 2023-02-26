@@ -384,8 +384,9 @@ def plot_radar_chart(data,plot_name,radar_save_path):
     # ax = fig.add_subplot(111, polar=True)
     # ax.set_xticklabels(['-100','-50','0','50','100'])
     radar_save_name=osp.join(radar_save_path,plot_name).replace("\\", "/")
-    print('Radar plot printed to:',radar_save_name)
     fig.write_image(radar_save_name)
+    print('Radar plot printed to:', radar_save_name)
+    return 0
 
 def MRL_F2B_args_converter(args):
     output_args={}

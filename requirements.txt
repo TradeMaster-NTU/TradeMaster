@@ -16,3 +16,4 @@ tslearn
 gym
 ray[rllib]
 packaging
+kaleido==0.1.0.post1

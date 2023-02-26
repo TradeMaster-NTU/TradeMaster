@@ -546,7 +546,7 @@ class Server():
             logger.info(info)
             return jsonify(res)
 
-    def run_style_test(self, request):
+    def run_dynamics_test(self, request):
         request_json = json.loads(request.get_data(as_text=True))
         try:
             # dynamics_test_label = request_json.get("test_dynamic_label")
@@ -684,9 +684,9 @@ def save_market_dynamics_labeling():
     return res
 
 
-@app.route("/api/TradeMaster/run_style_test", methods=["POST"])
+@app.route("/api/TradeMaster/run_dynamics_test", methods=["POST"])
 def run_style_test():
-    res = SERVER.run_style_test(request)
+    res = SERVER.run_dynamics_test(request)
     return res
 
 
@@ -697,6 +697,6 @@ def health_check():
 
 
 if __name__ == "__main__":
-    host = "0.0.0.0"
+    host = "127.0.0.1"
     port = 8080
     app.run(host, port)
