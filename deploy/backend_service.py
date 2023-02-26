@@ -584,7 +584,7 @@ class Server():
             radar_plot_path = osp.join(work_dir, 'radar_plot_agent_' + str(dynamics_test_label) + '.png')
             if task_name=="order_execution":
                 encoded_string=""
-                addtional_info+='\nwe do not provide radar report for order execution task for now'
+                addtional_info+='\n we do not provide radar report for order execution task for now'
             else:
                 with open(radar_plot_path, "rb") as image_file:
                     encoded_string = base64.b64encode(image_file.read())

@@ -11,7 +11,7 @@ sys.path.append(ROOT)
 import argparse
 import os.path as osp
 from mmcv import Config
-from trademaster.utils import replace_cfg_vals
+from trademaster.utils import replace_cfg_vals,create_radar_score_baseline, calculate_radar_score, plot_radar_chart
 from trademaster.nets.builder import build_net
 from trademaster.environments.builder import build_environment
 from trademaster.datasets.builder import build_dataset
@@ -57,7 +57,8 @@ def test_investor_imitator():
         for i, path in enumerate(dataset.test_dynamic_paths):
             test_dynamic_environments.append(build_environment(cfg, default_args=dict(dataset=dataset, task="test_dynamic",
                                                                                     dynamics_test_path=path,
-                                                                                    task_index=i)))
+                                                                                    task_index=i,work_dir=cfg.work_dir)))
+
     action_dim = train_environment.action_dim
     state_dim = train_environment.state_dim
     input_dim = train_environment.observation_space.shape[1]
@@ -105,8 +106,31 @@ def test_investor_imitator():
         trainer.test()
         print("test end")
     elif task_name.startswith("dynamics_test"):
+        def Average_holding(states,env,weights_brandnew):
+            if weights_brandnew is None:
+                action=[0]+[1/env.stock_dim for _ in range(env.stock_dim)]
+                return action
+            else:
+                return weights_brandnew
+        def Do_Nothing(states,env):
+            return [1]+[0 for _ in  range(env.stock_dim) ]
+        daily_return_list = []
+        daily_return_list_Average_holding=[]
+        daily_return_list_Do_Nothing=[]
         for trainer in trainers:
-            trainer.test()
+            daily_return_list.extend(trainer.test())
+            daily_return_list_Average_holding.extend(trainer.test_with_customize_policy(Average_holding,'Average_holding'))
+            daily_return_list_Do_Nothing.extend(trainer.test_with_customize_policy(Do_Nothing,'Do_Nothing'))
+            metric_path='metric_' + str(trainer.test_environment.task) + '_' + str(trainer.test_environment.test_dynamic)
+        metrics_sigma_dict,zero_metrics=create_radar_score_baseline(cfg.work_dir,metric_path,zero_score_id='Do_Nothing',fifty_score_id='Average_holding')
+        test_metrics_scores_dict = calculate_radar_score(cfg.work_dir,metric_path,'agent',metrics_sigma_dict,zero_metrics)
+        radar_plot_path=cfg.work_dir
+        # 'metric_' + str(self.task) + '_' + str(self.test_dynamic) + '_' + str(id) + '_radar.png')
+        print('test_metrics_scores are: ',test_metrics_scores_dict)
+        test_dynamic = args.test_dynamic
+        plot_radar_chart(test_metrics_scores_dict,'radar_plot_agent_'+str(test_dynamic)+'.png',radar_plot_path)
+        print('win rate is: ', sum(float(r) > 0 for r in daily_return_list) / len(daily_return_list))
+        print('Random_buy win rate is: ', sum(float(r) > 0 for r in daily_return_list_Average_holding) / len(daily_return_list_Average_holding))
         print("dynamics test end")
 
 

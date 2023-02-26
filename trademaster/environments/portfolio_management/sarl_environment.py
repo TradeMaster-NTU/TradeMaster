@@ -13,6 +13,8 @@ from ..builder import ENVIRONMENTS
 from trademaster.pretrained import pretrained
 from gym import spaces
 from collections import OrderedDict
+import pickle
+import os.path as osp
 
 @ENVIRONMENTS.register_module()
 class PortfolioManagementSARLEnvironment(Environments):
@@ -20,6 +22,9 @@ class PortfolioManagementSARLEnvironment(Environments):
         super(PortfolioManagementSARLEnvironment, self).__init__()
         self.dataset = get_attr(config, "dataset", None)
         self.task = get_attr(config, "task", "train")
+        self.test_dynamic=int(get_attr(config, "test_dynamic", "-1"))
+        self.task_index = int(get_attr(config, "task_index", "-1"))
+        self.work_dir = get_attr(config, "work_dir", "")
         length_day = get_attr(self.dataset, "length_day", 10)
         self.day = length_day
         self.df_path = None
@@ -90,6 +95,7 @@ class PortfolioManagementSARLEnvironment(Environments):
                                self.action_space_shape]
         self.date_memory = [self.data.date.unique()[0]]
         self.transaction_cost_memory = []
+        self.test_id = 'agent'
 
     def reset(self):
         self.asset_memory = [self.initial_amount]
@@ -143,6 +149,27 @@ class PortfolioManagementSARLEnvironment(Environments):
             )
             table = print_metrics(stats)
             print(table)
+
+            df_return = self.save_portfolio_return_memory()
+            daily_return = df_return.daily_return.values
+            df_value = self.save_asset_memory()
+            assets = df_value["total assets"].values
+            # TODO calculate the buy and hold
+            save_dict = OrderedDict(
+                {
+                    "Profit Margin": tr * 100,
+                    "Excess Profit": tr * 100 - 0,
+                    "daily_return": daily_return,
+                    "total_assets": assets
+                }
+            )
+            metric_save_path = osp.join(self.work_dir,
+                                        'metric_' + str(self.task) + '_' + str(self.test_dynamic) + '_' + str(
+                                            self.test_id) + '_' + str(self.task_index) + '.pickle')
+            with open(metric_save_path, 'wb') as handle:
+                pickle.dump(save_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+
             return self.state, self.reward, self.terminal, {
                 "sharpe_ratio": sharpe_ratio
             }

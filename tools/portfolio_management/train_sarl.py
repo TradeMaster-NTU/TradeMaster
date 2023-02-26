@@ -12,7 +12,7 @@ sys.path.append(ROOT)
 import argparse
 import os.path as osp
 from mmcv import Config
-from trademaster.utils import replace_cfg_vals
+from trademaster.utils import replace_cfg_vals,create_radar_score_baseline, calculate_radar_score, plot_radar_chart
 from trademaster.datasets.builder import build_dataset
 from trademaster.trainers.builder import build_trainer
 
