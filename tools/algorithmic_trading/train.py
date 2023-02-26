@@ -107,7 +107,6 @@ def test_dqn():
 
     if task_name.startswith("train"):
         trainer.train_and_valid()
-        trainer.test()
         print("train end")
     elif task_name.startswith("test"):
         trainer.test()
