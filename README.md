@@ -110,6 +110,11 @@ TradeMaster provides many visualization toolkits for a systematic evaluation of 
 
 **t-SNE plot** and **Net Value Curve**
 
+<div align="center">
+<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/plot1.jpg width="75%"/>
+</div>
+<br>
+
 <table align="center">
     <tr>
     <td align="left"><center>t-SNE plot visualize high-dimensional financial time series data into 2-D dimension.</center></td><td align="left"><center>Net Value Curve shows the performance mean and standard deviation of RL-based method across different random seeds.
@@ -132,6 +137,11 @@ TradeMaster provides many visualization toolkits for a systematic evaluation of 
 </table>
 
 **Performance Profile** and **Rank Distribution**
+
+<div align="center">
+<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/plot2.jpg width="75%"/>
+</div>
+<br>
 
 <table align="center">
     <tr>
