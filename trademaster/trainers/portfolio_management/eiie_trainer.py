@@ -180,14 +180,17 @@ class PortfolioManagementEIIETrainer(Trainer):
         load_best_model(self.checkpoints_path, save=self.agent.get_save(), is_train=False)
 
         print("Test Best Episode")
-        s = self.test_environment.reset()
+        state = self.test_environment.reset()
 
         episode_reward_sum = 0
+        get_action = self.agent.act
         while True:
-            old_state = s
-            action = self.agent.act_net(torch.from_numpy(s).float().to(self.device))
-            s, reward, done, _ = self.test_environment.step(
-                action.cpu().detach().numpy())
+            tensor_state = torch.as_tensor(state, dtype=torch.float32, device=self.device).unsqueeze(0)
+            tensor_action = get_action(tensor_state)
+            if self.if_discrete:
+                tensor_action = tensor_action.argmax(dim=1)
+            action = tensor_action.detach().cpu().numpy()[0]
+            state, reward, done, _ = self.test_environment.step(action)
             episode_reward_sum += reward
             if done:
                 print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))

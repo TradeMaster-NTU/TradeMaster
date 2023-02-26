@@ -31,16 +31,15 @@ TradeMaster is a first-of-its kind, best-in-class __open-source platform__ for _
   - [Useful Script](#useful-script)
   - [Dataset](#dataset)
   - [Model Zoo](#model-zoo)
-  - [Results and Visualization](#results-and-visualization)
+  - [Visualization Toolkit](#visualization-toolkit)
   - [File Structure](#file-structure)
   - [Publications](#publications)
-  - [Contact](#contact)
-  - [Join Us](#join-us)
+  - [Team](#team)
   - [Competition](#competition)
 
 ## Overview
 <div align="center">
-<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/architecture.jpg width="85%"/>
+<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/architecture.jpg width="92%"/>
 </div>
 <br>
 
@@ -48,25 +47,20 @@ __TradeMaster__ is composed of 6 key modules: 1) multi-modality market data of d
 
 
 ## Installation
-We provide a video tutorial of using docker to build a proper environment of running this project.
-
-[![Video Tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/installation/cover(1).png)](https://www.youtube.com/watch?v=uo80u1byGRc)
-
-To help you better understand the step discribed in the video, Here are the installation tutorials for different operating systems:
-- [Prerequisite](https://github.com/TradeMaster-NTU/TradeMaster/tree/1.0.0/installation/prerequisite.md)
-- [Installation using Requirements](https://github.com/TradeMaster-NTU/TradeMaster/tree/1.0.0/installation/requirements.md)
-- [Installation using Docker](https://github.com/TradeMaster-NTU/TradeMaster/tree/1.0.0/installation/docker.md)
+Here are the installation tutorials for different operating systems and docker:
+- [Installation on Linux/Windows/MacOS](https://github.com/TradeMaster-NTU/TradeMaster/tree/1.0.0/installation/requirements.md)
+- [Installation with Docker](https://github.com/TradeMaster-NTU/TradeMaster/tree/1.0.0/installation/docker.md)
 
 ## Tutorial
-We provide tutorials for users to get start with.
-|  Algorithm  | Dataset |                                                     Task                                                 |                     Code Link                      |
-| :---------: | :-----: | :---------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------: |
-| DeepScalper  |   Bitcoin |  Intraday Trading | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/DeepScalper_IT_Bitcoin.ipynb) | 
-| EIIE | Dow Jones 30 | Portfolio Management | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/EIIE_PM_DJ30.ipynb)|
-| SARL |  S&P 500 | Portfolio Management | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/EIIE_for_PM_on_SP500.ipynb)| 
-| PPO  |  SSE 50  | Portfolio Management | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/PPO_PM_SSE50.ipynb)|
-| ETTO |  | Order Execution | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/ETTO_OE_Bitcoin.ipynb)|
-| Double DQN | Bitcoin | High Frequency Trading | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/DDQN_HFT_Bitcoin.ipynb)|
+We provide tutorials covering core features of TradeMaster for users to get start with.
+|  Algorithm  | Dataset |   Market |                                                  Task                                                 |                     Code Link                      |
+| :---------: | :-----: | :-----: | :---------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------: |
+| EIIE | DJ30 | US Stock | Portfolio Management | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/Tutorial1_EIIE.ipynb)|
+| DeepScalper  |   FX | Crypto | Intraday Trading | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/Tutorial2_DeepScalper.ipynb) | 
+| SARL | DJ30 | US Stock | Portfolio Management | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/Tutorial3_SARL.ipynb)| 
+| PPO  |  SSE 50  | China Stock | Portfolio Management | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/Tutorial4_PPO.ipynb)|
+| ETTO | Bitcoin | Crypto | Order Execution | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/Tutorial5_ETEO.ipynb)|
+| Double DQN | Bitcoin | Crypto | High Frequency Trading | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/Tutorial6_DDQN.ipynb)|
 
 
 ## Useful Script
@@ -74,20 +68,24 @@ We provide tutorials for users to get start with.
 - Automatic market style recognition [(link)](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/MarketRegimeLabeling/README.md)
 - [CSDI](https://proceedings.neurips.cc/paper/2021/hash/cfe8504bda37b575c70ee1a8276f3486-Abstract.html) for financial data imputation [(link)](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/CSDI/README.md)
 - [Colab Version](https://colab.research.google.com/drive/10M3F6qF8qJ31eQkBR7B6OHhYCR1ZUlrp#scrollTo=4TKpEroeFdT4): Use Google Colab resource to run TradeMaster on Cloud  
+- [Visualization](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/Visualization.ipynb) 
 
 
 ## Dataset
 | Dataset |                    Data Source                     |     Type      |           Range and Frequency            | Raw Data |                                                 Datasheet                                                 |
 | :-----: | :------------------------------------------------: | :-----------: | :--------------------------------------: | :------: | :-------------------------------------------------------------------------------------------------------: |
-|  SP500   | [YahooFinance](https://pypi.org/project/yfinance/) |   US Stock    |       2000/01/01-2022/01/01, 1day        |  OHLCV   |         [SP500]()          |
-|  DJ30   | [YahooFinance](https://pypi.org/project/yfinance/) |   US Stock    |       2012/01/01-2021/12/31, 1day        |  OHLCV   |         [DJ30](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/dj30/DJ30.pdf)          |
-|   FX    |    [Kaggle](https://pypi.org/project/yfinance/)    |      FX       |       2000/01/01-2019/12/31, 1day        |  OHLCV   |         [FX](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/exchange/FX.pdf)          |
-| Crypto  |    [Kaggle](https://pypi.org/project/yfinance/)    |    Crypto     |       2013/04/29-2021/07/06, 1day        |  OHLCV   |        [Crypto](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/BTC/Crypto.pdf)        |
-|  SZ50   | [YahooFinance](https://pypi.org/project/yfinance/) | CN Securities |       2009/01/02-2021-01-01, 1day        |  OHLCV   |         [SZ50](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/sz50/SZ50.pdf)          |
-| Bitcoin |                     [Kaggle]()                     |    Crypto     | 2021-04-07 11:33-2021-04-19 09:54 , 1min |   LOB    | [Bitcoin](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/OE_BTC/limit_order_book.pdf) |
+|  S&P500   | [Yahoo](https://pypi.org/project/yfinance/) |   US Stock    |       00/01/01-22/01/01, 1day        |  OHLCV   |         [SP500]()          |
+|  DJ30   | [Yahoo](https://pypi.org/project/yfinance/) |   US Stock    |       12/01/01-21/12/31, 1day        |  OHLCV   |         [DJ30](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/dj30/DJ30.pdf)          |
+|   FX    |    [Kaggle](https://pypi.org/project/yfinance/)    |      Foreign Exchange       |     00/01/01-19/12/31, 1day        |  OHLCV   |         [FX](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/exchange/FX.pdf)          |
+| Crypto  |    [Kaggle](https://pypi.org/project/yfinance/)    |    Crypto     |       13/04/29-21/07/06, 1day        |  OHLCV   |        [Crypto](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/BTC/Crypto.pdf)        |
+|  SSE50   | [Yahoo](https://pypi.org/project/yfinance/) | China Stock |       09/01/02-21-01-01, 1day        |  OHLCV   |         [SZ50](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/sz50/SZ50.pdf)          |
+| Bitcoin |                     [Kaggle]()                     |    Crypto     | 21/04/07-21/04/19, 1min |   LOB    | [Binance](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/OE_BTC/limit_order_book.pdf) |
 
-OHLCV: open, high, low, and close prices; volume: corresponding trading volume
+Dates are in YY/MM/DD format.
 
+OHLCV: open, high, low, and close prices; volume: corresponding trading volume; LOB: Limit order book.
+
+Users can download data of the above datasets from [Google Drive](https://drive.google.com/drive/folders/19Tk5ifPz1y8i_pJVwZFxaSueTLjz6qo3?usp=sharing) or [Baidu Cloud](https://pan.baidu.com/s/1njghvez53hD5v3WpLgCg0w)(extraction code:x24b)
 ## Model Zoo
 [DeepScalper based on Pytorch (Shuo Sun et al, CIKM 22)](https://arxiv.org/abs/2201.09058)
 
@@ -107,69 +105,57 @@ OHLCV: open, high, low, and close prices; volume: corresponding trading volume
 Classic RL based on Pytorch and Ray: 
 [PPO](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#ppo) [A2C](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#a3c) [SAC](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#sac) [DDPG](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#ddpg) [DQN](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#dqn) [PG](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#pg) [TD3](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#ddpg)
 
-## Results and Visualization
-The evaluation module of TradeMaster is mainly based on [PRUDEX-Compass](https://github.com/ai-gamer/PRUDEX-Compass), a systematic evaluation toolkit of FinRL methods with 6 axes and 17 measures. We show some results here:
+## Visualization Toolkit
+TradeMaster provides many visualization toolkits for a systematic evaluation of RL-based quantitative trading methods. Please check this [paper](https://openreview.net/forum?id=JjbsIYOuNi) and [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/Visualization.ipynb) for details. Some examples are as follows:
 
-**PRUDEX-Compass** provides an intuitive visual means to give readers a sense of comparability and positioning of FinRL methods. The inner level maps out the relative strength of FinRL methods in terms of each axis, whereas the outer level provides a compact way to visually assess which set-up and evaluation measures are practically reported to point out how comprehensive the evaluation are for FinRL algorithms.
-
-<div align="center">
-  <img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/visualization_data/PRUDEX.jpg" width = 500 height = 400 />
-</div>
-
-**PRIDE-Star** is a star plot to evaluate profitability,risk-control and diversity. It contains the normalized score of 8 measures.
+**t-SNE plot** and **Net Value Curve**
 
 <table align="center">
     <tr>
-        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/visualization_data/A2C.PNG" width = 220 height = 200 />   </center></td>
-        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/visualization_data/PPO.PNG" width = 220 height = 200 /> </center></td>
-        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/visualization_data/SAC.PNG" width = 220 height = 200 /> </center></td>
+    <td align="left"><center>t-SNE plot visualize high-dimensional financial time series data into 2-D dimension.</center></td><td align="left"><center>Net Value Curve shows the performance mean and standard deviation of RL-based method across different random seeds.
+</center></td>     
     </tr>
     <tr>
-     <td align="center"><center>(a) A2C</center></td><td align="center"><center>(b) PPO</center></td>      <td align="center"><center>(c) SAC</center></td>                   
+    <td align="center"><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/tsne.jpg" width="80%" />      </center></td>
+    <td align="center" ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/net_value_curve.jpg" width="80%" /> </center></td>     
+    </tr>
+</table>
+
+**PRIDE-Star** is a star plot containing normalized score of 8 key financial measures such total return (TR) and Sharpe ratio (SR) to evaluate profitability,risk-control and diversity:
+<table align="center">
+    <tr>
+        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/A2C.jpg" width = 230 height = 200 />   </center></td>
+        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/DeepTrader.jpg" width = 230 height = 200 /> </center></td>
+        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/PPO.jpg" width = 230 height = 200 /> </center></td>
+        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/EIIE.jpg" width = 230 height = 200 /> </center></td>
+    </tr>
+</table>
+
+**Performance Profile** and **Rank Distribution**
+
+<table align="center">
+    <tr>
+    <td align="left"><center>Performance profile is a statistically unbiased approach to report score distribution of all runs.</center></td><td align="left"><center>Rank distribution is a bar plot, where the i-th column shows the probability that a given method is assigned rank i in each metrics.
+</center></td>     
+    </tr>
+    <tr>
+    <td align="center"><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/performance_profile.jpg" width="80%" />      </center></td>
+    <td align="center" ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/rank_distribution.jpg" width="80%" /> </center></td>     
     </tr>
 </table>
 
 
 
+## Publications
+[PRUDEX-Compass: Towards Systematic Evaluation of Reinforcement Learning in Financial Markets](https://openreview.net/forum?id=JjbsIYOuNi) *(2023)*
 
-**Rank distribution**
-plot is a bar plot, where the i-th column in the rank distribution shows the probability that a given method is assigned rank i in the corresponding metrics.
+[Reinforcement Learning for Quantitative Trading (Survey)](https://dl.acm.org/doi/10.1145/3582560) *(ACM Transactions on Intelligent Systems and Technology 2023)*
 
-<table align="center">
-    <tr>
-        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/result/visualization/rank-1.png" width = 300 height = 170 />   </center></td>
-        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/visualization_data/USrank.PNG" width = 300 height = 170 /> </center></td>
-        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/visualization_data/FXrank.PNG" width = 300 height = 170 /> </center></td>
-    </tr>
-    <tr>
-     <td align="center"><center>(a) All 4 datasets</center></td><td align="center"><center>(b) DJ30</center></td>      <td align="center"><center>(c) FX</center></td>                   
-    </tr>
-</table>
+[Deep Reinforcement Learning for Quantitative Trading: Challenges and Opportunities](https://ieeexplore.ieee.org/abstract/document/9779600) *(IEEE Intelligent Systems 2022)*
 
-<!-- <div align="center">
-  <img src="https://github.com/qinmoelei/TradeMaster_reframe/blob/master/tutorial/result/visualization/rank-1.png" width = 300 height = 225 />
-</div> -->
+[DeepScalper: A Risk-Aware Reinforcement Learning Framework to Capture Fleeting Intraday Trading Opportunities](https://arxiv.org/abs/2201.09058) *(CIKM 2022)*
 
-**Performance profile** reports FinRL methods' score distribution of all runs across the different financial markets that are statistically unbiased and more robust to outliers.
-
-
-<table align="center">
-    <tr>
-        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/result/visualization/pp-1.png" width = 300 height = 170 />   </center></td>
-        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/visualization_data/USPP.PNG" width = 300 height = 170 /> </center></td>
-        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/visualization_data/FXPP.PNG" width = 300 height = 170 /> </center></td>
-    </tr>
-    <tr>
-     <td align="center"><center>(a) All 4 datasets</center></td><td align="center"><center>(b) DJ30</center></td>      <td align="center"><center>(c) FX</center></td>                   
-    </tr>
-</table>
-
-
-<!-- <div align="center">
-  <img src="https://github.com/qinmoelei/TradeMaster_reframe/blob/master/tutorial/result/visualization/pp-1.png" width = 300 height = 225 />
-</div> -->
-
-For more information of the usage of this part, please refer to this [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/Visualization.ipynb) and this [project](https://github.com/ai-gamer/PRUDEX-Compass)
+[Commission Fee is not Enough: A Hierarchical Reinforced Framework for Portfolio Management](https://ojs.aaai.org/index.php/AAAI/article/view/16142) *(AAAI 21)*
 
 ## File Structure
 
@@ -212,19 +198,6 @@ For more information of the usage of this part, please refer to this [tutorial](
 | ├── python3.9.yaml
 | └── README.md
 ```
-
-
-
-## Publications
-[PRUDEX-Compass: Towards Systematic Evaluation of Reinforcement Learning in Financial Markets](https://openreview.net/forum?id=JjbsIYOuNi) *(2023)*
-
-[Reinforcement Learning for Quantitative Trading (Survey)](https://dl.acm.org/doi/10.1145/3582560) *(ACM Transactions on Intelligent Systems and Technology 2023)*
-
-[Deep Reinforcement Learning for Quantitative Trading: Challenges and Opportunities](https://ieeexplore.ieee.org/abstract/document/9779600) *(IEEE Intelligent Systems 2022)*
-
-[DeepScalper: A Risk-Aware Reinforcement Learning Framework to Capture Fleeting Intraday Trading Opportunities](https://arxiv.org/abs/2201.09058) *(CIKM 2022)*
-
-[Commission Fee is not Enough: A Hierarchical Reinforced Framework for Portfolio Management](https://ojs.aaai.org/index.php/AAAI/article/view/16142) *(AAAI 21)*
 
 
 ## Team
