@@ -28,7 +28,7 @@ class AlgorithmicTradingDataset(CustomDataset):
         self.forward_num_day = get_attr(kwargs, "forward_num_day", 5)
         self.tech_indicator_list = get_attr(kwargs, "tech_indicator_list", [])
 
-        test_dynamic=int(get_attr(kwargs, "test_dynamic", None))
+        test_dynamic=int(get_attr(kwargs, "test_dynamic", "-1"))
         if test_dynamic!=-1:
             self.test_dynamic_paths=[]
             data = pd.read_csv(self.test_dynamic_path)

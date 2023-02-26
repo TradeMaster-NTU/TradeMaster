@@ -12,7 +12,7 @@ import torch
 import argparse
 import os.path as osp
 from mmcv import Config
-from trademaster.utils import replace_cfg_vals
+from trademaster.utils import replace_cfg_vals ,create_radar_score_baseline, calculate_radar_score, plot_radar_chart
 from trademaster.nets.builder import build_net
 from trademaster.environments.builder import build_environment
 from trademaster.datasets.builder import build_dataset
@@ -45,6 +45,7 @@ def test_dqn():
 
     cfg = Config.fromfile(args.config)
     task_name = args.task_name
+    test_dynamic = args.test_dynamic
 
     cfg = replace_cfg_vals(cfg)
     # update test style
@@ -61,6 +62,16 @@ def test_dqn():
     test_environment = build_environment(
         cfg, default_args=dict(dataset=dataset, task="test")
     )
+    if task_name.startswith("dynamics_test"):
+        test_dynamic_environments = []
+        for i, path in enumerate(dataset.test_dynamic_paths):
+            test_dynamic_environments.append(
+                build_environment(cfg, default_args=dict(dataset=dataset, task="test_dynamic",
+                                                         dynamics_test_path=path,
+                                                         test_dynamic=test_dynamic,
+                                                         task_index=i, work_dir=cfg.work_dir)))
+
+
     cfg.environment = cfg.train_environment
     train_environment = build_environment(
         cfg, default_args=dict(dataset=dataset, task="train")
@@ -95,17 +106,25 @@ def test_dqn():
             device=device,
         ),
     )
-
-    trainer = build_trainer(
-        cfg,
-        default_args=dict(
-            train_environment=train_environment,
-            valid_environment=valid_environment,
-            test_environment=test_environment,
-            agent=agent,
-            device=device,
-        ),
-    )
+    if task_name.startswith("dynamics_test"):
+        trainers = []
+        for env in test_dynamic_environments:
+            trainers.append(build_trainer(cfg, default_args=dict(train_environment=train_environment,
+                                                                 valid_environment=valid_environment,
+                                                                 test_environment=env,
+                                                                 agent=agent,
+                                                                 device=device)))
+    else:
+        trainer = build_trainer(
+            cfg,
+            default_args=dict(
+                train_environment=train_environment,
+                valid_environment=valid_environment,
+                test_environment=test_environment,
+                agent=agent,
+                device=device,
+            ),
+        )
 
     cfg.dump(osp.join(ROOT, cfg.work_dir, osp.basename(args.config)))
 
@@ -116,6 +135,28 @@ def test_dqn():
     elif task_name.startswith("test"):
         trainer.test()
         print("test end")
+    elif task_name.startswith("dynamics_test"):
+        def Blind_Bid(states,env):
+            return env.action_dim -1
+        def Do_Nothing(states,env):
+            return 0
+        daily_return_list = []
+        daily_return_list_Blind_Bid=[]
+        daily_return_list_Do_Nothing=[]
+        for trainer in trainers:
+            daily_return_list.extend(trainer.test())
+            daily_return_list_Blind_Bid.extend(trainer.test_with_customize_policy(Blind_Bid,'Blind_Bid'))
+            daily_return_list_Do_Nothing.extend(trainer.test_with_customize_policy(Do_Nothing,'Do_Nothing'))
+            metric_path='metric_' + str(trainer.test_environment.task) + '_' + str(trainer.test_environment.test_dynamic)
+        metrics_sigma_dict,zero_metrics=create_radar_score_baseline(cfg.work_dir,metric_path)
+        test_metrics_scores_dict = calculate_radar_score(cfg.work_dir,metric_path,'agent',metrics_sigma_dict,zero_metrics)
+        radar_plot_path=cfg.work_dir
+        # 'metric_' + str(self.task) + '_' + str(self.test_dynamic) + '_' + str(id) + '_radar.png')
+        print('test_metrics_scores are: ',test_metrics_scores_dict)
+        plot_radar_chart(test_metrics_scores_dict,'radar_plot_agent_'+str(test_dynamic)+'.png',radar_plot_path)
+        print('win rate is: ', sum(float(r) > 0 for r in daily_return_list) / len(daily_return_list))
+        print('blind_bid win rate is: ', sum(float(r) > 0 for r in daily_return_list_Blind_Bid) / len(daily_return_list_Blind_Bid))
+        print("dynamics test end")
 
 
 if __name__ == "__main__":

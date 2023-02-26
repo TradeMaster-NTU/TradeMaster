@@ -3,7 +3,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 from ..custom import Trainer
 from ..builder import TRAINERS
-from trademaster.utils import get_attr, save_object, load_object
+from trademaster.utils import get_attr, save_object, load_object,create_radar_score_baseline, calculate_radar_score, plot_radar_chart
 import os
 import ray
 from ray.tune.registry import register_env
@@ -154,23 +154,92 @@ class PortfolioManagementSARLTrainer(Trainer):
         df.to_csv(os.path.join(self.work_dir, "test_result.csv"), index=False)
         return daily_return
 
-    def dynamics_test(self,style):
-        self.trainer.restore(self.best_model_path)
+    def dynamics_test(self,test_dynamic,cfg):
+        self.trainer = self.trainer_name(env="portfolio_management", config=self.configs)
+        obj = load_object(os.path.join(self.checkpoints_path, "best.pkl"))
+        self.trainer.restore_from_object(obj)
+
         test_dynamic_environments = []
-        for i, path in enumerate(dataset.test_dynamic_paths):
-            config = dict(dataset=self.dataset, task="test_dynamic",dynamics_test_path=path,task_index=i)
+        for i, path in enumerate(self.dataset.test_dynamic_paths):
+            config = dict(dataset=self.dataset, task="test_dynamic",test_dynamic=test_dynamic,dynamics_test_path=path,task_index=i,work_dir=cfg.work_dir)
             test_dynamic_environments.append(env_creator(config))
-        for i,env in enumerate(test_dynamic_environments):
-            state = env.reset()
+        # for i,env in enumerate(test_dynamic_environments):
+        #     state = env.reset()
+        #     done = False
+        #     while not done:
+        #         action = self.trainer.compute_single_action(state)
+        #         state, reward, done, sharpe = env.step(action)
+        #     rewards = env.save_asset_memory()
+        #     assets = rewards["total assets"].values
+        #     df_return = env.save_portfolio_return_memory()
+        #     daily_return = df_return.daily_return.values
+        #     df = pd.DataFrame()
+        #     df["daily_return"] = daily_return
+        #     df["total assets"] = assets
+        #     df.to_csv(os.path.join(self.work_dir, "test_dynamic_result"+"style_"+str(test_dynamic)+"_part_"+str(i)+".csv"), index=False)
+
+
+
+        def Average_holding(states, env, weights_brandnew):
+            if weights_brandnew is None:
+                action = [0] + [1 / env.stock_dim for _ in range(env.stock_dim)]
+                return action
+            else:
+                return weights_brandnew
+        def Do_Nothing(states, env):
+            return [1] + [0 for _ in range(env.stock_dim)]
+
+        daily_return_list = []
+        daily_return_list_Average_holding = []
+        daily_return_list_Do_Nothing = []
+
+        def test_single_env(this_env,policy,policy_id=None):
+            this_env.test_id = policy_id
+            state = this_env.reset()
             done = False
+            weights_brandnew=None
             while not done:
-                action = self.trainer.compute_single_action(state)
-                state, reward, done, sharpe = env.step(action)
-            rewards = env.save_asset_memory()
+                if policy_id=="Average_holding":
+                    action = policy(state,this_env,weights_brandnew)
+                elif policy_id=='Do_Nothing':
+                    action = policy(state, this_env)
+                else:
+                    action = policy(state)
+                # action = self.trainer.compute_single_action(state)
+                state, reward, done, return_dict = this_env.step(action)
+                if done:
+                    break
+                weights_brandnew = return_dict["weights_brandnew"]
+            rewards = this_env.save_asset_memory()
             assets = rewards["total assets"].values
-            df_return = env.save_portfolio_return_memory()
+            df_return = this_env.save_portfolio_return_memory()
             daily_return = df_return.daily_return.values
             df = pd.DataFrame()
             df["daily_return"] = daily_return
             df["total assets"] = assets
-            df.to_csv(os.path.join(self.work_dir, "test_dynamic_result"+"style_"+str(style)+"_part_"+str(i)+".csv"), index=False)
+            df.to_csv(os.path.join(self.work_dir, "test_dynamic_result"+"style_"+str(test_dynamic)+"_part_"+str(i)+".csv"), index=False)
+            return daily_return
+
+        for i,env in enumerate(test_dynamic_environments):
+            #test agent
+            daily_return_list.extend(test_single_env(env,self.trainer.compute_single_action,'agent'))
+            #test Average_holding
+            daily_return_list_Average_holding.extend(test_single_env(env,Average_holding,'Average_holding'))
+            #test Do_Nothing
+            daily_return_list_Do_Nothing.extend(test_single_env(env,Do_Nothing,'Do_Nothing'))
+        metric_path = 'metric_' + str("test_dynamic") + '_' + str(
+            cfg.data.test_dynamic)
+        metrics_sigma_dict, zero_metrics = create_radar_score_baseline(cfg.work_dir, metric_path,
+                                                                       zero_score_id='Do_Nothing',
+                                                                       fifty_score_id='Average_holding')
+        test_metrics_scores_dict = calculate_radar_score(cfg.work_dir, metric_path, 'agent', metrics_sigma_dict,
+                                                         zero_metrics)
+        radar_plot_path = cfg.work_dir
+        # 'metric_' + str(self.task) + '_' + str(self.test_dynamic) + '_' + str(id) + '_radar.png')
+        print('test_metrics_scores are: ', test_metrics_scores_dict)
+        plot_radar_chart(test_metrics_scores_dict, 'radar_plot_agent_' + str(test_dynamic) + '.png',
+                         radar_plot_path)
+        print('win rate is: ', sum(float(r) > 0 for r in daily_return_list) / len(daily_return_list))
+        print('Random_buy win rate is: ',
+              sum(float(r) > 0 for r in daily_return_list_Average_holding) / len(daily_return_list_Average_holding))
+        print("dynamics test end")
