@@ -227,7 +227,7 @@ class PortfolioManagementSARLTrainer(Trainer):
             daily_return_list_Average_holding.extend(test_single_env(env,Average_holding,'Average_holding'))
             #test Do_Nothing
             daily_return_list_Do_Nothing.extend(test_single_env(env,Do_Nothing,'Do_Nothing'))
-        metric_path = 'metric_' + str("task_name") + '_' + str(
+        metric_path = 'metric_' + str("test_dynamic") + '_' + str(
             cfg.data.test_dynamic)
         metrics_sigma_dict, zero_metrics = create_radar_score_baseline(cfg.work_dir, metric_path,
                                                                        zero_score_id='Do_Nothing',
