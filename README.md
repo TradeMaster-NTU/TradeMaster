@@ -105,64 +105,46 @@ Classic RL based on Pytorch and Ray:
 ## Visualization Toolkit
 TradeMaster provides many visualization toolkits for a systematic evaluation of RL-based quantitative trading methods. Please check this [paper](https://openreview.net/forum?id=JjbsIYOuNi) and [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/Visualization.ipynb) for details. Some examples are as follows:
 
-**PRUDEX-Compass** provides an intuitive visual means to give readers a sense of comparability and positioning of FinRL methods. The inner level maps out the relative strength of FinRL methods in terms of each axis, whereas the outer level provides a compact way to visually assess which set-up and evaluation measures are practically reported to point out how comprehensive the evaluation are for FinRL algorithms.
+**Net Value Curve** shows the performance mean and standard deviation of RL-based method across different random seeds:
 
 <div align="center">
-  <img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/visualization_data/PRUDEX.jpg" width = 500 height = 400 />
+<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/net_value_curve.jpg width="50%"/>
 </div>
 
-**PRIDE-Star** is a star plot to evaluate profitability,risk-control and diversity. It contains the normalized score of 8 measures.
-
+**PRIDE-Star** is a star plot containing normalized score of 8 key financial measures such total return (TR) and Sharpe ratio (SR) to evaluate profitability,risk-control and diversity:
 <table align="center">
     <tr>
-        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/visualization_data/A2C.PNG" width = 220 height = 200 />   </center></td>
-        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/visualization_data/PPO.PNG" width = 220 height = 200 /> </center></td>
-        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/visualization_data/SAC.PNG" width = 220 height = 200 /> </center></td>
-    </tr>
-    <tr>
-     <td align="center"><center>(a) A2C</center></td><td align="center"><center>(b) PPO</center></td>      <td align="center"><center>(c) SAC</center></td>                   
+        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/A2C.jpg" width = 220 height = 200 />   </center></td>
+        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/DeepTrader.jpg" width = 220 height = 200 /> </center></td>
+        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/PPO.jpg" width = 220 height = 200 /> </center></td>
+        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/EIIE.jpg" width = 220 height = 200 /> </center></td>
     </tr>
 </table>
 
+**t-SNE plot** visualize high-dimensional financial time series data into 2-D dimension:
+
+<div align="center">
+<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/tsne.jpg width="50%"/>
+</div>
+
+**Rank distribution** is a bar plot, where the $i$-th column in the rank distribution shows the probability that a given method is assigned rank $i$ in the corresponding metrics.
+
+<div align="center">
+<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/rank_distribution.jpg width="50%"/>
+</div>
 
 
+**Performance profile** reports FinRL methods' score distribution of all runs across the different financial markets that are statistically unbiased and more robust to outliers:
+<div align="center">
+<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/performance_profile.jpg width="50%"/>
+</div>
 
-**Rank distribution**
-plot is a bar plot, where the i-th column in the rank distribution shows the probability that a given method is assigned rank i in the corresponding metrics.
-
-<table align="center">
-    <tr>
-        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/result/visualization/rank-1.png" width = 300 height = 170 />   </center></td>
-        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/visualization_data/USrank.PNG" width = 300 height = 170 /> </center></td>
-        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/visualization_data/FXrank.PNG" width = 300 height = 170 /> </center></td>
-    </tr>
-    <tr>
-     <td align="center"><center>(a) All 4 datasets</center></td><td align="center"><center>(b) DJ30</center></td>      <td align="center"><center>(c) FX</center></td>                   
-    </tr>
-</table>
-
-<!-- <div align="center">
-  <img src="https://github.com/qinmoelei/TradeMaster_reframe/blob/master/tutorial/result/visualization/rank-1.png" width = 300 height = 225 />
-</div> -->
-
-**Performance profile** reports FinRL methods' score distribution of all runs across the different financial markets that are statistically unbiased and more robust to outliers.
+**Diversity heatmap** demonstrate the average portfolio to show the strategy diversity of different algorithms:
+<div align="center">
+<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/diversity_heatmap.jpg width="80%"/>
+</div>
 
 
-<table align="center">
-    <tr>
-        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/result/visualization/pp-1.png" width = 300 height = 170 />   </center></td>
-        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/visualization_data/USPP.PNG" width = 300 height = 170 /> </center></td>
-        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/visualization_data/FXPP.PNG" width = 300 height = 170 /> </center></td>
-    </tr>
-    <tr>
-     <td align="center"><center>(a) All 4 datasets</center></td><td align="center"><center>(b) DJ30</center></td>      <td align="center"><center>(c) FX</center></td>                   
-    </tr>
-</table>
-
-
-<!-- <div align="center">
-  <img src="https://github.com/qinmoelei/TradeMaster_reframe/blob/master/tutorial/result/visualization/pp-1.png" width = 300 height = 225 />
-</div> -->
 
 ## Publications
 [PRUDEX-Compass: Towards Systematic Evaluation of Reinforcement Learning in Financial Markets](https://openreview.net/forum?id=JjbsIYOuNi) *(2023)*
