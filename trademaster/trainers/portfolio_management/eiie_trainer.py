@@ -221,11 +221,11 @@ class PortfolioManagementEIIETrainer(Trainer):
             else:
                 action = policy(tensor_state, self.test_environment)
             state, reward, done, return_dict = self.test_environment.step(action)
-            weights_brandnew=return_dict["weights_brandnew"]
             episode_reward_sum += reward
             if done:
                 print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
                 break
+            weights_brandnew = return_dict["weights_brandnew"]
 
         df_return = self.test_environment.save_portfolio_return_memory()
         df_assets = self.test_environment.save_asset_memory()
