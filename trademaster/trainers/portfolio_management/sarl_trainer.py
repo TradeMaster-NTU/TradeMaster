@@ -194,6 +194,7 @@ class PortfolioManagementSARLTrainer(Trainer):
         daily_return_list_Do_Nothing = []
 
         def test_single_env(this_env,policy,policy_id=None):
+            this_env.test_id = policy_id
             state = this_env.reset()
             done = False
             weights_brandnew=None
