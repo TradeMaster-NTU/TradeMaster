@@ -131,7 +131,7 @@ def test_deeptrader():
             daily_return_list_Average_holding.extend(trainer.test_with_customize_policy(Average_holding,'Average_holding'))
             daily_return_list_Do_Nothing.extend(trainer.test_with_customize_policy(Do_Nothing,'Do_Nothing'))
             metric_path='metric_' + str(trainer.test_environment.task) + '_' + str(trainer.test_environment.test_dynamic)
-        metrics_sigma_dict,zero_metrics=create_radar_score_baseline(cfg.work_dir,metric_path)
+        metrics_sigma_dict,zero_metrics=create_radar_score_baseline(cfg.work_dir,metric_path,zero_score_id='Do_Nothing',fifty_score_id='Average_holding')
         test_metrics_scores_dict = calculate_radar_score(cfg.work_dir,metric_path,'agent',metrics_sigma_dict,zero_metrics)
         radar_plot_path=cfg.work_dir
         # 'metric_' + str(self.task) + '_' + str(self.test_dynamic) + '_' + str(id) + '_radar.png')

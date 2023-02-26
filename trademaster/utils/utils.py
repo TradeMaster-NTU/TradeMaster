@@ -260,7 +260,7 @@ def evaluate_metrics(scores_dicts,print_info=False):
         print(table)
     return output_dict
 
-def create_radar_score_baseline(dir_name,metric_path):
+def create_radar_score_baseline(dir_name,metric_path,zero_score_id='Do_Nothing',fifty_score_id='Blind_Bid'):
     # get 0-score metrics
     # noted that for Mdd and Volatility, the lower, the better.
     # So the 0-score metric for Mdd and Volatility here is actually 100-score
@@ -271,14 +271,14 @@ def create_radar_score_baseline(dir_name,metric_path):
     # The distribution of the score of policies is a normal distribution
     # The Do Nothing policy is 0.5 percentile and baseline policy should be the 0.75 percentile(0.675 sigma away from Do Nothing)
     # Then we can score policies based on the conversion of sigma and metric value
-    metric_path_zero=metric_path + '_Do_Nothing'
+    metric_path_zero=metric_path + '_'+zero_score_id
     zero_scores_files = [osp.join(dir_name,filename) for filename in os.listdir(dir_name) if filename.startswith(metric_path_zero)]
     zero_scores_dicts =[]
     for file in zero_scores_files:
         with open(file, 'rb') as f:
             zero_scores_dicts.append(pickle.load(f))
     # get 50-score metrics
-    metric_path_fifty=metric_path + '_Blind_Bid'
+    metric_path_fifty=metric_path + '_'+fifty_score_id
     fifty_scores_files = [osp.join(dir_name,filename) for filename in os.listdir(dir_name) if filename.startswith(metric_path_fifty)]
     fifty_scores_dicts =[]
     for file in fifty_scores_files:
