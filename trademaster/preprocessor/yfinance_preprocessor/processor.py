@@ -13,8 +13,6 @@ import os
 import yfinance as yf
 from tqdm import tqdm
 import numpy as np
-sys.path.append(ROOT)
-
 
 @PREPROCESSOR.register_module()
 class YfinancePreprocessor(CustomPreprocessor):
@@ -25,9 +23,7 @@ class YfinancePreprocessor(CustomPreprocessor):
         self.data_path = osp.join(ROOT, get_attr(kwargs, "data_path", None))
         if not os.path.exists(self.data_path):
             os.makedirs(self.data_path)
-        self.train_valid_test_portion = get_attr(kwargs,
-                                                 "train_valid_test_portion",
-                                                 [0.8, 0.1, 0.1])
+        self.train_valid_test_portion = get_attr(kwargs,"train_valid_test_portion", [0.8, 0.1, 0.1])
 
         self.train_path = osp.join(ROOT, get_attr(kwargs, "train_path", None))
         self.valid_path = osp.join(ROOT, get_attr(kwargs, "valid_path", None))
@@ -36,15 +32,6 @@ class YfinancePreprocessor(CustomPreprocessor):
         self.start_date = get_attr(kwargs, "start_date", "2000-01-01")
         self.end_date = get_attr(kwargs, "end_date", "2019-01-01")
         self.tickers = get_attr(kwargs, "tickers", None)
-        self.df = self.download_data()
-        self.df.columns=['open', 'high', 'low', 'close', 'adjclose', 'volume', 'ticker','date']
-        self.df = self.clean_data()
-        self.df = self.make_feature()
-        train,valid,test=self.split(self.df,self.train_valid_test_portion)
-        train.to_csv(self.train_path)
-        valid.to_csv(self.valid_path)
-        test.to_csv(self.test_path)
-
 
     def download_data(self):
         df_list = []
@@ -169,4 +156,34 @@ class YfinancePreprocessor(CustomPreprocessor):
         sum = np.sum(portion)
         portion = portion / sum
         return portion
-            
+
+    def run(self, custom_data_path = None):
+
+        if not custom_data_path:
+            self.df = self.download_data()
+        else:
+            self.df = pd.read_csv(custom_data_path)
+
+        self.df = self.df.rename(columns={
+            "Open":"open",
+            "High":"high",
+            "Low":"low",
+            "Close":"close",
+            "Adj Close":"adjclose",
+            "Volume":"volume",
+            "ticker":"ticker",
+            "date":"date"
+        })
+        self.df.index = self.df.date.values
+
+        self.df = self.clean_data()
+
+        self.df = self.make_feature()
+
+        self.df = self.df.rename(columns={"ticker": "tic"})
+
+        train, valid, test=self.split(self.df, self.train_valid_test_portion)
+
+        train.to_csv(self.train_path)
+        valid.to_csv(self.valid_path)
+        test.to_csv(self.test_path)
