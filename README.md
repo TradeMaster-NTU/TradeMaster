@@ -117,7 +117,7 @@ TradeMaster provides many visualization toolkits for a systematic evaluation of 
     </tr>
     <tr>
     <td align="center"><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/tsne.jpg" width="80%" />      </center></td>
-    <td align="center" ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/net_value_curve.jpg" width="120%" /> </center></td>     
+    <td align="center" ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/net_value_curve.jpg" width="80%" /> </center></td>     
     </tr>
 </table>
 
