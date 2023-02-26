@@ -222,7 +222,7 @@ class PortfolioManagementSARLTrainer(Trainer):
 
         for i,env in enumerate(test_dynamic_environments):
             #test agent
-            daily_return_list.extend(test_single_env(env,self.trainer.compute_single_action,'Agent'))
+            daily_return_list.extend(test_single_env(env,self.trainer.compute_single_action,'agent'))
             #test Average_holding
             daily_return_list_Average_holding.extend(test_single_env(env,Average_holding,'Average_holding'))
             #test Do_Nothing
