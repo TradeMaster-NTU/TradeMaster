@@ -79,6 +79,7 @@ class AlgorithmicTradingEnvironment(Environments):
         self.state = self.state + self.compound_memory[-1]
         self.state = np.array(self.state)
         self.test_id='agent'
+        self.test_id='agent'
 
     def reset(self):
         # here is a little difference: we only have one asset
@@ -248,18 +249,7 @@ class AlgorithmicTradingEnvironment(Environments):
 
         return df_return
 
-    # def buy_and_hold_save_portfolio_return_memory(self):
-    #     # a record of return for each time stamp
-    #     date_list = self.date_memory
-    #     df_date = pd.DataFrame(date_list)
-    #     df_date.columns = ['date']
-    #
-    #     return_list = self.buy_and_hold_portfolio_return_memory
-    #     df_return = pd.DataFrame(return_list)
-    #     df_return.columns = ["daily_return"]
-    #     df_return.index = df_date.date
-    #
-    #     return df_return
+
 
     def analysis_result(self):
         # A simpler API for the environment to analysis itself when coming to terminal
