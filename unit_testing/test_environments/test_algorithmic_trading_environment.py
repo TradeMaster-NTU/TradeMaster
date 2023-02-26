@@ -13,7 +13,7 @@ from trademaster.environments.algorithmic_trading import AlgorithmicTradingEnvir
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Download Alpaca Datasets')
-    parser.add_argument("--config", default=osp.join(ROOT, "configs", "algorithmic_trading", "dqn_btc.py"),
+    parser.add_argument("--config", default=osp.join(ROOT, "configs", "algorithmic_trading", "algorithmic_trading_BTC_dqn_dqn_adam_mse.py"),
                         help="download datasets config file path")
     args = parser.parse_args()
     return args
@@ -30,6 +30,10 @@ def test_algorithmic_trading_environment():
 
     environment = build_environment(cfg, default_args=dict(dataset = dataset,
                                                            task = "train"))
+    s=environment.reset()
+    done=False
+    while not done:
+        s,r,done,_=environment.step(2)
     assert isinstance(environment, AlgorithmicTradingEnvironment)
 
 if __name__ == '__main__':
