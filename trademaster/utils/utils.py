@@ -16,6 +16,7 @@ import pickle
 from scipy.stats import norm
 from argparse import Namespace
 from collections import OrderedDict
+import matplotlib.pyplot as plt
 
 def set_seed(random_seed):
     random.seed(random_seed)
@@ -407,3 +408,16 @@ def MRL_F2B_args_converter(args):
 
 
     return output_args
+def plot(df,alg,color='darkcyan',save=False):
+    x = range(len(df))
+    y=(df["total assets"].values-df["total assets"].values[0])/df["total assets"].values[0]
+    plt.plot(x, y*100, color, label=alg)
+    plt.xlabel('Trading times',size=18)
+    plt.ylabel('Total Return(%)',size=18)
+    plt.grid(ls='--')
+    plt.legend(loc='upper center', fancybox=True, ncol=1, fontsize='x-large',bbox_to_anchor=(0.49, 1.15,0,0))
+    if save:
+        plt.savefig("{}.pdf".format(alg))
+    plt.show()
+
+

@@ -308,3 +308,4 @@ class AlgorithmicTradingEnvironment(Environments):
         cr = np.sum(daily_return) / (mdd + 1e-10)
         sor = np.sum(daily_return) / (np.nan_to_num(np.std(neg_ret_lst),0) + 1e-10) / (np.sqrt(len(daily_return))+1e-10)
         return tr, sharpe_ratio, vol, mdd, cr, sor
+    
