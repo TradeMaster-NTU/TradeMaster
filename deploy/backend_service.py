@@ -108,6 +108,49 @@ class Server():
                 "bull_market",
                 "oscillation_market"
             ]
+
+
+        }
+        return res
+
+    def evluation_parameters(self):
+        res ={
+            "start_date": {
+                "algorithmic_trading:BTC": "2013-04-29",
+                "order_excecution:BTC": "2021-04-07",
+                "order_excecution:PD_BTC": "2013-04-29",
+                "portfolio_management:dj30": "2012-01-04",
+                "portfolio_management:exchange": "2000-01-27",
+            },
+            "end_date": {
+                "algorithmic_trading:BTC": "2021-07-05",
+                "order_excecution:BTC": "2021-04-19",
+                "order_excecution:PD_BTC": "2021-07-05",
+                "portfolio_management:dj30": "2021-12-31",
+                "portfolio_management:exchange": "2019-12-31",
+            },
+            "number_of_market_style": ["3"],
+            "length_time_slice": {
+                "algorithmic_trading:BTC": "24",
+                "order_excecution:BTC": "32",
+                "order_excecution:PD_BTC": "24",
+                "portfolio_management:dj30": "24",
+                "portfolio_management:exchange": "24"
+            },
+            "bear_threshold": {
+                "algorithmic_trading:BTC": "-0.15",
+                "order_excecution:BTC": "-0.01",
+                "order_excecution:PD_BTC": "-0.15",
+                "portfolio_management:dj30": "-0.25",
+                "portfolio_management:exchange": "-0.05"
+            },
+            "bull_threshold": {
+                "algorithmic_trading:BTC": "0.15",
+                "order_excecution:BTC": "0.01",
+                "order_excecution:PD_BTC": "0.15",
+                "portfolio_management:dj30": "0.25",
+                "portfolio_management:exchange": "0.05"
+            }
         }
         return res
 
@@ -222,7 +265,7 @@ class Server():
             log_path = os.path.join(work_dir, "train_log.txt")
 
             self.sessions = self.dump_sessions({session_id: {
-                "task_name":task_name,
+                "task_name": task_name,
                 "work_dir": work_dir,
                 "cfg_path": cfg_path,
                 "script_path": train_script_path,
@@ -371,7 +414,7 @@ class Server():
             args['dataset_name'] = request_json.get("dataset_name").split(":")[-1]
             args['number_of_market_dynamics'] = request_json.get("number_of_market_style")
             if int(args['number_of_market_dynamics']) not in [3, 4]:
-                raise Exception('only support dynamics number of 3 or 4 for now')
+                raise Exception('We only support dynamics number of 3 or 4 for now')
             args['minimun_length'] = request_json.get("length_time_slice")
             args['Granularity'] = request_json.get("granularity")
             args['bear_threshold'] = request_json.get("bear_threshold")
@@ -409,7 +452,7 @@ class Server():
             else:
                 args['PM'] = ''
 
-            #prepare OE_BTC index:
+            # prepare OE_BTC index:
             if args['dataset_name'] == "order_excecution:BTC":
                 args['OE_BTC'] = True
             else:
@@ -478,11 +521,11 @@ class Server():
                 self.sessions[session_id]["MDM_cfg_path"] = MDM_cfg_path
                 self.sessions[session_id]["MDM_script_path"] = MDM_script_path
                 self.sessions[session_id]["MDM_log_path"] = MDM_log_path
-                self.sessions = self.dump_sessions({session_id:  self.sessions[session_id] |
-                                                                             {
-                                                                                 "MDM_datafile_path": MDM_datafile_path,
-                                                                                 "MDM_visualization_paths": MDM_visualization_paths}
-                                                                 })
+                self.sessions = self.dump_sessions({session_id: self.sessions[session_id] |
+                                                                {
+                                                                    "MDM_datafile_path": MDM_datafile_path,
+                                                                    "MDM_visualization_paths": MDM_visualization_paths}
+                                                    })
             else:
                 self.sessions[session_id]["MDM_cfg_path"] = MDM_cfg_path
                 self.sessions[session_id]["MDM_script_path"] = MDM_script_path
@@ -560,7 +603,7 @@ class Server():
         request_json = json.loads(request.get_data(as_text=True))
         try:
             # dynamics_test_label = request_json.get("test_dynamic_label")
-            dynamics_test_label=0
+            dynamics_test_label = 0
             session_id = request_json.get("session_id")
             logger.info(request_json)
             # example input
@@ -573,7 +616,7 @@ class Server():
             # session_id = "b5bcd0b6-7a10-11ea-8367-181 dea4d9837"
 
             self.sessions = self.load_sessions()
-            addtional_info=''
+            addtional_info = ''
             if session_id in self.sessions:
                 work_dir = self.sessions[session_id]["work_dir"]
                 cfg_path = self.sessions[session_id]["cfg_path"]
@@ -592,9 +635,9 @@ class Server():
             DT_info = run_cmd(cmd)
             logger.info(DT_info)
             radar_plot_path = osp.join(work_dir, 'radar_plot_agent_' + str(dynamics_test_label) + '.png')
-            if task_name=="order_execution":
-                encoded_string=""
-                addtional_info+='\n we do not provide radar report for order execution task for now'
+            if task_name == "order_execution":
+                encoded_string = ""
+                addtional_info += '\n we do not provide radar report for order execution task for now'
             else:
                 with open(radar_plot_path, "rb") as image_file:
                     encoded_string = base64.b64encode(image_file.read())
@@ -607,7 +650,7 @@ class Server():
             info = f"request success, start test market {dynamics_test_label}\n\n"
             res = {
                 "error_code": error_code,
-                "info": info + dynamics_test_log_info+addtional_info,
+                "info": info + dynamics_test_log_info + addtional_info,
                 "session_id": session_id,
                 'radar_plot': str(encoded_string, 'utf-8')
             }
@@ -655,6 +698,10 @@ HEALTHCHECK = HealthCheck()
 @app.route("/api/TradeMaster/getParameters", methods=["GET"])
 def getParameters():
     res = SERVER.get_parameters(request)
+    return res
+@app.route("/api/TradeMaster/evaluation_getParameters", methods=["GET"])
+def evaluation_getParameters():
+    res = SERVER.evluation_parameters(request)
     return res
 
 

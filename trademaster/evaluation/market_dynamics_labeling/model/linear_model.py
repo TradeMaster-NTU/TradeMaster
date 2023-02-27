@@ -58,7 +58,7 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
         print('start fitting')
         Labeler.fit(self.regime_number, self.length_limit)
         print('finish fitting')
-        Labeler.label(self.labeling_parameters)
+        Labeler.label(self.labeling_parameters,os.path.dirname(self.data_path))
         labeled_data = pd.concat([v for v in Labeler.data_dict.values()], axis=0)
         data = pd.read_csv(self.data_path)
         merged_data = data.merge(labeled_data, how='left', on=['date', 'tic', 'adjcp'], suffixes=('', '_DROP')).filter(
