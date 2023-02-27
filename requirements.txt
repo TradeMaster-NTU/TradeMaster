@@ -16,5 +16,5 @@ tslearn
 gym
 ray[rllib]==1.13.0
 packaging
-kaleido==0.1.0.post1
+kaleido==0.1.0
 h5py
