@@ -193,7 +193,7 @@ class PortfolioManagementEIIETrainer(Trainer):
             state, reward, done, _ = self.test_environment.step(action)
             episode_reward_sum += reward
             if done:
-                print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
+                # print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
                 break
 
         df_return = self.test_environment.save_portfolio_return_memory()
