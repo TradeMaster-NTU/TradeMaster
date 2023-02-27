@@ -1,9 +1,9 @@
 task_name = "algorithmic_trading"
-dataset_name = "BTC"
+dataset_name = "FX"
 optimizer_name = "adam"
 loss_name = "mse"
-net_name = "dqn"
-agent_name = "dqn"
+net_name = "deepscalper"
+agent_name = "deepscalper"
 work_dir = f"work_dir/{task_name}_{dataset_name}_{net_name}_{agent_name}_{optimizer_name}_{loss_name}"
 
 _base_ = [
@@ -20,12 +20,12 @@ _base_ = [
 batch_size = 64
 data = dict(
     type='AlgorithmicTradingDataset',
-    data_path='data/algorithmic_trading/BTC',
-    train_path='data/algorithmic_trading/BTC/train.csv',
-    valid_path='data/algorithmic_trading/BTC/valid.csv',
-    test_path='data/algorithmic_trading/BTC/test.csv',
+    data_path='data/algorithmic_trading/FX',
+    train_path='data/algorithmic_trading/FX/train.csv',
+    valid_path='data/algorithmic_trading/FX/valid.csv',
+    test_path='data/algorithmic_trading/FX/test.csv',
     test_dynamic_path=
-    'data/algorithmic_trading/BTC/test_labeled_3_24_-0.15_0.15.csv',
+    'data/algorithmic_trading/FX/test_labeled_3_24_-0.15_0.15.csv',
     tech_indicator_list=[
         'high', 'low', 'open', 'close', 'adjcp', 'zopen', 'zhigh', 'zlow',
         'zadjcp', 'zclose', 'zd_5', 'zd_10', 'zd_15', 'zd_20', 'zd_25', 'zd_30'

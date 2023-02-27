@@ -115,7 +115,7 @@ class PortfolioManagementTrainer(Trainer):
                 state, reward, done, information = self.valid_environment.step(action)
                 episode_reward_sum += reward
                 if done:
-                    print("Train Episode Reward Sum: {:04f}".format(episode_reward_sum))
+                    #print("Valid Episode Reward Sum: {:04f}".format(episode_reward_sum))
                     break
             valid_score_list.append(information["sharpe_ratio"])
 
