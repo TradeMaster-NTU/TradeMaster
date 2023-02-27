@@ -2,3 +2,5 @@
 __pycache__
 .idea
 .DS_Store
+work_dir
+deploy/session.json

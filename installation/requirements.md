@@ -5,6 +5,7 @@ __Download and install Miniconda__ from the [official webiste](https://docs.cond
 ## Ceate a conda environment and activate it
 
   ```
+  conda update -n base -c defaults conda
   conda create --name TradeMaster python=3.9
   conda activate TradeMaster
    ```

@@ -290,7 +290,7 @@ class HighFrequencyTradingEnvironment(Environments):
             # buy_and_hold_profit=100*(last_close-self.first_close)/self.first_close
 
 
-            tr, sharpe_ratio, vol, mdd, cr, sor, ahl = self.evaualte(
+            tr, sharpe_ratio, vol, mdd, cr, sor = self.evaualte(
                 self.save_asset_memoey()
             )
             stats = OrderedDict(
