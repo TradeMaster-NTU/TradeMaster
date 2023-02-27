@@ -45,7 +45,7 @@ class Labeler():
                 self.y_pred_dict[tic] = y_pred_list
                 self.norm_coef_list_dict[tic] = norm_coef_list
 
-    def label(self,parameters):
+    def label(self,parameters,work_dir=os.getcwd()):
         # return a dict of label where key is the ticker and value is the label of time-series
         if self.method=='linear':
             try:
@@ -70,7 +70,7 @@ class Labeler():
             except:
               print('not able to do TSNE') 
             try:
-              self.stock_DWT()
+              self.stock_DWT(work_dir)
             except:
               print('not able to do clustering') 
 
@@ -126,7 +126,7 @@ class Labeler():
             tic_data = tic_data.assign(pct_return=tic_data['adjcp'].pct_change().fillna(0))
             self.data_dict[tic] = tic_data.reset_index(drop=True)
 
-    def stock_DWT(self):
+    def stock_DWT(self,work_dir):
         data_by_tic = []
         data_by_tic_1 = []
         for tic in self.tics:
@@ -141,10 +141,10 @@ class Labeler():
         km_stock = TimeSeriesKMeans(n_clusters=6, metric="dtw", max_iter=50, max_iter_barycenter=100, n_jobs=50,
                                     verbose=0).fit(fitting_data)
         label_stock = km_stock.predict(fitting_data)
-        output = open('DWT_stocks.pkl', 'wb')
+        output = open(os.path.join(work_dir,'DWT_stocks.pkl'), 'wb')
         pickle.dump(km_stock, output, -1)
         output.close()
-        output = open('DWT_label_stocks.pkl', 'wb')
+        output = open(os.path.join(work_dir,'DWT_label_stocks.pkl'), 'wb')
         pickle.dump(label_stock, output, -1)
         output.close()
         for i in range(len(self.tics)):

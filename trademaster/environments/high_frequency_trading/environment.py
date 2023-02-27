@@ -321,8 +321,9 @@ class HighFrequencyTradingEnvironment(Environments):
                 }
             )
             metric_save_path=osp.join(self.work_dir,'metric_'+str(self.task)+'_'+str(self.test_dynamic)+'_'+str(self.test_id)+'_'+str(self.task_index)+'.pickle')
-            with open(metric_save_path, 'wb') as handle:
-                pickle.dump(save_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            if self.task == 'test_dynamic':
+                with open(metric_save_path, 'wb') as handle:
+                    pickle.dump(save_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
             # print('metric result saved to '+metric_save_path)
 
         else:

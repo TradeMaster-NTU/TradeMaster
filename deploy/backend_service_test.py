@@ -87,6 +87,46 @@ class Server():
         logger.info("get_parameters end.")
         return jsonify(res)
 
+    def evluation_parameters(self):
+        res ={
+            "start_date": {
+                "algorithmic_trading:BTC": "2013-04-29",
+                "order_excecution:BTC": "2021-04-07",
+                "order_excecution:PD_BTC": "2013-04-29",
+                "portfolio_management:dj30": "2012-01-04",
+                "portfolio_management:exchange": "2000-01-27",
+            },
+            "end_date": {
+                "algorithmic_trading:BTC": "2021-07-05",
+                "order_excecution:BTC": "2021-04-19",
+                "order_excecution:PD_BTC": "2021-07-05",
+                "portfolio_management:dj30": "2021-12-31",
+                "portfolio_management:exchange": "2019-12-31",
+            },
+            "number_of_market_style": ["3"],
+            "length_time_slice": {
+                "algorithmic_trading:BTC": "24",
+                "order_excecution:BTC": "32",
+                "order_excecution:PD_BTC": "24",
+                "portfolio_management:dj30": "24",
+                "portfolio_management:exchange": "24"
+            },
+            "bear_threshold": {
+                "algorithmic_trading:BTC": "-0.15",
+                "order_excecution:BTC": "-0.01",
+                "order_excecution:PD_BTC": "-0.15",
+                "portfolio_management:dj30": "-0.25",
+                "portfolio_management:exchange": "-0.05"
+            },
+            "bull_threshold": {
+                "algorithmic_trading:BTC": "0.15",
+                "order_excecution:BTC": "0.01",
+                "order_excecution:PD_BTC": "0.15",
+                "portfolio_management:dj30": "0.25",
+                "portfolio_management:exchange": "0.05"
+            }
+        }
+        return res
 
     def train(self, request):
         request_json = json.loads(request.get_data(as_text=True))
@@ -213,13 +253,7 @@ class Server():
             args['bear_threshold'] = request_json.get("bear_threshold")
             args['bull_threshold'] = request_json.get("bull_threshold")
             args['task_name']=request_json.get("task_name")
-            # agent training parameters
-            task_name = request_json.get("task_name")
-            dataset_name = request_json.get("dataset_name").split(":")[-1]
-            optimizer_name = request_json.get("optimizer_name")
-            loss_name = request_json.get("loss_name")
-            agent_name = request_json.get("agent_name").split(":")[-1]
-            session_id= request_json.get("session_id")
+            session_id = request_json.get("session_id")
 
 
 
@@ -254,12 +288,6 @@ class Server():
     def save_market_dynamics_labeling(self, request):
         request_json = json.loads(request.get_data(as_text=True))
         try:
-            # same as agent training
-            task_name = request_json.get("task_name")
-            dataset_name = request_json.get("dataset_name").split(":")[-1]
-            optimizer_name = request_json.get("optimizer_name")
-            loss_name = request_json.get("loss_name")
-            agent_name = request_json.get("agent_name").split(":")[-1]
             session_id = request_json.get("session_id")
 
 
@@ -352,50 +380,57 @@ HEALTHCHECK = HealthCheck()
 def getParameters():
     res = SERVER.get_parameters(request)
     return res
+@app.route("/api/TradeMaster/evaluation_getParameters", methods=["GET"])
+def evaluation_getParameters():
+    res = SERVER.evluation_parameters(request)
+    return res
+
 
 @app.route("/api/TradeMaster/train", methods=["POST"])
-def start():
+def train():
     res = SERVER.train(request)
     return res
 
+
 @app.route("/api/TradeMaster/train_status", methods=["POST"])
-def start_status():
+def train_status():
     res = SERVER.train_status(request)
     return res
+
 
 @app.route("/api/TradeMaster/test", methods=["POST"])
 def test():
     res = SERVER.test(request)
     return res
 
-@app.route("/api/TradeMaster/dynamics_test", methods=["POST"])
-def dynamics_test():
-    res = SERVER.dynamics_test(request)
-    return res
 
 @app.route("/api/TradeMaster/test_status", methods=["POST"])
 def test_status():
     res = SERVER.test_status(request)
     return res
 
-@app.route("/api/TradeMaster/healthcheck", methods=["GET"])
-def health_check():
-    res = HEALTHCHECK.run(request)
-    return res
 
 @app.route("/api/TradeMaster/start_market_dynamics_labeling", methods=["POST"])
-def dynamics_test():
+def start_market_dynamics_labeling():
     res = SERVER.start_market_dynamics_labeling(request)
     return res
 
+
 @app.route("/api/TradeMaster/save_market_dynamics_labeling", methods=["POST"])
-def dynamics_test():
+def save_market_dynamics_labeling():
     res = SERVER.save_market_dynamics_labeling(request)
     return res
 
+
 @app.route("/api/TradeMaster/run_dynamics_test", methods=["POST"])
-def dynamics_test():
+def run_style_test():
     res = SERVER.run_dynamics_test(request)
+    return res
+
+
+@app.route("/api/TradeMaster/healthcheck", methods=["GET"])
+def health_check():
+    res = HEALTHCHECK.run(request)
     return res
 
 
