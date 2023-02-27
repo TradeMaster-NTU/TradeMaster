@@ -105,7 +105,27 @@ class Server():
                 "bull_market",
                 "oscillation_market"
             ]
-            ,
+
+
+        }
+        return res
+
+    def evluation_parameters(self):
+        res ={
+            "start_date": {
+                "algorithmic_trading:BTC": "2013-04-29",
+                "order_excecution:BTC": "2021-04-07",
+                "order_excecution:PD_BTC": "2013-04-29",
+                "portfolio_management:dj30": "2012-01-04",
+                "portfolio_management:exchange": "2000-01-27",
+            },
+            "end_date": {
+                "algorithmic_trading:BTC": "2021-07-05",
+                "order_excecution:BTC": "2021-04-19",
+                "order_excecution:PD_BTC": "2021-07-05",
+                "portfolio_management:dj30": "2021-12-31",
+                "portfolio_management:exchange": "2019-12-31",
+            },
             "number_of_market_style": ["3"],
             "length_time_slice": {
                 "algorithmic_trading:BTC": "24",
@@ -128,7 +148,6 @@ class Server():
                 "portfolio_management:dj30": "0.25",
                 "portfolio_management:exchange": "0.05"
             }
-
         }
         return res
 
@@ -673,6 +692,10 @@ HEALTHCHECK = HealthCheck()
 @app.route("/api/TradeMaster/getParameters", methods=["GET"])
 def getParameters():
     res = SERVER.get_parameters(request)
+    return res
+@app.route("/api/TradeMaster/evaluation_getParameters", methods=["GET"])
+def evaluation_getParameters():
+    res = SERVER.evluation_parameters(request)
     return res
 
 
