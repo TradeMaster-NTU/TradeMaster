@@ -24,7 +24,7 @@ from trademaster.utils import set_seed
 set_seed(2023)
 def parse_args():
     parser = argparse.ArgumentParser(description='Download Alpaca Datasets')
-    parser.add_argument("--config", default=osp.join(ROOT, "configs", "algorithmic_trading", "algorithmic_trading_BTC_dqn_dqn_adam_mse.py"),
+    parser.add_argument("--config", default=osp.join(ROOT, "configs", "algorithmic_trading", "algorithmic_trading_BTC_deepscalper_deepscalper_adam_mse.py"),
                         help="download datasets config file path")
     parser.add_argument("--task_name", type=str, default="train")
     parser.add_argument("--test_dynamic", type=str, default='-1')
