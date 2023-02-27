@@ -5,5 +5,7 @@ labeling_parameters=[-0.01,0.01],
 regime_number=3,
 length_limit=32,
 OE_BTC=True,
-PM=''
+PM='',
+process_datafile_path='',
+market_dynamic_labeling_visualization_paths=''
 )

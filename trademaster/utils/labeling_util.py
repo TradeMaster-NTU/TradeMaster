@@ -307,10 +307,10 @@ class Labeler():
         plot_path=folder_name
         if not os.path.exists(plot_path):
             os.makedirs(plot_path)
-        fig_path=plot_path+ tic + '.png'
+        fig_path=plot_path+'_'+tic+'.png'
         fig.savefig(fig_path)
         plt.close(fig)
-        return os.path.abspath(fig_path)
+        return os.path.abspath(fig_path).replace("\\", "/")
 
     def linear_regession_timewindow(self,data_ori, tic, adjcp_timewindow):
         # This is the version of linear regession that does not use a turning point to segment. Instead, it applys a fixed-length time winodw.

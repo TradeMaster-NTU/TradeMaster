@@ -289,12 +289,6 @@ class Server():
         try:
             #
             dynamics_test_label = request_json.get("test_dynamic_label")
-            # same as agent training
-            task_name = request_json.get("task_name")
-            dataset_name = request_json.get("dataset_name").split(":")[-1]
-            optimizer_name = request_json.get("optimizer_name")
-            loss_name = request_json.get("loss_name")
-            agent_name = request_json.get("agent_name").split(":")[-1]
             session_id = request_json.get("session_id")
 
 

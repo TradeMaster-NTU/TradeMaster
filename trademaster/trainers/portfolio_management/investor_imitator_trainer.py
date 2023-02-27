@@ -10,7 +10,7 @@ import os
 import pandas as pd
 import random
 import numpy as np
-
+from collections import OrderedDict
 
 @TRAINERS.register_module()
 class PortfolioManagementInvestorImitatorTrainer(Trainer):
@@ -126,6 +126,38 @@ class PortfolioManagementInvestorImitatorTrainer(Trainer):
                 print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
                 break
 
+        rewards = self.test_environment.save_asset_memory()
+        assets = rewards["total assets"].values
+        df_return = self.test_environment.save_portfolio_return_memory()
+        daily_return = df_return.daily_return.values
+        df = pd.DataFrame()
+        df["daily_return"] = daily_return
+        df["total assets"] = assets
+        df.to_csv(os.path.join(self.work_dir, "test_result.csv"))
+        return daily_return
+
+    def test_with_customize_policy(self, policy, customize_policy_id, extra_parameters=None):
+
+        self.test_environment.test_id = customize_policy_id
+        print(f"Test customize policy: {str(customize_policy_id)}")
+        state = self.test_environment.reset()
+        episode_reward_sum = 0
+        weights_brandnew = None
+        while True:
+
+
+            if customize_policy_id=="Average_holding":
+                action = policy(state, self.test_environment,weights_brandnew)
+            else:
+                action = policy(state, self.test_environment)
+
+
+            state, reward, done, return_dict = self.test_environment.step(action)
+            episode_reward_sum += reward
+            if done:
+                print("Test customize policy Reward Sum: {:04f}".format(episode_reward_sum))
+                break
+            weights_brandnew = return_dict["weights_brandnew"]
         rewards = self.test_environment.save_asset_memory()
         assets = rewards["total assets"].values
         df_return = self.test_environment.save_portfolio_return_memory()

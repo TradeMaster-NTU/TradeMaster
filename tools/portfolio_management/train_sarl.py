@@ -12,7 +12,7 @@ sys.path.append(ROOT)
 import argparse
 import os.path as osp
 from mmcv import Config
-from trademaster.utils import replace_cfg_vals
+from trademaster.utils import replace_cfg_vals,create_radar_score_baseline, calculate_radar_score, plot_radar_chart
 from trademaster.datasets.builder import build_dataset
 from trademaster.trainers.builder import build_trainer
 
@@ -59,8 +59,8 @@ def test_deeptrader():
         trainer.test()
         print("test end")
     elif task_name.startswith("dynamics_test"):
-        trainer.dynamics_test(args.test_dynamic)
-        print("style test end")
+        trainer.dynamics_test(args.test_dynamic,cfg)
+        print("dynamics test end")
 
 
 if __name__ == '__main__':

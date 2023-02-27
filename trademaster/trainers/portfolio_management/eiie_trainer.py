@@ -205,3 +205,34 @@ class PortfolioManagementEIIETrainer(Trainer):
         df["total assets"] = assets
         df.to_csv(os.path.join(self.work_dir + "test_result.csv"))
         return daily_return
+
+    def test_with_customize_policy(self, policy, customize_policy_id,extra_parameters=None):
+        state = self.test_environment.reset()
+        self.test_environment.test_id = customize_policy_id
+        print(f"Test customize policy: {str(customize_policy_id)}")
+
+        episode_reward_sum = 0
+        weights_brandnew=None
+        while True:
+            tensor_state = torch.as_tensor(state, dtype=torch.float32, device=self.device).unsqueeze(0)
+            # print('extra_parameters is ',extra_parameters)
+            if customize_policy_id=="Average_holding":
+                action = policy(tensor_state, self.test_environment,weights_brandnew)
+            else:
+                action = policy(tensor_state, self.test_environment)
+            state, reward, done, return_dict = self.test_environment.step(action)
+            episode_reward_sum += reward
+            if done:
+                print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
+                break
+            weights_brandnew = return_dict["weights_brandnew"]
+
+        df_return = self.test_environment.save_portfolio_return_memory()
+        df_assets = self.test_environment.save_asset_memory()
+        assets = df_assets["total assets"].values
+        daily_return = df_return.daily_return.values
+        df = pd.DataFrame()
+        df["daily_return"] = daily_return
+        df["total assets"] = assets
+        df.to_csv(os.path.join(self.work_dir, "test_result_customize_actions_id_"+str(customize_policy_id)+".csv"), index=False)
+        return daily_return

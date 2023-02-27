@@ -119,7 +119,7 @@ def eteo():
             reward_list.append(trainer.test())
         print('The win rate of this regime is:')
         print(Counter(reward_list))
-        print("style test end")
+        print("dynamics test end")
 
 
 if __name__ == '__main__':

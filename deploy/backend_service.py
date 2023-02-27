@@ -14,9 +14,10 @@ import pytz
 from flask import Flask, request, jsonify
 from mmcv import Config
 
+ROOT = str(pathlib.Path(__file__).resolve().parents[1])
+sys.path.append(ROOT)
 
-
-from trademaster.utils import replace_cfg_vals,MRL_F2B_args_converter
+from trademaster.utils import replace_cfg_vals, MRL_F2B_args_converter
 from flask_cors import CORS
 import os.path as osp
 import pickle
@@ -25,11 +26,6 @@ from tools import market_dynamics_labeling
 import base64
 
 tz = pytz.timezone('Asia/Shanghai')
-
-
-ROOT = str(pathlib.Path(__file__).resolve().parents[1])
-sys.path.append(ROOT)
-
 
 app = Flask(__name__)
 CORS(app, resources={r"/TradeMaster/*": {"origins": "*"}})
@@ -134,7 +130,7 @@ class Server():
             elif dataset_name == "exchange":
                 return os.path.join(ROOT, "tools", "portfolio_management", "train.py")
         elif task_name == 'market_dynamics_modeling':
-            return  os.path.join(ROOT, "tools", "market_dynamics_labeling", "run.py")
+            return os.path.join(ROOT, "tools", "market_dynamics_labeling", "run.py")
 
     def load_sessions(self):
         if os.path.exists("session.json"):
@@ -174,6 +170,7 @@ class Server():
             agent_name = request_json.get("agent_name").split(":")[-1]
             start_date = request_json.get("start_date")
             end_date = request_json.get("end_date")
+            ##TODO
             session_id = str(uuid.uuid1())
 
             cfg_path = os.path.join(ROOT, "configs", task_name,
@@ -223,6 +220,7 @@ class Server():
             log_path = os.path.join(work_dir, "train_log.txt")
 
             self.sessions = self.dump_sessions({session_id: {
+                "task_name":task_name,
                 "work_dir": work_dir,
                 "cfg_path": cfg_path,
                 "script_path": train_script_path,
@@ -230,7 +228,7 @@ class Server():
                 "test_log_path": os.path.join(os.path.dirname(log_path), "test_log.txt")
             }})
 
-            cmd = "conda activate python3.9 && nohup python -u {} --config {} --task_name train > {} 2>&1 &".format(
+            cmd = "conda activate TradeMaster1.0.0 && nohup python -u {} --config {} --task_name train > {} 2>&1 &".format(
                 train_script_path,
                 cfg_path,
                 log_path)
@@ -300,7 +298,7 @@ class Server():
             cfg_path = self.sessions[session_id]["cfg_path"]
             log_path = self.sessions[session_id]["test_log_path"]
 
-            cmd = "conda activate python3.9 && nohup python -u {} --config {} --task_name test > {} 2>&1 &".format(
+            cmd = "conda activate TradeMaster1.0.0 && nohup python -u {} --config {} --task_name test > {} 2>&1 &".format(
                 script_path,
                 cfg_path,
                 log_path)
@@ -362,70 +360,55 @@ class Server():
         try:
             # get input args
 
-
-            session_id= request_json.get("session_id")
+            session_id = request_json.get("session_id")
             # market_dynamics_labeling parameters
-            args={}
-            args['dataset_name'] = request_json.get("dynamics_test_dataset_name").split(":")[-1]
+            args = {}
+            args['dataset_name'] = request_json.get("dataset_name").split(":")[-1]
             args['number_of_market_dynamics'] = request_json.get("number_of_market_style")
-            if int(args['number_of_market_dynamics']) not in [3,4]:
+            if int(args['number_of_market_dynamics']) not in [3, 4]:
                 raise Exception('only support dynamics number of 3 or 4 for now')
-            args['minimun_length'] = request_json.get("minimun_length")
-            args['Granularity'] = request_json.get("Granularity")
+            args['minimun_length'] = request_json.get("length_time_slice")
+            args['Granularity'] = request_json.get("granularity")
             args['bear_threshold'] = request_json.get("bear_threshold")
             args['bull_threshold'] = request_json.get("bull_threshold")
-            # args['task_name']=request_json.get("task_name")
 
-
-
-            # example input
-            # args = {}
-            # args['dataset_name'] = "algorithmic_trading:BTC".split(":")[-1]
-            # args['number_of_market_dynamics'] = "3"
-            # if int(args['number_of_market_dynamics']) not in [3,4]:
-            #     raise Exception('only support dynamics number of 3 or 4 for now')
-            # args['minimun_length'] = '24'
-            # args['Granularity'] = '0.5'
-            # args['bear_threshold'] = '-0.25'
-            # args['bull_threshold'] = '0.25'
-            # args['task_name']="algorithmic_trading"
-            #
-            # session_id = "b5bcd0b6-7a10-11ea-8367-181 dea4d9837"
-
-
-            #load session
+            # load session
             self.sessions = self.load_sessions()
             if session_id in self.sessions:
-                work_dir=self.sessions[session_id]["work_dir"]
-                cfg_path=self.sessions[session_id]["cfg_path"]
+                work_dir = self.sessions[session_id]["work_dir"]
+                cfg_path = self.sessions[session_id]["cfg_path"]
 
-
-
-            #prepare data
+            # prepare data
 
             cfg = Config.fromfile(cfg_path)
             cfg = replace_cfg_vals(cfg)
-            test_start_date = request_json.get("dynamics_test_start_date")
-            test_end_date = request_json.get("dynamics_test_end_date")
+            test_start_date = request_json.get("start_date")
+            test_end_date = request_json.get("end_date")
 
             # test_start_date = "2010-01-01"
             # test_end_date = "2015-01-01"
 
             data = pd.read_csv(os.path.join(ROOT, cfg.data.data_path, "data.csv"), index_col=0)
             data = data[(data["date"] >= test_start_date) & (data["date"] < test_end_date)]
-            data_path=os.path.join(work_dir, "dynamics_test.csv")
+            data_path = os.path.join(work_dir, "dynamics_test.csv").replace("\\", "/")
             data.to_csv(data_path)
-            args['dataset_path']=data_path
+            args['dataset_path'] = data_path
 
-            #prepare PM index data if needed
-            if args['dataset_name']=='portfolio_management:dj30':
+            # prepare PM index data if needed
+            if args['dataset_name'] == 'portfolio_management:dj30':
                 DJI_data = pd.read_csv(os.path.join(ROOT, cfg.data.data_path, "DJI_index.csv"), index_col=0)
                 DJI_data = DJI_data[(DJI_data["date"] >= test_start_date) & (DJI_data["date"] < test_end_date)]
-                data_path = os.path.join(work_dir, "DJI_index_dynamics_test.csv")
+                data_path = os.path.join(work_dir, "DJI_index_dynamics_test.csv").replace("\\", "/")
                 DJI_data.to_csv(data_path)
-                args['PM']=data_path
+                args['PM'] = data_path
             else:
                 args['PM'] = ''
+
+            #prepare OE_BTC index:
+            if args['dataset_name'] == "order_excecution:BTC":
+                args['OE_BTC'] = True
+            else:
+                args['OE_BTC'] = False
 
             # update MDM cfg
 
@@ -436,52 +419,72 @@ class Server():
             MDM_cfg = replace_cfg_vals(MDM_cfg)
             # front-end args to back-end args
             args = MRL_F2B_args_converter(args)
-            MDM_cfg.data.update({'data_path': args['data_path'],
-                                 'fitting_parameters':args['fitting_parameters'],
-                                 'labeling_parameters':args['labeling_parameters'],
-                                 'regime_number':args['regime_number'],
-                                 'length_limit':args['length_limit'],
-                                 'OE_BTC':args['OE_BTC'],
-                                 'PM':args['PM']
-                                 })
+            MDM_cfg.market_dynamics_model.update({'data_path': args['data_path'],
+                                                  'fitting_parameters': args['fitting_parameters'],
+                                                  'labeling_parameters': args['labeling_parameters'],
+                                                  'regime_number': args['regime_number'],
+                                                  'length_limit': args['length_limit'],
+                                                  'OE_BTC': args['OE_BTC'],
+                                                  'PM': args['PM']
+                                                  })
             MDM_cfg_path = os.path.join(work_dir, osp.basename(MDM_cfg_path))
             MDM_cfg.dump(MDM_cfg_path)
             logger.info(MDM_cfg)
             MDM_log_path = os.path.join(work_dir, "MDM_log.txt")
-            MDM_script_path = self.train_scripts('market_dynamics_labeling', '', '', '', '')
-            self.sessions = self.dump_sessions({session_id: {
-                "MDM_cfg_path": MDM_cfg_path,
-                "MDM_script_path": MDM_script_path,
-                "MDM_log_path": MDM_log_path,
-            }})
+            MDM_script_path = self.train_scripts('market_dynamics_modeling', '', '', '', '')
 
-            #run MDM
-            cmd = "conda activate python3.9 && nohup python -u {} --config {} --task_name train > {} 2>&1 &".format(
+            # update session file
+
+            # first test
+            if "MDM_cfg_path" not in self.sessions[session_id]:
+                self.sessions = self.dump_sessions({session_id: self.sessions[session_id] | {
+                    "MDM_cfg_path": MDM_cfg_path,
+                    "MDM_script_path": MDM_script_path,
+                    "MDM_log_path": MDM_log_path,
+                }})
+            # following dump
+            else:
+                self.sessions[session_id]["MDM_cfg_path"] = MDM_cfg_path
+                self.sessions[session_id]["MDM_script_path"] = MDM_script_path
+                self.sessions[session_id]["MDM_log_path"] = MDM_log_path
+                self.sessions = self.dump_sessions({session_id: self.sessions[session_id]})
+
+            # run MDM
+            cmd = "conda activate TradeMaster1.0.0 && nohup python -u {} --config {} > {} 2>&1 &".format(
                 MDM_script_path,
                 MDM_cfg_path,
                 MDM_log_path)
+            logger.info(cmd)
             MDM_run_info = run_cmd(cmd)
             logger.info(MDM_run_info)
 
-            #reload MDM_cfg to get results
+            # reload MDM_cfg to get results
             MDM_cfg = Config.fromfile(MDM_cfg_path)
             MDM_cfg = replace_cfg_vals(MDM_cfg)
-            MDM_datafile_path=MDM_cfg.market_dynamics_model.process_datafile_path
-            MDM_visualization_paths=MDM_cfg.market_dynamics_model.market_dynamic_labeling_visualization_paths
+            MDM_datafile_path = MDM_cfg.market_dynamics_model.process_datafile_path
+            MDM_visualization_paths = MDM_cfg.market_dynamics_model.market_dynamic_labeling_visualization_paths
 
-
-            with open(market_dynamic_labeling_visualization_paths[0], "rb") as image_file:
+            with open(MDM_visualization_paths[0], "rb") as image_file:
                 encoded_string = base64.b64encode(image_file.read())
 
             # update session information:
-
-            self.sessions = self.dump_sessions({session_id: {
-                "MDM_cfg_path": MDM_cfg_path,
-                "MDM_script_path": MDM_script_path,
-                "MDM_log_path": MDM_log_path,
-                "MDM_datafile_path":MDM_datafile_path,
-                "MDM_visualization_paths":MDM_visualization_paths
-            }})
+            # update session information:
+            if "MDM_datafile_path" not in self.sessions[session_id]:
+                self.sessions[session_id]["MDM_cfg_path"] = MDM_cfg_path
+                self.sessions[session_id]["MDM_script_path"] = MDM_script_path
+                self.sessions[session_id]["MDM_log_path"] = MDM_log_path
+                self.sessions = self.dump_sessions({session_id:  self.sessions[session_id] |
+                                                                             {
+                                                                                 "MDM_datafile_path": MDM_datafile_path,
+                                                                                 "MDM_visualization_paths": MDM_visualization_paths}
+                                                                 })
+            else:
+                self.sessions[session_id]["MDM_cfg_path"] = MDM_cfg_path
+                self.sessions[session_id]["MDM_script_path"] = MDM_script_path
+                self.sessions[session_id]["MDM_log_path"] = MDM_log_path
+                self.sessions[session_id]["MDM_datafile_path"] = MDM_datafile_path
+                self.sessions[session_id]["MDM_visualization_paths"] = MDM_visualization_paths
+                self.sessions = self.dump_sessions({session_id: self.sessions[session_id]})
 
             error_code = 0
             info = "request success, show market dynamics labeling visualization"
@@ -489,17 +492,19 @@ class Server():
             res = {
                 "error_code": error_code,
                 "info": info,
-                "market_dynamic_labeling_visulization": str(encoded_string,'utf-8')
+                "market_dynamic_labeling_visulization": str(encoded_string, 'utf-8')
             }
             logger.info(info)
             return jsonify(res)
 
         except Exception as e:
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
             error_code = 1
             info = "request data error, {}".format(e)
             res = {
                 "error_code": error_code,
-                "info": info,
+                "info": info + str(exc_type) + str(fname) + str(exc_tb.tb_lineno),
                 "market_dynamic_labeling_visulization": ""
             }
             logger.info(info)
@@ -510,7 +515,6 @@ class Server():
         try:
             session_id = request_json.get("session_id")
 
-
             # example input
             # session_id = "b5bcd0b6-7a10-11ea-8367-181 dea4d9837"
 
@@ -518,16 +522,13 @@ class Server():
             if session_id in self.sessions:
                 work_dir = self.sessions[session_id]["work_dir"]
                 cfg_path = self.sessions[session_id]["cfg_path"]
-                MDM_datafile_path=self.sessions[session_id]["MDM_datafile_path"]
-
-
-
+                MDM_datafile_path = self.sessions[session_id]["MDM_datafile_path"]
 
             cfg = Config.fromfile(cfg_path)
             cfg = replace_cfg_vals(cfg)
 
             # update dataset cfg
-            cfg.data.test_dynamic_path = MDM_datafile_path
+            cfg.data.test_dynamic_path = MDM_datafile_path.replace("\\", "/")
             cfg_path = os.path.join(work_dir, osp.basename(cfg_path))
             cfg.dump(cfg_path)
             logger.info(cfg)
@@ -550,14 +551,13 @@ class Server():
             logger.info(info)
             return jsonify(res)
 
-
     def run_dynamics_test(self, request):
         request_json = json.loads(request.get_data(as_text=True))
         try:
-            dynamics_test_label = request_json.get("dynamics_test_label")
+            # dynamics_test_label = request_json.get("test_dynamic_label")
+            dynamics_test_label=0
             session_id = request_json.get("session_id")
-
-
+            logger.info(request_json)
             # example input
             # dynamics_test_label = "0"
             # task_name = "algorithmic_trading"
@@ -568,39 +568,43 @@ class Server():
             # session_id = "b5bcd0b6-7a10-11ea-8367-181 dea4d9837"
 
             self.sessions = self.load_sessions()
+            addtional_info=''
             if session_id in self.sessions:
                 work_dir = self.sessions[session_id]["work_dir"]
                 cfg_path = self.sessions[session_id]["cfg_path"]
+                train_script_path = self.sessions[session_id]["script_path"]
+                task_name = self.sessions[session_id]["task_name"]
             cfg = Config.fromfile(cfg_path)
             cfg = replace_cfg_vals(cfg)
             cfg_path = os.path.join(work_dir, osp.basename(cfg_path))
-            dt_log_path = os.path.join(work_dir, "dynamics_test_"+str(dynamics_test_label)+"_log.txt")
-            train_script_path = self.train_scripts(task_name, dataset_name, optimizer_name, loss_name, agent_name)
-            cmd = "conda activate python3.9 && nohup python -u {} --config {} --task_name dynamics_test --test_dynamic {} > {} 2>&1 &".format(
+            dt_log_path = os.path.join(work_dir, "dynamics_test_" + str(dynamics_test_label) + "_log.txt")
+            cmd = "conda activate TradeMaster1.0.0 && nohup python -u {} --config {} --task_name dynamics_test --test_dynamic {} > {} 2>&1 &".format(
                 train_script_path,
                 cfg_path,
                 dynamics_test_label,
                 dt_log_path)
-
+            logger.info(cmd)
             DT_info = run_cmd(cmd)
             logger.info(DT_info)
+            radar_plot_path = osp.join(work_dir, 'radar_plot_agent_' + str(dynamics_test_label) + '.png')
+            if task_name=="order_execution":
+                encoded_string=""
+                addtional_info+='\n we do not provide radar report for order execution task for now'
+            else:
+                with open(radar_plot_path, "rb") as image_file:
+                    encoded_string = base64.b64encode(image_file.read())
 
-            radar_plot_path=osp.join(work_dir,'radar_plot_agent_'+str(dynamics_test_label)+'.png')
-            with open(radar_plot_path, "rb") as image_file:
-                encoded_string = base64.b64encode(image_file.read())
-
-            #print log output
-            print_log_cmd = "tail -n 2000 {}".format(log_path)
+            # print log output
+            print_log_cmd = "tail -n 100 {}".format(dt_log_path)
             dynamics_test_log_info = run_cmd(print_log_cmd)
-
 
             error_code = 0
             info = f"request success, start test market {dynamics_test_label}\n\n"
             res = {
                 "error_code": error_code,
-                "info": info+dynamics_test_log_info,
+                "info": info + dynamics_test_log_info+addtional_info,
                 "session_id": session_id,
-                'radar_plot':str(encoded_string,'utf-8')
+                'radar_plot': str(encoded_string, 'utf-8')
             }
             logger.info(info)
             return jsonify(res)
@@ -612,7 +616,7 @@ class Server():
                 "error_code": error_code,
                 "info": info,
                 "session_id": "",
-                'radar_plot':""
+                'radar_plot': ""
             }
             logger.info(info)
             return jsonify(res)
@@ -672,21 +676,23 @@ def test_status():
     res = SERVER.test_status(request)
     return res
 
+
 @app.route("/api/TradeMaster/start_market_dynamics_labeling", methods=["POST"])
 def start_market_dynamics_labeling():
     res = SERVER.start_market_dynamics_labeling(request)
     return res
+
 
 @app.route("/api/TradeMaster/save_market_dynamics_labeling", methods=["POST"])
 def save_market_dynamics_labeling():
     res = SERVER.save_market_dynamics_labeling(request)
     return res
 
+
 @app.route("/api/TradeMaster/run_dynamics_test", methods=["POST"])
-def run_dynamics_test():
+def run_style_test():
     res = SERVER.run_dynamics_test(request)
     return res
-
 
 
 @app.route("/api/TradeMaster/healthcheck", methods=["GET"])
@@ -696,6 +702,6 @@ def health_check():
 
 
 if __name__ == "__main__":
-    host = "0.0.0.0"
+    host = "127.0.0.1"
     port = 8080
     app.run(host, port)
