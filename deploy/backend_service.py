@@ -266,8 +266,11 @@ class Server():
             self.sessions = self.load_sessions()
             session_id = request_json.get("session_id")
             if session_id in self.sessions:
-                cmd = "tail -n 2000 {}".format(self.sessions[session_id]["train_log_path"])
-                info = run_cmd(cmd)
+                if os.path.exists(self.sessions[session_id]["train_log_path"]):
+                    cmd = "tail -n 2000 {}".format(self.sessions[session_id]["train_log_path"])
+                    info = run_cmd(cmd)
+                else:
+                    info = ""
             else:
                 info = "there are no train status"
 
