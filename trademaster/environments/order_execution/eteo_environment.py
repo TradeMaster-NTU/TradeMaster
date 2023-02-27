@@ -136,7 +136,7 @@ class OrderExecutionETEOEnvironment(Environments):
         # according to the order 1 and 3 we modify our action and make the order tradable
         # TODO we need to modify the definition of portfolio and the very end as well and add it into the portfolio_history part
         # the think is that we check the order history and clarify the cash and bitcoin taken in the order book and
-
+        action[1]=action[1]+self.data['midpoint']
         if action[0] < 0:
             # if the action's volume is smaller than 0, we are going to sell the bitcoin we are holding
             sell_volume = -action[0]
