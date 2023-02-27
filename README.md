@@ -119,12 +119,12 @@ TradeMaster provides many visualization toolkits for a systematic evaluation of 
 </table>
 
 <div align="left">
-<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/plot1.jpg width="95%"/>
+<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/plot1.jpg width="100%"/>
 </div>
 <br>
 
 <div align="left">
-<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/plot2.jpg width="90%"/>
+<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/plot2.jpg width="100%"/>
 </div>
 <br>
 
