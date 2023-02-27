@@ -227,7 +227,7 @@ class Server():
                 "test_log_path": os.path.join(os.path.dirname(log_path), "test_log.txt")
             }})
 
-            cmd = "conda activate TradeMaster1.0.0 && nohup python -u {} --config {} --task_name train > {} 2>&1 &".format(
+            cmd = "conda activate TradeMaster && nohup python -u {} --config {} --task_name train > {} 2>&1 &".format(
                 train_script_path,
                 cfg_path,
                 log_path)
@@ -297,7 +297,7 @@ class Server():
             cfg_path = self.sessions[session_id]["cfg_path"]
             log_path = self.sessions[session_id]["test_log_path"]
 
-            cmd = "conda activate TradeMaster1.0.0 && nohup python -u {} --config {} --task_name test > {} 2>&1 &".format(
+            cmd = "conda activate TradeMaster && nohup python -u {} --config {} --task_name test > {} 2>&1 &".format(
                 script_path,
                 cfg_path,
                 log_path)
@@ -449,7 +449,7 @@ class Server():
                 self.sessions = self.dump_sessions({session_id: self.sessions[session_id]})
 
             # run MDM
-            cmd = "conda activate TradeMaster1.0.0 && nohup python -u {} --config {} > {} 2>&1 &".format(
+            cmd = "conda activate TradeMaster && nohup python -u {} --config {} > {} 2>&1 &".format(
                 MDM_script_path,
                 MDM_cfg_path,
                 MDM_log_path)
@@ -577,7 +577,7 @@ class Server():
             cfg = replace_cfg_vals(cfg)
             cfg_path = os.path.join(work_dir, osp.basename(cfg_path))
             dt_log_path = os.path.join(work_dir, "dynamics_test_" + str(dynamics_test_label) + "_log.txt")
-            cmd = "conda activate TradeMaster1.0.0 && nohup python -u {} --config {} --task_name dynamics_test --test_dynamic {} > {} 2>&1 &".format(
+            cmd = "conda activate TradeMaster && nohup python -u {} --config {} --task_name dynamics_test --test_dynamic {} > {} 2>&1 &".format(
                 train_script_path,
                 cfg_path,
                 dynamics_test_label,
