@@ -218,7 +218,7 @@ class PortfolioManagementDeepTraderTrainer(Trainer):
                 if count % 100 == 10:
                     self.agent.learn()
                 if done:
-                    print("Train Episode Reward Sum: {:04f}".format(episode_reward_sum))
+                    # print("Train Episode Reward Sum: {:04f}".format(episode_reward_sum))
                     break
 
             save_model(self.checkpoints_path,
@@ -276,7 +276,7 @@ class PortfolioManagementDeepTraderTrainer(Trainer):
             s, reward, done, _ = self.test_environment.step(weights)
             episode_reward_sum += reward
             if done:
-                print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
+                # print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
                 break
 
         df_return = self.test_environment.save_portfolio_return_memory()

@@ -141,7 +141,7 @@ class PortfolioManagementSARLTrainer(Trainer):
             state, reward, done, sharpe = self.test_environment.step(action)
             episode_reward_sum += reward
             if done:
-                print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
+                # print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
                 break
 
         rewards = self.test_environment.save_asset_memory()
