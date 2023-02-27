@@ -29,7 +29,7 @@ def parse_args():
     return args
 
 
-def test_deeptrader():
+def main():
     args = parse_args()
 
     cfg = Config.fromfile(args.config)
@@ -64,7 +64,7 @@ def test_deeptrader():
 
 
 if __name__ == '__main__':
-    test_deeptrader()
+    main()
     """
     algorithmic_trading
     portfolio_management
