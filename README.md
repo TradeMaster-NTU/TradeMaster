@@ -78,7 +78,7 @@ We provide tutorials covering core features of TradeMaster for users to get star
 |  DJ30   | [Yahoo](https://pypi.org/project/yfinance/) |   US Stock    |       12/01/01-21/12/31, 1day        |  OHLCV   |         [DJ30](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/dj30/DJ30.pdf)          |
 |   FX    |    [Kaggle](https://pypi.org/project/yfinance/)    |      Foreign Exchange       |     00/01/01-19/12/31, 1day        |  OHLCV   |         [FX](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/exchange/FX.pdf)          |
 | Crypto  |    [Kaggle](https://pypi.org/project/yfinance/)    |    Crypto     |       13/04/29-21/07/06, 1day        |  OHLCV   |        [Crypto](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/BTC/Crypto.pdf)        |
-|  SSE50   | [Yahoo](https://pypi.org/project/yfinance/) | China Stock |       09/01/02-21-01-01, 1day        |  OHLCV   |         [SZ50](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/sz50/SZ50.pdf)          |
+|  SSE50   | [Yahoo](https://pypi.org/project/yfinance/) | China Stock |       09/01/02-21-01-01, 1day        |  OHLCV   |         [SSE50](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/sz50/SZ50.pdf)          |
 | Bitcoin |                     [Kaggle]()                     |    Crypto     | 21/04/07-21/04/19, 1min |   LOB    | [Binance](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/OE_BTC/limit_order_book.pdf) |
 
 Dates are in YY/MM/DD format.
@@ -108,12 +108,6 @@ Classic RL based on Pytorch and Ray:
 ## Visualization Toolkit
 TradeMaster provides many visualization toolkits for a systematic evaluation of RL-based quantitative trading methods. Please check this [paper](https://openreview.net/forum?id=JjbsIYOuNi) and [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/Visualization.ipynb) for details. Some examples are as follows:
 
-
-<div align="left">
-<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/plot1.jpg width="95%"/>
-</div>
-<br>
-
 **PRIDE-Star** is a star plot containing normalized score of 8 key financial measures such total return (TR) and Sharpe ratio (SR) to evaluate profitability,risk-control and diversity:
 <table align="center">
     <tr>
@@ -124,10 +118,13 @@ TradeMaster provides many visualization toolkits for a systematic evaluation of 
     </tr>
 </table>
 
-
+<div align="left">
+<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/plot1.jpg width="100%"/>
+</div>
+<br>
 
 <div align="left">
-<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/plot2.jpg width="90%"/>
+<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/plot2.jpg width="100%"/>
 </div>
 <br>
 

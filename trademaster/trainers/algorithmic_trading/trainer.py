@@ -149,7 +149,7 @@ class AlgorithmicTradingTrainer(Trainer):
                     state, reward, done, _ = self.valid_environment.step(action)
                     episode_reward_sum += reward
                     if done:
-                        print("Valid Episode Reward Sum: {:04f}".format(episode_reward_sum))
+                        #print("Valid Episode Reward Sum: {:04f}".format(episode_reward_sum))
                         break
                 valid_score_list.append(episode_reward_sum)
 
@@ -228,7 +228,7 @@ class AlgorithmicTradingTrainer(Trainer):
                     state, reward, done, _ = self.valid_environment.step(action)
                     episode_reward_sum += reward
                     if done:
-                        print("Valid Episode Reward Sum: {:04f}".format(episode_reward_sum))
+                        #print("Valid Episode Reward Sum: {:04f}".format(episode_reward_sum))
                         break
                 valid_score_list.append(episode_reward_sum)
 
@@ -321,8 +321,6 @@ class AlgorithmicTradingTrainer(Trainer):
 
         if len(customize_actions)!=self.test_environment.action_length:
             raise ValueError('Action length doesn\'t fit.')
-
-
 
         episode_reward_sum = 0
         action_index=0

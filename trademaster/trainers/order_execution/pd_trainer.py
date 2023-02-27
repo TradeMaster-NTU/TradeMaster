@@ -201,7 +201,7 @@ class OrderExecutionPDTrainer(Trainer):
                         state, reward, done, info = self.valid_environment.step(action)
                         episode_reward_sum += reward
                         if done:
-                            print("Valid Episode Reward Sum: {:04f}".format(episode_reward_sum))
+                            #print("Valid Episode Reward Sum: {:04f}".format(episode_reward_sum))
                             break
                     valid_score_list.append(episode_reward_sum)
                     save_model(self.checkpoints_path,

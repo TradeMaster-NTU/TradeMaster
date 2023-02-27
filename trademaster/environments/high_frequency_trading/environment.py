@@ -28,7 +28,6 @@ class HighFrequencyTradingEnvironment(Environments):
         self.test_dynamic = int(get_attr(kwargs, "test_dynamic", "-1"))
         self.task_index = int(get_attr(kwargs, "task_index", "-1"))
         self.work_dir = get_attr(kwargs, "work_dir", "")
-        print(self.task)
 
         self.df_path = None
         if self.task.startswith("train"):
@@ -96,7 +95,7 @@ class HighFrequencyTradingEnvironment(Environments):
                     * price_information["bid{}_size".format(i)]
                 )
         if position > 0 and i == 5:
-            print("the holding could not be sell all clear")
+            # print("the holding could not be sell all clear")
             # 执行的单量
             actual_changed_position = orgional_position - position
         else:
@@ -121,7 +120,7 @@ class HighFrequencyTradingEnvironment(Environments):
                     * price_information["ask{}_size".format(i)]
                 )
         if i == 5 and position > 0:
-            print("the holding could not be bought all clear")
+            # print("the holding could not be bought all clear")
             actual_changed_position = orgional_position - position
         else:
             value += price_information["ask{}_price".format(i)] * position
@@ -296,7 +295,7 @@ class HighFrequencyTradingEnvironment(Environments):
             )
             stats = OrderedDict(
                 {
-                    "Profit Margin": ["{:04f}%".format(tr * 100)],
+                    "Total Return": ["{:04f}%".format(tr * 100)],
                     "Sharp Ratio": ["{:04f}".format(sharpe_ratio)],
                     "Volatility": ["{:04f}%".format(vol* 100)],
                     "Max Drawdown": ["{:04f}%".format(mdd* 100)],
@@ -322,9 +321,10 @@ class HighFrequencyTradingEnvironment(Environments):
                 }
             )
             metric_save_path=osp.join(self.work_dir,'metric_'+str(self.task)+'_'+str(self.test_dynamic)+'_'+str(self.test_id)+'_'+str(self.task_index)+'.pickle')
-            with open(metric_save_path, 'wb') as handle:
-                pickle.dump(save_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
-            print('metric result saved to '+metric_save_path)
+            if self.task == 'test_dynamic':
+                with open(metric_save_path, 'wb') as handle:
+                    pickle.dump(save_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            # print('metric result saved to '+metric_save_path)
 
         else:
             DP_distribution = [0] * 11
@@ -439,7 +439,7 @@ class HighFrequencyTradingEnvironment(Environments):
             balance_list = []
             for i in range(len(in_out_list)):
                 balance_list.append(np.sum(in_out_list[: i + 1]))
-            print("the money we require is", -min(balance_list))
+            # print("the money we require is", -min(balance_list))
         return balance_list
 
     def making_multi_level_dp_demonstration(self, max_punish=1e12):

@@ -229,7 +229,7 @@ def is_main_process():
 
 def save_on_master(state, path):
     if is_main_process():
-        print(f"save path {path}")
+        #print(f"save path {path}")
         with pathmgr.open(path, "wb") as f:
             torch.save(state, f)
 

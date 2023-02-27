@@ -95,7 +95,7 @@ class PortfolioManagementEnvironment(Environments):
             tr, sharpe_ratio, vol, mdd, cr, sor = self.analysis_result()
             stats = OrderedDict(
                 {
-                    "Profit Margin": ["{:04f}%".format(tr * 100)],
+                    "Total Return": ["{:04f}%".format(tr * 100)],
                     "Sharp Ratio": ["{:04f}".format(sharpe_ratio)],
                     "Volatility": ["{:04f}%".format(vol*100)],
                     "Max Drawdown": ["{:04f}%".format(mdd*100)],

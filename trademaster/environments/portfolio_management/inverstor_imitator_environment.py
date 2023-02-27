@@ -237,7 +237,7 @@ class PortfolioManagementInvestorImitatorEnvironment(Environments):
             tr, sharpe_ratio, vol, mdd, cr, sor = self.analysis_result()
             stats = OrderedDict(
                 {
-                    "Profit Margin": ["{:04f}%".format(tr * 100)],
+                    "Total Return": ["{:04f}%".format(tr * 100)],
                     "Sharp Ratio": ["{:04f}".format(sharpe_ratio)],
                     "Volatility": ["{:04f}%".format(vol* 100)],
                     "Max Drawdown": ["{:04f}%".format(mdd* 100)],
@@ -264,8 +264,9 @@ class PortfolioManagementInvestorImitatorEnvironment(Environments):
             metric_save_path = osp.join(self.work_dir,
                                         'metric_' + str(self.task) + '_' + str(self.test_dynamic) + '_' + str(
                                             self.test_id) + '_' + str(self.task_index) + '.pickle')
-            with open(metric_save_path, 'wb') as handle:
-                pickle.dump(save_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            if self.task == 'test_dynamic':
+                with open(metric_save_path, 'wb') as handle:
+                    pickle.dump(save_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
             return self.state, self.reward, self.terminal, {}

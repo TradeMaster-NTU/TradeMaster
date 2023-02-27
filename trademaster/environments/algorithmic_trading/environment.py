@@ -126,7 +126,7 @@ class AlgorithmicTradingEnvironment(Environments):
 
             stats = OrderedDict(
                 {
-                    "Profit Margin": ["{:04f}%".format(tr * 100)],
+                    "Total Return": ["{:04f}%".format(tr * 100)],
                     # "Buy and Hold Profit": ["{:04f}%".format(buy_and_hold_profit)],
                     # "Excess Profit": ["{:04f}%".format(tr * 100 - 0)],
                     "Sharp Ratio": ["{:04f}".format(sharpe_ratio)],
@@ -152,9 +152,10 @@ class AlgorithmicTradingEnvironment(Environments):
                 }
             )
             metric_save_path=osp.join(self.work_dir,'metric_'+str(self.task)+'_'+str(self.test_dynamic)+'_'+str(self.test_id)+'_'+str(self.task_index)+'.pickle')
-            with open(metric_save_path, 'wb') as handle:
-                pickle.dump(save_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
-            print('metric result saved to '+metric_save_path)
+            if self.task=='test_dynamic':
+                with open(metric_save_path, 'wb') as handle:
+                    pickle.dump(save_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            # print('metric result saved to '+metric_save_path)
             return self.state, self.reward, self.terminal, {
                 "volidality": self.var
             }

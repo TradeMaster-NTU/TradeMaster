@@ -44,7 +44,7 @@ def main(args):
         # args.data_path = './temp/OE_BTC_processed.csv'
     Labeler = util.Labeler(args.data_path, 'linear',args.fitting_parameters)
     Labeler.fit(args.regime_number, args.length_limit)
-    Labeler.label(args.labeling_parameters)
+    Labeler.label(args.labeling_parameters,os.path.dirname(args.data_path))
     labeled_data = pd.concat([v for v in Labeler.data_dict.values()], axis=0)
     data = pd.read_csv(args.data_path)
     merged_data = data.merge(labeled_data, how='left', on=['date', 'tic', 'adjcp'], suffixes=('', '_DROP')).filter(
