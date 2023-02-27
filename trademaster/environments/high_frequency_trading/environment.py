@@ -325,7 +325,7 @@ class HighFrequencyTradingEnvironment(Environments):
             if self.task == 'test_dynamic':
                 with open(metric_save_path, 'wb') as handle:
                     pickle.dump(save_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
-            print('metric result saved to '+metric_save_path)
+            # print('metric result saved to '+metric_save_path)
 
         else:
             DP_distribution = [0] * 11
