@@ -731,7 +731,8 @@ class HighFrequencyTradingTrainingEnvironment(HighFrequencyTradingEnvironment):
             )
             self.required_money = required_money
             DP_distribution = [0] * 11
-            tr, sharpe_ratio, vol, mdd, cr, sor, ahl = self.evaualte(
+
+            tr, sharpe_ratio, vol, mdd, cr, sor = self.evaualte(
                 self.save_asset_memoey()
             )
             stats = OrderedDict(

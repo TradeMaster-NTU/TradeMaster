@@ -45,7 +45,7 @@ class PortfolioManagementTrainer(Trainer):
     def __init__(self, **kwargs):
         super(PortfolioManagementTrainer, self).__init__()
 
-        device = get_attr(kwargs, "device", None)
+        self.device = get_attr(kwargs, "device", None)
 
         self.configs = get_attr(kwargs, "configs", None)
         self.agent_name = get_attr(kwargs, "agent_name", "ppo")
