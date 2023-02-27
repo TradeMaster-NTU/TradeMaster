@@ -14,6 +14,6 @@ statsmodels
 scikit_learn
 tslearn
 gym
-ray[rllib]
+ray[rllib]==1.13.0
 packaging
 kaleido==0.1.0.post1
