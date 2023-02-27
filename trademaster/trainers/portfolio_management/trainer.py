@@ -13,8 +13,6 @@ from trademaster.environments.portfolio_management.environment import PortfolioM
 import pandas as pd
 import numpy as np
 import torch
-import pickle as pkl
-
 
 def env_creator(config):
     return PortfolioManagementEnvironment(config)
@@ -65,7 +63,6 @@ class PortfolioManagementTrainer(Trainer):
         self.configs["env"] = PortfolioManagementEnvironment
         self.configs["env_config"] = dict(dataset=self.dataset, task="train")
         register_env("portfolio_management", env_creator)
-
 
         self.init_before_training()
 

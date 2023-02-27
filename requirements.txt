@@ -14,6 +14,7 @@ statsmodels
 scikit_learn
 tslearn
 gym
+gymnasium
 ray[rllib]==1.13.0
 tensorflow==2.11.0
 packaging
