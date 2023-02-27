@@ -108,12 +108,6 @@ Classic RL based on Pytorch and Ray:
 ## Visualization Toolkit
 TradeMaster provides many visualization toolkits for a systematic evaluation of RL-based quantitative trading methods. Please check this [paper](https://openreview.net/forum?id=JjbsIYOuNi) and [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/Visualization.ipynb) for details. Some examples are as follows:
 
-
-<div align="left">
-<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/plot1.jpg width="95%"/>
-</div>
-<br>
-
 **PRIDE-Star** is a star plot containing normalized score of 8 key financial measures such total return (TR) and Sharpe ratio (SR) to evaluate profitability,risk-control and diversity:
 <table align="center">
     <tr>
@@ -124,7 +118,10 @@ TradeMaster provides many visualization toolkits for a systematic evaluation of 
     </tr>
 </table>
 
-
+<div align="left">
+<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/plot1.jpg width="95%"/>
+</div>
+<br>
 
 <div align="left">
 <img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/plot2.jpg width="90%"/>
