@@ -295,7 +295,7 @@ class HighFrequencyTradingEnvironment(Environments):
             )
             stats = OrderedDict(
                 {
-                    "Profit Margin": ["{:04f}%".format(tr * 100)],
+                    "Total Return": ["{:04f}%".format(tr * 100)],
                     "Sharp Ratio": ["{:04f}".format(sharpe_ratio)],
                     "Volatility": ["{:04f}%".format(vol* 100)],
                     "Max Drawdown": ["{:04f}%".format(mdd* 100)],
