@@ -22,7 +22,7 @@ class OrderExecutionDataset(CustomDataset):
         self.valid_path = osp.join(ROOT, get_attr(kwargs, "valid_path", None))
         self.test_path = osp.join(ROOT, get_attr(kwargs, "test_path", None))
         self.test_dynamic_path = osp.join(ROOT, get_attr(kwargs, "test_dynamic_path", None))
-        test_dynamic = int(get_attr(kwargs, "test_dynamic", None))
+        test_dynamic = int(get_attr(kwargs, "test_dynamic", "-1"))
         if test_dynamic != -1:
             length_keeping = get_attr(kwargs, "length_keeping", None)
             self.test_dynamic_paths=[]

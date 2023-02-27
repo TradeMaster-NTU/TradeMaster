@@ -64,12 +64,10 @@ class AlgorithmicTradingEnvironment(Environments):
         self.compound_memory = [[self.initial_amount, 0]]
         # the compound_memory's element consists of 2 parts: the cash and the number of bitcoin you have in hand
         self.portfolio_return_memory = [0]
-        # self.buy_and_hold_portfolio_return_memory=[0]
         self.transaction_cost_memory = []
         self.terminal = False
         self.portfolio_value = self.initial_amount
         self.asset_memory = [self.initial_amount]
-        # self.buy_and_hold_asset_memory = [self.initial_amount]
         self.day = self.backward_num_day
         self.data = self.df.iloc[self.day - self.backward_num_day:self.day, :]
         self.date_memory = [self.data.date.unique()[-1]]
@@ -80,6 +78,7 @@ class AlgorithmicTradingEnvironment(Environments):
         self.state = np.array(self.state).reshape(-1).tolist()
         self.state = self.state + self.compound_memory[-1]
         self.state = np.array(self.state)
+        self.test_id='agent'
         self.test_id='agent'
 
     def reset(self):
@@ -129,7 +128,7 @@ class AlgorithmicTradingEnvironment(Environments):
                 {
                     "Profit Margin": ["{:04f}%".format(tr * 100)],
                     # "Buy and Hold Profit": ["{:04f}%".format(buy_and_hold_profit)],
-                    # "Excess Profit": ["{:04f}%".format(tr * 100 - buy_and_hold_profit)],
+                    # "Excess Profit": ["{:04f}%".format(tr * 100 - 0)],
                     "Sharp Ratio": ["{:04f}".format(sharpe_ratio)],
                     "Volatility": ["{:04f}%".format(vol* 100)],
                     "Max Drawdown": ["{:04f}%".format(mdd* 100)],
@@ -147,7 +146,7 @@ class AlgorithmicTradingEnvironment(Environments):
                 {
                     "Profit Margin": tr * 100,
                     "Buy and Hold Profit":buy_and_hold_profit,
-                    "Excess Profit": tr * 100-buy_and_hold_profit,
+                    "Excess Profit": tr * 100-0,
                     "daily_return": daily_return,
                     "total_assets": assets
                 }
@@ -250,18 +249,7 @@ class AlgorithmicTradingEnvironment(Environments):
 
         return df_return
 
-    # def buy_and_hold_save_portfolio_return_memory(self):
-    #     # a record of return for each time stamp
-    #     date_list = self.date_memory
-    #     df_date = pd.DataFrame(date_list)
-    #     df_date.columns = ['date']
-    #
-    #     return_list = self.buy_and_hold_portfolio_return_memory
-    #     df_return = pd.DataFrame(return_list)
-    #     df_return.columns = ["daily_return"]
-    #     df_return.index = df_date.date
-    #
-    #     return df_return
+
 
     def analysis_result(self):
         # A simpler API for the environment to analysis itself when coming to terminal
@@ -297,7 +285,7 @@ class AlgorithmicTradingEnvironment(Environments):
             return_rate=(price_list[i+1]/price_list[i])-1
             return_rate_list.append(return_rate)
         return return_rate_list
-        
+
 
     def evaualte(self, df):
         daily_return = df["daily_return"]

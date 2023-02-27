@@ -10,6 +10,8 @@ import numpy as np
 
 import sys
 from pathlib import Path
+import pickle
+import os.path as osp
 
 ROOT = str(Path(__file__).resolve().parents[2])
 sys.path.append(ROOT)
@@ -23,6 +25,9 @@ class HighFrequencyTradingEnvironment(Environments):
 
         self.dataset = get_attr(kwargs, "dataset", None)
         self.task = get_attr(kwargs, "task", "train")
+        self.test_dynamic = int(get_attr(kwargs, "test_dynamic", "-1"))
+        self.task_index = int(get_attr(kwargs, "task_index", "-1"))
+        self.work_dir = get_attr(kwargs, "work_dir", "")
         print(self.task)
 
         self.df_path = None
@@ -74,6 +79,7 @@ class HighFrequencyTradingEnvironment(Environments):
         self.previous_position = 0
         self.position = 0
         self.reward_history = [0]
+        self.test_id = 'agent'
 
     def sell_value(self, price_information, position):
         orgional_position = position
@@ -186,6 +192,7 @@ class HighFrequencyTradingEnvironment(Environments):
         DP_distribution[self.demonstration_action[self.day - 1]] = 1
         DP_distribution = np.array(DP_distribution)
         self.position_history = []
+        # self.first_close = self.data.iloc[-1, :].close
 
         return self.state.reshape(-1), {
             "previous_action": 0,
@@ -275,6 +282,15 @@ class HighFrequencyTradingEnvironment(Environments):
             )
             self.required_money = required_money
             DP_distribution = [0] * 11
+
+            ##
+            # last_day = self.day + 1
+            # data = self.df.iloc[last_day -
+            #                     self.backward_num_day:last_day, :]
+            # last_close = data.iloc[-1, :].close
+            # buy_and_hold_profit=100*(last_close-self.first_close)/self.first_close
+
+
             tr, sharpe_ratio, vol, mdd, cr, sor, ahl = self.evaualte(
                 self.save_asset_memoey()
             )
@@ -293,6 +309,23 @@ class HighFrequencyTradingEnvironment(Environments):
             )
             table = print_metrics(stats)
             print(table)
+            df_value = self.save_asset_memoey()
+            daily_return=df_value["daily_return"].values
+            assets = df_value["total assets"].values
+            ## Excess profit is profit margin
+            save_dict = OrderedDict(
+                {
+                    "Profit Margin": tr * 100,
+                    "Excess Profit": tr * 100 - 0,
+                    "daily_return": daily_return,
+                    "total_assets": assets
+                }
+            )
+            metric_save_path=osp.join(self.work_dir,'metric_'+str(self.task)+'_'+str(self.test_dynamic)+'_'+str(self.test_id)+'_'+str(self.task_index)+'.pickle')
+            with open(metric_save_path, 'wb') as handle:
+                pickle.dump(save_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            print('metric result saved to '+metric_save_path)
+
         else:
             DP_distribution = [0] * 11
             DP_distribution[self.demonstration_action[self.day - 1]] = 1

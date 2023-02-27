@@ -65,7 +65,7 @@ We provide tutorials covering core features of TradeMaster for users to get star
 
 ## Useful Script
 - Auto RL
-- Automatic market style recognition [(link)](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/MarketRegimeLabeling/README.md)
+- [Automatic market style recognition](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/trademaster/evaluation/market_dynamics_labeling/example.ipynb)
 - [CSDI](https://proceedings.neurips.cc/paper/2021/hash/cfe8504bda37b575c70ee1a8276f3486-Abstract.html) for financial data imputation [(link)](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/CSDI/README.md)
 - [Colab Version](https://colab.research.google.com/drive/10M3F6qF8qJ31eQkBR7B6OHhYCR1ZUlrp#scrollTo=4TKpEroeFdT4): Use Google Colab resource to run TradeMaster on Cloud  
 - [Visualization](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/Visualization.ipynb) 
@@ -78,7 +78,7 @@ We provide tutorials covering core features of TradeMaster for users to get star
 |  DJ30   | [Yahoo](https://pypi.org/project/yfinance/) |   US Stock    |       12/01/01-21/12/31, 1day        |  OHLCV   |         [DJ30](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/dj30/DJ30.pdf)          |
 |   FX    |    [Kaggle](https://pypi.org/project/yfinance/)    |      Foreign Exchange       |     00/01/01-19/12/31, 1day        |  OHLCV   |         [FX](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/exchange/FX.pdf)          |
 | Crypto  |    [Kaggle](https://pypi.org/project/yfinance/)    |    Crypto     |       13/04/29-21/07/06, 1day        |  OHLCV   |        [Crypto](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/BTC/Crypto.pdf)        |
-|  SSE50   | [Yahoo](https://pypi.org/project/yfinance/) | China Stock |       09/01/02-21-01-01, 1day        |  OHLCV   |         [SZ50](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/sz50/SZ50.pdf)          |
+|  SSE50   | [Yahoo](https://pypi.org/project/yfinance/) | China Stock |       09/01/02-21-01-01, 1day        |  OHLCV   |         [SSE50](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/sz50/SZ50.pdf)          |
 | Bitcoin |                     [Kaggle]()                     |    Crypto     | 21/04/07-21/04/19, 1min |   LOB    | [Binance](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/OE_BTC/limit_order_book.pdf) |
 
 Dates are in YY/MM/DD format.
@@ -108,41 +108,26 @@ Classic RL based on Pytorch and Ray:
 ## Visualization Toolkit
 TradeMaster provides many visualization toolkits for a systematic evaluation of RL-based quantitative trading methods. Please check this [paper](https://openreview.net/forum?id=JjbsIYOuNi) and [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/Visualization.ipynb) for details. Some examples are as follows:
 
-**t-SNE plot** and **Net Value Curve**
-
-<table align="center">
-    <tr>
-    <td align="left"><center>t-SNE plot visualize high-dimensional financial time series data into 2-D dimension.</center></td><td align="left"><center>Net Value Curve shows the performance mean and standard deviation of RL-based method across different random seeds.
-</center></td>     
-    </tr>
-    <tr>
-    <td align="center"><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/tsne.jpg" width="80%" />      </center></td>
-    <td align="center" ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/net_value_curve.jpg" width="80%" /> </center></td>     
-    </tr>
-</table>
-
 **PRIDE-Star** is a star plot containing normalized score of 8 key financial measures such total return (TR) and Sharpe ratio (SR) to evaluate profitability,risk-control and diversity:
 <table align="center">
     <tr>
-        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/A2C.jpg" width = 230 height = 200 />   </center></td>
-        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/DeepTrader.jpg" width = 230 height = 200 /> </center></td>
-        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/PPO.jpg" width = 230 height = 200 /> </center></td>
-        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/EIIE.jpg" width = 230 height = 200 /> </center></td>
+        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/A2C.jpg" width="95%" />   </center></td>
+        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/DeepTrader.jpg" width="95%" /> </center></td>
+        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/PPO.jpg" width="95%" /> </center></td>
+        <td ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/EIIE.jpg" width="95%" /> </center></td>
     </tr>
 </table>
 
-**Performance Profile** and **Rank Distribution**
+<div align="left">
+<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/plot1.jpg width="100%"/>
+</div>
+<br>
 
-<table align="center">
-    <tr>
-    <td align="left"><center>Performance profile is a statistically unbiased approach to report score distribution of all runs.</center></td><td align="left"><center>Rank distribution is a bar plot, where the i-th column shows the probability that a given method is assigned rank i in each metrics.
-</center></td>     
-    </tr>
-    <tr>
-    <td align="center"><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/performance_profile.jpg" width="80%" />      </center></td>
-    <td align="center" ><center><img src="https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/rank_distribution.jpg" width="80%" /> </center></td>     
-    </tr>
-</table>
+<div align="left">
+<img align="center" src=https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/figure/visualization/plot2.jpg width="100%"/>
+</div>
+<br>
+
 
 
 

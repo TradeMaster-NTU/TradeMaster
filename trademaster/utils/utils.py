@@ -15,6 +15,7 @@ import os.path as osp
 import pickle
 from scipy.stats import norm
 from argparse import Namespace
+from collections import OrderedDict
 
 def set_seed(random_seed):
     random.seed(random_seed)
@@ -215,7 +216,7 @@ def replace_cfg_vals(ori_cfg):
         updated_cfg.pop('model_wrapper')
     return updated_cfg
 
-def evaluate_metrics(scores_dicts):
+def evaluate_metrics(scores_dicts,print_info=False):
     Excess_Profit_list = []
     daily_return_list = []
     tr_list = []
@@ -243,9 +244,23 @@ def evaluate_metrics(scores_dicts):
     neg_ret_lst = daily_return_merged[daily_return_merged < 0]
     output_dict['sor'] = np.sum(daily_return_merged) / (np.nan_to_num(np.std(neg_ret_lst),0) + 1e-10) / (
                 np.sqrt(len(daily_return_merged)) + 1e-10)
+    if print_info:
+        stats = OrderedDict(
+            {
+                "Excess Profit": ["{:04f}%".format(output_dict['Excess_Profit'])],
+                "Sharp Ratio": ["{:04f}".format(output_dict['sharpe_ratio'])],
+                "Volatility": ["{:04f}".format(output_dict['vol'])],
+                "Max Drawdown": ["{:04f}".format(output_dict['mdd'])],
+                "Calmar Ratio": ["{:04f}".format(output_dict['cr'])],
+                "Sortino Ratio": ["{:04f}".format(output_dict['sor'])]
+            }
+        )
+        print('This is the result of '+print_info)
+        table = print_metrics(stats)
+        print(table)
     return output_dict
 
-def create_radar_score_baseline(dir_name,metric_path):
+def create_radar_score_baseline(dir_name,metric_path,zero_score_id='Do_Nothing',fifty_score_id='Blind_Bid'):
     # get 0-score metrics
     # noted that for Mdd and Volatility, the lower, the better.
     # So the 0-score metric for Mdd and Volatility here is actually 100-score
@@ -256,14 +271,14 @@ def create_radar_score_baseline(dir_name,metric_path):
     # The distribution of the score of policies is a normal distribution
     # The Do Nothing policy is 0.5 percentile and baseline policy should be the 0.75 percentile(0.675 sigma away from Do Nothing)
     # Then we can score policies based on the conversion of sigma and metric value
-    metric_path_zero=metric_path + '_Do_Nothing'
+    metric_path_zero=metric_path + '_'+zero_score_id
     zero_scores_files = [osp.join(dir_name,filename) for filename in os.listdir(dir_name) if filename.startswith(metric_path_zero)]
     zero_scores_dicts =[]
     for file in zero_scores_files:
         with open(file, 'rb') as f:
             zero_scores_dicts.append(pickle.load(f))
     # get 50-score metrics
-    metric_path_fifty=metric_path + '_Blind_Bid'
+    metric_path_fifty=metric_path + '_'+fifty_score_id
     fifty_scores_files = [osp.join(dir_name,filename) for filename in os.listdir(dir_name) if filename.startswith(metric_path_fifty)]
     fifty_scores_dicts =[]
     for file in fifty_scores_files:
@@ -297,7 +312,7 @@ def calculate_radar_score(dir_name,metric_path,agent_id,metrics_sigma_dict,zero_
         with open(file, 'rb') as f:
             test_scores_dicts.append(pickle.load(f))
     # print('test_scores_dicts:',test_scores_dicts)
-    test_metrics=evaluate_metrics(test_scores_dicts)
+    test_metrics=evaluate_metrics(test_scores_dicts,print_info='tested dynamic summary')
     #turn metrics to sigma
     profit_metric_names=['Excess_Profit','tr','sharpe_ratio','cr','sor']
     risk_metric_names = ['vol', 'mdd']
@@ -368,9 +383,10 @@ def plot_radar_chart(data,plot_name,radar_save_path):
     )
     # ax = fig.add_subplot(111, polar=True)
     # ax.set_xticklabels(['-100','-50','0','50','100'])
-    radar_save_name=osp.join(radar_save_path,plot_name)
-    print('Radar plot printed to:',radar_save_name)
+    radar_save_name=osp.join(radar_save_path,plot_name).replace("\\", "/")
     fig.write_image(radar_save_name)
+    print('Radar plot printed to:', radar_save_name)
+    return 0
 
 def MRL_F2B_args_converter(args):
     output_args={}
@@ -380,14 +396,14 @@ def MRL_F2B_args_converter(args):
     # Granularity=0-> base=5 Granularity=1-> base=25
     G=args['Granularity']
     output_args['fitting_parameters']=[str(2/(20*float(G)+5)),str(1/(20*float(G)+5)),'4']#"2/7 2/14 4"
-    output_args['labeling_parameters']=[args['bear_threshold'],args['bull_threshold']]
-    output_args['regime_number']=args['number_of_market_dynamics']
-    output_args['length_limit']=args['minimun_length']
+    output_args['labeling_parameters']=[float(args['bear_threshold']),float(args['bull_threshold'])]
+    output_args['regime_number']=int(args['number_of_market_dynamics'])
+    output_args['length_limit']=int(args['minimun_length'])
     output_args['PM']=args['PM']
-    if args['dataset_name']=='order_excecution:BTC':
+    if args['dataset_name']=="order_excecution:BTC":
         output_args['OE_BTC']=True
     else:
-        output_args['OE_BTC'] =False
+        output_args['OE_BTC']=False
 
 
     return output_args
