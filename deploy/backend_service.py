@@ -66,6 +66,7 @@ class Server():
         res = {
             "task_name": ["algorithmic_trading", "order_execution", "portfolio_management"],
             "dataset_name": ["algorithmic_trading:BTC",
+                             "algorithmic_trading:FX",
                              "order_excecution:BTC",
                              "order_excecution:PD_BTC",
                              "portfolio_management:dj30",
@@ -73,7 +74,7 @@ class Server():
             "optimizer_name": ["adam"],
             "loss_name": ["mse"],
             "agent_name": [
-                "algorithmic_trading:dqn",
+                "algorithmic_trading:deepscalper",
                 "order_execution:eteo",
                 "order_execution:pd",
                 "portfolio_management:a2c",
@@ -88,6 +89,7 @@ class Server():
             ],
             "start_date": {
                 "algorithmic_trading:BTC": "2013-04-29",
+                "algorithmic_trading:FX": "2000-01-01",
                 "order_excecution:BTC": "2021-04-07",
                 "order_excecution:PD_BTC": "2013-04-29",
                 "portfolio_management:dj30": "2012-01-04",
@@ -95,6 +97,7 @@ class Server():
             },
             "end_date": {
                 "algorithmic_trading:BTC": "2021-07-05",
+                "algorithmic_trading:FX": "2019-12-31",
                 "order_excecution:BTC": "2021-04-19",
                 "order_excecution:PD_BTC": "2021-07-05",
                 "portfolio_management:dj30": "2021-12-31",
@@ -274,7 +277,7 @@ class Server():
                 train_script_path,
                 cfg_path,
                 log_path)
-            print(cmd)
+
             executor.submit(run_cmd, cmd)
             logger.info(cmd)
 
@@ -306,8 +309,11 @@ class Server():
             self.sessions = self.load_sessions()
             session_id = request_json.get("session_id")
             if session_id in self.sessions:
-                cmd = "tail -n 2000 {}".format(self.sessions[session_id]["train_log_path"])
-                info = run_cmd(cmd)
+                if os.path.exists(self.sessions[session_id]["train_log_path"]):
+                    cmd = "tail -n 2000 {}".format(self.sessions[session_id]["train_log_path"])
+                    info = run_cmd(cmd)
+                else:
+                    info = ""
             else:
                 info = "there are no train status"
 
