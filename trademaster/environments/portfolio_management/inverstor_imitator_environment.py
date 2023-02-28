@@ -207,6 +207,7 @@ class PortfolioManagementInvestorImitatorEnvironment(Environments):
 
     def generate_portfolio_weights(self, actions):
         scores = []
+        print(len(self.tic_list))
         for i in range(len(self.tic_list)):
             tic_information = self.data[self.data.tic == self.tic_list[i]][
                 self.tech_indicator_list]
