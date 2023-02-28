@@ -203,7 +203,7 @@ class OrderExecutionETEOTrainer(Trainer):
             action = torch.tensor(action, dtype=torch.float32, device=self.device)
 
             ary_action = action.detach().cpu().numpy()
-            ary_state, reward, done, _ = self.valid_environment.step(ary_action)  # next_state
+            ary_state, reward, done, return_dict = self.valid_environment.step(ary_action)  # next_state
             ary_state = torch.as_tensor(ary_state, dtype=torch.float32, device=self.device)
 
             # compress state
@@ -217,3 +217,4 @@ class OrderExecutionETEOTrainer(Trainer):
 
         result = np.array(self.test_environment.portfolio_value_history)
         np.save(os.path.join(self.work_dir,"result.npy"), result)
+        return return_dict

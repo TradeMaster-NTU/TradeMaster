@@ -132,7 +132,8 @@ class OrderExecutionPDEnvironment(Environments):
 
             return self.public_imperfect_state, self.reward, self.terminal, {
                 "perfect_state": np.array([self.public_perfect_state]),
-                "private_state": np.array([self.private_state_list])
+                "private_state": np.array([self.private_state_list]),
+                "money_sold":self.money_sold
             }
 
         else:
