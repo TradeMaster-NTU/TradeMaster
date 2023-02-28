@@ -325,6 +325,18 @@ def calculate_radar_score(dir_name,metric_path,agent_id,metrics_sigma_dict,zero_
            3-(test_metrics[metric_name] - zero_metrics[metric_name]) / metrics_sigma_dict[metric_name]) * 200-100
     test_metrics_scores_dict["Profitability"] = (test_metrics_scores_dict["tr"] + test_metrics_scores_dict["sharpe_ratio"] + test_metrics_scores_dict["cr"] + test_metrics_scores_dict["sor"]) / 4
     test_metrics_scores_dict["Risk Control"] = (test_metrics_scores_dict["mdd"] + test_metrics_scores_dict["vol"]) / 2
+
+    test_metrics_scores_dict = OrderedDict(
+        {
+            "Excess Profit": ["{:04f}%".format(test_metrics_scores_dict['Excess_Profit'])],
+            "Sharp Ratio": ["{:04f}".format(test_metrics_scores_dict['sharpe_ratio'])],
+            "Volatility": ["{:04f}%".format(test_metrics_scores_dict['vol'])],
+            "Max Drawdown": ["{:04f}%".format(test_metrics_scores_dict['mdd'])],
+            "Calmar Ratio": ["{:04f}".format(test_metrics_scores_dict['cr'])],
+            "Sortino Ratio": ["{:04f}".format(test_metrics_scores_dict['sor'])]
+        }
+    )
+
     return test_metrics_scores_dict
 
 def plot_radar_chart(data,plot_name,radar_save_path):
