@@ -337,7 +337,7 @@ def calculate_radar_score(dir_name,metric_path,agent_id,metrics_sigma_dict,zero_
         }
     )
     print('test_metrics_scores are:')
-    print_metrics(test_metrics_scores_dict_for_print)
+    print(print_metrics(test_metrics_scores_dict_for_print))
     return test_metrics_scores_dict
 
 def plot_radar_chart(data,plot_name,radar_save_path):
