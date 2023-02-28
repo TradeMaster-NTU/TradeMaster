@@ -336,7 +336,7 @@ def calculate_radar_score(dir_name,metric_path,agent_id,metrics_sigma_dict,zero_
             "Sortino Ratio": ["{:02f}".format(test_metrics_scores_dict['sor'])]
         }
     )
-    print('test_metrics_scores are:')
+    print('Tested scores are:')
     print(print_metrics(test_metrics_scores_dict_for_print))
     return test_metrics_scores_dict
 
