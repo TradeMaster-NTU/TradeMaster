@@ -293,11 +293,13 @@ class Server():
 
         except Exception as e:
             error_code = 1
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
             info = "request data error, {}".format(e)
             print(info)
             res = {
                 "error_code": error_code,
-                "info": info,
+                "info": info+str(exc_type) + str(fname) + str(exc_tb.tb_lineno),
                 "session_id": ""
             }
             return jsonify(res)

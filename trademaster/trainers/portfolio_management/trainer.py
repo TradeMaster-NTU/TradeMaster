@@ -152,3 +152,4 @@ class PortfolioManagementTrainer(Trainer):
         df["daily_return"] = daily_return
         df["total assets"] = assets
         df.to_csv(os.path.join(self.work_dir, "test_result.csv"), index=False)
+        return daily_return
