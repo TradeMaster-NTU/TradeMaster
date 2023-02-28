@@ -4,13 +4,13 @@ import sys
 from pathlib import Path
 import os
 import torch
+import argparse
+import os.path as osp
+from mmcv import Config
 
 ROOT = str(Path(__file__).resolve().parents[2])
 sys.path.append(ROOT)
 
-import argparse
-import os.path as osp
-from mmcv import Config
 from trademaster.utils import replace_cfg_vals,create_radar_score_baseline, calculate_radar_score, plot_radar_chart
 from trademaster.nets.builder import build_net
 from trademaster.environments.builder import build_environment
@@ -20,8 +20,8 @@ from trademaster.optimizers.builder import build_optimizer
 from trademaster.losses.builder import build_loss
 from trademaster.trainers.builder import build_trainer
 from trademaster.transition.builder import build_transition
-
 from trademaster.utils import set_seed
+
 set_seed(2023)
 
 def parse_args():
@@ -34,7 +34,7 @@ def parse_args():
     return args
 
 
-def test_deeptrader():
+def main():
     args = parse_args()
 
     cfg = Config.fromfile(args.config)
@@ -142,7 +142,7 @@ def test_deeptrader():
 
 
 if __name__ == '__main__':
-    test_deeptrader()
+    main()
     """
     algorithmic_trading
     portfolio_management

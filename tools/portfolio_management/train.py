@@ -4,13 +4,13 @@ import sys
 from pathlib import Path
 import os
 import torch
+import argparse
+import os.path as osp
+from mmcv import Config
 
 ROOT = str(Path(__file__).resolve().parents[2])
 sys.path.append(ROOT)
 
-import argparse
-import os.path as osp
-from mmcv import Config
 from trademaster.utils import replace_cfg_vals
 from trademaster.nets.builder import build_net
 from trademaster.environments.builder import build_environment
@@ -20,19 +20,19 @@ from trademaster.optimizers.builder import build_optimizer
 from trademaster.losses.builder import build_loss
 from trademaster.trainers.builder import build_trainer
 from trademaster.utils import set_seed
+
 set_seed(2023)
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Download Alpaca Datasets')
     parser.add_argument("--config", default=osp.join(ROOT, "configs", "portfolio_management", "portfolio_management_exchange_ppo_ppo_adam_mse.py"),
                         help="download datasets config file path")
-    parser.add_argument("--task_name", type=str, default="test")
+    parser.add_argument("--task_name", type=str, default="train")
     parser.add_argument("--test_dynamic", type=str, default="-1")
     args = parser.parse_args()
     return args
 
-
-def test_deeptrader():
+def main():
     args = parse_args()
 
     cfg = Config.fromfile(args.config)
@@ -60,9 +60,8 @@ def test_deeptrader():
         trainer.test()
         print("test end")
 
-
 if __name__ == '__main__':
-    test_deeptrader()
+    main()
     """
     algorithmic_trading
     portfolio_management
