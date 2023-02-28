@@ -234,6 +234,9 @@ class PortfolioManagementInvestorImitatorEnvironment(Environments):
         self.terminal = self.day >= len(self.df.index.unique()) - 1
 
         if self.terminal:
+            if sum(given_weights)==0:
+                self.portfolio_return_memory=[0 for _ in self.portfolio_return_memory]
+                self.asset_memory=[0 for _ in self.asset_memory]
             tr, sharpe_ratio, vol, mdd, cr, sor = self.analysis_result()
             stats = OrderedDict(
                 {
@@ -392,7 +395,6 @@ class PortfolioManagementInvestorImitatorEnvironment(Environments):
         df_return = pd.DataFrame(return_list)
         df_return.columns = ["daily_return"]
         df_return.index = df_date.date
-
         return df_return
 
     def save_asset_memory(self):
