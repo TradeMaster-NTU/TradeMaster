@@ -117,6 +117,7 @@ def main():
         daily_return_list = []
         daily_return_list_Average_holding=[]
         daily_return_list_Do_Nothing=[]
+        # we set Dothing by ourselves due to env constraint
         for trainer in trainers:
             daily_return_list.extend(trainer.test())
             daily_return_list_Average_holding.extend(trainer.test_with_customize_policy(Average_holding,'Average_holding'))
