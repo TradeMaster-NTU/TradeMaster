@@ -286,9 +286,9 @@ def create_radar_score_baseline(dir_name,metric_path,zero_score_id='Do_Nothing',
         with open(file, 'rb') as f:
             fifty_scores_dicts.append(pickle.load(f))
     # We only assume the daily return follows normal distribution so to give a overall metric across multiple tests we will calculate the metrics here.
-    zero_metrics=evaluate_metrics(zero_scores_dicts)
+    zero_metrics=evaluate_metrics(zero_scores_dicts,print_info='tested '+zero_score_id+' summary')
     # print('fifty_scores_dicts: ',fifty_scores_dicts)
-    fifty_metrics=evaluate_metrics(fifty_scores_dicts)
+    fifty_metrics=evaluate_metrics(fifty_scores_dicts,print_info='tested '+fifty_score_id+' summary')
     # print(zero_metrics,fifty_metrics)
 
     metrics_sigma_dict={}
@@ -313,7 +313,7 @@ def calculate_radar_score(dir_name,metric_path,agent_id,metrics_sigma_dict,zero_
         with open(file, 'rb') as f:
             test_scores_dicts.append(pickle.load(f))
     # print('test_scores_dicts:',test_scores_dicts)
-    test_metrics=evaluate_metrics(test_scores_dicts,print_info='tested dynamic summary')
+    test_metrics=evaluate_metrics(test_scores_dicts,print_info='tested '+agent_id+' summary')
     #turn metrics to sigma
     profit_metric_names=['Excess_Profit','tr','sharpe_ratio','cr','sor']
     risk_metric_names = ['vol', 'mdd']
