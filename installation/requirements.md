@@ -15,7 +15,7 @@ install Pytorch following [official instructions](https://pytorch.org/):
 
 On CPU platforms
   ```
-  conda install pytorch torchvision cpuonly -c pytorch
+  conda install pytorch==1.12.1 torchvision==0.13.1 torchaudio==0.12.1 cpuonly -c pytorch
   ```
 On GPU platforms
   ```
