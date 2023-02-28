@@ -228,7 +228,7 @@ class PortfolioManagementInvestorImitatorEnvironment(Environments):
         portfolio_weights = self.softmax(scores)
         return portfolio_weights
 
-    def step(self, actions):
+    def step(self, actions,given_weights=None):
         # here the action change to from 0 to 4 which actually indicates a choice of logical discriptor and
         # make judgement about whether our data is running out
         self.terminal = self.day >= len(self.df.index.unique()) - 1
@@ -273,7 +273,10 @@ class PortfolioManagementInvestorImitatorEnvironment(Environments):
 
         else:
             # transfer actino into portofolios weights
-            weights = self.generate_portfolio_weights(actions)
+            if given_weights is not None:
+                weights=given_weights
+            else:
+                weights = self.generate_portfolio_weights(actions)
             self.weights_memory.append(weights)
             last_day_memory = self.data
 
