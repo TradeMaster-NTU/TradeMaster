@@ -11,7 +11,7 @@ from mmcv import Config
 ROOT = str(Path(__file__).resolve().parents[2])
 sys.path.append(ROOT)
 
-from trademaster.utils import replace_cfg_vals,create_radar_score_baseline, calculate_radar_score, plot_radar_chart
+from trademaster.utils import replace_cfg_vals,create_radar_score_baseline, calculate_radar_score, plot_radar_chart,print_metrics
 from trademaster.nets.builder import build_net
 from trademaster.environments.builder import build_environment
 from trademaster.datasets.builder import build_dataset
@@ -135,11 +135,13 @@ def test_deeptrader():
         test_metrics_scores_dict = calculate_radar_score(cfg.work_dir,metric_path,'agent',metrics_sigma_dict,zero_metrics)
         radar_plot_path=cfg.work_dir
         # 'metric_' + str(self.task) + '_' + str(self.test_dynamic) + '_' + str(id) + '_radar.png')
-        print('test_metrics_scores are: ',test_metrics_scores_dict)
+        # print('test_metrics_scores are: ',test_metrics_scores_dict)
+        print('test_metrics_scores are:')
+        print_metrics(test_metrics_scores_dict)
         test_dynamic = args.test_dynamic
         plot_radar_chart(test_metrics_scores_dict,'radar_plot_agent_'+str(test_dynamic)+'.png',radar_plot_path)
-        print('win rate is: ', sum(float(r) > 0 for r in daily_return_list) / len(daily_return_list))
-        print('Random_buy win rate is: ', sum(float(r) > 0 for r in daily_return_list_Average_holding) / len(daily_return_list_Average_holding))
+        # print('win rate is: ', sum(float(r) > 0 for r in daily_return_list) / len(daily_return_list))
+        # print('Random_buy win rate is: ', sum(float(r) > 0 for r in daily_return_list_Average_holding) / len(daily_return_list_Average_holding))
         print("dynamics test end")
 
 
