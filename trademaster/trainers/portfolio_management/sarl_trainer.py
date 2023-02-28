@@ -54,7 +54,7 @@ class PortfolioManagementSARLTrainer(Trainer):
         self.device = get_attr(kwargs, "device", None)
         self.configs = get_attr(kwargs, "configs", None)
         self.agent_name = get_attr(kwargs, "agent_name", "ppo")
-        self.epochs = get_attr(kwargs, "epochs", 1)
+        self.epochs = get_attr(kwargs, "epochs", 20)
         self.dataset = get_attr(kwargs, "dataset", None)
         self.work_dir = get_attr(kwargs, "work_dir", None)
         self.work_dir = os.path.join(ROOT, self.work_dir)
