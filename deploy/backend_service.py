@@ -443,8 +443,8 @@ class Server():
             args['dataset_path'] = data_path
 
             # prepare PM index data if needed
-            if args['dataset_name'] == 'portfolio_management:dj30':
-                DJI_data = pd.read_csv(os.path.join(ROOT, cfg.data.data_path, "DJI_index.csv"), index_col=0)
+            if request_json.get("dataset_name") == 'portfolio_management:dj30':
+                DJI_data = pd.read_csv(os.path.join(ROOT, cfg.data.data_path, "DJI.csv"), index_col=0)
                 DJI_data = DJI_data[(DJI_data["date"] >= test_start_date) & (DJI_data["date"] < test_end_date)]
                 data_path = os.path.join(work_dir, "DJI_index_dynamics_test.csv").replace("\\", "/")
                 DJI_data.to_csv(data_path)
@@ -453,7 +453,7 @@ class Server():
                 args['PM'] = ''
 
             # prepare OE_BTC index:
-            if args['dataset_name'] == "order_excecution:BTC":
+            if request_json.get("dataset_name") == "order_excecution:BTC":
                 args['OE_BTC'] = True
             else:
                 args['OE_BTC'] = False
