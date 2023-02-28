@@ -4,13 +4,13 @@ import sys
 from pathlib import Path
 import os
 import torch
+import argparse
+import os.path as osp
+from mmcv import Config
 
 ROOT = str(Path(__file__).resolve().parents[2])
 sys.path.append(ROOT)
 
-import argparse
-import os.path as osp
-from mmcv import Config
 from trademaster.utils import replace_cfg_vals,create_radar_score_baseline, calculate_radar_score, plot_radar_chart
 from trademaster.nets.builder import build_net
 from trademaster.environments.builder import build_environment
@@ -19,8 +19,8 @@ from trademaster.agents.builder import build_agent
 from trademaster.optimizers.builder import build_optimizer
 from trademaster.losses.builder import build_loss
 from trademaster.trainers.builder import build_trainer
-
 from trademaster.utils import set_seed
+
 set_seed(2023)
 
 def parse_args():
@@ -33,7 +33,7 @@ def parse_args():
     return args
 
 
-def test_investor_imitator():
+def main():
     args = parse_args()
 
     cfg = Config.fromfile(args.config)
@@ -133,9 +133,8 @@ def test_investor_imitator():
         print('Random_buy win rate is: ', sum(float(r) > 0 for r in daily_return_list_Average_holding) / len(daily_return_list_Average_holding))
         print("dynamics test end")
 
-
 if __name__ == '__main__':
-    test_investor_imitator()
+    main()
     """
     algorithmic_trading
     portfolio_management
