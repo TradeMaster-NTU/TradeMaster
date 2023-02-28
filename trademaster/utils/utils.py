@@ -256,7 +256,7 @@ def evaluate_metrics(scores_dicts,print_info=False):
                 "Sortino Ratio": ["{:04f}".format(output_dict['sor'])]
             }
         )
-        print('This is the result of '+print_info)
+        print(print_info)
         table = print_metrics(stats)
         print(table)
     return output_dict
