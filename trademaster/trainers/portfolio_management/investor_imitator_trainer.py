@@ -152,7 +152,7 @@ class PortfolioManagementInvestorImitatorTrainer(Trainer):
                 weights = policy(state, self.test_environment)
 
 
-            state, reward, done, return_dict = self.test_environment.step(_,weights)
+            state, reward, done, return_dict = self.test_environment.step(None,weights)
             episode_reward_sum += reward
             if done:
                 print("Test customize policy Reward Sum: {:04f}".format(episode_reward_sum))
