@@ -63,7 +63,10 @@ An example of labeling the data
    ```
   $ python trademaster/evaluation/market_dynamics_labeling/model/run_linear_model.py --data_path data/algorithmic_trading/BTC/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.5 0.5
    ```
-
+FX
+```
+$ python trademaster/evaluation/market_dynamics_labeling/model/run_linear_model.py --data_path data/algorithmic_trading/FX/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.05 0.05 --regime_number 3 --length_limit 24
+```
 DJ30
     ```
   $ python trademaster/evaluation/market_dynamics_labeling/model/run_linear_model.py --data_path data/portfolio_management/dj30/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.25 0.25 --regime_number 3 --length_limit 24

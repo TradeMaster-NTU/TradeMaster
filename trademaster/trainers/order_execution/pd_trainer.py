@@ -238,3 +238,4 @@ class OrderExecutionPDTrainer(Trainer):
             if done:
                 # print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
                 break
+        return info

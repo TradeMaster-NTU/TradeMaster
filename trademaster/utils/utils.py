@@ -256,7 +256,7 @@ def evaluate_metrics(scores_dicts,print_info=False):
                 "Sortino Ratio": ["{:04f}".format(output_dict['sor'])]
             }
         )
-        print('This is the result of '+print_info)
+        print(print_info)
         table = print_metrics(stats)
         print(table)
     return output_dict
@@ -286,9 +286,9 @@ def create_radar_score_baseline(dir_name,metric_path,zero_score_id='Do_Nothing',
         with open(file, 'rb') as f:
             fifty_scores_dicts.append(pickle.load(f))
     # We only assume the daily return follows normal distribution so to give a overall metric across multiple tests we will calculate the metrics here.
-    zero_metrics=evaluate_metrics(zero_scores_dicts)
+    zero_metrics=evaluate_metrics(zero_scores_dicts,print_info=zero_score_id+' policy performance summary')
     # print('fifty_scores_dicts: ',fifty_scores_dicts)
-    fifty_metrics=evaluate_metrics(fifty_scores_dicts)
+    fifty_metrics=evaluate_metrics(fifty_scores_dicts,print_info=fifty_score_id+' policy performance summary')
     # print(zero_metrics,fifty_metrics)
 
     metrics_sigma_dict={}
@@ -313,7 +313,7 @@ def calculate_radar_score(dir_name,metric_path,agent_id,metrics_sigma_dict,zero_
         with open(file, 'rb') as f:
             test_scores_dicts.append(pickle.load(f))
     # print('test_scores_dicts:',test_scores_dicts)
-    test_metrics=evaluate_metrics(test_scores_dicts,print_info='tested dynamic summary')
+    test_metrics=evaluate_metrics(test_scores_dicts,print_info='Tested '+agent_id+' policy performance summary')
     #turn metrics to sigma
     profit_metric_names=['Excess_Profit','tr','sharpe_ratio','cr','sor']
     risk_metric_names = ['vol', 'mdd']
@@ -325,6 +325,19 @@ def calculate_radar_score(dir_name,metric_path,agent_id,metrics_sigma_dict,zero_
            3-(test_metrics[metric_name] - zero_metrics[metric_name]) / metrics_sigma_dict[metric_name]) * 200-100
     test_metrics_scores_dict["Profitability"] = (test_metrics_scores_dict["tr"] + test_metrics_scores_dict["sharpe_ratio"] + test_metrics_scores_dict["cr"] + test_metrics_scores_dict["sor"]) / 4
     test_metrics_scores_dict["Risk Control"] = (test_metrics_scores_dict["mdd"] + test_metrics_scores_dict["vol"]) / 2
+
+    test_metrics_scores_dict_for_print = OrderedDict(
+        {
+            "Excess Profit": ["{:02f}".format(test_metrics_scores_dict['Excess_Profit'])],
+            "Sharp Ratio": ["{:02f}".format(test_metrics_scores_dict['sharpe_ratio'])],
+            "Volatility": ["{:02f}".format(test_metrics_scores_dict['vol'])],
+            "Max Drawdown": ["{:02f}".format(test_metrics_scores_dict['mdd'])],
+            "Calmar Ratio": ["{:02f}".format(test_metrics_scores_dict['cr'])],
+            "Sortino Ratio": ["{:02f}".format(test_metrics_scores_dict['sor'])]
+        }
+    )
+    print('Tested scores are:')
+    print(print_metrics(test_metrics_scores_dict_for_print))
     return test_metrics_scores_dict
 
 def plot_radar_chart(data,plot_name,radar_save_path):
@@ -386,7 +399,7 @@ def plot_radar_chart(data,plot_name,radar_save_path):
     # ax.set_xticklabels(['-100','-50','0','50','100'])
     radar_save_name=osp.join(radar_save_path,plot_name).replace("\\", "/")
     fig.write_image(radar_save_name)
-    print('Radar plot printed to:', radar_save_name)
+    # print('Radar plot printed to:', radar_save_name)
     return 0
 
 def MRL_F2B_args_converter(args):

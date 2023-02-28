@@ -379,6 +379,6 @@ class OrderExecutionETEOEnvironment(Environments):
             table = print_metrics(stats)
             print(table)
 
-            return self.state, self.reward, self.terminal, {}
+            return self.state, self.reward, self.terminal, {'cash_left':cash_left,'TWAP_value':TWAP_value}
         else:
             return self.state, 0, self.terminal, {}

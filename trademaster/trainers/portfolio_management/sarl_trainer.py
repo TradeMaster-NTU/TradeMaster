@@ -239,10 +239,12 @@ class PortfolioManagementSARLTrainer(Trainer):
                                                          zero_metrics)
         radar_plot_path = cfg.work_dir
         # 'metric_' + str(self.task) + '_' + str(self.test_dynamic) + '_' + str(id) + '_radar.png')
-        print('test_metrics_scores are: ', test_metrics_scores_dict)
+        # print('test_metrics_scores are: ', test_metrics_scores_dict)
+        # print('test_metrics_scores are:')
+        # print_metrics(test_metrics_scores_dict)
         plot_radar_chart(test_metrics_scores_dict, 'radar_plot_agent_' + str(test_dynamic) + '.png',
                          radar_plot_path)
-        print('win rate is: ', sum(float(r) > 0 for r in daily_return_list) / len(daily_return_list))
-        print('Random_buy win rate is: ',
-              sum(float(r) > 0 for r in daily_return_list_Average_holding) / len(daily_return_list_Average_holding))
+        # print('win rate is: ', sum(float(r) > 0 for r in daily_return_list) / len(daily_return_list))
+        # print('Random_buy win rate is: ',
+        #       sum(float(r) > 0 for r in daily_return_list_Average_holding) / len(daily_return_list_Average_holding))
         print("dynamics test end")

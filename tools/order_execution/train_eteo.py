@@ -8,11 +8,11 @@ import argparse
 import os.path as osp
 from mmcv import Config
 from collections import Counter
-
+from collections import OrderedDict
 ROOT = str(Path(__file__).resolve().parents[2])
 sys.path.append(ROOT)
 
-from trademaster.utils import replace_cfg_vals
+from trademaster.utils import replace_cfg_vals,print_metrics
 from trademaster.nets.builder import build_net
 from trademaster.environments.builder import build_environment
 from trademaster.datasets.builder import build_dataset
@@ -112,11 +112,28 @@ def main():
         trainer.test()
         print("test end")
     elif task_name.startswith("dynamics_test"):
-        reward_list = []
+        return_list= []
         for trainer in trainers:
-            reward_list.append(trainer.test())
-        print('The win rate of this regime is:')
-        print(Counter(reward_list))
+            return_list.append(trainer.test())
+        cash_left_list=[]
+        TWAP_value_list=[]
+        for r in return_list:
+            cash_left_list.append(r['cash_left'])
+            TWAP_value_list.append(r['TWAP_value'])
+        cash_left_mean=sum(cash_left_list)/len(cash_left_list)
+        TWAP_value_mean=sum(TWAP_value_list)/len(TWAP_value_list)
+        stats = OrderedDict(
+            {
+                "Cash Left": ["{:04f}".format(cash_left_mean)],
+                "TWAP": ["{:04f}".format(TWAP_value_mean)],
+                "Cash Left Ratio": ["{:04f}%".format(100 * (cash_left_mean - TWAP_value_mean) / TWAP_value_mean)],
+            }
+        )
+        table = print_metrics(stats)
+        print('Summary of dynamics test:')
+        print(table)
+        # print('The win rate of this regime is:')
+        # print(Counter(reward_list))
         print("dynamics test end")
 
 

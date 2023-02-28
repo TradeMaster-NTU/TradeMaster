@@ -11,7 +11,7 @@ from mmcv import Config
 ROOT = str(Path(__file__).resolve().parents[2])
 sys.path.append(ROOT)
 
-from trademaster.utils import replace_cfg_vals
+from trademaster.utils import replace_cfg_vals, print_metrics
 from trademaster.nets.builder import build_net
 from trademaster.environments.builder import build_environment
 from trademaster.datasets.builder import build_dataset
@@ -21,6 +21,7 @@ from trademaster.losses.builder import build_loss
 from trademaster.trainers.builder import build_trainer
 from trademaster.transition.builder import build_transition
 from trademaster.utils import set_seed
+from collections import OrderedDict
 
 set_seed(2023)
 
@@ -114,9 +115,21 @@ def main():
     elif task_name.startswith("test"):
         trainer.test()
     elif task_name.startswith("dynamics_test"):
-        reward_list = []
+        r_list = []
         for trainer in trainers:
-            reward_list.append(trainer.test())
+            r_list.append(trainer.test())
+        money_sold_list=[]
+        for r in r_list:
+            money_sold_list.append(r['money_sold'])
+        money_sold_mean=sum(money_sold_list)/len(money_sold_list)
+        stats = OrderedDict(
+            {
+                "Money Sold": ["{:04f}".format(money_sold_mean)],
+            }
+        )
+        table = print_metrics(stats)
+        print('Summary of dynamics test:')
+        print(table)
         # print('The win rate of this regime is:')
         # print(Counter(reward_list))
         print("dynamics test end")

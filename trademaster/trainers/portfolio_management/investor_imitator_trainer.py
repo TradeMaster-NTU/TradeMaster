@@ -142,20 +142,20 @@ class PortfolioManagementInvestorImitatorTrainer(Trainer):
         print(f"Test customize policy: {str(customize_policy_id)}")
         state = self.test_environment.reset()
         episode_reward_sum = 0
-        weights_brandnew = None
+        weights_brandnew=None
         while True:
 
 
             if customize_policy_id=="Average_holding":
-                action = policy(state, self.test_environment,weights_brandnew)
+                weights = policy(state, self.test_environment,weights_brandnew)
             else:
-                action = policy(state, self.test_environment)
+                weights = policy(state, self.test_environment)
 
 
-            state, reward, done, return_dict = self.test_environment.step(action)
+            state, reward, done, return_dict = self.test_environment.step(None,weights)
             episode_reward_sum += reward
             if done:
-                print("Test customize policy Reward Sum: {:04f}".format(episode_reward_sum))
+                # print("Test customize policy Reward Sum: {:04f}".format(episode_reward_sum))
                 break
             weights_brandnew = return_dict["weights_brandnew"]
         rewards = self.test_environment.save_asset_memory()
@@ -166,3 +166,4 @@ class PortfolioManagementInvestorImitatorTrainer(Trainer):
         df["daily_return"] = daily_return
         df["total assets"] = assets
         df.to_csv(os.path.join(self.work_dir, "test_result.csv"))
+        return daily_return

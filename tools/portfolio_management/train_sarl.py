@@ -11,7 +11,7 @@ from mmcv import Config
 ROOT = str(Path(__file__).resolve().parents[2])
 sys.path.append(ROOT)
 
-from trademaster.utils import replace_cfg_vals,create_radar_score_baseline, calculate_radar_score, plot_radar_chart
+from trademaster.utils import replace_cfg_vals
 from trademaster.datasets.builder import build_dataset
 from trademaster.trainers.builder import build_trainer
 

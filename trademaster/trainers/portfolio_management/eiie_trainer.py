@@ -204,6 +204,8 @@ class PortfolioManagementEIIETrainer(Trainer):
         df["daily_return"] = daily_return
         df["total assets"] = assets
         df.to_csv(os.path.join(self.work_dir + "test_result.csv"))
+        daily_return = df.daily_return.values
+        return daily_return
 
     def test_with_customize_policy(self, policy, customize_policy_id,extra_parameters=None):
         state = self.test_environment.reset()
@@ -222,7 +224,7 @@ class PortfolioManagementEIIETrainer(Trainer):
             state, reward, done, return_dict = self.test_environment.step(action)
             episode_reward_sum += reward
             if done:
-                print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
+                # print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
                 break
             weights_brandnew = return_dict["weights_brandnew"]
 

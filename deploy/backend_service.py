@@ -293,11 +293,13 @@ class Server():
 
         except Exception as e:
             error_code = 1
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
             info = "request data error, {}".format(e)
             print(info)
             res = {
                 "error_code": error_code,
-                "info": info,
+                "info": info+str(exc_type) + str(fname) + str(exc_tb.tb_lineno),
                 "session_id": ""
             }
             return jsonify(res)
@@ -411,7 +413,7 @@ class Server():
             session_id = request_json.get("session_id")
             # market_dynamics_labeling parameters
             args = {}
-            args['dataset_name'] = request_json.get("dataset_name").split(":")[-1]
+            args['dataset_name'] = request_json.get("dataset_name")
             args['number_of_market_dynamics'] = request_json.get("number_of_market_style")
             if int(args['number_of_market_dynamics']) not in [3, 4]:
                 raise Exception('We only support dynamics number of 3 or 4 for now')
@@ -443,8 +445,8 @@ class Server():
             args['dataset_path'] = data_path
 
             # prepare PM index data if needed
-            if args['dataset_name'] == 'portfolio_management:dj30':
-                DJI_data = pd.read_csv(os.path.join(ROOT, cfg.data.data_path, "DJI_index.csv"), index_col=0)
+            if request_json.get("dataset_name") == 'portfolio_management:dj30':
+                DJI_data = pd.read_csv(os.path.join(ROOT, cfg.data.data_path, "DJI.csv"), index_col=0)
                 DJI_data = DJI_data[(DJI_data["date"] >= test_start_date) & (DJI_data["date"] < test_end_date)]
                 data_path = os.path.join(work_dir, "DJI_index_dynamics_test.csv").replace("\\", "/")
                 DJI_data.to_csv(data_path)
@@ -452,11 +454,6 @@ class Server():
             else:
                 args['PM'] = ''
 
-            # prepare OE_BTC index:
-            if args['dataset_name'] == "order_excecution:BTC":
-                args['OE_BTC'] = True
-            else:
-                args['OE_BTC'] = False
 
             # update MDM cfg
 
