@@ -328,12 +328,12 @@ def calculate_radar_score(dir_name,metric_path,agent_id,metrics_sigma_dict,zero_
 
     test_metrics_scores_dict_for_print = OrderedDict(
         {
-            "Excess Profit": ["{:04f}%".format(test_metrics_scores_dict['Excess_Profit'])],
-            "Sharp Ratio": ["{:04f}".format(test_metrics_scores_dict['sharpe_ratio'])],
-            "Volatility": ["{:04f}%".format(test_metrics_scores_dict['vol'])],
-            "Max Drawdown": ["{:04f}%".format(test_metrics_scores_dict['mdd'])],
-            "Calmar Ratio": ["{:04f}".format(test_metrics_scores_dict['cr'])],
-            "Sortino Ratio": ["{:04f}".format(test_metrics_scores_dict['sor'])]
+            "Excess Profit": ["{:02f}".format(test_metrics_scores_dict['Excess_Profit'])],
+            "Sharp Ratio": ["{:02f}".format(test_metrics_scores_dict['sharpe_ratio'])],
+            "Volatility": ["{:02f}".format(test_metrics_scores_dict['vol'])],
+            "Max Drawdown": ["{:02f}".format(test_metrics_scores_dict['mdd'])],
+            "Calmar Ratio": ["{:02f}".format(test_metrics_scores_dict['cr'])],
+            "Sortino Ratio": ["{:02f}".format(test_metrics_scores_dict['sor'])]
         }
     )
     print('test_metrics_scores are:')
