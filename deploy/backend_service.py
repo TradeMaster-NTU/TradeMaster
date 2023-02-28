@@ -413,7 +413,7 @@ class Server():
             session_id = request_json.get("session_id")
             # market_dynamics_labeling parameters
             args = {}
-            args['dataset_name'] = request_json.get("dataset_name").split(":")[-1]
+            args['dataset_name'] = request_json.get("dataset_name")
             args['number_of_market_dynamics'] = request_json.get("number_of_market_style")
             if int(args['number_of_market_dynamics']) not in [3, 4]:
                 raise Exception('We only support dynamics number of 3 or 4 for now')
@@ -454,11 +454,6 @@ class Server():
             else:
                 args['PM'] = ''
 
-            # prepare OE_BTC index:
-            if request_json.get("dataset_name") == "order_excecution:BTC":
-                args['OE_BTC'] = True
-            else:
-                args['OE_BTC'] = False
 
             # update MDM cfg
 

@@ -46,7 +46,10 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
             raw_data = pd.read_csv(self.data_path)
             raw_data['tic'] = 'OE_BTC'
             raw_data['adjcp'] = raw_data["midpoint"]
-            raw_data['date'] = raw_data["system_time"]
+            try:
+                raw_data['date'] = raw_data["system_time"]
+            except:
+                raw_data['date'] = raw_data["date"]
             # if not os.path.exists('./temp'):
             #     os.makedirs('./temp')
             # raw_data.to_csv('./temp/OE_BTC_processed.csv')

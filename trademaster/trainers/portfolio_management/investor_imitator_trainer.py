@@ -120,6 +120,7 @@ class PortfolioManagementInvestorImitatorTrainer(Trainer):
         episode_reward_sum = 0
         while True:
             action = self.agent.get_action(state)
+            print(type(action))
             state, reward, done, _ = self.test_environment.step(action)
             episode_reward_sum += reward
             if done:
