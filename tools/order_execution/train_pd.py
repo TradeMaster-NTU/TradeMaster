@@ -120,7 +120,6 @@ def main():
             r_list.append(trainer.test())
         money_sold_list=[]
         for r in r_list:
-            print(r.keys())
             money_sold_list.append(r['money_sold'])
         money_sold_mean=sum(money_sold_list)/len(money_sold_list)
         stats = OrderedDict(
