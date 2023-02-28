@@ -277,6 +277,7 @@ class PortfolioManagementInvestorImitatorEnvironment(Environments):
                 weights=given_weights
             else:
                 weights = self.generate_portfolio_weights(actions)
+            print(weights)
             self.weights_memory.append(weights)
             last_day_memory = self.data
 
