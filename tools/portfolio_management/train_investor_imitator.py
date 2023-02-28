@@ -108,12 +108,12 @@ def main():
     elif task_name.startswith("dynamics_test"):
         def Average_holding(states,env,weights_brandnew):
             if weights_brandnew is None:
-                action=[0]+[1/env.stock_dim for _ in range(env.stock_dim)]
+                action=[1/env.stock_dim for _ in range(env.stock_dim)]
                 return action
             else:
                 return weights_brandnew
         def Do_Nothing(states,env):
-            return [1]+[0 for _ in  range(env.stock_dim) ]
+            return [0 for _ in  range(env.stock_dim) ]
         daily_return_list = []
         daily_return_list_Average_holding=[]
         daily_return_list_Do_Nothing=[]
