@@ -1,16 +1,15 @@
-import os
-import sys
-from pathlib import Path
 import warnings
 warnings.filterwarnings("ignore")
-
-ROOT = str(Path(__file__).resolve().parents[2])
-sys.path.append(ROOT)
-
+import sys
+from pathlib import Path
 import torch
 import argparse
 import os.path as osp
 from mmcv import Config
+
+ROOT = str(Path(__file__).resolve().parents[2])
+sys.path.append(ROOT)
+
 from trademaster.utils import replace_cfg_vals,create_radar_score_baseline, calculate_radar_score, plot_radar_chart
 from trademaster.nets.builder import build_net
 from trademaster.environments.builder import build_environment
@@ -21,18 +20,20 @@ from trademaster.losses.builder import build_loss
 from trademaster.trainers.builder import build_trainer
 from trademaster.transition.builder import build_transition
 from trademaster.utils import set_seed
+
 set_seed(2023)
+
 def parse_args():
     parser = argparse.ArgumentParser(description='Download Alpaca Datasets')
-    parser.add_argument("--config", default=osp.join(ROOT, "configs", "algorithmic_trading", "algorithmic_trading_BTC_dqn_dqn_adam_mse.py"),
+    parser.add_argument("--config", default=osp.join(ROOT, "configs", "algorithmic_trading", "algorithmic_trading_FX_deepscalper_deepscalper_adam_mse.py"),
                         help="download datasets config file path")
-    parser.add_argument("--task_name", type=str, default="train")
+    parser.add_argument("--task_name", type=str, default="test")
     parser.add_argument("--test_dynamic", type=str, default='-1')
     args = parser.parse_args()
     return args
 
 
-def test_dqn():
+def main():
     args = parse_args()
     cfg = Config.fromfile(args.config)
     task_name = args.task_name
@@ -136,7 +137,7 @@ def test_dqn():
 
 
 if __name__ == '__main__':
-    test_dqn()
+    main()
     """
     algorithmic_trading
     portfolio_management

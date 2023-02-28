@@ -61,7 +61,7 @@ class PortfolioManagementSARLTrainer(Trainer):
         self.trainer_name = select_algorithms(self.agent_name)
         self.configs["env"] = PortfolioManagementSARLEnvironment
         self.configs["env_config"] = dict(dataset=self.dataset, task="train")
-        register_env("portfolio_management", env_creator)
+        register_env("portfolio_management_sarl", env_creator)
 
         self.init_before_training()
 
@@ -94,7 +94,7 @@ class PortfolioManagementSARLTrainer(Trainer):
     def train_and_valid(self):
 
         valid_score_list = []
-        self.trainer = self.trainer_name(env="portfolio_management", config=self.configs)
+        self.trainer = self.trainer_name(env="portfolio_management_sarl", config=self.configs)
 
         for epoch in range(1, self.epochs+1):
             print("Train Episode: [{}/{}]".format(epoch, self.epochs))
@@ -126,7 +126,7 @@ class PortfolioManagementSARLTrainer(Trainer):
         ray.shutdown()
 
     def test(self):
-        self.trainer = self.trainer_name(env="portfolio_management", config=self.configs)
+        self.trainer = self.trainer_name(env="portfolio_management_sarl", config=self.configs)
 
         obj = load_object(os.path.join(self.checkpoints_path, "best.pkl"))
         self.trainer.restore_from_object(obj)
@@ -141,7 +141,7 @@ class PortfolioManagementSARLTrainer(Trainer):
             state, reward, done, sharpe = self.test_environment.step(action)
             episode_reward_sum += reward
             if done:
-                print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
+                # print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
                 break
 
         rewards = self.test_environment.save_asset_memory()
@@ -152,10 +152,9 @@ class PortfolioManagementSARLTrainer(Trainer):
         df["daily_return"] = daily_return
         df["total assets"] = assets
         df.to_csv(os.path.join(self.work_dir, "test_result.csv"), index=False)
-        return daily_return
 
     def dynamics_test(self,test_dynamic,cfg):
-        self.trainer = self.trainer_name(env="portfolio_management", config=self.configs)
+        self.trainer = self.trainer_name(env="portfolio_management_sarl", config=self.configs)
         obj = load_object(os.path.join(self.checkpoints_path, "best.pkl"))
         self.trainer.restore_from_object(obj)
 

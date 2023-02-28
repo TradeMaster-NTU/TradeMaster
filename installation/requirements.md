@@ -5,6 +5,7 @@ __Download and install Miniconda__ from the [official webiste](https://docs.cond
 ## Ceate a conda environment and activate it
 
   ```
+  conda update -n base -c defaults conda
   conda create --name TradeMaster python=3.9
   conda activate TradeMaster
    ```
@@ -14,7 +15,7 @@ install Pytorch following [official instructions](https://pytorch.org/):
 
 On CPU platforms
   ```
-  conda install pytorch torchvision cpuonly -c pytorch
+  conda install pytorch==1.12.1 torchvision==0.13.1 torchaudio==0.12.1 cpuonly -c pytorch
   ```
 On GPU platforms
   ```

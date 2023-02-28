@@ -212,9 +212,8 @@ class OrderExecutionETEOTrainer(Trainer):
 
             episode_reward_sum += reward
             if done:
-                print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
+#                print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
                 break
 
         result = np.array(self.test_environment.portfolio_value_history)
         np.save(os.path.join(self.work_dir,"result.npy"), result)
-        return episode_reward_sum

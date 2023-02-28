@@ -82,7 +82,7 @@ class PortfolioManagementInvestorImitatorTrainer(Trainer):
                 episode_reward_sum += reward
                 self.agent.act.rewards.append(reward)
                 if done:
-                    print("Train Episode Reward Sum: {:04f}".format(episode_reward_sum))
+                    # print("Train Episode Reward Sum: {:04f}".format(episode_reward_sum))
                     break
 
             self.agent.update_net()
@@ -123,7 +123,7 @@ class PortfolioManagementInvestorImitatorTrainer(Trainer):
             state, reward, done, _ = self.test_environment.step(action)
             episode_reward_sum += reward
             if done:
-                print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
+                # print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
                 break
 
         rewards = self.test_environment.save_asset_memory()
@@ -166,4 +166,3 @@ class PortfolioManagementInvestorImitatorTrainer(Trainer):
         df["daily_return"] = daily_return
         df["total assets"] = assets
         df.to_csv(os.path.join(self.work_dir, "test_result.csv"))
-        return daily_return

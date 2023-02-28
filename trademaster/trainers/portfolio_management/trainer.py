@@ -13,8 +13,6 @@ from trademaster.environments.portfolio_management.environment import PortfolioM
 import pandas as pd
 import numpy as np
 import torch
-import pickle as pkl
-
 
 def env_creator(config):
     return PortfolioManagementEnvironment(config)
@@ -47,7 +45,7 @@ class PortfolioManagementTrainer(Trainer):
     def __init__(self, **kwargs):
         super(PortfolioManagementTrainer, self).__init__()
 
-        device = get_attr(kwargs, "device", None)
+        self.device = get_attr(kwargs, "device", None)
 
         self.configs = get_attr(kwargs, "configs", None)
         self.agent_name = get_attr(kwargs, "agent_name", "ppo")
@@ -65,7 +63,6 @@ class PortfolioManagementTrainer(Trainer):
         self.configs["env"] = PortfolioManagementEnvironment
         self.configs["env_config"] = dict(dataset=self.dataset, task="train")
         register_env("portfolio_management", env_creator)
-
 
         self.init_before_training()
 
@@ -144,7 +141,7 @@ class PortfolioManagementTrainer(Trainer):
             state, reward, done, sharpe = self.test_environment.step(action)
             episode_reward_sum += reward
             if done:
-                print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
+                # print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
                 break
 
         rewards = self.test_environment.save_asset_memory()
