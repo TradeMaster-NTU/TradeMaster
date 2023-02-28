@@ -14,9 +14,12 @@ import pandas as pd
 import numpy as np
 import torch
 
-def env_creator(config):
-    return PortfolioManagementEnvironment(config)
-
+def env_creator(env_name):
+    if env_name == 'portfolio_management':
+        env = PortfolioManagementEnvironment
+    else:
+        raise NotImplementedError
+    return env
 
 def select_algorithms(alg_name):
     alg_name = alg_name.upper()
@@ -39,6 +42,8 @@ def select_algorithms(alg_name):
         raise NotImplementedError
     return trainer
 
+ray.init(ignore_reinit_error=True)
+register_env("portfolio_management", lambda config: env_creator("portfolio_management")(config))
 
 @TRAINERS.register_module()
 class PortfolioManagementTrainer(Trainer):
@@ -58,11 +63,9 @@ class PortfolioManagementTrainer(Trainer):
         self.if_remove = get_attr(kwargs, "if_remove", False)
         self.num_threads = int(get_attr(kwargs, "num_threads", 8))
 
-        ray.init(ignore_reinit_error=True)
         self.trainer_name = select_algorithms(self.agent_name)
-        self.configs["env"] = PortfolioManagementEnvironment
+        self.configs["env"] = "portfolio_management"
         self.configs["env_config"] = dict(dataset=self.dataset, task="train")
-        register_env("portfolio_management", env_creator)
 
         self.init_before_training()
 
@@ -102,7 +105,7 @@ class PortfolioManagementTrainer(Trainer):
             self.trainer.train()
 
             config = dict(dataset=self.dataset, task="valid")
-            self.valid_environment = env_creator(config)
+            self.valid_environment = env_creator("portfolio_management")(config)
             print("Valid Episode: [{}/{}]".format(epoch, self.epochs))
             state = self.valid_environment.reset()
 
@@ -132,7 +135,7 @@ class PortfolioManagementTrainer(Trainer):
         self.trainer.restore_from_object(obj)
 
         config = dict(dataset=self.dataset, task="test")
-        self.test_environment = env_creator(config)
+        self.test_environment = env_creator("portfolio_management")(config)
         print("Test Best Episode")
         state = self.test_environment.reset()
         episode_reward_sum = 0

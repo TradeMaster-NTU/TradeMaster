@@ -14,8 +14,12 @@ import random
 import torch
 
 
-def env_creator(config):
-    return PortfolioManagementSARLEnvironment(config)
+def env_creator(env_name):
+    if env_name == 'portfolio_management_sarl':
+        env = PortfolioManagementSARLEnvironment
+    else:
+        raise NotImplementedError
+    return env
 
 
 def select_algorithms(alg_name):
@@ -39,6 +43,8 @@ def select_algorithms(alg_name):
         raise NotImplementedError
     return trainer
 
+ray.init(ignore_reinit_error=True)
+register_env("portfolio_management_sarl", lambda config: env_creator("portfolio_management_sarl")(config))
 
 @TRAINERS.register_module()
 class PortfolioManagementSARLTrainer(Trainer):
@@ -57,11 +63,9 @@ class PortfolioManagementSARLTrainer(Trainer):
         self.if_remove = get_attr(kwargs, "if_remove", False)
         self.num_threads = int(get_attr(kwargs, "num_threads", 8))
 
-        ray.init(ignore_reinit_error=True)
         self.trainer_name = select_algorithms(self.agent_name)
         self.configs["env"] = PortfolioManagementSARLEnvironment
         self.configs["env_config"] = dict(dataset=self.dataset, task="train")
-        register_env("portfolio_management_sarl", env_creator)
 
         self.init_before_training()
 
@@ -101,7 +105,7 @@ class PortfolioManagementSARLTrainer(Trainer):
             self.trainer.train()
 
             config = dict(dataset=self.dataset, task="valid")
-            self.valid_environment = env_creator(config)
+            self.valid_environment = env_creator("portfolio_management_sarl")(config)
             print("Valid Episode: [{}/{}]".format(epoch, self.epochs))
             state = self.valid_environment.reset()
 
@@ -132,7 +136,7 @@ class PortfolioManagementSARLTrainer(Trainer):
         self.trainer.restore_from_object(obj)
 
         config = dict(dataset=self.dataset, task="test")
-        self.test_environment = env_creator(config)
+        self.test_environment = env_creator("portfolio_management_sarl")(config)
         print("Test Best Episode")
         state = self.test_environment.reset()
         episode_reward_sum = 0
@@ -161,7 +165,7 @@ class PortfolioManagementSARLTrainer(Trainer):
         test_dynamic_environments = []
         for i, path in enumerate(self.dataset.test_dynamic_paths):
             config = dict(dataset=self.dataset, task="test_dynamic",test_dynamic=test_dynamic,dynamics_test_path=path,task_index=i,work_dir=cfg.work_dir)
-            test_dynamic_environments.append(env_creator(config))
+            test_dynamic_environments.append(env_creator("portfolio_management_sarl")(config))
         # for i,env in enumerate(test_dynamic_environments):
         #     state = env.reset()
         #     done = False

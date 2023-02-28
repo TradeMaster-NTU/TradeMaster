@@ -164,6 +164,13 @@ class OrderExecutionPDEnvironment(Environments):
                 self.reward = leftover_order * (
                         current_price / previous_average_price - 1)
                 self.terminal = True
+                stats = OrderedDict(
+                {
+                    "Money Sold": ["{:04f}".format(self.money_sold)],
+                }
+                )
+                table = print_metrics(stats)
+                print(table)
             leftover_day, leftover_order = leftover_day - 1 / (len(
                 self.df) - 2 * self.state_length), leftover_order - action
             self.private_state = np.array([leftover_day, leftover_order])
