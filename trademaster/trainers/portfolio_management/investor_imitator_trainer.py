@@ -142,6 +142,7 @@ class PortfolioManagementInvestorImitatorTrainer(Trainer):
         print(f"Test customize policy: {str(customize_policy_id)}")
         state = self.test_environment.reset()
         episode_reward_sum = 0
+        weights_brandnew=None
         while True:
 
 
