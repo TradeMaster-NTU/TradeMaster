@@ -19,7 +19,7 @@ TradeMaster is a first-of-its kind, best-in-class __open-source platform__ for _
 
 | Update | Status |
 | --                      | ------    |
-| Release TradeMaster 1.0.0 | :octocat: [Released] on Dec 9, 2022 |
+| Release TradeMaster 1.0.0 | :octocat: [Released] on March, 2023 |
 
 ## Outline
 
