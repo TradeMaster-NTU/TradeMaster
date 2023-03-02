@@ -70,7 +70,7 @@ class Own_Dataset(Dataset):
         self.observed_masks = []
         self.gt_masks = []
         path = (
-            "./workdir/missing_value_imputation/data/" + dataset_name + "/" + tic_name + "_missing" + str(missing_ratio) + "_seed" + str(seed) + ".pk"
+            "./work_dir/missing_value_imputation/data/" + dataset_name + "/" + tic_name + "_missing" + str(missing_ratio) + "_seed" + str(seed) + ".pk"
         )
 
         if os.path.isfile(path) == False:  
