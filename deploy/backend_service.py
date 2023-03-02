@@ -696,9 +696,10 @@ HEALTHCHECK = HealthCheck()
 def getParameters():
     res = SERVER.get_parameters(request)
     return res
+
 @app.route("/api/TradeMaster/evaluation_getParameters", methods=["GET"])
 def evaluation_getParameters():
-    res = SERVER.evluation_parameters(request)
+    res = SERVER.evluation_parameters()
     return res
 
 
