@@ -173,7 +173,7 @@ class HighFrequencyTradingDDQN(AgentBase):
                 self.start_index += 1
                 random_start = start_list[self.start_index]
                 self.completed_eposide_number += 1
-        self.last_info, self.last_state = ary_info, ary_state
+        self.last_info, self.last_state = ary_info_, ary_state_
         return buffer
 
     def get_obj_critic_raw(self, buffer: ReplayBufferHFT) -> Tuple[Tensor, Tensor]:

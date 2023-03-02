@@ -168,7 +168,7 @@ class OrderExecutionETEOTrainer(Trainer):
                     if done:
                         #print("Valid Episode Reward Sum: {:04f}".format(episode_reward_sum))
                         break
-                valid_score_list.append(episode_reward_sum)
+                valid_score_list.append(self.valid_environment.cash_left)
 
                 save_model(self.checkpoints_path,
                            epoch=epoch,

@@ -133,5 +133,5 @@ trainer = dict(
 )
 loss = dict(type="HFTLoss", ada=1)
 optimizer = dict(type="Adam", lr=0.001)
-act = dict(type="HFTQNet", state_dim=66, action_dim=11, dims=16, explore_rate=0.25)
+act = dict(type="HFTQNet", state_dim=66, action_dim=11, dims=16, explore_rate=0.01)
 cri = None

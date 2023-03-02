@@ -129,6 +129,7 @@ class HighFrequencyTradingTrainer(Trainer):
         epoch = 1
         print("Train Episode: [{}/{}]".format(epoch, self.epochs))
         while True:
+            previous_completed_eposide_number=self.agent.completed_eposide_number
             buffer = self.agent.explore_env(self.train_environment,
                                             self.horizon_len,
                                             buffer,
@@ -138,13 +139,13 @@ class HighFrequencyTradingTrainer(Trainer):
             torch.set_grad_enabled(True)
             logging_tuple = self.agent.update_net(buffer)
             torch.set_grad_enabled(False)
-           
+            current_completed_eposide_number=self.agent.completed_eposide_number
 
-            if self.agent.completed_eposide_number % (
+            if current_completed_eposide_number!=previous_completed_eposide_number and (self.agent.completed_eposide_number % (
                 int(len(self.train_environment.df) /
                  self.train_environment.episode_length)) == (
                      int(len(self.train_environment.df) /
-                      self.train_environment.episode_length) - 1):
+                      self.train_environment.episode_length) - 1)):
                 #如果环境中出现undone的情况
                 print("Valid Episode: [{}/{}]".format(epoch, self.epochs))
                 state, info = self.valid_environment.reset()
