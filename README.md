@@ -201,6 +201,4 @@ TradeMaster provides many visualization toolkits for a systematic evaluation of 
 [TradeMaster Cup 2022](https://codalab.lisn.upsaclay.fr/competitions/8440?secret_key=51d5952f-d68d-47d9-baef-6032445dea01)
 
 ## Contact Us
-If you are interested in this project, please join us. Please concat TradeMaster.NTU@gmail.com
-
-| Dataset |                    Data Source                     |     Type      |           Range and Frequency            | Raw Data |                                                 Datasheet                                                 |
+If you are interested in this project, please join us. Please concat [TradeMaster.NTU@gmail.com](TradeMaster.NTU@gmail.com)
