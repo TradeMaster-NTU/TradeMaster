@@ -37,8 +37,8 @@ class CSDI_Imputation(CustomImputation):
         self.tic_name = get_attr(kwargs,"tic_name", None)
         self.device = "cuda"
         self.nsample = get_attr(kwargs,"nsample", None)
-        self.modelfolder = "./workdir/missing_value_imputation/save/" + self.dataset_name + "/"+ self.tic_name + "_" + str(self.missing_ratio) + "/"
-        self.datafolder = "./workdir/missing_value_imputation/data/" + self.dataset_name + "/"
+        self.modelfolder = "./work_dir/missing_value_imputation/save/" + self.dataset_name + "/"+ self.tic_name + "_" + str(self.missing_ratio) + "/"
+        self.datafolder = "./work_dir/missing_value_imputation/data/" + self.dataset_name + "/"
         os.makedirs(self.datafolder, exist_ok=True)
 
 
@@ -70,8 +70,8 @@ class CSDI_Imputation(CustomImputation):
         return torch.quantile(samples,q,dim).cpu().numpy()
     
     def impute(self):
-        data_path = "./workdir/missing_value_imputation/data/" + self.dataset_name + "/" + self.tic_name + "_missing" + str(self.missing_ratio) + "_seed1.pk"
-        result_path = "./workdir/missing_value_imputation/save/" + self.dataset_name + "/" + self.tic_name + "_" + str(self.missing_ratio) + "/generated_outputs_nsample100.pk"
+        data_path = "./work_dir/missing_value_imputation/data/" + self.dataset_name + "/" + self.tic_name + "_missing" + str(self.missing_ratio) + "_seed1.pk"
+        result_path = "./work_dir/missing_value_imputation/save/" + self.dataset_name + "/" + self.tic_name + "_" + str(self.missing_ratio) + "/generated_outputs_nsample100.pk"
         with open(data_path, "rb") as f:
                 observed_values, observed_masks, gt_masks, mean, std = pickle.load(f)
 
@@ -130,13 +130,13 @@ class CSDI_Imputation(CustomImputation):
             count+=1
         df_new = df_new.sort_values(by=["date"]).reset_index(drop=True)
         print("Missing value imputed: ", impute_list)
-        save_path = './workdir/missing_value_imputation/imputed/' + self.dataset_name
+        save_path = './work_dir/missing_value_imputation/imputed/' + self.dataset_name
         os.makedirs(save_path, exist_ok=True)
         df_new.to_csv(save_path + "/" + self.tic_name + '.csv')
     
     def visual(self):
-        data_path = "./workdir/missing_value_imputation/data/" + self.dataset_name + "/" + self.tic_name + "_missing" + str(self.missing_ratio) + "_seed1.pk"
-        result_path = "./workdir/missing_value_imputation/save/" + self.dataset_name + "/" + self.tic_name + "_" + str(self.missing_ratio) + "/generated_outputs_nsample100.pk"
+        data_path = "./work_dir/missing_value_imputation/data/" + self.dataset_name + "/" + self.tic_name + "_missing" + str(self.missing_ratio) + "_seed1.pk"
+        result_path = "./work_dir/missing_value_imputation/save/" + self.dataset_name + "/" + self.tic_name + "_" + str(self.missing_ratio) + "/generated_outputs_nsample100.pk"
         with open(data_path, "rb") as f:
                 observed_values, observed_masks, gt_masks, mean, std = pickle.load(f)
 
@@ -184,7 +184,7 @@ class CSDI_Imputation(CustomImputation):
         for count in range(5):
             fig.delaxes(axes[-1][-count])
         #plt.pause(2)
-        visual_path = "./workdir/missing_value_imputation/visual/" + self.dataset_name + "/" + self.tic_name + str(self.missing_ratio)
+        visual_path = "./work_dir/missing_value_imputation/visual/" + self.dataset_name + "/" + self.tic_name + str(self.missing_ratio)
         os.makedirs(visual_path, exist_ok=True)
         plt.savefig(visual_path + "/point_chart" + str(dataind) + ".png")
         plt.show()
