@@ -194,11 +194,11 @@ TradeMaster provides many visualization toolkits for a systematic evaluation of 
 ```
 
 ## Team
-- This repository is developed and maintained by [AMI](https://personal.ntu.edu.sg/boan/) group at [Nanyang Technological University](https://www.ntu.edu.sg/).
-- We have positions for software engineer, research associate and postdoc. If you are interested in working at the intersection of RL and quantitative trading, feel free to send an email to [Prof An](boan@ntu.edu.sg) with your CV.
+- This repository is developed and maintained by [AMI](https://personal.ntu.edu.sg/boan/) group lead by [Prof Bo An](boan@ntu.edu.sg) at [Nanyang Technological University](https://www.ntu.edu.sg/).
+- We have positions for software engineer, research associate and postdoc. If you are interested in working at the intersection of RL and quantitative trading, feel free to send us an email with your CV.
 
 ## Competition
 [TradeMaster Cup 2022](https://codalab.lisn.upsaclay.fr/competitions/8440?secret_key=51d5952f-d68d-47d9-baef-6032445dea01)
 
 ## Contact Us
-If you are interested in this project, please join us. Please concat [TradeMaster.NTU@gmail.com](TradeMaster.NTU@gmail.com)
+If you have any further questions of this project, please contact [TradeMaster.NTU@gmail.com](TradeMaster.NTU@gmail.com)
