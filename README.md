@@ -19,7 +19,7 @@ TradeMaster is a first-of-its kind, best-in-class __open-source platform__ for _
 
 | Update | Status |
 | --                      | ------    |
-| Release TradeMaster 1.0.0 | :octocat: [Released] on Dec 9, 2022 |
+| Release TradeMaster 1.0.0 | :octocat: [Released] on March, 2023 |
 
 ## Outline
 
@@ -67,7 +67,6 @@ We provide tutorials covering core features of TradeMaster for users to get star
 - [Automatic hyperparameter tuning](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/Tutorial7_auto_tuning.ipynb)
 - [Market dynamic labeling](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/trademaster/evaluation/market_dynamics_labeling/example.ipynb)
 - [Financial data imputation with diffusion models](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tools/missing_value_imputation/run.py)
-- [Colab Version](https://colab.research.google.com/drive/10M3F6qF8qJ31eQkBR7B6OHhYCR1ZUlrp#scrollTo=4TKpEroeFdT4): Use Google Colab resource to run TradeMaster on Cloud 
 
 
 ## Dataset
