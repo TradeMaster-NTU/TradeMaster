@@ -195,7 +195,6 @@ class PortfolioManagementEIIETrainer(Trainer):
             if done:
                 # print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
                 break
-
         df_return = self.test_environment.save_portfolio_return_memory()
         df_assets = self.test_environment.save_asset_memory()
         assets = df_assets["total assets"].values
