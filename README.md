@@ -72,12 +72,12 @@ We provide tutorials covering core features of TradeMaster for users to get star
 ## Dataset
 | Dataset |                    Data Source                     |     Type      |           Range and Frequency            | Raw Data |                                                 Datasheet                                                 |
 | :-----: | :------------------------------------------------: | :-----------: | :--------------------------------------: | :------: | :-------------------------------------------------------------------------------------------------------: |
-|  S&P500   | [Yahoo](https://pypi.org/project/yfinance/) |   US Stock    |       00/01/01-22/01/01, 1day        |  OHLCV   |         [SP500]()          |
-|  DJ30   | [Yahoo](https://pypi.org/project/yfinance/) |   US Stock    |       12/01/01-21/12/31, 1day        |  OHLCV   |         [DJ30](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/dj30/DJ30.pdf)          |
-|   FX    |    [Kaggle](https://pypi.org/project/yfinance/)    |      Foreign Exchange       |     00/01/01-19/12/31, 1day        |  OHLCV   |         [FX](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/exchange/FX.pdf)          |
-| Crypto  |    [Kaggle](https://pypi.org/project/yfinance/)    |    Crypto     |       13/04/29-21/07/06, 1day        |  OHLCV   |        [Crypto](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/BTC/Crypto.pdf)        |
-|  SSE50   | [Yahoo](https://pypi.org/project/yfinance/) | China Stock |       09/01/02-21/01/01, 1day        |  OHLCV   |         [SSE50](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/sz50/SZ50.pdf)          |
-| Bitcoin |                     [Binance](https://www.binance.com/)                     |    Crypto     | 21/04/07-21/04/19, 1min |   LOB    | [Binance](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/OE_BTC/limit_order_book.pdf) |
+|  S&P500   | [Yahoo](https://pypi.org/project/yfinance/) |   US Stock    |       2000/01/01-2022/01/01, 1day        |  OHLCV   |         [SP500]()          |
+|  DJ30   | [Yahoo](https://pypi.org/project/yfinance/) |   US Stock    |       2012/01/01-2021/12/31, 1day        |  OHLCV   |         [DJ30](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/dj30/DJ30.pdf)          |
+|   FX    |    [Kaggle](https://pypi.org/project/yfinance/)    |      Foreign Exchange       |     2000/01/01-2019/12/31, 1day        |  OHLCV   |         [FX](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/exchange/FX.pdf)          |
+| Crypto  |    [Kaggle](https://pypi.org/project/yfinance/)    |    Crypto     |       2013/04/29-2021/07/06, 1day        |  OHLCV   |        [Crypto](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/BTC/Crypto.pdf)        |
+|  SSE50   | [Yahoo](https://pypi.org/project/yfinance/) | China Stock |       2009/01/02-2021/01/01, 1day        |  OHLCV   |         [SSE50](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/sz50/SZ50.pdf)          |
+| Bitcoin |                     [Binance](https://www.binance.com/)                     |    Crypto     | 2021/04/07-2021/04/19, 1min |   LOB    | [Binance](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/OE_BTC/limit_order_book.pdf) |
 
 Dates are in YY/MM/DD format.
 
