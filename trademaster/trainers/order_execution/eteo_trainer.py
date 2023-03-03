@@ -191,7 +191,8 @@ class OrderExecutionETEOTrainer(Trainer):
         load_best_model(self.checkpoints_path, save=self.agent.get_save(), is_train=False)
 
         print("Test Best Episode")
-        state = self.agent.init_states(env=self.valid_environment)
+        self.test_environment.reset()
+        state = self.agent.init_states(env=self.test_environment)
         if self.num_envs == 1:
             state = torch.tensor(state, dtype=torch.float32, device=self.device).unsqueeze(0)
         else:
@@ -203,7 +204,7 @@ class OrderExecutionETEOTrainer(Trainer):
             action = torch.tensor(action, dtype=torch.float32, device=self.device)
 
             ary_action = action.detach().cpu().numpy()
-            ary_state, reward, done, return_dict = self.valid_environment.step(ary_action)  # next_state
+            ary_state, reward, done, return_dict = self.test_environment.step(ary_action)  # next_state
             ary_state = torch.as_tensor(ary_state, dtype=torch.float32, device=self.device)
 
             # compress state

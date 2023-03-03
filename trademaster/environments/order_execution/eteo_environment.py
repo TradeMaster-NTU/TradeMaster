@@ -136,7 +136,7 @@ class OrderExecutionETEOEnvironment(Environments):
         # according to the order 1 and 3 we modify our action and make the order tradable
         # TODO we need to modify the definition of portfolio and the very end as well and add it into the portfolio_history part
         # the think is that we check the order history and clarify the cash and bitcoin taken in the order book and
-        action[1]=action[1]+(self.data["midpoint"])*0.5
+        action[1]=action[1]
         if action[0] < 0:
             # if the action's volume is smaller than 0, we are going to sell the bitcoin we are holding
             sell_volume = -action[0]
@@ -353,7 +353,7 @@ class OrderExecutionETEOEnvironment(Environments):
             single_volume = self.target_order / all_length
             cash_used = 0
             for index in self.df.index:
-                cash_used = cash_used + single_volume * self.data[
+                cash_used = cash_used + single_volume * self.df.iloc[index][
                     "midpoint"] * (1 + self.data["asks_distance_0"] * 0.01)
             TWAP_value = self.initial_amount - cash_used
             cash_left = self.portfolio[0] + self.portfolio[1]
