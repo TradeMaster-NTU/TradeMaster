@@ -111,7 +111,7 @@ class AlgorithmicTradingEnvironment(Environments):
         return self.state
 
     def step(self, action):
-        # 此处的action应为仓位变化
+        # here the action refer to the amount of changed position
         self.terminal = self.day >= len(
             self.df.index.unique()) - self.forward_num_day - 1
         if self.terminal:
@@ -169,23 +169,24 @@ class AlgorithmicTradingEnvironment(Environments):
             cash_variation_number = np.abs(hold_volume) - np.abs(
                 self.compound_memory[-1][1])
             if cash_variation_number < 0:
-                # 我们卖出了一些比特币 并获得了一些额外的现金 没有支付不起手续费的情况
+                # we sell some bitcioin and get some cash back, there is no such thing as we can not 
+                # pay for the commission fee
                 cash = self.compound_memory[-1][0] + np.abs(
                     cash_variation_number) * self.data.iloc[-1, :].close * (
                                1 - self.transaction_cost_pct)
                 hold_volume = hold_volume
             else:
-                # 如果我们要放更多的钱到比特币手里 无论是买空还是卖空, 现金将会减少 会出现买不起的情况
+                # we put more money into bitcoin and there is a chance that we could not afford it
                 if self.compound_memory[-1][0] > np.abs(
                         buy_volume) * self.data.iloc[-1, :].close / (
                         1 - self.transaction_cost_pct):
-                    # 如果手里的现金足够我们支付买卖比特币的费用外加手续费
+                    #if we can afford it
                     cash = self.compound_memory[-1][0] - np.abs(
                         buy_volume) * self.data.iloc[-1, :].close / (
                                    1 - self.transaction_cost_pct)
                     hold_volume = hold_volume
                 else:
-                    # 如果没有足够的现金支持
+                    # if we can not afford it
                     max_trading = int(self.compound_memory[-1][0] /
                                       (self.data.iloc[-1, :].close /
                                        (1 - self.transaction_cost_pct)))
@@ -199,14 +200,14 @@ class AlgorithmicTradingEnvironment(Environments):
             self.compound_memory.append(compound)
             old_price = self.data.iloc[-1, :].close
             self.day = self.day + 1
-            # 接下来 我们先进行reward的计算 而后进行各个部分历史的填充以及state的迭代
+            # calculate the reward and next state
             self.data = self.df.iloc[self.day -
                                      self.backward_num_day:self.day, :]
             new_price = self.data.iloc[-1, :].close
             # -2来源：-1来自于df.iloc从0开始 -1来自于已经是新的self.day了 加过1了
             newer_price = self.df.iloc[self.day + self.forward_num_day -
                                        2].close
-            # 计算reward 经过一天 价格发生变化 并提却更遥远的未来做估值打算
+            #hindsight reward
             self.reward = compound[1] * (
                     (new_price - old_price) + self.future_weights *
                     (newer_price - old_price))

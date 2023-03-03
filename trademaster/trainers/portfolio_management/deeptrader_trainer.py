@@ -13,6 +13,11 @@ import numpy as np
 import os
 import pandas as pd
 from collections import OrderedDict
+"""this algorithms is based on the paper 'DeepTrader: A Deep Reinforcement Learning Approach for Risk-Return Balanced Portfolio Management with Market Conditions Embedding'
+and code https://github.com/CMACH508/DeepTrader. However, since the data is open-souce, we make some modification
+the tic-level tabular data follows the rest algrithms  in portfolio management while we use the corriance matrix to represents the graph information
+and average tic-level tabular data as the market information 
+"""
 
 
 def make_market_information(df, technical_indicator):

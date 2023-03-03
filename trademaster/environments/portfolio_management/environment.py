@@ -12,7 +12,14 @@ from ..custom import Environments
 from ..builder import ENVIRONMENTS
 from gym import spaces
 from collections import OrderedDict
-
+"""this environment is based on https://github.com/AI4Finance-Foundation/FinRL/blob/master/finrl/meta/env_portfolio_allocation/env_portfolio.py but 
+adding 2 additional features and 1 modification:
+Additional features
+1) we consider the weights difference due to price variation and calculates the commission fee based this weights difference.
+2) we consider the cash term which allow the agents to keep its assets safe when the market is risky
+Modification:
+we remove the covarriance term in the state because it does not fit our algorithms
+"""
 
 @ENVIRONMENTS.register_module()
 class PortfolioManagementEnvironment(Environments):

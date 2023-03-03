@@ -11,7 +11,8 @@ import numpy as np
 import os
 import pandas as pd
 from collections import namedtuple, OrderedDict
-
+"""the Algorithm trading DeepScalper is based on the paper  'DeepScalper: A Risk-Aware Reinforcement Learning Framework
+to Capture Fleeting Intraday Trading Opportunities'(https://arxiv.org/pdf/2201.09058.pdf)"""
 
 @TRAINERS.register_module()
 class AlgorithmicTradingTrainer(Trainer):
