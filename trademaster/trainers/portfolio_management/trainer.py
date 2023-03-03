@@ -103,7 +103,6 @@ class PortfolioManagementTrainer(Trainer):
         for epoch in range(1, self.epochs + 1):
             print("Train Episode: [{}/{}]".format(epoch, self.epochs))
             self.trainer.train()
-
             config = dict(dataset=self.dataset, task="valid")
             self.valid_environment = env_creator("portfolio_management")(config)
             print("Valid Episode: [{}/{}]".format(epoch, self.epochs))
@@ -112,6 +111,7 @@ class PortfolioManagementTrainer(Trainer):
             episode_reward_sum = 0
             while True:
                 action = self.trainer.compute_single_action(state)
+                action=np.exp(action)/np.sum(np.exp(action))
                 state, reward, done, information = self.valid_environment.step(action)
                 episode_reward_sum += reward
                 if done:
@@ -141,6 +141,8 @@ class PortfolioManagementTrainer(Trainer):
         episode_reward_sum = 0
         while True:
             action = self.trainer.compute_single_action(state)
+            action=np.exp(action)/np.sum(np.exp(action))
+
             state, reward, done, sharpe = self.test_environment.step(action)
             episode_reward_sum += reward
             if done:
