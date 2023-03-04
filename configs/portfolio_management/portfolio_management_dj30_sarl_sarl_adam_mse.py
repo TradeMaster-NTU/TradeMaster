@@ -54,4 +54,5 @@ trainer = dict(
     if_remove=False ,
     configs = {},
     work_dir=work_dir,
+    epochs=2,
 )

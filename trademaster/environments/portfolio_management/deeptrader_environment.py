@@ -213,7 +213,7 @@ class PortfolioManagementDeepTraderEnvironment(Environments):
         tr = df["total assets"].values[-1] / (df["total assets"].values[0] + 1e-10) - 1
         return_rate_list=self.get_daily_return_rate(df["total assets"].values)
 
-        sharpe_ratio = tr*(252)** 0.5 / (np.std(return_rate_list) * (len(df) ** 0.5) + 1e-10)
+        sharpe_ratio = np.mean(return_rate_list)*(252)** 0.5 / (np.std(return_rate_list) + 1e-10)
         vol = np.std(return_rate_list)
         mdd = 0
         peak=df["total assets"][0]
