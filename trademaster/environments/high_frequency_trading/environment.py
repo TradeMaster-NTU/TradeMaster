@@ -49,8 +49,11 @@ class HighFrequencyTradingEnvironment(Environments):
         if self.task.startswith("test_dynamic"):
             dynamics_test_path = get_attr(kwargs, "dynamics_test_path", None)
             self.df = pd.read_csv(dynamics_test_path, index_col=0)
+            self.start_date=self.df.loc[:,'date'].iloc[0]
+            self.end_date = self.df.loc[:,'date'].iloc[-1]
         else:
             self.df = pd.read_csv(self.df_path, index_col=0)
+
 
         self.action_space = spaces.Discrete(get_attr(self.dataset, "num_action", 11))
         self.observation_space = spaces.Box(
@@ -269,6 +272,8 @@ class HighFrequencyTradingEnvironment(Environments):
         # self.get_final_return_rate()
         # 检查是否出现return rate 为nan的情况
         if self.terminal:
+            if self.task.startswith("test_dynamic"):
+                print(f'Date from {self.start_date} to {self.end_date}')
             (
                 return_margin,
                 pure_balance,

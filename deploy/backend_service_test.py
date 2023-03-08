@@ -87,17 +87,25 @@ class Server():
         logger.info("get_parameters end.")
         return jsonify(res)
 
-    def evluation_parameters(self):
-        res ={
+    def evaluation_parameters(self, request):
+        request_json = json.loads(request.get_data(as_text=True))
+        session_id = request_json.get("session_id")
+        self.sessions = self.load_sessions()
+        if session_id in self.sessions:
+            dataset = self.sessions[session_id]["dataset"]
+        res = {
+            "dataset_name": [dataset],
             "start_date": {
-                "algorithmic_trading:BTC": "2013-04-29",
-                "order_excecution:BTC": "2021-04-07",
-                "order_excecution:PD_BTC": "2013-04-29",
-                "portfolio_management:dj30": "2012-01-04",
-                "portfolio_management:exchange": "2000-01-27",
+                "algorithmic_trading:BTC": "2020-03-03",
+                "algorithmic_trading:FX": "2017-12-22",
+                "order_excecution:BTC": "2021-04-17",
+                "order_excecution:PD_BTC": "2020-09-10",
+                "portfolio_management:dj30": "2021-04-01",
+                "portfolio_management:exchange": "2019-08-09",
             },
             "end_date": {
                 "algorithmic_trading:BTC": "2021-07-05",
+                "algorithmic_trading:FX": "2019-12-31",
                 "order_excecution:BTC": "2021-04-19",
                 "order_excecution:PD_BTC": "2021-07-05",
                 "portfolio_management:dj30": "2021-12-31",
@@ -105,21 +113,24 @@ class Server():
             },
             "number_of_market_style": ["3"],
             "length_time_slice": {
-                "algorithmic_trading:BTC": "24",
+                "algorithmic_trading:BTC": "12",
+                "algorithmic_trading:FX": "24",
                 "order_excecution:BTC": "32",
                 "order_excecution:PD_BTC": "24",
                 "portfolio_management:dj30": "24",
                 "portfolio_management:exchange": "24"
             },
             "bear_threshold": {
-                "algorithmic_trading:BTC": "-0.15",
+                "algorithmic_trading:BTC": "-0.4",
+                "algorithmic_trading:FX": "-0.05",
                 "order_excecution:BTC": "-0.01",
                 "order_excecution:PD_BTC": "-0.15",
                 "portfolio_management:dj30": "-0.25",
                 "portfolio_management:exchange": "-0.05"
             },
             "bull_threshold": {
-                "algorithmic_trading:BTC": "0.15",
+                "algorithmic_trading:BTC": "0.4",
+                "algorithmic_trading:FX": "0.05",
                 "order_excecution:BTC": "0.01",
                 "order_excecution:PD_BTC": "0.15",
                 "portfolio_management:dj30": "0.25",
@@ -127,7 +138,6 @@ class Server():
             }
         }
         return res
-
     def train(self, request):
         request_json = json.loads(request.get_data(as_text=True))
         try:
@@ -382,7 +392,7 @@ def getParameters():
     return res
 @app.route("/api/TradeMaster/evaluation_getParameters", methods=["GET"])
 def evaluation_getParameters():
-    res = SERVER.evluation_parameters(request)
+    res = SERVER.evaluation_parameters(request)
     return res
 
 

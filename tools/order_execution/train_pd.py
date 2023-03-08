@@ -27,7 +27,7 @@ set_seed(2023)
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Download Alpaca Datasets')
-    parser.add_argument("--config", default=osp.join(ROOT, "configs", "order_execution", "order_execution_BTC_pd_pd_adam_mse.py"),
+    parser.add_argument("--config", default=osp.join(ROOT, "configs", "order_execution", "order_execution_PD_BTC_pd_pd_adam_mse.py"),
                         help="download datasets config file path")
     parser.add_argument("--task_name", type=str, default="test")
     parser.add_argument("--test_dynamic", type=str, default="-1")

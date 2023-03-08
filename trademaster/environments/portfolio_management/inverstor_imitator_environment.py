@@ -21,13 +21,14 @@ from collections import OrderedDict
 import pickle
 import os.path as osp
 
+
 @ENVIRONMENTS.register_module()
 class PortfolioManagementInvestorImitatorEnvironment(Environments):
     def __init__(self, **kwargs):
         super(PortfolioManagementInvestorImitatorEnvironment, self).__init__()
         self.dataset = get_attr(kwargs, "dataset", None)
         self.task = get_attr(kwargs, "task", "train")
-        self.test_dynamic=int(get_attr(kwargs, "test_dynamic", "-1"))
+        self.test_dynamic = int(get_attr(kwargs, "test_dynamic", "-1"))
         self.task_index = int(get_attr(kwargs, "task_index", "-1"))
         self.work_dir = get_attr(kwargs, "work_dir", "")
         length_day = get_attr(self.dataset, "length_day", 10)
@@ -47,6 +48,8 @@ class PortfolioManagementInvestorImitatorEnvironment(Environments):
         if self.task.startswith("test_dynamic"):
             dynamics_test_path = get_attr(kwargs, "dynamics_test_path", None)
             self.df = pd.read_csv(dynamics_test_path, index_col=0)
+            self.start_date = self.df.loc[:, 'date'].iloc[0]
+            self.end_date = self.df.loc[:, 'date'].iloc[-1]
         else:
             self.df = pd.read_csv(self.df_path, index_col=0)
         self.stock_dim = len(self.df.tic.unique())
@@ -60,10 +63,11 @@ class PortfolioManagementInvestorImitatorEnvironment(Environments):
         for sub_file in os.listdir(self.network_dict_path):
             discriptor_path = os.path.join(self.network_dict_path, sub_file)
             best_model_path = "best_model"
-            discriptor_best_path = os.path.join(discriptor_path,best_model_path)
+            discriptor_best_path = os.path.join(discriptor_path, best_model_path)
             for net_dict in os.listdir(discriptor_best_path):
-                indicator_dict = torch.load(os.path.join(discriptor_best_path, net_dict), map_location=torch.device('cpu'))
-                net = MLPReg(input_dim=len(self.tech_indicator_list), dims = [256], output_dim=1).cpu()
+                indicator_dict = torch.load(os.path.join(discriptor_best_path, net_dict),
+                                            map_location=torch.device('cpu'))
+                net = MLPReg(input_dim=len(self.tech_indicator_list), dims=[256], output_dim=1).cpu()
                 net.load_state_dict(indicator_dict)
             all_dict.update({sub_file: net})
         # here the self.net_2_dict is the 2 layer of dict and content is the network
@@ -228,22 +232,24 @@ class PortfolioManagementInvestorImitatorEnvironment(Environments):
         portfolio_weights = self.softmax(scores)
         return portfolio_weights
 
-    def step(self, actions,given_weights=None):
+    def step(self, actions, given_weights=None):
         # here the action change to from 0 to 4 which actually indicates a choice of logical discriptor and
         # make judgement about whether our data is running out
         self.terminal = self.day >= len(self.df.index.unique()) - 1
 
         if self.terminal:
-            if given_weights is not None and sum(given_weights)==0:
-                self.portfolio_return_memory=[0 for _ in self.portfolio_return_memory]
-                self.asset_memory=[1 for _ in self.asset_memory]
+            if self.task.startswith("test_dynamic"):
+                print(f'Date from {self.start_date} to {self.end_date}')
+            if given_weights is not None and sum(given_weights) == 0:
+                self.portfolio_return_memory = [0 for _ in self.portfolio_return_memory]
+                self.asset_memory = [1 for _ in self.asset_memory]
             tr, sharpe_ratio, vol, mdd, cr, sor = self.analysis_result()
             stats = OrderedDict(
                 {
                     "Total Return": ["{:04f}%".format(tr * 100)],
                     "Sharp Ratio": ["{:04f}".format(sharpe_ratio)],
-                    "Volatility": ["{:04f}%".format(vol* 100)],
-                    "Max Drawdown": ["{:04f}%".format(mdd* 100)],
+                    "Volatility": ["{:04f}%".format(vol * 100)],
+                    "Max Drawdown": ["{:04f}%".format(mdd * 100)],
                     # "Calmar Ratio": ["{:04f}".format(cr)],
                     # "Sortino Ratio": ["{:04f}".format(sor)],
                 }
@@ -271,13 +277,12 @@ class PortfolioManagementInvestorImitatorEnvironment(Environments):
                 with open(metric_save_path, 'wb') as handle:
                     pickle.dump(save_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-
             return self.state, self.reward, self.terminal, {}
 
         else:
             # transfer actino into portofolios weights
             if given_weights is not None:
-                weights=given_weights
+                weights = given_weights
             else:
                 weights = self.generate_portfolio_weights(actions)
             self.weights_memory.append(weights)
@@ -369,7 +374,7 @@ class PortfolioManagementInvestorImitatorEnvironment(Environments):
 
             self.reward = self.reward
 
-        return self.state, self.reward, self.terminal, {"weights_brandnew":weights_brandnew}
+        return self.state, self.reward, self.terminal, {"weights_brandnew": weights_brandnew}
 
     def normalization(self, actions):
         # a normalization function not only for actions to transfer into weights but also for the weights of the
@@ -421,31 +426,31 @@ class PortfolioManagementInvestorImitatorEnvironment(Environments):
         df["total assets"] = assets
         return self.evaualte(df)
 
-    def get_daily_return_rate(self,price_list:list):
-        return_rate_list=[]
-        for i in range(len(price_list)-1):
-            return_rate=(price_list[i+1]/price_list[i])-1
+    def get_daily_return_rate(self, price_list: list):
+        return_rate_list = []
+        for i in range(len(price_list) - 1):
+            return_rate = (price_list[i + 1] / price_list[i]) - 1
             return_rate_list.append(return_rate)
         return return_rate_list
-        
 
     def evaualte(self, df):
         daily_return = df["daily_return"]
         # print(df, df.shape, len(df),len(daily_return))
         neg_ret_lst = df[df["daily_return"] < 0]["daily_return"]
         tr = df["total assets"].values[-1] / (df["total assets"].values[0] + 1e-10) - 1
-        return_rate_list=self.get_daily_return_rate(df["total assets"].values)
+        return_rate_list = self.get_daily_return_rate(df["total assets"].values)
 
-        sharpe_ratio = np.mean(return_rate_list)*(252)** 0.5 / (np.std(return_rate_list) + 1e-10)
+        sharpe_ratio = np.mean(return_rate_list) * (252) ** 0.5 / (np.std(return_rate_list) + 1e-10)
         vol = np.std(return_rate_list)
         mdd = 0
-        peak=df["total assets"][0]
+        peak = df["total assets"][0]
         for value in df["total assets"]:
-            if value>peak:
-                peak=value
-            dd=(peak-value)/peak
-            if dd>mdd:
-                mdd=dd
+            if value > peak:
+                peak = value
+            dd = (peak - value) / peak
+            if dd > mdd:
+                mdd = dd
         cr = np.sum(daily_return) / (mdd + 1e-10)
-        sor = np.sum(daily_return) / (np.nan_to_num(np.std(neg_ret_lst),0) + 1e-10) / (np.sqrt(len(daily_return))+1e-10)
+        sor = np.sum(daily_return) / (np.nan_to_num(np.std(neg_ret_lst), 0) + 1e-10) / (
+                np.sqrt(len(daily_return)) + 1e-10)
         return tr, sharpe_ratio, vol, mdd, cr, sor

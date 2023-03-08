@@ -113,17 +113,19 @@ class Server():
         }
         return res
 
-    def evluation_parameters(self):
+    def evaluation_parameters(self):
         res ={
             "start_date": {
-                "algorithmic_trading:BTC": "2013-04-29",
-                "order_excecution:BTC": "2021-04-07",
-                "order_excecution:PD_BTC": "2013-04-29",
-                "portfolio_management:dj30": "2012-01-04",
-                "portfolio_management:exchange": "2000-01-27",
+                "algorithmic_trading:BTC": "2020-03-03",
+                "algorithmic_trading:FX": "2017-12-22",
+                "order_excecution:BTC": "2021-04-17",
+                "order_excecution:PD_BTC": "2018-09-10",
+                "portfolio_management:dj30": "2020-04-01",
+                "portfolio_management:exchange": "2018-08-09",
             },
             "end_date": {
                 "algorithmic_trading:BTC": "2021-07-05",
+                "algorithmic_trading:FX": "2019-12-31",
                 "order_excecution:BTC": "2021-04-19",
                 "order_excecution:PD_BTC": "2021-07-05",
                 "portfolio_management:dj30": "2021-12-31",
@@ -131,25 +133,28 @@ class Server():
             },
             "number_of_market_style": ["3"],
             "length_time_slice": {
-                "algorithmic_trading:BTC": "24",
+                "algorithmic_trading:BTC": "12",
+                "algorithmic_trading:FX": "24",
                 "order_excecution:BTC": "32",
-                "order_excecution:PD_BTC": "24",
-                "portfolio_management:dj30": "24",
-                "portfolio_management:exchange": "24"
+                "order_excecution:PD_BTC": "32",
+                "portfolio_management:dj30": "12",
+                "portfolio_management:exchange": "12"
             },
             "bear_threshold": {
-                "algorithmic_trading:BTC": "-0.15",
+                "algorithmic_trading:BTC": "-0.4",
+                "algorithmic_trading:FX": "-0.05",
                 "order_excecution:BTC": "-0.01",
-                "order_excecution:PD_BTC": "-0.15",
-                "portfolio_management:dj30": "-0.25",
-                "portfolio_management:exchange": "-0.05"
+                "order_excecution:PD_BTC": "-0.3",
+                "portfolio_management:dj30": "-0.15",
+                "portfolio_management:exchange": "-0.03"
             },
             "bull_threshold": {
-                "algorithmic_trading:BTC": "0.15",
+                "algorithmic_trading:BTC": "0.4",
+                "algorithmic_trading:FX": "0.05",
                 "order_excecution:BTC": "0.01",
-                "order_excecution:PD_BTC": "0.15",
-                "portfolio_management:dj30": "0.25",
-                "portfolio_management:exchange": "0.05"
+                "order_excecution:PD_BTC": "0.3",
+                "portfolio_management:dj30": "0.15",
+                "portfolio_management:exchange": "0.03"
             }
         }
         return res
@@ -236,7 +241,8 @@ class Server():
             data = pd.read_csv(os.path.join(ROOT, cfg.data.data_path, "data.csv"), index_col=0)
             data = data[(data["date"] >= start_date) & (data["date"] < end_date)]
 
-            indexs = range(len(data.index.unique()))
+            # indexs = range(len(data.index.unique()))
+            indexs = data.index.unique()
 
             train_indexs = indexs[:int(len(indexs) * 0.8)]
             val_indexs = indexs[int(len(indexs) * 0.8):int(len(indexs) * 0.9)]
@@ -265,6 +271,7 @@ class Server():
             log_path = os.path.join(work_dir, "train_log.txt")
 
             self.sessions = self.dump_sessions({session_id: {
+                "dataset":request_json.get("dataset_name"),
                 "task_name": task_name,
                 "work_dir": work_dir,
                 "cfg_path": cfg_path,
@@ -432,9 +439,8 @@ class Server():
 
             cfg = Config.fromfile(cfg_path)
             cfg = replace_cfg_vals(cfg)
-            test_start_date = request_json.get("start_date")
-            test_end_date = request_json.get("end_date")
-
+            test_start_date = request_json.get("evaluation_start_date")
+            test_end_date = request_json.get("evaluation_end_date")
             # test_start_date = "2010-01-01"
             # test_end_date = "2015-01-01"
 
@@ -448,9 +454,10 @@ class Server():
             if request_json.get("dataset_name") == 'portfolio_management:dj30':
                 DJI_data = pd.read_csv(os.path.join(ROOT, cfg.data.data_path, "DJI.csv"), index_col=0)
                 DJI_data = DJI_data[(DJI_data["date"] >= test_start_date) & (DJI_data["date"] < test_end_date)]
-                data_path = os.path.join(work_dir, "DJI_index_dynamics_test.csv").replace("\\", "/")
-                DJI_data.to_csv(data_path)
-                args['PM'] = data_path
+                DJI_data_path = os.path.join(work_dir, "DJI_index_dynamics_test.csv").replace("\\", "/")
+                DJI_data.to_csv(DJI_data_path)
+                args['PM'] = args['dataset_path']
+                args['dataset_path']=DJI_data_path
             else:
                 args['PM'] = ''
 
@@ -699,7 +706,7 @@ def getParameters():
 
 @app.route("/api/TradeMaster/evaluation_getParameters", methods=["GET"])
 def evaluation_getParameters():
-    res = SERVER.evluation_parameters()
+    res = SERVER.evaluation_parameters()
     return res
 
 
