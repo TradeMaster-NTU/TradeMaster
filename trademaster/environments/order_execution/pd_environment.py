@@ -42,8 +42,12 @@ class OrderExecutionPDEnvironment(Environments):
         if self.task.startswith("test_dynamic"):
             dynamics_test_path = get_attr(kwargs, "dynamics_test_path", None)
             self.df = pd.read_csv(dynamics_test_path, index_col=0)
+            self.start_date=self.df.loc[:,'date'].iloc[0]
+            self.end_date = self.df.loc[:,'date'].iloc[-1]
         else:
             self.df = pd.read_csv(self.df_path, index_col=0)
+
+
 
         self.time_frame = 0
         self.order_history = []
@@ -113,6 +117,8 @@ class OrderExecutionPDEnvironment(Environments):
 
         self.terminal = (self.day >= (len(self.df) - self.state_length))
         if self.terminal:
+            if self.task.startswith("test_dynamic"):
+                print(f'Date from {self.start_date} to {self.end_date}')
             leftover_day, leftover_order = self.private_state
             self.data_public_imperfect = self.df.iloc[
                                          self.day - self.state_length:self.day, :]

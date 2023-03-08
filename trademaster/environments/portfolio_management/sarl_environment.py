@@ -42,6 +42,8 @@ class PortfolioManagementSARLEnvironment(Environments):
         if self.task.startswith("test_dynamic"):
             dynamics_test_path = get_attr(config, "dynamics_test_path", None)
             self.df = pd.read_csv(dynamics_test_path, index_col=0)
+            self.start_date=self.df.loc[:,'date'].iloc[0]
+            self.end_date = self.df.loc[:,'date'].iloc[-1]
         else:
             self.df = pd.read_csv(self.df_path, index_col=0)
         self.stock_dim = len(self.df.tic.unique())
@@ -136,6 +138,8 @@ class PortfolioManagementSARLEnvironment(Environments):
         actions = np.array(actions)
 
         if self.terminal:
+            if self.task.startswith("test_dynamic"):
+                print(f'Date from {self.start_date} to {self.end_date}')
             tr, sharpe_ratio, vol, mdd, cr, sor = self.analysis_result()
             stats = OrderedDict(
                 {

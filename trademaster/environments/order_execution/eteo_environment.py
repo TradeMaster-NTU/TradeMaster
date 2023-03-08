@@ -41,8 +41,12 @@ class OrderExecutionETEOEnvironment(Environments):
         if self.task.startswith("test_dynamic"):
             dynamics_test_path = get_attr(kwargs, "dynamics_test_path", None)
             self.df = pd.read_csv(dynamics_test_path, index_col=0)
+            self.start_date=self.df.loc[:,'date'].iloc[0]
+            self.end_date = self.df.loc[:,'date'].iloc[-1]
         else:
             self.df = pd.read_csv(self.df_path, index_col=0)
+
+
 
         self.time_frame = 0
         self.order_history = []
@@ -346,6 +350,8 @@ class OrderExecutionETEOEnvironment(Environments):
         self.state = np.array(self.public_state + self.private_state)
         self.terminal = (self.time_frame + 1 >= self.df.index[-1])
         if self.terminal:
+            if self.task.startswith("test_dynamic"):
+                print(f'Date from {self.start_date} to {self.end_date}')
             # 终结时候计算reward
             # 先进行IS TWAP的计算
             # becasue the bitcoin at the end is the same and therefore we use the

@@ -37,6 +37,8 @@ class PortfolioManagementEIIEEnvironment(Environments):
         else:
             self.df_path = get_attr(self.dataset, "test_path", None)
 
+
+
         self.initial_amount = get_attr(self.dataset, "initial_amount", 100000)
         self.transaction_cost_pct = get_attr(self.dataset, "transaction_cost_pct", 0.001)
         self.tech_indicator_list = get_attr(self.dataset, "tech_indicator_list", [])
@@ -44,8 +46,11 @@ class PortfolioManagementEIIEEnvironment(Environments):
         if self.task.startswith("test_dynamic"):
             dynamics_test_path = get_attr(kwargs, "dynamics_test_path", None)
             self.df = pd.read_csv(dynamics_test_path, index_col=0)
+            self.start_date = self.df.loc[:, 'date'].iloc[0]
+            self.end_date = self.df.loc[:, 'date'].iloc[-1]
         else:
             self.df = pd.read_csv(self.df_path, index_col=0)
+
         self.stock_dim = len(self.df.tic.unique())
         self.state_space_shape = self.stock_dim
         self.action_space_shape = self.stock_dim
@@ -107,6 +112,8 @@ class PortfolioManagementEIIEEnvironment(Environments):
         weights = np.array(weights)
 
         if self.terminal:
+            if self.task.startswith("test_dynamic"):
+                print(f'Date from {self.start_date} to {self.end_date}')
             tr, sharpe_ratio, vol, mdd, cr, sor = self.analysis_result()
             stats = OrderedDict(
                 {

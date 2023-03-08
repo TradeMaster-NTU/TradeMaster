@@ -218,6 +218,9 @@ def replace_cfg_vals(ori_cfg):
     return updated_cfg
 
 def evaluate_metrics(scores_dicts,print_info=False):
+    ##TODO: high frequency have different normalization factor
+    time_scale_factor=252
+
     Excess_Profit_list = []
     daily_return_list = []
     tr_list = []
@@ -229,18 +232,23 @@ def evaluate_metrics(scores_dicts,print_info=False):
         tr_list.append(
             scores_dict["total_assets"][-1] / (scores_dict["total_assets"][0] + 1e-10) - 1)
         daily_return_list.append(scores_dict["daily_return"])
-        mdd = max((max(scores_dict["total_assets"]) - scores_dict["total_assets"]) / (
-            max(scores_dict["total_assets"])) + 1e-10)
+        mdd = max(
+            (max(scores_dict["total_assets"]) - scores_dict["total_assets"])
+            / (
+            max(scores_dict["total_assets"])) + 1e-10
+        )
         mdd_list.append(mdd)
         cr_list.append(np.sum(scores_dict["daily_return"]) / (mdd + 1e-10))
     output_dict={}
     output_dict['Excess_Profit'] = sum(Excess_Profit_list) / len(Excess_Profit_list)
     output_dict['tr'] = sum(tr_list) / len(tr_list)
     daily_return_merged = np.concatenate(daily_return_list, axis=0)
-    output_dict['sharpe_ratio'] = np.mean(daily_return_merged) / (
-                np.std(daily_return_merged) * (len(daily_return_merged) ** 0.5) + 1e-10)
+    output_dict['sharpe_ratio'] = np.mean(daily_return_merged) * (time_scale_factor) ** 0.5 / (np.std(daily_return_merged) + 1e-10)
     output_dict['vol'] = np.std(daily_return_merged)
+
     output_dict['mdd'] = sum(mdd_list) / len(mdd_list)
+
+
     output_dict['cr'] = sum(cr_list) / len(cr_list)
     neg_ret_lst = daily_return_merged[daily_return_merged < 0]
     output_dict['sor'] = np.sum(daily_return_merged) / (np.nan_to_num(np.std(neg_ret_lst),0) + 1e-10) / (

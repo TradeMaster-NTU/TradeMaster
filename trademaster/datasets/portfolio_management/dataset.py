@@ -25,16 +25,29 @@ class PortfolioManagementDataset(CustomDataset):
         self.test_dynamic_path=osp.join(ROOT, get_attr(kwargs, "test_dynamic_path", None))
         test_dynamic=int(get_attr(kwargs, "test_dynamic", "-1"))
         if test_dynamic!=-1:
-            length_day= get_attr(kwargs, "length_day", None)
+            length_day= get_attr(kwargs, "length_day", 0)
             self.test_dynamic_paths=[]
             data = pd.read_csv(self.test_dynamic_path)
             data = data.reset_index()
-            data = data.loc[data['label'] == test_dynamic, :]
-            intervals, index_by_tick_list = self.get_styled_intervals_and_gives_new_index(data)
-            data.drop(columns=['index'], inplace=True)
+            ## vote for data['label'] for multiple labels by date
+            voter = data.loc[:, ["date", "label"]].groupby(["date", "label"], as_index=False).size()
+            voter = voter.groupby(["date"]).apply(lambda x: x.nlargest(1, ['size'])).reset_index(drop=True)
+            data = data.merge(voter.loc[:, ["date", "label"]], left_on='date', right_on='date')
+            data['label'] = data['label_y']
+            data.drop(['label_x', 'label_y'], axis=1, inplace=True)
+
             temp_foler=osp.join(ROOT,os.path.dirname(self.test_dynamic_path),'style_slice')
             if not os.path.exists(temp_foler):
                 os.makedirs(temp_foler)
+            data.to_csv(osp.join(ROOT, temp_foler, 'process_data.csv'))
+            data = data.loc[data['label'] == test_dynamic, :]
+
+            intervals, index_by_tick_list = self.get_styled_intervals_and_gives_new_index(data)
+            data.drop(columns=['index'], inplace=True)
+
+
+
+
             for i, interval in enumerate(intervals):
                 data_temp = data.iloc[interval[0]:interval[1], :]
                 data_temp.index = index_by_tick_list[i]
