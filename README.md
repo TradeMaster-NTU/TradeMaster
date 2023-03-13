@@ -34,6 +34,7 @@ TradeMaster is a first-of-its kind, best-in-class __open-source platform__ for _
   - [Visualization Toolkit](#visualization-toolkit)
   - [File Structure](#file-structure)
   - [Publications](#publications)
+  - [News](#news)
   - [Team](#team)
   - [Competition](#competition)
   - [Contact Us](#contact-us)
@@ -128,19 +129,6 @@ TradeMaster provides many visualization toolkits for a systematic evaluation of 
 <br>
 
 
-
-
-## Publications
-[PRUDEX-Compass: Towards Systematic Evaluation of Reinforcement Learning in Financial Markets](https://openreview.net/forum?id=JjbsIYOuNi) *(2023)*
-
-[Reinforcement Learning for Quantitative Trading (Survey)](https://dl.acm.org/doi/10.1145/3582560) *(ACM Transactions on Intelligent Systems and Technology 2023)*
-
-[Deep Reinforcement Learning for Quantitative Trading: Challenges and Opportunities](https://ieeexplore.ieee.org/abstract/document/9779600) *(IEEE Intelligent Systems 2022)*
-
-[DeepScalper: A Risk-Aware Reinforcement Learning Framework to Capture Fleeting Intraday Trading Opportunities](https://arxiv.org/abs/2201.09058) *(CIKM 2022)*
-
-[Commission Fee is not Enough: A Hierarchical Reinforced Framework for Portfolio Management](https://ojs.aaai.org/index.php/AAAI/article/view/16142) *(AAAI 21)*
-
 ## File Structure
 
 ```
@@ -192,6 +180,20 @@ TradeMaster provides many visualization toolkits for a systematic evaluation of 
 | ├── pyproject.toml
 | └── requirements.txt
 ```
+
+## Publications
+[PRUDEX-Compass: Towards Systematic Evaluation of Reinforcement Learning in Financial Markets](https://openreview.net/forum?id=JjbsIYOuNi) *(2023)*
+
+[Reinforcement Learning for Quantitative Trading (Survey)](https://dl.acm.org/doi/10.1145/3582560) *(ACM Transactions on Intelligent Systems and Technology 2023)*
+
+[Deep Reinforcement Learning for Quantitative Trading: Challenges and Opportunities](https://ieeexplore.ieee.org/abstract/document/9779600) *(IEEE Intelligent Systems 2022)*
+
+[DeepScalper: A Risk-Aware Reinforcement Learning Framework to Capture Fleeting Intraday Trading Opportunities](https://arxiv.org/abs/2201.09058) *(CIKM 2022)*
+
+[Commission Fee is not Enough: A Hierarchical Reinforced Framework for Portfolio Management](https://ojs.aaai.org/index.php/AAAI/article/view/16142) *(AAAI 21)*
+
+## News
+[机器之心][南洋理工发布量化交易大师TradeMaster，涵盖15种强化学习算法](https://mp.weixin.qq.com/s/MTUOksGGgaWX6GkXZT6wwA)
 
 ## Team
 - This repository is developed and maintained by [AMI](https://personal.ntu.edu.sg/boan/) group lead by [Prof Bo An](boan@ntu.edu.sg) at [Nanyang Technological University](https://www.ntu.edu.sg/).
