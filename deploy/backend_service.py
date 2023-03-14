@@ -567,9 +567,6 @@ class Server():
         try:
             session_id = request_json.get("session_id")
 
-            # example input
-            # session_id = "b5bcd0b6-7a10-11ea-8367-181 dea4d9837"
-
             self.sessions = self.load_sessions()
             if session_id in self.sessions:
                 work_dir = self.sessions[session_id]["work_dir"]
@@ -606,7 +603,7 @@ class Server():
     def run_dynamics_test(self, request):
         request_json = json.loads(request.get_data(as_text=True))
         try:
-            dynamics_test_label = request_json.get("test_dynamic_label")
+            dynamics_test_label = request_json.get("0")
             session_id = request_json.get("session_id")
             logger.info(request_json)
 
