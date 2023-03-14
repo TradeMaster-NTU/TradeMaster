@@ -10,9 +10,9 @@ Welcome to TradeMaster's documentation!
     :caption: Get Started
     :maxdepth: 2
     
-    get_started.md
     introduction.md
-    quick_run.md
+    installation.md
+    docker.md
 
 .. toctree::
     :caption: Tutorials
@@ -20,7 +20,8 @@ Welcome to TradeMaster's documentation!
 
     tutorial/index.rst
 
-.. toctree::
+..
+ .. toctree::
     :caption: Useful Tools and Scripts
     :maxdepth: 2
     
@@ -30,10 +31,10 @@ Welcome to TradeMaster's documentation!
     script/yahoo.md
 
 .. toctree::
-    :caption: Reference
+    :caption: Supporting Documents
     :maxdepth: 2
 
-    reference.md
+    document.md
 
 
 

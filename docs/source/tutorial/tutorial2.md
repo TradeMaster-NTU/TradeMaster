@@ -9,8 +9,6 @@ The framework consists of the Ensemble of Identical Independent Evaluators
 
 
 
-
-## Notebook and Script
 In this notebook, we implement the training and testing process of EIIE based on the TradeMaster framework.
 
 [Tutorial2_EIIE](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/Tutorial2_EIIE.ipynb)

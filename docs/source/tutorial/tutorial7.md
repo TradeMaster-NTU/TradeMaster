@@ -5,7 +5,6 @@
 The framework of automatic hyperparameter tuning using Optuna library. 
 By suggesting the scope of hyperparameters wanted to be tuned, Optuna API will search the best hyperparameter pair and train the corresponding model. 
 
-## Notebook and Script
 In this notebook, we implement the hyperparameter tuning process of DeepScalper based on the TradeMaster framework.
 
 [Tutorial7_AutoRL](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/Tutorial7_auto_tuning.ipynb)

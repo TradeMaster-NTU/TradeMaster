@@ -4,7 +4,7 @@ High Frequency Trading is a fundamental quantitative trading task, where traders
 
 HFT_DDQN use a decayed supervised regulator genereated from the real q table based on the future price information and a double q network to optimizer the portfit margine.
 
-## Notebook and Script
+
 In this notebook, we implement the training and testing process of HFTDDQN based on the TradeMaster framework.
 
 [Tutorial5_HFT](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/Tutorial5_HFT.ipynb)

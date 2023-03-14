@@ -6,9 +6,6 @@ Intraday trading is a fundamental quantitative trading task, where traders activ
 DeepScalper use deep q network to optimize the reward sum got from reinforcement learning where a hindsight reward is used to capture the long-term porfit trends and embedding from both micro-level and macro-level market information.
 
 
-
-
-## Notebook and Script
 In this notebook, we implement the training and testing process of DeepScalper based on the TradeMaster framework.
 
 [Tutorial1_DeepScalper](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/Tutorial1_DeepScalper.ipynb)

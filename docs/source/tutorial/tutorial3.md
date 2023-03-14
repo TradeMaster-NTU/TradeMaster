@@ -7,7 +7,6 @@ prices) represent the internal features constituting the original state s', and 
 to be encoded and augmented to the final state s for SARL. The asset movement signal δ is used for state augmentation and the
 policy network will generate the portfolio management strategy from the augmented state s.
 
-## Notebook and Script
 In this notebook, we implement the training and testing process of SARL based on the TradeMaster framework.
 
 [Tutorial3_SARL](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/Tutorial3_SARL.ipynb)
