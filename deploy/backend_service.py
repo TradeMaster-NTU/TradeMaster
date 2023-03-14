@@ -606,18 +606,9 @@ class Server():
     def run_dynamics_test(self, request):
         request_json = json.loads(request.get_data(as_text=True))
         try:
-            # dynamics_test_label = request_json.get("test_dynamic_label")
-            dynamics_test_label = 0
+            dynamics_test_label = request_json.get("test_dynamic_label")
             session_id = request_json.get("session_id")
             logger.info(request_json)
-            # example input
-            # dynamics_test_label = "0"
-            # task_name = "algorithmic_trading"
-            # dataset_name = "algorithmic_trading:BTC".split(":")[-1]
-            # optimizer_name = "adam"
-            # loss_name ="mse"
-            # agent_name = "algorithmic_trading:dqn".split(":")[-1]
-            # session_id = "b5bcd0b6-7a10-11ea-8367-181 dea4d9837"
 
             self.sessions = self.load_sessions()
             addtional_info = ''
