@@ -9,6 +9,7 @@
 [![Platform](https://img.shields.io/badge/platform-linux%20%7C%20windows%20%7C%20macos-lightgrey)](Platform)
 [![License](https://img.shields.io/github/license/TradeMaster-NTU/TradeMaster)](License)
 [![Document](https://img.shields.io/badge/docs-latest-red)](https://trademaster.readthedocs.io/en/latest/)
+[![GitHub stars](https://img.shields.io/github/stars/TradeMaster-NTU/TradeMaster?color=orange)](https://github.com/TradeMaster-NTU/TradeMaster/stargazers)
 
 </div>
 
