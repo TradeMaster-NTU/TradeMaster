@@ -29,8 +29,6 @@ tz = pytz.timezone('Asia/Shanghai')
 
 app = Flask(__name__)
 CORS(app, resources={r"/TradeMaster/*": {"origins": "*"}})
-
-
 def run_cmd(cmd):
     process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     command_output = process.stdout.read().decode('utf-8')
@@ -65,8 +63,9 @@ class Server():
     def parameters(self):
         res = {
             "task_name": ["algorithmic_trading", "order_execution", "portfolio_management"],
-            "dataset_name": ["algorithmic_trading:BTC",
-                             "algorithmic_trading:FX",
+            "dataset_name": [
+                            "algorithmic_trading:BTC",
+                            "algorithmic_trading:FX",
                              "order_excecution:BTC",
                              "order_excecution:PD_BTC",
                              "portfolio_management:dj30",
@@ -88,7 +87,7 @@ class Server():
                 "portfolio_management:td3"
             ],
             "start_date": {
-                "algorithmic_trading:BTC": "2013-04-29",
+                "algorithmic_trading:BTC": "2015-10-01",
                 "algorithmic_trading:FX": "2000-01-01",
                 "order_excecution:BTC": "2021-04-07",
                 "order_excecution:PD_BTC": "2013-04-29",
@@ -96,7 +95,7 @@ class Server():
                 "portfolio_management:exchange": "2000-01-27",
             },
             "end_date": {
-                "algorithmic_trading:BTC": "2021-07-05",
+                "algorithmic_trading:BTC": "2021-07-06",
                 "algorithmic_trading:FX": "2019-12-31",
                 "order_excecution:BTC": "2021-04-19",
                 "order_excecution:PD_BTC": "2021-07-05",
