@@ -3,7 +3,7 @@
 TradeMaster is a first-of-its kind, best-in-class open-source platform for quantitative trading (QT) empowered by reinforcement learning (RL), which covers the full pipeline for the design, implementation, evaluation and deployment of RL-based algorithms.
 
 ## Architecture
-![Architecture.jpg](../../figure/figure/architecture.jpg)
+![Architecture.jpg](../../figure/architecture.jpg)
 
 TradeMaster is composed of 6 key modules: 1) multi-modality market data of different financial assets at multiple granularity; 2) whole data preprocessing pipeline; 3) a series of high-fidelity data-driven market simulators for mainstream QT tasks; 4) efficient implementations of over 13 novel RL-based trading algorithms; 5) systematic evaluation toolkits with 6 axes and 17 measures; 6) different interfaces for interdisciplinary users.
 

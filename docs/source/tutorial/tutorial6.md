@@ -1,13 +1,14 @@
-# Tutorial 6: Portfolio Management with PPO
+# Tutorial 6: High Frequency Trading with Double DQN
 
-## PPO
-PPO strikes a balance between ease of implementation, sample complexity, and ease of tuning, trying to compute an update at each step that minimizes the cost function while ensuring the deviation from the previous policy is relativel small.
+High Frequency Trading is a fundamental quantitative trading task, where traders actively buy/sell one pre-selected financial periodically in seconds with the consideration of order execution.
+
+HFT_DDQN use a decayed supervised regulator genereated from the real q table based on the future price information and a double q network to optimizer the portfit margine.
 
 
-In this notebook, we implement the training and testing process of PPO based on the TradeMaster framework.
+In this notebook, we implement the training and testing process of HFTDDQN based on the TradeMaster framework.
 
-[Tutorial6_PPO](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/Tutorial6_PPO.ipynb)
+[Tutorial6_HFT](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/Tutorial6_DDQN.ipynb)
 
 And this is the script for training and testing.
 
-[train_ppo.py](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/tutorial/Tutorial6_PPO.ipynb)
+[train.py](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tools/high_frequency_trading/train.py)
