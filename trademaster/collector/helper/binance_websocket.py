@@ -1,5 +1,4 @@
 import websocket
-import json
 import threading
 import json
 
@@ -90,12 +89,12 @@ def on_message(ws, message):
                 'orderbook': process_orderbook_data(orderbook_data),
                 'kline': process_kline_data(kline_data)
             }
-            print("Combined data:")
             print(combined_data)
 
         # reset orderbook_data and kline_data
         orderbook_data = None
         kline_data = None
+
 def start_websocket():
     ws = websocket.WebSocketApp(
         "wss://stream.binance.com:9443/stream?streams=btcusdt@kline_1s/btcusdt@depth@1000ms",
