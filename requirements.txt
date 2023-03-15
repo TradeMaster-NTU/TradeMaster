@@ -24,3 +24,5 @@ kaleido==0.1.0
 h5py
 pydantic==1.10.2
 jupyter
+celery
+pika
