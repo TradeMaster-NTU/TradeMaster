@@ -117,7 +117,6 @@ def store_data_in_rabbitmq(combined_data):
     print("Stored data in RabbitMQ:")
     print(message)
 
-@app.task
 def start_producer():
     ws = websocket.WebSocketApp(
         "wss://stream.binance.com:9443/stream?streams=btcusdt@kline_1s/btcusdt@depth@1000ms",
@@ -127,6 +126,10 @@ def start_producer():
         on_message=on_message
     )
     ws.run_forever()
+
+@app.task
+def restart_producer():
+    start_producer()
 
 if __name__ == "__main__":
     start_producer()
