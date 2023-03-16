@@ -1,6 +1,7 @@
 from datetime import timedelta
 
-broker_url = 'pyamqp://guest@localhost//'
+
+broker_url = 'amqp://zwt:123456@localhost/vhost'
 result_backend = 'rpc://'
 
 timezone = 'UTC'
