@@ -1,7 +1,7 @@
 import json
 import websocket
-#from celery_app import app
-#import pika
+from celery_app import app
+from pika_connection import pika_connection
 
 orderbook_data = None
 kline_data = None
@@ -82,8 +82,6 @@ def on_message(ws, message):
     global orderbook_data, kline_data
     data = json.loads(message)["data"]
 
-    print(data)
-
     if 'e' in data:
         event_type = data['e']
         if event_type == 'depthUpdate':
@@ -97,33 +95,29 @@ def on_message(ws, message):
                 'orderbook': process_orderbook_data(orderbook_data),
                 'kline': process_kline_data(kline_data)
             }
-            #store_data_in_rabbitmq(combined_data)
+            store_data_in_rabbitmq(combined_data)
 
         # reset orderbook_data and kline_data
         orderbook_data = None
         kline_data = None
 
-# def store_data_in_rabbitmq(combined_data):
-#     pika_connection = pika.BlockingConnection(
-#         pika.ConnectionParameters(host='localhost')
-#     )
-#
-#     channel = pika_connection.channel()
-#
-#     # init queue
-#     channel.queue_declare(queue='binance_data')
-#
-#     # to json string
-#     message = json.dumps(combined_data)
-#
-#     # push a message
-#     channel.basic_publish(exchange='',
-#                           routing_key='binance_data',
-#                           body=message)
-#     print("Stored data in RabbitMQ:")
-#     print(combined_data)
-#
-#     pika_connection.close()
+def store_data_in_rabbitmq(combined_data):
+    channel = pika_connection.channel()
+
+    # init queue
+    channel.queue_declare(queue='binance_data')
+
+    # to json string
+    message = json.dumps(combined_data)
+
+    # push a message
+    channel.basic_publish(exchange='',
+                          routing_key='binance_data',
+                          body=message)
+    print("Stored data in RabbitMQ:")
+    print(message)
+
+@app.task
 def start_producer():
     ws = websocket.WebSocketApp(
         "wss://stream.binance.com:9443/stream?streams=btcusdt@kline_1s/btcusdt@depth@1000ms",
