@@ -88,6 +88,8 @@ OHLCV: open, high, low, and close prices; volume: corresponding trading volume; 
 
 Users can download data of the above datasets from [Google Drive](https://drive.google.com/drive/folders/19Tk5ifPz1y8i_pJVwZFxaSueTLjz6qo3?usp=sharing) or [Baidu Cloud](https://pan.baidu.com/s/1njghvez53hD5v3WpLgCg0w) (extraction code:x24b)
 ## Model Zoo
+TradeMaster provides efficient implementations of the following algorithms:
+
 [DeepScalper based on Pytorch (Shuo Sun et al, CIKM 22)](https://arxiv.org/abs/2201.09058)
 
 [OPD based on Pytorch (Fang et al, AAAI 21)](https://ojs.aaai.org/index.php/AAAI/article/view/16083)
@@ -183,7 +185,7 @@ TradeMaster provides many visualization toolkits for a systematic evaluation of 
 ```
 
 ## Publications
-[PRUDEX-Compass: Towards Systematic Evaluation of Reinforcement Learning in Financial Markets](https://openreview.net/forum?id=JjbsIYOuNi) *(2023)*
+[PRUDEX-Compass: Towards Systematic Evaluation of Reinforcement Learning in Financial Markets](https://openreview.net/forum?id=JjbsIYOuNi) *(Transactions on Machine learning Research 2023)*
 
 [Reinforcement Learning for Quantitative Trading (Survey)](https://dl.acm.org/doi/10.1145/3582560) *(ACM Transactions on Intelligent Systems and Technology 2023)*
 

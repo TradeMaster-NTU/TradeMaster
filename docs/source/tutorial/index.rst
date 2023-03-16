@@ -1,4 +1,5 @@
 .. toctree::
+   :caption: Tutorial
    :maxdepth: 2
 
    tutorial1.md
