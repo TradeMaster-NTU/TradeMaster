@@ -7,7 +7,7 @@ ROOT = Path(__file__).resolve().parents[3]
 from ..custom import Trainer
 from ..builder import TRAINERS
 
-from trademaster.utils import get_attr, save_model, load_best_model, save_best_model, GeneralReplayBuffer
+from trademaster.utils import get_attr, save_model, load_model, load_best_model, save_best_model, GeneralReplayBuffer
 import numpy as np
 import os
 import pandas as pd
@@ -181,6 +181,9 @@ class OrderExecutionETEOTrainer(Trainer):
                 break
 
         max_index = np.argmax(valid_score_list)
+        load_model(self.checkpoints_path,
+                   epoch=max_index + 1,
+                   save=self.agent.get_save())
         save_best_model(
             output_dir=self.checkpoints_path,
             epoch=max_index + 1,

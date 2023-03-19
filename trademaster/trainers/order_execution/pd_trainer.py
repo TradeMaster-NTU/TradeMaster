@@ -11,7 +11,7 @@ import os
 import pandas as pd
 import random
 from collections import OrderedDict, namedtuple
-from trademaster.utils import get_attr, save_model, load_best_model, save_best_model, ReplayBuffer, GeneralReplayBuffer
+from trademaster.utils import get_attr, save_model, load_model, load_best_model, save_best_model, ReplayBuffer, GeneralReplayBuffer
 
 
 @TRAINERS.register_module()
@@ -210,6 +210,9 @@ class OrderExecutionPDTrainer(Trainer):
                     break
 
         max_index = np.argmax(valid_score_list)
+        load_model(self.checkpoints_path,
+                   epoch=max_index + 1,
+                   save=self.agent.get_save())
         save_best_model(
             output_dir=self.checkpoints_path,
             epoch=max_index + 1,

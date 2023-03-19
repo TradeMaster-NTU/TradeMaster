@@ -373,10 +373,6 @@ def save_best_model(output_dir,
                     epoch = None):
     checkpoint_path = os.path.join(output_dir, "best.pth")
 
-    if epoch:
-        load_model(output_dir, save = save,
-                   resume=os.path.join(output_dir, "checkpoint-{:05d}.pth".format(epoch)))
-
     to_save = dict()
     for name, model in save["models"].items():
         if model:
@@ -395,10 +391,6 @@ def save_best_model_trial(output_dir,
                save,
                epoch = None):
     checkpoint_path = os.path.join(output_dir, "trial-{:05d}.pth".format(trial_number))
-
-    if epoch:
-        load_model(output_dir, save = save,
-                   resume=os.path.join(output_dir, "checkpoint-{:05d}.pth".format(epoch)))
 
     to_save = dict()
     for name, model in save["models"].items():
@@ -433,23 +425,26 @@ def get_last_checkpoint(output_dir):
 
 def load_model(output_dir,
                save,
+               epoch = None,
                resume = None,
                is_train = True):
-    if not resume:
+
+    if resume is None:
         resume = get_last_checkpoint(output_dir)
+    if epoch:
+        resume = os.path.join(output_dir, "checkpoint-{:05d}.pth".format(epoch))
 
-    if resume:
-        with pathmgr.open(resume, "rb") as f:
-            checkpoint = torch.load(f, map_location="cpu")
+    with pathmgr.open(resume, "rb") as f:
+        checkpoint = torch.load(f, map_location="cpu")
 
-        for name, model in save["models"].items():
-            if model:
-                model.load_state_dict(checkpoint[name])
-        print("Resume checkpoint %s" % resume)
-        if is_train:
-            for name, optimizer in save["optimizers"].items():
-                optimizer.load_state_dict(checkpoint[name])
-            print("With optim & sched!")
+    for name, model in save["models"].items():
+        if model:
+            model.load_state_dict(checkpoint[name])
+    print("Resume checkpoint %s" % resume)
+    if is_train:
+        for name, optimizer in save["optimizers"].items():
+            optimizer.load_state_dict(checkpoint[name])
+        print("With optim & sched!")
 
 def load_best_model(output_dir,
                save,

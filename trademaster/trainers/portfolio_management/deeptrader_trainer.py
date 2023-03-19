@@ -256,6 +256,9 @@ class PortfolioManagementDeepTraderTrainer(Trainer):
             valid_score_list.append(episode_reward_sum)
 
         max_index = np.argmax(valid_score_list)
+        load_model(self.checkpoints_path,
+                   epoch=max_index + 1,
+                   save=self.agent.get_save())
         save_best_model(
             output_dir=self.checkpoints_path,
             epoch=max_index + 1,
