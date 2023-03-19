@@ -369,9 +369,13 @@ def save_model(output_dir,
 
 
 def save_best_model(output_dir,
-               epoch,
-               save):
+                    save,
+                    epoch = None):
     checkpoint_path = os.path.join(output_dir, "best.pth")
+
+    if epoch:
+        load_model(output_dir, save = save,
+                   resume=os.path.join(output_dir, "checkpoint-{:05d}.pth".format(epoch)))
 
     to_save = dict()
     for name, model in save["models"].items():
@@ -387,9 +391,14 @@ def save_best_model(output_dir,
     return checkpoint_path
 
 def save_best_model_trial(output_dir,
-               epoch, trial_number,
-               save):
+               trial_number,
+               save,
+               epoch = None):
     checkpoint_path = os.path.join(output_dir, "trial-{:05d}.pth".format(trial_number))
+
+    if epoch:
+        load_model(output_dir, save = save,
+                   resume=os.path.join(output_dir, "checkpoint-{:05d}.pth".format(epoch)))
 
     to_save = dict()
     for name, model in save["models"].items():
