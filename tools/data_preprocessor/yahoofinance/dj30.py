@@ -30,8 +30,9 @@ def preprocessor():
     cfg = replace_cfg_vals(cfg)
 
     preprocessor = build_preprocessor(cfg)
-
-    preprocessor.run(os.path.join(ROOT, "data/portfolio_management/dj30/data.csv"))
+    
+    preprocessor.run()
+    #preprocessor.run(os.path.join(ROOT, "data/portfolio_management/dj30/data.csv"))
 
 if __name__ == '__main__':
     preprocessor()
