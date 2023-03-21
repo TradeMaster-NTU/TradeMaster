@@ -13,6 +13,7 @@ import os
 import yfinance as yf
 from tqdm import tqdm
 import numpy as np
+from sklearn.linear_model import LinearRegression
 
 @PREPROCESSOR.register_module()
 class YfinancePreprocessor(CustomPreprocessor):
@@ -33,6 +34,7 @@ class YfinancePreprocessor(CustomPreprocessor):
         self.end_date = get_attr(kwargs, "end_date", "2019-01-01")
         self.tickers = get_attr(kwargs, "tickers", None)
 
+        self.indicator = get_attr(kwargs, "indicator", 'basic')
     def download_data(self):
         df_list = []
         for ticker in self.tickers:
@@ -46,7 +48,34 @@ class YfinancePreprocessor(CustomPreprocessor):
         df["date"]=df.index
         return df
 
-def make_feature(self):
+    def clean_data(self):
+        initial_ticker_list = self.df[self.df.index == self.df.index.unique()
+                                      [0]]["ticker"].values.tolist()
+        initial_ticker_list = set(initial_ticker_list)
+        for index in tqdm(self.df.index.unique()):
+            ticker_list = self.df[self.df.index ==
+                                  index]["ticker"].values.tolist()
+            ticker_list = set(ticker_list)
+            initial_ticker_list = initial_ticker_list & ticker_list
+        df_list = []
+        for ticker in initial_ticker_list:
+            new_df = self.df[self.df.ticker == ticker]
+            df_list.append(new_df)
+        df = pd.concat(df_list)
+        df = df.sort_values(by="ticker")
+        df = df.sort_index()
+        df = df.copy()
+        df = df.sort_values(["date", "ticker"], ignore_index=True)
+        df.index = df.date.factorize()[0]
+        merged_closes = df.pivot_table(index="date",
+                                       columns="ticker",
+                                       values="close")
+        merged_closes = merged_closes.dropna(axis=1)
+        tics = merged_closes.columns
+        df = df[df.ticker.isin(tics)]
+        return df
+
+    def make_feature(self):
         self.df["zopen"] = self.df["open"] / self.df["close"] - 1
         self.df["zhigh"] = self.df["high"] / self.df["close"] - 1
         self.df["zlow"] = self.df["low"] / self.df["close"] - 1
@@ -459,7 +488,7 @@ def make_feature(self):
             method="bfill")
         
         return df_indicator
-    
+
     def get_date(self,df):
         date = df.date.unique()
         start_date = pd.to_datetime(date[0])
@@ -514,10 +543,10 @@ def make_feature(self):
     def run(self, custom_data_path = None):
 
         if not custom_data_path:
-            self.df = self.download_data()
+          self.df = self.download_data()
         else:
-            self.df = pd.read_csv(custom_data_path)
-
+          self.df = pd.read_csv(custom_data_path)
+        self.df = self.download_data()
         self.df = self.df.rename(columns={
             "Open":"open",
             "High":"high",
@@ -525,7 +554,7 @@ def make_feature(self):
             "Close":"close",
             "Adj Close":"adjclose",
             "Volume":"volume",
-            "ticker":"ticker",
+            "tic":"ticker",
             "date":"date"
         })
         self.df.index = self.df.date.values
@@ -533,10 +562,17 @@ def make_feature(self):
         self.df = self.clean_data()
 
         self.df = self.make_feature()
-
-        self.df = self.df.rename(columns={"ticker": "tic"})
+        if self.indicator == 'alpha158_novolume':  
+          self.df = self.make_alpha()
+        elif self.indicator == 'alpha158': 
+          self.df = self.make_alpha158()
 
         train, valid, test=self.split(self.df, self.train_valid_test_portion)
+        
+        #Modify column names as needed.
+        train = train.rename(columns={"ticker": "tic"})
+        valid = valid.rename(columns={"ticker": "tic"})
+        test = test.rename(columns={"ticker": "tic"})
 
         train.to_csv(self.train_path)
         valid.to_csv(self.valid_path)
