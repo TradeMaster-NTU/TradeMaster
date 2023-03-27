@@ -34,7 +34,7 @@ def select_algorithms(alg_name):
     elif alg_name == 'SAC':
         from ray.rllib.agents.sac import SACTrainer as trainer
     elif alg_name == 'TD3':
-        from ray.rllib.agents.ddpg.ddpg import TD3Trainer as trainer
+        from ray.rllib.agents.ddpg.td3 import TD3Trainer as trainer
     else:
         print(alg_name)
         print(alg_name == "A2C")
