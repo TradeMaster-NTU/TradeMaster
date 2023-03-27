@@ -75,7 +75,7 @@ class PortfolioManagementTrainer(Trainer):
         torch.cuda.manual_seed_all(self.random_seed)
         np.random.seed(self.random_seed)
         torch.manual_seed(self.random_seed)
-        torch.backends.cudnn.benckmark = False
+        torch.backends.cudnn.benchmark = False
         torch.backends.cudnn.deterministic = True
         torch.set_num_threads(self.num_threads)
         torch.set_default_dtype(torch.float32)
