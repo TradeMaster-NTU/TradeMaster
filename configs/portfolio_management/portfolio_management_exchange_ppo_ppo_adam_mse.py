@@ -41,5 +41,5 @@ data = dict(
 trainer = dict(
     agent_name = agent_name,
     work_dir = work_dir,
-    epochs=2,
+    epochs=10,
 )
