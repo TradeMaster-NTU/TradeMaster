@@ -84,6 +84,10 @@ We provide tutorials covering core features of TradeMaster for users to get star
 | Futures |                     [AKshare](https://akshare.xyz/)                     |    Futures     | 2023/03/07-2023/03/28, 5min |   OHLCV    | [SHFE](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/data/portfolio_management/Future/future.pdf) |
 | HSTech30 |                     [AKShare](https://akshare.xyz/)                     |    Hang Seng Tech Index     | 1988/12/30-2023/03/27, 1day |   OHLCV    | [HSTech30](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/data/portfolio_management/hstech30/HSTech30.pdf) |
 
+
+Dates are in YY/MM/DD format.
+
+
 OHLCV: open, high, low, and close prices; volume: corresponding trading volume; LOB: Limit order book.
 
 Users can download data of the above datasets from [Google Drive](https://drive.google.com/drive/folders/19Tk5ifPz1y8i_pJVwZFxaSueTLjz6qo3?usp=sharing) or [Baidu Cloud](https://pan.baidu.com/s/1njghvez53hD5v3WpLgCg0w) (extraction code:x24b)
