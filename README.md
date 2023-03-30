@@ -86,8 +86,8 @@ We also provide a colab version of these tutorials that can be run directly. ([c
 | Crypto  |    [Kaggle](https://pypi.org/project/yfinance/)    |    Crypto     |       2013/04/29-2021/07/06, 1day        |  OHLCV   |        [Crypto](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/BTC/Crypto.pdf)        |
 |  SSE50  | [Yahoo](https://pypi.org/project/yfinance/) | China Stock |       2009/01/02-2021/01/01, 1day        |  OHLCV   |         [SSE50](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/sz50/SZ50.pdf)          |
 | Bitcoin |                     [Binance](https://www.binance.com/)                     |    Crypto     | 2021/04/07-2021/04/19, 1min |   LOB    | [Binance](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/OE_BTC/limit_order_book.pdf) |
-| Future |                     [AKshare](https://akshare.xyz/)                     |    Future     | 2023/03/07-2023/03/28, 5min |   OHLCV    | [SHFE](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/data/portfolio_management/Future/future.pdf) |
-| HS30 |                     [AKShare](https://akshare.xyz/)                     |    HK Stock     | 1988/12/30-2023/03/27, 1day |   OHLCV    | [HSTech30](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/data/portfolio_management/hstech30/HSTech30.pdf) |
+| Future |                     [AKshare](https://akshare.xyz/)                     |    Future     | 2023/03/07-2023/03/28, 5min |   OHLCV    | [Future](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/data/portfolio_management/Future/future.pdf) |
+| HS30 |                     [AKShare](https://akshare.xyz/)                     |    HK Stock     | 1988/12/30-2023/03/27, 1day |   OHLCV    | [HS30](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/data/portfolio_management/hstech30/HSTech30.pdf) |
 
 
 Dates are in YY/MM/DD format.
