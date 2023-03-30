@@ -20,6 +20,9 @@ TradeMaster is a first-of-its kind, best-in-class __open-source platform__ for _
 
 | Update | Status |
 | --                      | ------    |
+| Release [Colab](https://colab.research.google.com/drive/10M3F6qF8qJ31eQkBR7B6OHhYCR1ZUlrp#scrollTo=4TKpEroeFdT4) Version | :gear: [Updated](https://github.com/TradeMaster-NTU/TradeMaster/pull/133) on 29 March 2023 |
+| Incldue [HK Stock](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/data/portfolio_management/hstech30/HSTech30.pdf) and [Future](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/data/portfolio_management/Future/future.pdf) Datasets | :speech_balloon: Updated [#131](https://github.com/TradeMaster-NTU/TradeMaster/pull/131) [#132](https://github.com/TradeMaster-NTU/TradeMaster/pull/132) on 27 March 2023 |
+| Support [Alpha158](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/Tutorial8_Train_with_more_technical_indicators.ipynb) | :hammer: Updated [#123](https://github.com/TradeMaster-NTU/TradeMaster/pull/123) [#124](https://github.com/TradeMaster-NTU/TradeMaster/pull/124) on 20 March 2023 |
 | Release TradeMaster 1.0.0 | :octocat: [Released v1.0.0](https://github.com/TradeMaster-NTU/TradeMaster/releases/tag/v1.0.0) on 5 March 2023 |
 
 ## Outline
@@ -83,8 +86,8 @@ We also provide a colab version of these tutorials that can be run directly. ([c
 | Crypto  |    [Kaggle](https://pypi.org/project/yfinance/)    |    Crypto     |       2013/04/29-2021/07/06, 1day        |  OHLCV   |        [Crypto](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/BTC/Crypto.pdf)        |
 |  SSE50  | [Yahoo](https://pypi.org/project/yfinance/) | China Stock |       2009/01/02-2021/01/01, 1day        |  OHLCV   |         [SSE50](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/sz50/SZ50.pdf)          |
 | Bitcoin |                     [Binance](https://www.binance.com/)                     |    Crypto     | 2021/04/07-2021/04/19, 1min |   LOB    | [Binance](https://github.com/TradeMaster-NTU/TradeMaster/blob/main/data/data/OE_BTC/limit_order_book.pdf) |
-| Futures |                     [AKshare](https://akshare.xyz/)                     |    Futures     | 2023/03/07-2023/03/28, 5min |   OHLCV    | [SHFE](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/data/portfolio_management/Future/future.pdf) |
-| HSTech30 |                     [AKShare](https://akshare.xyz/)                     |    Hang Seng Tech Index     | 1988/12/30-2023/03/27, 1day |   OHLCV    | [HSTech30](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/data/portfolio_management/hstech30/HSTech30.pdf) |
+| Future |                     [AKshare](https://akshare.xyz/)                     |    Future     | 2023/03/07-2023/03/28, 5min |   OHLCV    | [SHFE](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/data/portfolio_management/Future/future.pdf) |
+| HS30 |                     [AKShare](https://akshare.xyz/)                     |    HK Stock     | 1988/12/30-2023/03/27, 1day |   OHLCV    | [HSTech30](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/data/portfolio_management/hstech30/HSTech30.pdf) |
 
 
 Dates are in YY/MM/DD format.
@@ -204,7 +207,7 @@ TradeMaster provides many visualization toolkits for a systematic evaluation of 
 ## News
 - [知乎][用强化学习在金融市场上赚钱？南洋理工发布全新基于强化学习的量化交易平台TradeMaster](https://zhuanlan.zhihu.com/p/614855780?utm_medium=social&utm_oi=798261254362927104&utm_psn=1620381293060993024&utm_source=wechat_session&wechatShare=1&s_r=0)
 - [机器之心][南洋理工发布量化交易大师TradeMaster，涵盖15种强化学习算法](https://mp.weixin.qq.com/s/MTUOksGGgaWX6GkXZT6wwA)
-[运筹OR帷幄][量化交易大师TradeMaster](https://mp.weixin.qq.com/s/bAuvKD5QD3Lz8ZC60WWJLQ)
+- [运筹OR帷幄][量化交易大师TradeMaster](https://mp.weixin.qq.com/s/bAuvKD5QD3Lz8ZC60WWJLQ)
 
 
 ## Team
