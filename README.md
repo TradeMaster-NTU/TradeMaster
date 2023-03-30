@@ -208,6 +208,7 @@ TradeMaster provides many visualization toolkits for a systematic evaluation of 
 - [知乎][用强化学习在金融市场上赚钱？南洋理工发布全新基于强化学习的量化交易平台TradeMaster](https://zhuanlan.zhihu.com/p/614855780?utm_medium=social&utm_oi=798261254362927104&utm_psn=1620381293060993024&utm_source=wechat_session&wechatShare=1&s_r=0)
 - [机器之心][南洋理工发布量化交易大师TradeMaster，涵盖15种强化学习算法](https://mp.weixin.qq.com/s/MTUOksGGgaWX6GkXZT6wwA)
 - [运筹OR帷幄][量化交易大师TradeMaster](https://mp.weixin.qq.com/s/bAuvKD5QD3Lz8ZC60WWJLQ)
+- [Medium][Introduction on TradeMaster](https://medium.com/@trademaster.ntu/introduction-to-trademaster-a-new-standard-of-reinforcement-learning-framework-for-quantitative-67f7133485e2)
 
 
 ## Team
