@@ -21,7 +21,7 @@ TradeMaster is a first-of-its kind, best-in-class __open-source platform__ for _
 | Update | Status |
 | --                      | ------    |
 | Release [Colab](https://colab.research.google.com/drive/10M3F6qF8qJ31eQkBR7B6OHhYCR1ZUlrp#scrollTo=4TKpEroeFdT4) Version | :speech_balloon: [Updated](https://github.com/TradeMaster-NTU/TradeMaster/pull/133) on 29 March 2023 |
-| Incldue [HK Stock](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/data/portfolio_management/hstech30/HSTech30.pdf) and [Future](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/data/portfolio_management/Future/future.pdf) Datasets | :chart_with_upwards_trend: Updated [#131](https://github.com/TradeMaster-NTU/TradeMaster/pull/131) [#132](https://github.com/TradeMaster-NTU/TradeMaster/pull/132) on 27 March 2023 |
+| Incldue [HK Stock](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/data/portfolio_management/hstech30/HSTech30.pdf) and [Future](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/data/portfolio_management/Future/future.pdf) Datasets | :compass: Updated [#131](https://github.com/TradeMaster-NTU/TradeMaster/pull/131) [#132](https://github.com/TradeMaster-NTU/TradeMaster/pull/132) on 27 March 2023 |
 | Support [Alpha158](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/Tutorial8_Train_with_more_technical_indicators.ipynb) | :hammer: Updated [#123](https://github.com/TradeMaster-NTU/TradeMaster/pull/123) [#124](https://github.com/TradeMaster-NTU/TradeMaster/pull/124) on 20 March 2023 |
 | Release TradeMaster 1.0.0 | :octocat: [Released v1.0.0](https://github.com/TradeMaster-NTU/TradeMaster/releases/tag/v1.0.0) on 5 March 2023 |
 
