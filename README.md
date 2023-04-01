@@ -75,6 +75,7 @@ We also provide a colab version of these tutorials that can be run directly. ([c
 - [Automatic hyperparameter tuning](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/Tutorial7_auto_tuning.ipynb)
 - [Market dynamic labeling](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/trademaster/evaluation/market_dynamics_labeling/example.ipynb)
 - [Financial data imputation with diffusion models](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tools/missing_value_imputation/run.py)
+- [Train RL agents with Alpha158 technical indicators](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/Tutorial8_Train_with_more_technical_indicators.ipynb)
 
 
 ## Dataset
