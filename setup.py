@@ -1,11 +1,11 @@
 from setuptools import setup, find_packages
 
-with open('TradeMaster_try/README.md', "r") as fh:
+with open('TradeMaster/README.md', "r") as fh:
     long_description = fh.read()
 
 setup(
-    name='TradeMaster_try',
-    version='0.0.6',
+    name='TradeMaster',
+    version='0.0.1',
     description='TradeMaster - A platform for algorithmic trading',
     long_description=long_description,
     long_description_content_type="text/markdown",
