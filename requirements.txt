@@ -1,6 +1,6 @@
 Flask
 Flask-Cors
-mmcv
+mmcv==1.7.1
 git+https://github.com/optuna/optuna.git
 prettytable
 plotly
