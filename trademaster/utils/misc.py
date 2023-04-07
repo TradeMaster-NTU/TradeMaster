@@ -20,7 +20,7 @@ import psutil
 import torch
 import torch.distributed as dist
 from iopath.common.file_io import g_pathmgr as pathmgr
-from torch._six import inf
+from math import inf
 import pickle as pkl
 
 
