@@ -1,18 +1,19 @@
+import torch
+import numpy as np
+import pandas as pd
+from trademaster.environments.portfolio_management.environment import PortfolioManagementEnvironment
+from ray.tune.registry import register_env
+import ray
+import os
+from trademaster.utils import get_attr, save_object, load_object
+from ..builder import TRAINERS
+from ..custom import Trainer
 import random
 import shutil
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
-from ..custom import Trainer
-from ..builder import TRAINERS
-from trademaster.utils import get_attr, save_object, load_object
-import os
-import ray
-from ray.tune.registry import register_env
-from trademaster.environments.portfolio_management.environment import PortfolioManagementEnvironment
-import pandas as pd
-import numpy as np
-import torch
+
 
 def env_creator(env_name):
     if env_name == 'portfolio_management':
@@ -20,6 +21,7 @@ def env_creator(env_name):
     else:
         raise NotImplementedError
     return env
+
 
 def select_algorithms(alg_name):
     alg_name = alg_name.upper()
@@ -42,8 +44,11 @@ def select_algorithms(alg_name):
         raise NotImplementedError
     return trainer
 
+
 ray.init(ignore_reinit_error=True)
-register_env("portfolio_management", lambda config: env_creator("portfolio_management")(config))
+register_env("portfolio_management", lambda config: env_creator(
+    "portfolio_management")(config))
+
 
 @TRAINERS.register_module()
 class PortfolioManagementTrainer(Trainer):
@@ -82,7 +87,8 @@ class PortfolioManagementTrainer(Trainer):
 
         '''remove history'''
         if self.if_remove is None:
-            self.if_remove = bool(input(f"| Arguments PRESS 'y' to REMOVE: {self.work_dir}? ") == 'y')
+            self.if_remove = bool(
+                input(f"| Arguments PRESS 'y' to REMOVE: {self.work_dir}? ") == 'y')
         if self.if_remove:
             import shutil
             shutil.rmtree(self.work_dir, ignore_errors=True)
@@ -98,37 +104,44 @@ class PortfolioManagementTrainer(Trainer):
     def train_and_valid(self):
 
         valid_score_list = []
-        self.trainer = self.trainer_name(env="portfolio_management", config=self.configs)
+        self.trainer = self.trainer_name(
+            env="portfolio_management", config=self.configs)
 
         for epoch in range(1, self.epochs + 1):
             print("Train Episode: [{}/{}]".format(epoch, self.epochs))
             self.trainer.train()
             config = dict(dataset=self.dataset, task="valid")
-            self.valid_environment = env_creator("portfolio_management")(config)
+            self.valid_environment = env_creator(
+                "portfolio_management")(config)
             print("Valid Episode: [{}/{}]".format(epoch, self.epochs))
             state = self.valid_environment.reset()
 
             episode_reward_sum = 0
             while True:
                 action = self.trainer.compute_single_action(state)
-                state, reward, done, information = self.valid_environment.step(action)
+                action = np.exp(action)/np.sum(np.exp(action))
+                state, reward, done, information = self.valid_environment.step(
+                    action)
                 episode_reward_sum += reward
                 if done:
                     #print("Valid Episode Reward Sum: {:04f}".format(episode_reward_sum))
                     break
             valid_score_list.append(information["sharpe_ratio"])
 
-            checkpoint_path = os.path.join(self.checkpoints_path, "checkpoint-{:05d}.pkl".format(epoch))
+            checkpoint_path = os.path.join(
+                self.checkpoints_path, "checkpoint-{:05d}.pkl".format(epoch))
             obj = self.trainer.save_to_object()
             save_object(obj, checkpoint_path)
 
         max_index = np.argmax(valid_score_list)
-        obj = load_object(os.path.join(self.checkpoints_path, "checkpoint-{:05d}.pkl".format(max_index+1)))
+        obj = load_object(os.path.join(self.checkpoints_path,
+                          "checkpoint-{:05d}.pkl".format(max_index+1)))
         save_object(obj, os.path.join(self.checkpoints_path, "best.pkl"))
         ray.shutdown()
 
     def test(self):
-        self.trainer = self.trainer_name(env="portfolio_management", config=self.configs)
+        self.trainer = self.trainer_name(
+            env="portfolio_management", config=self.configs)
 
         obj = load_object(os.path.join(self.checkpoints_path, "best.pkl"))
         self.trainer.restore_from_object(obj)
@@ -140,6 +153,7 @@ class PortfolioManagementTrainer(Trainer):
         episode_reward_sum = 0
         while True:
             action = self.trainer.compute_single_action(state)
+            action = np.exp(action)/np.sum(np.exp(action))
 
             state, reward, done, sharpe = self.test_environment.step(action)
             episode_reward_sum += reward
