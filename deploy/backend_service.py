@@ -21,6 +21,7 @@ from trademaster.utils import replace_cfg_vals, MRL_F2B_args_converter
 from flask_cors import CORS
 import os.path as osp
 import pickle
+import csv
 
 from tools import market_dynamics_labeling
 import base64
@@ -415,8 +416,11 @@ class Server():
         request_json = json.loads(request.get_data(as_text=True))
         try:
             # get input args
-
-            session_id = request_json.get("session_id")
+            try:
+                session_id = request_json.get("session_id")
+            except:
+                # if session_id is not provided, generate a new one
+                session_id = str(uuid.uuid4())
             # market_dynamics_labeling parameters
             args = {}
             args['dataset_name'] = request_json.get("dataset_name")
@@ -433,7 +437,22 @@ class Server():
             if session_id in self.sessions:
                 work_dir = self.sessions[session_id]["work_dir"]
                 cfg_path = self.sessions[session_id]["cfg_path"]
+            else:
+                # create new session
+                # we will use a default cfg file because we will not actually run an agent in this use case
+                cfg_path = os.path.join(ROOT, "configs", 'algorithmic_trading',
+                                        'algorithmic_trading_BTC_deepscalper_deepscalper_adam_mse.py')
+                # train_script_path = self.train_scripts(task_name, dataset_name, optimizer_name, loss_name, agent_name)
+                work_dir = os.path.join(ROOT, "work_dir", session_id,
+                                        f"dynamic_labeling_{args['dataset_name']}")
+                if not os.path.exists(work_dir):
+                    os.makedirs(work_dir)
 
+                cfg = Config.fromfile(cfg_path)
+                cfg = replace_cfg_vals(cfg)
+                cfg.work_dir = "work_dir/{}/{}".format(session_id,
+                                                       'dynamic_labeling_{}'.format(args['dataset_name']))
+                cfg.trainer.work_dir = cfg.work_dir
             # prepare data
 
             cfg = Config.fromfile(cfg_path)
@@ -518,7 +537,6 @@ class Server():
             with open(MDM_visualization_paths[0], "rb") as image_file:
                 encoded_string = base64.b64encode(image_file.read())
 
-            # update session information:
             # update session information:
             if "MDM_datafile_path" not in self.sessions[session_id]:
                 self.sessions[session_id]["MDM_cfg_path"] = MDM_cfg_path
@@ -661,6 +679,88 @@ class Server():
             return jsonify(res)
 
 
+    def upload_csv(self, request):
+        request_json = json.loads(request.get_data(as_text=True))
+        try:
+            session_id = request_json.get("session_id")
+
+            # if 'file' not in request_json.files:
+            #     return jsonify({'error': 'No file found in request'}), 400
+
+            uploaded_file = request_json.get('file')
+            if uploaded_file.filename == '':
+                return jsonify({'error': 'No file selected'}), 400
+
+            if uploaded_file and uploaded_file.filename.endswith('.csv'):
+                file_data = uploaded_file.stream.read().decode("utf-8")
+                #get file name without extension
+                custom_data_name = uploaded_file.filename.split('.')[0]
+                custom_data = list(csv.reader(file_data.splitlines()))
+                # return jsonify(csv_data)
+
+            self.sessions = self.load_sessions()
+            if session_id in self.sessions:
+                work_dir = self.sessions[session_id]["work_dir"]
+            # save custom data to csv file in work_dir
+            custom_datafile_path = os.path.join(work_dir, custom_data_name + ".csv")
+            with open(custom_datafile_path, 'w', newline='') as f:
+                writer = csv.writer(f)
+                writer.writerows(custom_data)
+
+            # update session info
+            if "custom_datafile_paths" not in self.sessions[session_id]:
+                self.sessions[session_id]["custom_datafile_paths"] = [custom_datafile_path]
+                self.sessions = self.dump_sessions({session_id: self.sessions[session_id] |
+                                                                {
+                                                                    "custom_datafile_paths":[custom_datafile_path],}
+                                                    })
+            else:
+                self.sessions[session_id]["custom_datafile_paths"].append(custom_datafile_path)
+                self.sessions = self.dump_sessions({session_id: self.sessions[session_id]})
+
+
+
+            error_code = 0
+            info = "request success, read uploaded csv file"
+            res = {
+                "error_code": error_code,
+                "info": info
+            }
+            logger.info(info)
+            return jsonify(res)
+
+        except Exception as e:
+            error_code = 1
+            info = "request error, {}".format(e)
+            res = {
+                "error_code": error_code,
+                "info": info
+            }
+            logger.info(info)
+            return jsonify(res)
+
+
+# def download_csv():
+#     # Define the path to your CSV file
+#     csv_file_path = 'your_csv_file.csv'
+#
+#     # Read the CSV file contents
+#     with open(csv_file_path, 'r', encoding='utf-8') as file:
+#         csv_data = file.read()
+#
+#     # Create a response with appropriate headers for downloading a CSV file
+#     response = Response(
+#         csv_data,
+#         content_type='text/csv',
+#         headers={
+#             "Content-Disposition": f"attachment; filename={csv_file_path}",
+#             "Content-Type": "text/csv; charset=utf-8"
+#         }
+#     )
+#
+#     return response
+
+
 class HealthCheck():
     def __init__(self):
         super(HealthCheck, self).__init__()
@@ -684,6 +784,11 @@ class HealthCheck():
 
 SERVER = Server()
 HEALTHCHECK = HealthCheck()
+
+@app.route("/api/TradeMaster/upload_csv", methods=['POST'])
+def upload_csv():
+    res = SERVER.upload_csv(request)
+    return res
 
 
 @app.route("/api/TradeMaster/getParameters", methods=["GET"])
