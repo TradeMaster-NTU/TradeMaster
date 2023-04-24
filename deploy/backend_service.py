@@ -11,7 +11,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 import pandas as pd
 import pytz
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response
 from mmcv import Config
 
 ROOT = str(pathlib.Path(__file__).resolve().parents[1])
@@ -416,11 +416,8 @@ class Server():
         request_json = json.loads(request.get_data(as_text=True))
         try:
             # get input args
-            try:
-                session_id = request_json.get("session_id")
-            except:
-                # if session_id is not provided, generate a new one
-                session_id = str(uuid.uuid4())
+
+            info=''
             # market_dynamics_labeling parameters
             args = {}
             args['dataset_name'] = request_json.get("dataset_name")
@@ -432,27 +429,19 @@ class Server():
             args['bear_threshold'] = request_json.get("bear_threshold")
             args['bull_threshold'] = request_json.get("bull_threshold")
 
+            try:
+                session_id = request_json.get("session_id")
+            except:
+                # if no session_id, create a new session with fake_training
+                session_id = self.fake_training(dataset_name=args['dataset_name'])
             # load session
             self.sessions = self.load_sessions()
             if session_id in self.sessions:
                 work_dir = self.sessions[session_id]["work_dir"]
                 cfg_path = self.sessions[session_id]["cfg_path"]
-            else:
-                # create new session
-                # we will use a default cfg file because we will not actually run an agent in this use case
-                cfg_path = os.path.join(ROOT, "configs", 'algorithmic_trading',
-                                        'algorithmic_trading_BTC_deepscalper_deepscalper_adam_mse.py')
-                # train_script_path = self.train_scripts(task_name, dataset_name, optimizer_name, loss_name, agent_name)
-                work_dir = os.path.join(ROOT, "work_dir", session_id,
-                                        f"dynamic_labeling_{args['dataset_name']}")
-                if not os.path.exists(work_dir):
-                    os.makedirs(work_dir)
-
-                cfg = Config.fromfile(cfg_path)
-                cfg = replace_cfg_vals(cfg)
-                cfg.work_dir = "work_dir/{}/{}".format(session_id,
-                                                       'dynamic_labeling_{}'.format(args['dataset_name']))
-                cfg.trainer.work_dir = cfg.work_dir
+                custom_datafile_paths = self.sessions[session_id]["custom_datafile_paths"]
+                # parse all custom data file name from custom_datafile_paths
+                custom_datafile_names = [os.path.basename(path).split('.')[0] for path in custom_datafile_paths]
             # prepare data
 
             cfg = Config.fromfile(cfg_path)
@@ -462,8 +451,15 @@ class Server():
             # test_start_date = "2010-01-01"
             # test_end_date = "2015-01-01"
 
+            # if dataset is custom, change the cfg.data.data_path to custom data path
+            if args['dataset_name'] in custom_datafile_names:
+                cfg.data.data_path = custom_datafile_paths[custom_datafile_names.index(args['dataset_name'])]
+
             data = pd.read_csv(os.path.join(ROOT, cfg.data.data_path, "data.csv"), index_col=0)
+
+
             data = data[(data["date"] >= test_start_date) & (data["date"] < test_end_date)]
+            info += f"There are total {data.shape[0]} ticks in the dataset\\n"
             data_path = os.path.join(work_dir, "dynamics_test.csv").replace("\\", "/")
             data.to_csv(data_path)
             args['dataset_path'] = data_path
@@ -502,6 +498,7 @@ class Server():
             logger.info(MDM_cfg)
             MDM_log_path = os.path.join(work_dir, "MDM_log.txt")
             MDM_script_path = self.train_scripts('market_dynamics_modeling', '', '', '', '')
+            MDM_dataset_name = args['dataset_name']
 
             # update session file
 
@@ -511,12 +508,14 @@ class Server():
                     "MDM_cfg_path": MDM_cfg_path,
                     "MDM_script_path": MDM_script_path,
                     "MDM_log_path": MDM_log_path,
+                    "MDM_dataset_name": MDM_dataset_name
                 }})
             # following dump
             else:
                 self.sessions[session_id]["MDM_cfg_path"] = MDM_cfg_path
                 self.sessions[session_id]["MDM_script_path"] = MDM_script_path
                 self.sessions[session_id]["MDM_log_path"] = MDM_log_path
+                self.sessions[session_id]["MDM_dataset_name"] = MDM_dataset_name
                 self.sessions = self.dump_sessions({session_id: self.sessions[session_id]})
 
             # run MDM
@@ -542,6 +541,7 @@ class Server():
                 self.sessions[session_id]["MDM_cfg_path"] = MDM_cfg_path
                 self.sessions[session_id]["MDM_script_path"] = MDM_script_path
                 self.sessions[session_id]["MDM_log_path"] = MDM_log_path
+                self.sessions[session_id]["MDM_dataset_name"] = MDM_dataset_name
                 self.sessions = self.dump_sessions({session_id: self.sessions[session_id] |
                                                                 {
                                                                     "MDM_datafile_path": MDM_datafile_path,
@@ -553,15 +553,17 @@ class Server():
                 self.sessions[session_id]["MDM_log_path"] = MDM_log_path
                 self.sessions[session_id]["MDM_datafile_path"] = MDM_datafile_path
                 self.sessions[session_id]["MDM_visualization_paths"] = MDM_visualization_paths
+                self.sessions[session_id]["MDM_dataset_name"] = MDM_dataset_name
                 self.sessions = self.dump_sessions({session_id: self.sessions[session_id]})
 
             error_code = 0
-            info = "request success, show market dynamics labeling visualization"
+            info = "request success, show market dynamics labeling visualization" + info
 
             res = {
                 "error_code": error_code,
                 "info": info,
-                "market_dynamic_labeling_visulization": str(encoded_string, 'utf-8')
+                "market_dynamic_labeling_visulization": str(encoded_string, 'utf-8'),
+                "session_id": session_id
             }
             logger.info(info)
             return jsonify(res)
@@ -574,7 +576,8 @@ class Server():
             res = {
                 "error_code": error_code,
                 "info": info + str(exc_type) + str(fname) + str(exc_tb.tb_lineno),
-                "market_dynamic_labeling_visulization": ""
+                "market_dynamic_labeling_visulization": "",
+                "session_id": session_id
             }
             logger.info(info)
             return jsonify(res)
@@ -589,6 +592,7 @@ class Server():
                 work_dir = self.sessions[session_id]["work_dir"]
                 cfg_path = self.sessions[session_id]["cfg_path"]
                 MDM_datafile_path = self.sessions[session_id]["MDM_datafile_path"]
+                MDM_dataset_name = self.sessions[session_id]["MDM_dataset_name"]
 
             cfg = Config.fromfile(cfg_path)
             cfg = replace_cfg_vals(cfg)
@@ -682,11 +686,6 @@ class Server():
     def upload_csv(self, request):
         request_json = json.loads(request.get_data(as_text=True))
         try:
-            session_id = request_json.get("session_id")
-
-            # if 'file' not in request_json.files:
-            #     return jsonify({'error': 'No file found in request'}), 400
-
             uploaded_file = request_json.get('file')
             if uploaded_file.filename == '':
                 return jsonify({'error': 'No file selected'}), 400
@@ -696,6 +695,45 @@ class Server():
                 #get file name without extension
                 custom_data_name = uploaded_file.filename.split('.')[0]
                 custom_data = list(csv.reader(file_data.splitlines()))
+
+
+            try:
+                session_id = request_json.get("session_id")
+            except:
+                # if session_id is not provided, create a new session with fake_training()
+                session_id = self.fake_training(dataset_name=custom_data_name)
+                # create new session
+                # we will use a default cfg file because we will not actually run an agent in this use case
+                # cfg_path = os.path.join(ROOT, "configs", 'algorithmic_trading',
+                #                         'algorithmic_trading_BTC_deepscalper_deepscalper_adam_mse.py')
+                # # train_script_path = self.train_scripts(task_name, dataset_name, optimizer_name, loss_name, agent_name)
+                # work_dir = os.path.join(ROOT, "work_dir", session_id,
+                #                         f"dynamic_labeling_{args['dataset_name']}")
+                # if not os.path.exists(work_dir):
+                #     os.makedirs(work_dir)
+                #
+                # cfg = Config.fromfile(cfg_path)
+                # cfg = replace_cfg_vals(cfg)
+                # cfg.work_dir = "work_dir/{}/{}".format(session_id,
+                #                                        'dynamic_labeling_{}'.format(args['dataset_name']))
+                # cfg.trainer.work_dir = cfg.work_dir
+
+
+
+
+
+            # if 'file' not in request_json.files:
+            #     return jsonify({'error': 'No file found in request'}), 400
+
+            # uploaded_file = request_json.get('file')
+            # if uploaded_file.filename == '':
+            #     return jsonify({'error': 'No file selected'}), 400
+            #
+            # if uploaded_file and uploaded_file.filename.endswith('.csv'):
+            #     file_data = uploaded_file.stream.read().decode("utf-8")
+            #     #get file name without extension
+            #     custom_data_name = uploaded_file.filename.split('.')[0]
+            #     custom_data = list(csv.reader(file_data.splitlines()))
                 # return jsonify(csv_data)
 
             self.sessions = self.load_sessions()
@@ -724,7 +762,8 @@ class Server():
             info = "request success, read uploaded csv file"
             res = {
                 "error_code": error_code,
-                "info": info
+                "info": info,
+                "session_id": session_id
             }
             logger.info(info)
             return jsonify(res)
@@ -734,31 +773,174 @@ class Server():
             info = "request error, {}".format(e)
             res = {
                 "error_code": error_code,
-                "info": info
+                "info": info,
+                "session_id": session_id
             }
             logger.info(info)
             return jsonify(res)
 
 
-# def download_csv():
-#     # Define the path to your CSV file
-#     csv_file_path = 'your_csv_file.csv'
-#
-#     # Read the CSV file contents
-#     with open(csv_file_path, 'r', encoding='utf-8') as file:
-#         csv_data = file.read()
-#
-#     # Create a response with appropriate headers for downloading a CSV file
-#     response = Response(
-#         csv_data,
-#         content_type='text/csv',
-#         headers={
-#             "Content-Disposition": f"attachment; filename={csv_file_path}",
-#             "Content-Type": "text/csv; charset=utf-8"
-#         }
-#     )
-#
-#     return response
+    def fake_training(self,task_name = "algorithmic_trading",
+        dataset_name = "algorithmic_trading:BTC".split(":")[-1],
+        optimizer_name = "adam",
+        loss_name = "mse",
+        agent_name = "algorithmic_trading:deepscalper".split(":")[-1],
+        start_date = "2015-10-01",
+        end_date = "2021-07-06"):
+
+        task_name = task_name
+        dataset_name = dataset_name
+        optimizer_name = optimizer_name
+        loss_name = loss_name
+        agent_name = agent_name
+        start_date = start_date
+        end_date = end_date
+        ##TODO
+        session_id = str(uuid.uuid1())
+
+        cfg_path = os.path.join(ROOT, "configs", task_name,
+                                f"{task_name}_algorithmic_trading_{agent_name}_{agent_name}_{optimizer_name}_{loss_name}.py")
+        train_script_path = self.train_scripts(task_name, "algorithmic_trading", optimizer_name, loss_name, agent_name)
+        work_dir = os.path.join(ROOT, "work_dir", session_id,
+                                'dynamic_labeling')
+        if not os.path.exists(work_dir):
+            os.makedirs(work_dir)
+
+        cfg = Config.fromfile(cfg_path)
+        cfg = replace_cfg_vals(cfg)
+        cfg.work_dir = "work_dir/{}/{}".format(session_id,
+                                               'dynamic_labeling')
+        cfg.trainer.work_dir = cfg.work_dir
+
+        # # build dataset
+        # data = pd.read_csv(os.path.join(ROOT, cfg.data.data_path, "data.csv"), index_col=0)
+        # data = data[(data["date"] >= start_date) & (data["date"] < end_date)]
+        #
+        # # indexs = range(len(data.index.unique()))
+        # indexs = data.index.unique()
+        #
+        # train_indexs = indexs[:int(len(indexs) * 0.8)]
+        # val_indexs = indexs[int(len(indexs) * 0.8):int(len(indexs) * 0.9)]
+        # test_indexs = indexs[int(len(indexs) * 0.9):]
+        #
+        # train_data = data.loc[train_indexs, :]
+        # train_data.index = train_data.index - train_data.index.min()
+        #
+        # val_data = data.loc[val_indexs, :]
+        # val_data.index = val_data.index - val_data.index.min()
+        #
+        # test_data = data.loc[test_indexs, :]
+        # test_data.index = test_data.index - test_data.index.min()
+        #
+        # train_data.to_csv(os.path.join(work_dir, "train.csv"))
+        cfg.data.train_path = "{}/{}".format(cfg.work_dir, "train.csv")
+        # val_data.to_csv(os.path.join(work_dir, "valid.csv"))
+        cfg.data.valid_path = "{}/{}".format(cfg.work_dir, "valid.csv")
+        # test_data.to_csv(os.path.join(work_dir, "test.csv"))
+        cfg.data.test_path = "{}/{}".format(cfg.work_dir, "test.csv")
+
+        cfg_path = os.path.join(work_dir, osp.basename(cfg_path))
+        cfg.dump(cfg_path)
+        logger.info(cfg)
+
+        log_path = os.path.join(work_dir, "train_log.txt")
+
+        self.sessions = self.dump_sessions({session_id: {
+            "dataset": dataset_name,
+            "task_name": task_name,
+            "work_dir": work_dir,
+            "cfg_path": cfg_path,
+            "script_path": train_script_path,
+            "train_log_path": log_path,
+            "test_log_path": os.path.join(os.path.dirname(log_path), "test_log.txt")
+        }})
+
+        return session_id
+        # cmd = "conda activate TradeMaster && nohup python -u {} --config {} --task_name train > {} 2>&1 &".format(
+        #     train_script_path,
+        #     cfg_path,
+        #     log_path)
+        #
+        # executor.submit(run_cmd, cmd)
+        # logger.info(cmd)
+
+        # error_code = 0
+        # info = "request success, start train"
+        # res = {
+        #     "error_code": error_code,
+        #     "info": info,
+        #     "session_id": session_id
+        # }
+        # logger.info(info)
+        # return jsonify(res)
+
+
+    def download_csv(self, request):
+        request_json = json.loads(request.get_data(as_text=True))
+        try:
+            session_id = request_json.get("session_id")
+
+            self.sessions = self.load_sessions()
+            if session_id in self.sessions:
+                work_dir = self.sessions[session_id]["work_dir"]
+                # get the saved csv file path that is set in save_market_dynamics_labeling()
+                # TODO: modify the save_market_dynamics_labeling()
+                # get all custom data file paths
+                custom_datafile_paths = self.sessions[session_id]["custom_datafile_paths"]
+                MDM_dataset_name = self.sessions[session_id]["MDM_dataset_name"]
+
+            # parse all custom data file name from custom_datafile_paths
+            custom_datafile_names = [os.path.basename(path).split('.')[0] for path in custom_datafile_paths]
+
+            # forbid download csv file if it is not a custom data
+            if MDM_dataset_name not in custom_datafile_names:
+                error_code = 1
+                info = "request error, you can only download custom data"
+                res = {
+                    "error_code": error_code,
+                    "info": info,
+                    "file": None
+                }
+                logger.info(info)
+                return jsonify(res)
+
+            # get the saved csv file path that is set in save_market_dynamics_labeling()
+            saved_dataset_path = os.path.join(work_dir, MDM_dataset_name + ".csv")
+
+            # Read the CSV file contents
+            with open(saved_dataset_path, 'r', encoding='utf-8') as file:
+                csv_data = file.read()
+
+            # Create a response with appropriate headers for downloading a CSV file
+            response = Response(
+                csv_data,
+                content_type='text/csv',
+                headers={
+                    "Content-Disposition": f"attachment; filename={MDM_dataset_name}",
+                    "Content-Type": "text/csv; charset=utf-8"
+                }
+            )
+
+            error_code = 0
+            info = "request success, read uploaded csv file"
+            res = {
+                "error_code": error_code,
+                "info": info,
+                "file": response
+            }
+            logger.info(info)
+            return jsonify(res)
+
+        except Exception as e:
+            error_code = 1
+            info = "request error, {}".format(e)
+            res = {
+                "error_code": error_code,
+                "info": info,
+                "file": None
+            }
+            logger.info(info)
+            return jsonify(res)
 
 
 class HealthCheck():
@@ -790,6 +972,10 @@ def upload_csv():
     res = SERVER.upload_csv(request)
     return res
 
+@app.route("/api/TradeMaster/download_csv", methods=['POST'])
+def download_csv():
+    res = SERVER.download_csv(request)
+    return res
 
 @app.route("/api/TradeMaster/getParameters", methods=["GET"])
 def getParameters():
