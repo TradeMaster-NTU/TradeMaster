@@ -442,3 +442,20 @@ def plot(df,alg,color='darkcyan',save=False):
     plt.show()
 
 
+def plot_total_asset_against_buy_and_hold(total_asset,buy_and_hold,alg,task,color='darkcyan',save_dir=None):
+    x = range(len(total_asset))
+    y=total_asset
+    plt.plot(x, y*100, color, label=alg)
+    plt.xlabel('Trading times',size=18)
+    plt.ylabel('Total assets',size=18)
+    if buy_and_hold is not None:
+        plt.plot(x, buy_and_hold, 'r', label='Buy and Hold')
+    plt.grid(ls='--')
+    plt.legend(loc='upper center', fancybox=True, ncol=1, fontsize='x-large',bbox_to_anchor=(0.49, 1.15,0,0))
+    # set title
+    plt.title(f'Total asset of {alg} in {task}')
+    if save_dir is not None:
+        plt.savefig(osp.join(save_dir,f"Total asset of {alg} in {task}.png"))
+    # plt.show()
+
+
