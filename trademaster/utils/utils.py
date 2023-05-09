@@ -498,7 +498,9 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
     # plot trading points(buy_trade_points and sell_trade_points) as bars using the second y axis
     ax2 = ax1.twinx()
     ax2.set_ylabel('Trading',size=18)
-    scale=max(max(buy_trade_points.values()),max(sell_trade_points.values()))
+    buy_max=max(buy_trade_points.values()) if len(buy_trade_points)>0 else 0
+    sell_max=max(sell_trade_points.values()) if len(sell_trade_points)>0 else 0
+    scale=max(buy_max,sell_max)
     ax2.set_ylim(-1.1*scale,1.1*scale)
     ax2.set_yticks([-1.1*scale,0,1.1*scale])
     ax2.set_yticklabels(['sell','hold','buy'])
