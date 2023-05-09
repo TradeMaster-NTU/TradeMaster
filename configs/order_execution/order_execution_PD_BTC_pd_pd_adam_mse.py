@@ -68,7 +68,7 @@ agent = dict(
 
 trainer = dict(
     type="OrderExecutionPDTrainer",
-    epochs=10,
+    epochs=2,
     work_dir=work_dir,
     seeds_list=(12345,),
     batch_size=batch_size,
