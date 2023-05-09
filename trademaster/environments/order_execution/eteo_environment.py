@@ -388,7 +388,21 @@ class OrderExecutionETEOEnvironment(Environments):
             print(table)
             self.cash_left=cash_left
 
+            market_features_dict = {'bids_distance_0':self.data['bids_distance_0']*self.data['spread'],'asks_distance_0':self.data['asks_distance_0']*self.data['spread']}
+
+            buy_points={}
+            sell_points={}
+            for i,order in enumerate(self.order_history):
+                # if the action's volume is greater than 0, we are going to buy the bitcoin we are holding
+                if order[0] > 0:
+                    buy_points[i] = order[0]
+                elif order[0] < 0:
+                    sell_points[i] = order[0]
+            trading_points = {'buy':buy_points,'sell':sell_points}
+
             return self.state, self.reward, self.terminal, {'cash_left':cash_left,'TWAP_value':TWAP_value,
-                                                            'cash_left_by_tick':cash_left_by_tick, 'portfolio_value_history':self.portfolio_value_history}
+                                                            'cash_left_by_tick':cash_left_by_tick, 'portfolio_value_history':self.portfolio_value_history,
+                                                            'trading_points':trading_points,
+                                                            'market_features_dict':market_features_dict}
         else:
             return self.state, 0, self.terminal, {}

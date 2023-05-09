@@ -444,7 +444,7 @@ def plot(df,alg,color='darkcyan',save=False):
 
 def plot_metric_against_baseline(total_asset,buy_and_hold,alg,task,color='darkcyan',save_dir=None,metric_name='Total asset'):
     # print('total_asset shape is:',total_asset.shape)
-    print(total_asset)
+    # print(total_asset)
     x = range(len(total_asset))
     # print('total_asset shape is:',total_asset.shape)
     # print('x shape is:',len(x))
@@ -464,5 +464,36 @@ def plot_metric_against_baseline(total_asset,buy_and_hold,alg,task,color='darkcy
     if save_dir is not None:
         plt.savefig(osp.join(save_dir,f"{metric_name} of {alg} in {task}.png"))
     # plt.show()
+
+def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task,color='darkcyan',save_dir=None,metric_name='Trading'):
+    # parse market_features_dict to get market_features
+    market_features=market_features_dict.keys()
+    x = range(len(market_features[market_features[0]]))
+    # print('total_asset shape is:',total_asset.shape)
+    # print('x shape is:',len(x))
+    # set figure size
+    plt.figure(figsize=(10, 6))
+    for market_feature in market_features:
+        y=market_features_dict[market_feature]
+        plt.plot(x, y, color, label=market_feature)
+    plt.xlabel('Trading times',size=18)
+    plt.ylabel(metric_name,size=18)
+
+    buy_trade_points=trading_points['buy']
+    sell_trade_points=trading_points['sell']
+    # plot trading points as vertical arrows, buy points are red, sell points are green,add the volume of the trade on the arrow
+    for buy_trade_point,buy_volume in buy_trade_points.items():
+        plt.annotate(f'buy {buy_volume}', xy=(buy_trade_point, 0), xytext=(buy_trade_point, 0.5),
+                     arrowprops=dict(facecolor='red', shrink=0.05),)
+    for sell_trade_point,sell_volume in sell_trade_points.items():
+        plt.annotate(f'sell {sell_volume}', xy=(sell_trade_point, 0), xytext=(sell_trade_point, 0.5),
+                     arrowprops=dict(facecolor='green', shrink=0.05),)
+
+    plt.grid(ls='--')
+    plt.legend(loc='upper center', fancybox=True, ncol=1)
+    # set title
+    plt.title(f'{metric_name} of {alg} in {task}')
+    if save_dir is not None:
+        plt.savefig(osp.join(save_dir,f"{metric_name} of {alg} in {task}.png"))
 
 
