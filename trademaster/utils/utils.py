@@ -444,11 +444,14 @@ def plot(df,alg,color='darkcyan',save=False):
 
 def plot_metric_against_baseline(total_asset,buy_and_hold,alg,task,color='darkcyan',save_dir=None,metric_name='Total asset'):
     x = range(len(total_asset))
+    print('total_asset shape is:',total_asset.shape)
+    print('x shape is:',len(x))
     y=total_asset
     plt.plot(x, y*100, color, label=alg)
     plt.xlabel('Trading times',size=18)
     plt.ylabel(metric_name,size=18)
     if buy_and_hold is not None:
+        print('buy and hold shape is:',buy_and_hold.shape)
         plt.plot(x, buy_and_hold, 'r', label='Buy and Hold')
     plt.grid(ls='--')
     plt.legend(loc='upper center', fancybox=True, ncol=1, fontsize='x-large',bbox_to_anchor=(0.49, 1.15,0,0))
