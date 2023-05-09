@@ -198,9 +198,12 @@ class PortfolioManagementEIIETrainer(Trainer):
             if self.if_discrete:
                 tensor_action = tensor_action.argmax(dim=1)
             action = tensor_action.detach().cpu().numpy()[0]
-            state, reward, done, _ = self.test_environment.step(action)
+            state, reward, done, return_dict = self.test_environment.step(action)
             episode_reward_sum += reward
             if done:
+                plot_metric_against_baseline(total_asset=return_dict['total_assets'],
+                                             buy_and_hold=None, alg='Ensemble of Identical Independent Evaluators',
+                                             task='test', color='darkcyan', save_dir=self.work_dir)
                 # print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
                 break
         df_return = self.test_environment.save_portfolio_return_memory()
