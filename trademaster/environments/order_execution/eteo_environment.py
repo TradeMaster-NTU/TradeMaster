@@ -375,7 +375,7 @@ class OrderExecutionETEOEnvironment(Environments):
             else:
                 self.reward = 0
 
-            cash_left_by_tick = [portfolio[0] + portfolio[1] for portfolio in self.portfolio_value_history ]
+            cash_left_by_tick = [ self.portfolio + self.portfolio for portfolio  in self.portfolio_history]
 
             stats = OrderedDict(
                 {
@@ -389,6 +389,6 @@ class OrderExecutionETEOEnvironment(Environments):
             self.cash_left=cash_left
 
             return self.state, self.reward, self.terminal, {'cash_left':cash_left,'TWAP_value':TWAP_value,
-                                                            'cash_left_by_tick':cash_left_by_tick}
+                                                            'cash_left_by_tick':cash_left_by_tick, 'portfolio_value_history':self.portfolio_value_history}
         else:
             return self.state, 0, self.terminal, {}
