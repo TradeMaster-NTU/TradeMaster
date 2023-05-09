@@ -465,7 +465,7 @@ def plot_metric_against_baseline(total_asset,buy_and_hold,alg,task,color='darkcy
         plt.savefig(osp.join(save_dir,f"{metric_name} of {alg} in {task}.png"))
     # plt.show()
 
-def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task,color='darkcyan',save_dir=None,metric_name='Trading'):
+def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task,color='darkcyan',save_dir=None,metric_name='Level 0 Bid and Ask Distance'):
     # parse market_features_dict to get market_features
     # print('market_features_dict is:',market_features_dict)
     # print('trading_points is:',trading_points)
@@ -474,7 +474,7 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
     # print('total_asset shape is:',total_asset.shape)
     # print('x shape is:',len(x))
     # set figure size
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(12, 8))
     fig, ax1 = plt.subplots()
 
     # plot the market_features on the first y axis
@@ -484,7 +484,7 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
     plt.xlabel('Trading times',size=18)
     plt.ylabel(metric_name,size=18)
     plt.grid(ls='--')
-    plt.legend(loc='upper center', fancybox=True, ncol=1)
+
 
     # for market_feature in market_features:
     #     y=market_features_dict[market_feature]
@@ -497,7 +497,7 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
 
     # plot trading points(buy_trade_points and sell_trade_points) as bars using the second y axis
     ax2 = ax1.twinx()
-    ax2.set_ylabel('Trading',size=18)
+    ax2.set_ylabel('Trading Size',size=18)
     buy_max=max(buy_trade_points.values()) if len(buy_trade_points)>0 else 0
     sell_max=max(sell_trade_points.values()) if len(sell_trade_points)>0 else 0
     scale=max(buy_max,sell_max)
@@ -508,6 +508,7 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
         ax2.bar(buy_trade_point,buy_volume, color='r',width=1,label='buy')
     for sell_trade_point,sell_volume in sell_trade_points.items():
         ax2.bar(sell_trade_point,-1*sell_volume, color='g',width=1,label='sell')
+    plt.legend(loc='upper center', fancybox=True, ncol=1)
 
 
     # plot trading points as vertical arrows, buy points are red, sell points are green,add the volume of the trade on the arrow
