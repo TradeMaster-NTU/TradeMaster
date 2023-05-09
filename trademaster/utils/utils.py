@@ -477,9 +477,10 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
     plt.figure(figsize=(12, 8))
     fig, ax1 = plt.subplots()
 
-    # plot the market_features on the first y axis
+    # plot the market_features on the first y axis and give a different color for each market_feature
     for market_feature in market_features:
         y=market_features_dict[market_feature]
+        # ax1.plot(x, y, label=market_feature)
         ax1.plot(x, y, label=market_feature)
     plt.xlabel('Trading times',size=12)
     plt.ylabel(metric_name,size=12)
@@ -505,10 +506,11 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
     ax2.set_ylim(-1.1*scale,1.1*scale)
     ax2.set_yticks([-1.1*scale,0,1.1*scale])
     ax2.set_yticklabels(['sell','hold','buy'])
+    # give different color for buy and sell
     # for buy_trade_point,buy_volume in buy_trade_points.items():
-    ax2.bar(list(buy_trade_points.keys()),list(buy_trade_points.values()),width=1,label='buy')
+    ax2.bar(list(buy_trade_points.keys()),list(buy_trade_points.values()),width=1,label='buy',color='r')
     # for sell_trade_point,sell_volume in sell_trade_points.items():
-    ax2.bar(list(sell_trade_points.keys()),-1*list(sell_trade_points.values()),width=1,label='sell')
+    ax2.bar(list(sell_trade_points.keys()),-1*list(sell_trade_points.values()),width=1,label='sell',color='g')
     ax2.legend(loc='upper center', fancybox=True, ncol=1)
 
 
