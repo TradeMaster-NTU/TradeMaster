@@ -214,7 +214,6 @@ class OrderExecutionPDTrainer(Trainer):
                     break
 
         max_index = np.argmax(valid_score_list)
-        print(save_dict_list[max_index])
         plot_metric_against_baseline(total_asset=save_dict_list[max_index]['money_sold_list'], buy_and_hold=None,
                                      alg='Oracle Policy Distillation', task='train', color='darkcyan', save_dir=self.work_dir,
                                      metric_name='Money sold')
