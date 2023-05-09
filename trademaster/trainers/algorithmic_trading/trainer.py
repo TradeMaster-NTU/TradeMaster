@@ -168,7 +168,7 @@ class AlgorithmicTradingTrainer(Trainer):
 
         max_index = np.argmax(valid_score_list)
         # plot the total asset against the baseline of the best epoch
-        plot_metric_against_baseline(total_asset=save_dict_list[max_index]['total_assets'],buy_and_hold=save_dict_list[max_index]['buy_and_hold_assets'],alg=self.agent,task='train',color='darkcyan',save_dir=self.work_dir)
+        plot_metric_against_baseline(total_asset=save_dict_list[max_index]['total_assets'],buy_and_hold=save_dict_list[max_index]['buy_and_hold_assets'],alg='Deepscalper',task='train',color='darkcyan',save_dir=self.work_dir)
 
         load_model(self.checkpoints_path,
                    epoch=max_index + 1,
@@ -284,7 +284,7 @@ class AlgorithmicTradingTrainer(Trainer):
                 # print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
                 plot_metric_against_baseline(total_asset=save_dict['total_assets'],
                                              buy_and_hold=save_dict['buy_and_hold_assets'],
-                                             alg=self.agent, task='test', color='darkcyan', save_dir=self.work_dir)
+                                             alg='Deepscalper', task='test', color='darkcyan', save_dir=self.work_dir)
                 break
 
         rewards = self.test_environment.save_asset_memory()

@@ -182,7 +182,7 @@ class OrderExecutionETEOTrainer(Trainer):
                 break
 
         max_index = np.argmax(valid_score_list)
-        plot_metric_against_baseline(total_asset=save_dict_list[max_index]['cash_left_by_tick'],buy_and_hold=None,alg=self.agent,task='train',color='darkcyan',save_dir=self.work_dir,metric_name='Cash left')
+        plot_metric_against_baseline(total_asset=save_dict_list[max_index]['cash_left_by_tick'],buy_and_hold=None,alg='End-to-End Optimal',task='train',color='darkcyan',save_dir=self.work_dir,metric_name='Cash left')
         load_model(self.checkpoints_path,
                    epoch=max_index + 1,
                    save=self.agent.get_save())
@@ -218,7 +218,7 @@ class OrderExecutionETEOTrainer(Trainer):
 
             episode_reward_sum += reward
             if done:
-                plot_metric_against_baseline(total_asset=return_dict['cash_left_by_tick'],buy_and_hold=None,alg=self.agent,task='test',color='darkcyan',save_dir=self.work_dir,metric_name='Cash left')
+                plot_metric_against_baseline(total_asset=return_dict['cash_left_by_tick'],buy_and_hold=None,alg='End-to-End Optimal',task='test',color='darkcyan',save_dir=self.work_dir,metric_name='Cash left')
 #                print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
                 break
 
