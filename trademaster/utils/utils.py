@@ -506,9 +506,9 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
     ax2.set_yticks([-1.1*scale,0,1.1*scale])
     ax2.set_yticklabels(['sell','hold','buy'])
     # for buy_trade_point,buy_volume in buy_trade_points.items():
-    ax2.bar(list(buy_trade_points.keys()),list(buy_trade_points.values()), color='r',width=1,label='buy')
+    ax2.bar(list(buy_trade_points.keys()),list(buy_trade_points.values()),width=1,label='buy')
     # for sell_trade_point,sell_volume in sell_trade_points.items():
-    ax2.bar(list(sell_trade_points.keys()),-1*list(sell_trade_points.values()), color='g',width=1,label='sell')
+    ax2.bar(list(sell_trade_points.keys()),-1*list(sell_trade_points.values()),width=1,label='sell')
     ax2.legend(loc='upper center', fancybox=True, ncol=1)
 
 
