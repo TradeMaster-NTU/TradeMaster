@@ -194,7 +194,7 @@ class OrderExecutionPDTrainer(Trainer):
                     state, info = self.valid_environment.reset()
 
                     episode_reward_sum = 0.0  # sum of rewards in an episode
-                    episode_reward_sum_list = []
+
                     while True:
                         public_state = torch.from_numpy(state).to(self.device).float()
                         private_state = torch.from_numpy(info["private_state"]).to(self.device).float()
@@ -202,7 +202,6 @@ class OrderExecutionPDTrainer(Trainer):
                         action = tensor_action[0, 0].detach().cpu().numpy()
                         state, reward, done, info = self.valid_environment.step(action)
                         episode_reward_sum += reward
-                        episode_reward_sum_list.append(episode_reward_sum)
                         if done:
                             #print("Valid Episode Reward Sum: {:04f}".format(episode_reward_sum))
                             break
@@ -215,6 +214,7 @@ class OrderExecutionPDTrainer(Trainer):
                     break
 
         max_index = np.argmax(valid_score_list)
+        print(save_dict_list[max_index])
         plot_metric_against_baseline(total_asset=save_dict_list[max_index]['money_sold_list'], buy_and_hold=None,
                                      alg='Oracle Policy Distillation', task='train', color='darkcyan', save_dir=self.work_dir,
                                      metric_name='Money sold')
@@ -236,7 +236,6 @@ class OrderExecutionPDTrainer(Trainer):
         state, info = self.test_environment.reset()
 
         episode_reward_sum = 0
-        episode_reward_sum_list = []
         while True:
 
             public_state = torch.from_numpy(state).to(self.device).float()
@@ -246,7 +245,6 @@ class OrderExecutionPDTrainer(Trainer):
             action = tensor_action[0, 0].detach().cpu().numpy()
             state, reward, done, info = self.test_environment.step(action)
             episode_reward_sum += reward
-            episode_reward_sum_list.append(episode_reward_sum)
 
             if done:
                 plot_metric_against_baseline(total_asset=info['money_sold_list'], buy_and_hold=None,
