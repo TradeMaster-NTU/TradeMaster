@@ -375,7 +375,7 @@ class OrderExecutionETEOEnvironment(Environments):
             else:
                 self.reward = 0
 
-            cash_left_by_tick = [ self.portfolio + self.portfolio for portfolio  in self.portfolio_history]
+            cash_left_by_tick = [ portfolio[0] + portfolio[1] for portfolio in self.portfolio_history]
 
             stats = OrderedDict(
                 {
