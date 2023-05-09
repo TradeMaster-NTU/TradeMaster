@@ -444,6 +444,7 @@ def plot(df,alg,color='darkcyan',save=False):
 
 def plot_metric_against_baseline(total_asset,buy_and_hold,alg,task,color='darkcyan',save_dir=None,metric_name='Total asset'):
     # print('total_asset shape is:',total_asset.shape)
+    print(total_asset)
     x = range(len(total_asset))
     # print('total_asset shape is:',total_asset.shape)
     # print('x shape is:',len(x))
