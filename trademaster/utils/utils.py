@@ -454,7 +454,7 @@ def plot_metric_against_baseline(total_asset,buy_and_hold,alg,task,color='darkcy
         # print('buy and hold shape is:',buy_and_hold.shape)
         plt.plot(x, buy_and_hold, 'r', label='Buy and Hold')
     plt.grid(ls='--')
-    plt.legend(loc='upper center', fancybox=True, ncol=1, fontsize='x-large',bbox_to_anchor=(0.49, 1.15,0,0))
+    plt.legend(loc='upper center', fancybox=True, ncol=1)
     # set title
     plt.title(f'{metric_name} of {alg} in {task}')
     if save_dir is not None:
