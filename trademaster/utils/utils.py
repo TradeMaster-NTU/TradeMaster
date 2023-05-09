@@ -446,6 +446,8 @@ def plot_metric_against_baseline(total_asset,buy_and_hold,alg,task,color='darkcy
     x = range(len(total_asset))
     # print('total_asset shape is:',total_asset.shape)
     # print('x shape is:',len(x))
+    # set figure size
+    plt.figure(figsize=(10, 6))
     y=total_asset
     plt.plot(x, y, color, label=alg)
     plt.xlabel('Trading times',size=18)
