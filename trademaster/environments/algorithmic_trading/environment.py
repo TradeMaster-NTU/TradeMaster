@@ -134,7 +134,7 @@ class AlgorithmicTradingEnvironment(Environments):
                 {
                     "Total Return": ["{:04f}%".format(tr * 100)],
                     "Buy and Hold Profit": ["{:04f}%".format(buy_and_hold_profit)],
-                    # "Excess Profit": ["{:04f}%".format(tr * 100 - 0)],
+                    "Excess Profit": ["{:04f}%".format(tr * 100 - buy_and_hold_profit)],
                     "Sharp Ratio": ["{:04f}".format(sharpe_ratio)],
                     "Volatility": ["{:04f}%".format(vol* 100)],
                     "Max Drawdown": ["{:04f}%".format(mdd* 100)],
