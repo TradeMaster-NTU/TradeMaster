@@ -483,13 +483,26 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
 
     buy_trade_points=trading_points['buy']
     sell_trade_points=trading_points['sell']
-    # plot trading points as vertical arrows, buy points are red, sell points are green,add the volume of the trade on the arrow
+
+    # plot trading points(buy_trade_points and sell_trade_points) as bars using the second y axis
+    ax2 = plt.twinx()
+    ax2.set_ylabel('Trading',size=18)
+    ax2.set_ylim(-1,1)
+    ax2.set_yticks([-1,0,1])
+    ax2.set_yticklabels(['sell','hold','buy'])
     for buy_trade_point,buy_volume in buy_trade_points.items():
-        plt.annotate(f'buy {buy_volume}', xy=(buy_trade_point, 0), xytext=(buy_trade_point, 0.5),
-                     arrowprops=dict(facecolor='red', shrink=0.05),)
+        ax2.bar(buy_trade_point,buy_volume, color='r',width=1)
     for sell_trade_point,sell_volume in sell_trade_points.items():
-        plt.annotate(f'sell {sell_volume}', xy=(sell_trade_point, 0), xytext=(sell_trade_point, 0.5),
-                     arrowprops=dict(facecolor='green', shrink=0.05),)
+        ax2.bar(sell_trade_point,-1*sell_volume, color='g',width=1)
+
+
+    # plot trading points as vertical arrows, buy points are red, sell points are green,add the volume of the trade on the arrow
+    # for buy_trade_point,buy_volume in buy_trade_points.items():
+    #     plt.annotate(f'buy {buy_volume}', xy=(buy_trade_point, 0), xytext=(buy_trade_point, 0.5),
+    #                  arrowprops=dict(facecolor='red', shrink=0.05),)
+    # for sell_trade_point,sell_volume in sell_trade_points.items():
+    #     plt.annotate(f'sell {sell_volume}', xy=(sell_trade_point, 0), xytext=(sell_trade_point, 0.5),
+    #                  arrowprops=dict(facecolor='green', shrink=0.05),)
 
     plt.grid(ls='--')
     plt.legend(loc='upper center', fancybox=True, ncol=1)
