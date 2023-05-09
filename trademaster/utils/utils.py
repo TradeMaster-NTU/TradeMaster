@@ -468,7 +468,7 @@ def plot_metric_against_baseline(total_asset,buy_and_hold,alg,task,color='darkcy
 def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task,color='darkcyan',save_dir=None,metric_name='Trading'):
     # parse market_features_dict to get market_features
     market_features=market_features_dict.keys()
-    x = range(len(market_features[market_features[0]]))
+    x = range(len(market_features_dict[market_features[0]]))
     # print('total_asset shape is:',total_asset.shape)
     # print('x shape is:',len(x))
     # set figure size
