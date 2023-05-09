@@ -218,6 +218,7 @@ class OrderExecutionETEOTrainer(Trainer):
 
             episode_reward_sum += reward
             if done:
+                print('plot_metric_against_baseline')
                 plot_metric_against_baseline(total_asset=return_dict['cash_left_by_tick'],buy_and_hold=None,alg='End-to-End Optimal',task='test',color='darkcyan',save_dir=self.work_dir,metric_name='Cash left')
 #                print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
                 break
