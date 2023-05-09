@@ -50,6 +50,7 @@ class OrderExecutionETEOEnvironment(Environments):
 
         self.time_frame = 0
         self.order_history = []
+        self.action_history = []
         self.action_space = spaces.Box(low=-np.inf, high=np.inf, shape=(2,))
         # set action第一个为volume 正为买 负为卖 第二个为价格
         self.observation_space = spaces.Box(
@@ -89,6 +90,7 @@ class OrderExecutionETEOEnvironment(Environments):
         self.portfolio = [self.initial_amount] + [0] + [0] + [0]
         self.portfolio_history = [self.portfolio]
         self.order_history = []
+        self.action_history = []
         self.data = self.df.loc[self.time_frame, :]
         self.data_normal = self.data.copy()
         self.data_normal["order_money"] = self.data_normal[
@@ -183,6 +185,7 @@ class OrderExecutionETEOEnvironment(Environments):
         if action[0] == 0:
             action = [0, 0, 0]
         order = action
+        self.action_history.append(action)
         self.order_history.append(order)
         if len(self.order_history) > self.order_length:
             self.order_history.pop(0)
@@ -388,11 +391,11 @@ class OrderExecutionETEOEnvironment(Environments):
             print(table)
             self.cash_left=cash_left
 
-            market_features_dict = {'bids_distance_0':self.data['bids_distance_0']*self.data['spread'],'asks_distance_0':self.data['asks_distance_0']*self.data['spread']}
+            market_features_dict = {'bids_distance_0':self.df['bids_distance_0']*self.df['spread'],'asks_distance_0':self.df['asks_distance_0']*self.df['spread']}
 
             buy_points={}
             sell_points={}
-            for i,order in enumerate(self.order_history):
+            for i,order in enumerate(self.action_history):
                 # if the action's volume is greater than 0, we are going to buy the bitcoin we are holding
                 if order[0] > 0:
                     buy_points[i] = order[0]
