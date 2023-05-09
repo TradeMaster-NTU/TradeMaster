@@ -133,7 +133,7 @@ class AlgorithmicTradingEnvironment(Environments):
             stats = OrderedDict(
                 {
                     "Total Return": ["{:04f}%".format(tr * 100)],
-                    # "Buy and Hold Profit": ["{:04f}%".format(buy_and_hold_profit)],
+                    "Buy and Hold Profit": ["{:04f}%".format(buy_and_hold_profit)],
                     # "Excess Profit": ["{:04f}%".format(tr * 100 - 0)],
                     "Sharp Ratio": ["{:04f}".format(sharpe_ratio)],
                     "Volatility": ["{:04f}%".format(vol* 100)],
