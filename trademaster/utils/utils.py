@@ -498,13 +498,13 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
     # plot trading points(buy_trade_points and sell_trade_points) as bars using the second y axis
     ax2 = ax1.twinx()
     ax2.set_ylabel('Trading',size=18)
-    ax2.set_ylim(-1,1)
-    ax2.set_yticks([-1,0,1])
+    # ax2.set_ylim(-1,1)
+    # ax2.set_yticks([-1,0,1])
     ax2.set_yticklabels(['sell','hold','buy'])
     for buy_trade_point,buy_volume in buy_trade_points.items():
-        ax2.bar(buy_trade_point,buy_volume, color='r',width=1)
+        ax2.bar(buy_trade_point,buy_volume, color='r',width=1,label='buy')
     for sell_trade_point,sell_volume in sell_trade_points.items():
-        ax2.bar(sell_trade_point,-1*sell_volume, color='g',width=1)
+        ax2.bar(sell_trade_point,-1*sell_volume, color='g',width=1,label='sell')
 
 
     # plot trading points as vertical arrows, buy points are red, sell points are green,add the volume of the trade on the arrow
