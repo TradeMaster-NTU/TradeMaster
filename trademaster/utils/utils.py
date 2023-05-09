@@ -481,8 +481,8 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
     for market_feature in market_features:
         y=market_features_dict[market_feature]
         ax1.plot(x, y, label=market_feature)
-    plt.xlabel('Trading times',size=18)
-    plt.ylabel(metric_name,size=18)
+    plt.xlabel('Trading times',size=12)
+    plt.ylabel(metric_name,size=12)
     plt.grid(ls='--')
 
 
@@ -497,17 +497,17 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
 
     # plot trading points(buy_trade_points and sell_trade_points) as bars using the second y axis
     ax2 = ax1.twinx()
-    ax2.set_ylabel('Trading Size',size=18)
+    ax2.set_ylabel('Trading Size',size=12)
     buy_max=max(buy_trade_points.values()) if len(buy_trade_points)>0 else 0
     sell_max=max(sell_trade_points.values()) if len(sell_trade_points)>0 else 0
     scale=max(buy_max,sell_max)
     ax2.set_ylim(-1.1*scale,1.1*scale)
     ax2.set_yticks([-1.1*scale,0,1.1*scale])
     ax2.set_yticklabels(['sell','hold','buy'])
-    for buy_trade_point,buy_volume in buy_trade_points.items():
-        ax2.bar(buy_trade_point,buy_volume, color='r',width=1,label='buy')
-    for sell_trade_point,sell_volume in sell_trade_points.items():
-        ax2.bar(sell_trade_point,-1*sell_volume, color='g',width=1,label='sell')
+    # for buy_trade_point,buy_volume in buy_trade_points.items():
+    ax2.bar(list(buy_trade_points.keys()),list(buy_trade_points.values()), color='r',width=1,label='buy')
+    # for sell_trade_point,sell_volume in sell_trade_points.items():
+    ax2.bar(list(sell_trade_points.keys()),-1*list(sell_trade_points.values()), color='g',width=1,label='sell')
     plt.legend(loc='upper center', fancybox=True, ncol=1)
 
 
