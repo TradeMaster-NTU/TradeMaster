@@ -484,6 +484,7 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
     plt.xlabel('Trading times',size=12)
     plt.ylabel(metric_name,size=12)
     plt.grid(ls='--')
+    ax1.legend(loc='lower center', fancybox=True, ncol=1)
 
 
     # for market_feature in market_features:
@@ -508,7 +509,7 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
     ax2.bar(list(buy_trade_points.keys()),list(buy_trade_points.values()), color='r',width=1,label='buy')
     # for sell_trade_point,sell_volume in sell_trade_points.items():
     ax2.bar(list(sell_trade_points.keys()),-1*list(sell_trade_points.values()), color='g',width=1,label='sell')
-    plt.legend(loc='upper center', fancybox=True, ncol=1)
+    ax2.legend(loc='upper center', fancybox=True, ncol=1)
 
 
     # plot trading points as vertical arrows, buy points are red, sell points are green,add the volume of the trade on the arrow
