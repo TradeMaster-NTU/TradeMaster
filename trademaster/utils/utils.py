@@ -451,7 +451,7 @@ def plot_metric_against_baseline(total_asset,buy_and_hold,alg,task,color='darkcy
     plt.xlabel('Trading times',size=18)
     plt.ylabel(metric_name,size=18)
     if buy_and_hold is not None:
-        print('buy and hold shape is:',buy_and_hold.shape)
+        # print('buy and hold shape is:',buy_and_hold.shape)
         plt.plot(x, buy_and_hold, 'r', label='Buy and Hold')
     plt.grid(ls='--')
     plt.legend(loc='upper center', fancybox=True, ncol=1, fontsize='x-large',bbox_to_anchor=(0.49, 1.15,0,0))
