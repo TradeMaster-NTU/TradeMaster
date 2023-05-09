@@ -391,7 +391,7 @@ class OrderExecutionETEOEnvironment(Environments):
             print(table)
             self.cash_left=cash_left
 
-            market_features_dict = {'bids_distance_0':self.df['bids_distance_0']*self.df['spread'],'asks_distance_0':self.df['asks_distance_0']*self.df['spread']}
+            market_features_dict = {'bids_distance_0':self.df['bids_distance_0']*self.df['midpoint'],'asks_distance_0':self.df['asks_distance_0']*self.df['midpoint']}
 
             buy_points={}
             sell_points={}

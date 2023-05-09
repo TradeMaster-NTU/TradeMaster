@@ -467,7 +467,7 @@ def plot_metric_against_baseline(total_asset,buy_and_hold,alg,task,color='darkcy
 
 def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task,color='darkcyan',save_dir=None,metric_name='Trading'):
     # parse market_features_dict to get market_features
-    print('market_features_dict is:',market_features_dict)
+    # print('market_features_dict is:',market_features_dict)
     # print('trading_points is:',trading_points)
     market_features=list(market_features_dict.keys())
     x = range(len(market_features_dict[market_features[0]]))
@@ -480,7 +480,7 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
     # plot the market_features on the first y axis
     for market_feature in market_features:
         y=market_features_dict[market_feature]
-        ax1.plot(x, y, color, label=market_feature)
+        ax1.plot(x, y, label=market_feature)
     plt.xlabel('Trading times',size=18)
     plt.ylabel(metric_name,size=18)
     plt.grid(ls='--')
@@ -498,8 +498,9 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
     # plot trading points(buy_trade_points and sell_trade_points) as bars using the second y axis
     ax2 = ax1.twinx()
     ax2.set_ylabel('Trading',size=18)
-    # ax2.set_ylim(-1,1)
-    # ax2.set_yticks([-1,0,1])
+    scale=max(max(buy_trade_points.values()),max(sell_trade_points.values()))
+    ax2.set_ylim(-1.1*scale,1.1*scale)
+    ax2.set_yticks([-1.1*scale,0,1.1*scale])
     ax2.set_yticklabels(['sell','hold','buy'])
     for buy_trade_point,buy_volume in buy_trade_points.items():
         ax2.bar(buy_trade_point,buy_volume, color='r',width=1,label='buy')
