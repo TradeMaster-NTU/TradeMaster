@@ -127,7 +127,7 @@ class AlgorithmicTradingEnvironment(Environments):
             data = self.df.iloc[last_day -
                                 self.backward_num_day:last_day, :]
             last_close = data.iloc[-1, :].close
-            buy_and_hold_asset = self.initial_amount/self.first_close * self.data.close
+            buy_and_hold_asset = (self.initial_amount/self.first_close) * data.close
             buy_and_hold_profit=100*(last_close-self.first_close)/self.first_close
 
             stats = OrderedDict(
