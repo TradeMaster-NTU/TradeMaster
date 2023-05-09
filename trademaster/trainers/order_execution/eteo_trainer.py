@@ -7,7 +7,7 @@ ROOT = Path(__file__).resolve().parents[3]
 from ..custom import Trainer
 from ..builder import TRAINERS
 
-from trademaster.utils import get_attr, save_model, load_model, load_best_model, save_best_model, GeneralReplayBuffer
+from trademaster.utils import get_attr, save_model, load_model, load_best_model, save_best_model, GeneralReplayBuffer,plot_metric_against_baseline
 import numpy as np
 import os
 import pandas as pd
@@ -132,6 +132,7 @@ class OrderExecutionETEOTrainer(Trainer):
                                          device=self.device)
 
         valid_score_list = []
+        save_dict_list = []
         epoch = 1
         print("Train Episode: [{}/{}]".format(epoch, self.epochs))
         while True:
@@ -157,7 +158,7 @@ class OrderExecutionETEOTrainer(Trainer):
                     action = torch.tensor(action, dtype=torch.float32, device=self.device)
 
                     ary_action = action.detach().cpu().numpy()
-                    ary_state, reward, done, _ = self.valid_environment.step(ary_action)  # next_state
+                    ary_state, reward, done, save_dict = self.valid_environment.step(ary_action)  # next_state
                     ary_state = torch.as_tensor(ary_state, dtype=torch.float32, device=self.device)
 
                     # compress state
@@ -169,7 +170,7 @@ class OrderExecutionETEOTrainer(Trainer):
                         #print("Valid Episode Reward Sum: {:04f}".format(episode_reward_sum))
                         break
                 valid_score_list.append(self.valid_environment.cash_left)
-
+                save_dict_list.append(save_dict)
                 save_model(self.checkpoints_path,
                            epoch=epoch,
                            save=self.agent.get_save())
@@ -181,6 +182,7 @@ class OrderExecutionETEOTrainer(Trainer):
                 break
 
         max_index = np.argmax(valid_score_list)
+        plot_metric_against_baseline(total_asset=save_dict_list[max_index]['cash_left_by_tick'],buy_and_hold=None,alg=self.agent,task='train',color='darkcyan',save_dir=self.work_dir,metric_name='Cash left')
         load_model(self.checkpoints_path,
                    epoch=max_index + 1,
                    save=self.agent.get_save())
@@ -216,6 +218,7 @@ class OrderExecutionETEOTrainer(Trainer):
 
             episode_reward_sum += reward
             if done:
+                plot_metric_against_baseline(total_asset=return_dict['cash_left_by_tick'],buy_and_hold=None,alg=self.agent,task='test',color='darkcyan',save_dir=self.work_dir,metric_name='Cash left')
 #                print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
                 break
 

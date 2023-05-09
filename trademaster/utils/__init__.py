@@ -23,4 +23,4 @@ from .general_replay_buffer import GeneralReplayBuffer
 from .labeling_util import *
 from .utils import set_seed
 from .utils import plot
-from .utils import plot_total_asset_against_buy_and_hold
+from .utils import plot_metric_against_baseline

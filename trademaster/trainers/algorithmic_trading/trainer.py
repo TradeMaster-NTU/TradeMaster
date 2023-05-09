@@ -6,7 +6,7 @@ import torch
 ROOT = Path(__file__).resolve().parents[3]
 from ..custom import Trainer
 from ..builder import TRAINERS
-from trademaster.utils import get_attr, save_model, load_model, load_best_model, save_best_model, save_best_model_trial, ReplayBuffer, GeneralReplayBuffer,plot_total_asset_against_buy_and_hold
+from trademaster.utils import get_attr, save_model, load_model, load_best_model, save_best_model, save_best_model_trial, ReplayBuffer, GeneralReplayBuffer,plot_metric_against_baseline
 import numpy as np
 import os
 import pandas as pd
@@ -168,7 +168,7 @@ class AlgorithmicTradingTrainer(Trainer):
 
         max_index = np.argmax(valid_score_list)
         # plot the total asset against the baseline of the best epoch
-        plot_total_asset_against_buy_and_hold(total_asset=save_dict_list[max_index]['total_asset'],buy_and_hold=save_dict_list[max_index]['buy_and_hold_assets'],alg=self.agent,task='train',color='darkcyan',save_dir=self.work_dir)
+        plot_metric_against_baseline(total_asset=save_dict_list[max_index]['total_asset'],buy_and_hold=save_dict_list[max_index]['buy_and_hold_assets'],alg=self.agent,task='train',color='darkcyan',save_dir=self.work_dir)
 
         load_model(self.checkpoints_path,
                    epoch=max_index + 1,
@@ -278,10 +278,13 @@ class AlgorithmicTradingTrainer(Trainer):
                 tensor_action = tensor_action.argmax(dim=1)
             action = tensor_action.detach().cpu().numpy()[
                 0]  # not need detach(), because using torch.no_grad() outside
-            state, reward, done, _ = self.test_environment.step(action)
+            state, reward, done, save_dict = self.test_environment.step(action)
             episode_reward_sum += reward
             if done:
                 # print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
+                plot_metric_against_baseline(total_asset=save_dict['total_asset'],
+                                             buy_and_hold=save_dict['buy_and_hold_assets'],
+                                             alg=self.agent, task='test', color='darkcyan', save_dir=self.work_dir)
                 break
 
         rewards = self.test_environment.save_asset_memory()

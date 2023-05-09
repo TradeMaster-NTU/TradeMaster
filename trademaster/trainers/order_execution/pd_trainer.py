@@ -11,7 +11,7 @@ import os
 import pandas as pd
 import random
 from collections import OrderedDict, namedtuple
-from trademaster.utils import get_attr, save_model, load_model, load_best_model, save_best_model, ReplayBuffer, GeneralReplayBuffer
+from trademaster.utils import get_attr, save_model, load_model, load_best_model, save_best_model, ReplayBuffer, GeneralReplayBuffer,plot_metric_against_baseline
 
 
 @TRAINERS.register_module()
@@ -150,6 +150,7 @@ class OrderExecutionPDTrainer(Trainer):
                                                  device=self.device)
 
         valid_score_list = []
+        save_dict_list = []
         for epoch in range(1, self.epochs+1):
             print("Train Episode: [{}/{}]".format(epoch, self.epochs))
             # train teacher
@@ -193,6 +194,7 @@ class OrderExecutionPDTrainer(Trainer):
                     state, info = self.valid_environment.reset()
 
                     episode_reward_sum = 0.0  # sum of rewards in an episode
+                    episode_reward_sum_list = []
                     while True:
                         public_state = torch.from_numpy(state).to(self.device).float()
                         private_state = torch.from_numpy(info["private_state"]).to(self.device).float()
@@ -200,9 +202,12 @@ class OrderExecutionPDTrainer(Trainer):
                         action = tensor_action[0, 0].detach().cpu().numpy()
                         state, reward, done, info = self.valid_environment.step(action)
                         episode_reward_sum += reward
+                        episode_reward_sum_list.append(episode_reward_sum)
                         if done:
                             #print("Valid Episode Reward Sum: {:04f}".format(episode_reward_sum))
                             break
+
+                    save_dict_list.append(episode_reward_sum_list)
                     valid_score_list.append(episode_reward_sum)
                     save_model(self.checkpoints_path,
                                epoch=epoch,
@@ -210,6 +215,9 @@ class OrderExecutionPDTrainer(Trainer):
                     break
 
         max_index = np.argmax(valid_score_list)
+        plot_metric_against_baseline(total_asset=save_dict_list[max_index], buy_and_hold=None,
+                                     alg=self.agent, task='train', color='darkcyan', save_dir=self.work_dir,
+                                     metric_name='Episode reward sum')
         load_model(self.checkpoints_path,
                    epoch=max_index + 1,
                    save=self.agent.get_save())
@@ -228,6 +236,7 @@ class OrderExecutionPDTrainer(Trainer):
         state, info = self.test_environment.reset()
 
         episode_reward_sum = 0
+        episode_reward_sum_list = []
         while True:
 
             public_state = torch.from_numpy(state).to(self.device).float()
@@ -237,8 +246,12 @@ class OrderExecutionPDTrainer(Trainer):
             action = tensor_action[0, 0].detach().cpu().numpy()
             state, reward, done, info = self.test_environment.step(action)
             episode_reward_sum += reward
+            episode_reward_sum_list.append(episode_reward_sum)
 
             if done:
+                plot_metric_against_baseline(total_asset=episode_reward_sum_list, buy_and_hold=None,
+                                             alg=self.agent, task='test', color='darkcyan', save_dir=self.work_dir,
+                                             metric_name='Episode reward sum')
                 # print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
                 break
         return info
