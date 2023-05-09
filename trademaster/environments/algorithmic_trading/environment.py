@@ -162,6 +162,8 @@ class AlgorithmicTradingEnvironment(Environments):
                 with open(metric_save_path, 'wb') as handle:
                     pickle.dump(save_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
             # print('metric result saved to '+metric_save_path)
+            print("total_assets",assets,
+                'buy_and_hold_assets',buy_and_hold_asset)
             return self.state, self.reward, self.terminal, {
                 "volidality": self.var,
                 "total_assets": assets,
