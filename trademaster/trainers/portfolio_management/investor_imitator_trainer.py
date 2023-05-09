@@ -5,7 +5,7 @@ import torch
 ROOT = Path(__file__).resolve().parents[3]
 from ..custom import Trainer
 from ..builder import TRAINERS
-from trademaster.utils import get_attr, save_model, save_best_model, load_model, load_best_model
+from trademaster.utils import get_attr, save_model, save_best_model, load_model, load_best_model,plot_metric_against_baseline
 import os
 import pandas as pd
 import random
@@ -69,6 +69,7 @@ class PortfolioManagementInvestorImitatorTrainer(Trainer):
     def train_and_valid(self):
 
         valid_score_list = []
+        save_dict_list = []
         for epoch in range(1, self.epochs + 1):
             print("Train Episode: [{}/{}]".format(epoch, self.epochs))
             state = self.train_environment.reset()
@@ -97,14 +98,18 @@ class PortfolioManagementInvestorImitatorTrainer(Trainer):
             episode_reward_sum = 0
             while True:
                 action = self.agent.get_action(state)
-                state, reward, done, _ = self.valid_environment.step(action)
+                state, reward, done, save_dict = self.valid_environment.step(action)
                 episode_reward_sum += reward
                 if done:
                     #print("Valid Episode Reward Sum: {:04f}".format(episode_reward_sum))
                     break
             valid_score_list.append(episode_reward_sum)
+            save_dict_list.append(save_dict)
 
         max_index = np.argmax(valid_score_list)
+        plot_metric_against_baseline(total_asset=save_dict_list[max_index]['total_assets'],
+                                     buy_and_hold=None, alg='Investor Imitator',
+                                     task='train', color='darkcyan', save_dir=self.work_dir)
         load_model(self.checkpoints_path,
                    epoch=max_index + 1,
                    save=self.agent.get_save())
@@ -123,9 +128,12 @@ class PortfolioManagementInvestorImitatorTrainer(Trainer):
         episode_reward_sum = 0
         while True:
             action = self.agent.get_action(state)
-            state, reward, done, _ = self.test_environment.step(action)
+            state, reward, done, save_dict = self.test_environment.step(action)
             episode_reward_sum += reward
             if done:
+                plot_metric_against_baseline(total_asset=save_dict['total_assets'],
+                                             buy_and_hold=None, alg='Investor Imitator',
+                                             task='test', color='darkcyan', save_dir=self.work_dir)
                 # print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
                 break
 

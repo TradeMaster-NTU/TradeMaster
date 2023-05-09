@@ -5,7 +5,7 @@ from trademaster.environments.portfolio_management.environment import PortfolioM
 from ray.tune.registry import register_env
 import ray
 import os
-from trademaster.utils import get_attr, save_object, load_object
+from trademaster.utils import get_attr, save_object, load_object,plot_metric_against_baseline
 from ..builder import TRAINERS
 from ..custom import Trainer
 import random
@@ -104,6 +104,7 @@ class PortfolioManagementTrainer(Trainer):
     def train_and_valid(self):
 
         valid_score_list = []
+        save_dict_list = []
         self.trainer = self.trainer_name(
             env="portfolio_management", config=self.configs)
 
@@ -126,6 +127,7 @@ class PortfolioManagementTrainer(Trainer):
                 if done:
                     #print("Valid Episode Reward Sum: {:04f}".format(episode_reward_sum))
                     break
+            save_dict_list.append(information)
             valid_score_list.append(information["sharpe_ratio"])
 
             checkpoint_path = os.path.join(
@@ -134,6 +136,8 @@ class PortfolioManagementTrainer(Trainer):
             save_object(obj, checkpoint_path)
 
         max_index = np.argmax(valid_score_list)
+        plot_metric_against_baseline(total_asset=save_dict_list[max_index]['total_assets'],buy_and_hold=None,alg=self.agent_name.upper(),task='train',color='darkcyan',save_dir=self.work_dir)
+
         obj = load_object(os.path.join(self.checkpoints_path,
                           "checkpoint-{:05d}.pkl".format(max_index+1)))
         save_object(obj, os.path.join(self.checkpoints_path, "best.pkl"))
@@ -158,6 +162,9 @@ class PortfolioManagementTrainer(Trainer):
             state, reward, done, sharpe = self.test_environment.step(action)
             episode_reward_sum += reward
             if done:
+                plot_metric_against_baseline(total_asset=sharpe['total_assets'], buy_and_hold=None,
+                                             alg=self.agent_name.upper(), task='test', color='darkcyan', save_dir=self.work_dir)
+
                 # print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
                 break
 

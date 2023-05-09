@@ -112,8 +112,11 @@ class PortfolioManagementEnvironment(Environments):
             )
             table = print_metrics(stats)
             print(table)
+            df_value = self.save_asset_memory()
+            assets = df_value["total assets"].values
             return self.state, self.reward, self.terminal, {
-                "sharpe_ratio": sharpe_ratio
+                "sharpe_ratio": sharpe_ratio,
+                'total_assets': assets
             }
 
         else:

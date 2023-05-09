@@ -3,7 +3,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 from ..custom import Trainer
 from ..builder import TRAINERS
-from trademaster.utils import get_attr, save_object, load_object,create_radar_score_baseline, calculate_radar_score, plot_radar_chart
+from trademaster.utils import get_attr, save_object, load_object,create_radar_score_baseline, calculate_radar_score, plot_radar_chart,plot_metric_against_baseline
 import os
 import ray
 from ray.tune.registry import register_env
@@ -98,6 +98,7 @@ class PortfolioManagementSARLTrainer(Trainer):
     def train_and_valid(self):
 
         valid_score_list = []
+        save_dict_list = []
         self.trainer = self.trainer_name(env="portfolio_management_sarl", config=self.configs)
 
         for epoch in range(1, self.epochs+1):
@@ -117,7 +118,7 @@ class PortfolioManagementSARLTrainer(Trainer):
                 if done:
                     #print("Valid Episode Reward Sum: {:04f}".format(episode_reward_sum))
                     break
-
+            save_dict_list.append(information)
             valid_score_list.append(information["sharpe_ratio"])
 
             checkpoint_path = os.path.join(self.checkpoints_path, "checkpoint-{:05d}.pkl".format(epoch))
@@ -125,6 +126,9 @@ class PortfolioManagementSARLTrainer(Trainer):
             save_object(obj, checkpoint_path)
 
         max_index = np.argmax(valid_score_list)
+        plot_metric_against_baseline(total_asset=save_dict_list[max_index]['total_assets'],
+                                     buy_and_hold=None, alg='SARL',
+                                     task='train', color='darkcyan', save_dir=self.work_dir)
         obj = load_object(os.path.join(self.checkpoints_path, "checkpoint-{:05d}.pkl".format(max_index+1)))
         save_object(obj, os.path.join(self.checkpoints_path, "best.pkl"))
         ray.shutdown()
@@ -145,6 +149,9 @@ class PortfolioManagementSARLTrainer(Trainer):
             state, reward, done, sharpe = self.test_environment.step(action)
             episode_reward_sum += reward
             if done:
+                plot_metric_against_baseline(total_asset=sharpe['total_assets'],
+                                             buy_and_hold=None, alg='SARL',
+                                             task='test', color='darkcyan', save_dir=self.work_dir)
                 # print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
                 break
 

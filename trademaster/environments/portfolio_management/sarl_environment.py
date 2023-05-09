@@ -176,7 +176,7 @@ class PortfolioManagementSARLEnvironment(Environments):
 
 
             return self.state, self.reward, self.terminal, {
-                "sharpe_ratio": sharpe_ratio
+                "sharpe_ratio": sharpe_ratio,"total_assets": assets
             }
         else:
             # transfer actino into portofolios weights
