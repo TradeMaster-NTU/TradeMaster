@@ -386,7 +386,6 @@ class Server():
     def test_status(self, request):
         request_json = json.loads(request.get_data(as_text=True))
         try:
-
             self.sessions = self.load_sessions()
             session_id = request_json.get("session_id")
             if session_id in self.sessions:
