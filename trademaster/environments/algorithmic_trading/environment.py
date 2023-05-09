@@ -165,7 +165,7 @@ class AlgorithmicTradingEnvironment(Environments):
             return self.state, self.reward, self.terminal, {
                 "volidality": self.var,
                 "total_assets": assets,
-                'buy_and_hold_assets':buy_and_hold_asset.values
+                'buy_and_hold_assets':buy_and_hold_asset
             }
         else:
             # self.actions_counter+=1
