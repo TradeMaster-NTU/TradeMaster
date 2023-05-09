@@ -475,17 +475,28 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
     # print('x shape is:',len(x))
     # set figure size
     plt.figure(figsize=(10, 6))
+    fig, ax1 = plt.subplots()
+
+    # plot the market_features on the first y axis
     for market_feature in market_features:
         y=market_features_dict[market_feature]
-        plt.plot(x, y, color, label=market_feature)
+        ax1.plot(x, y, color, label=market_feature)
     plt.xlabel('Trading times',size=18)
     plt.ylabel(metric_name,size=18)
+    plt.grid(ls='--')
+    plt.legend(loc='upper center', fancybox=True, ncol=1)
+
+    # for market_feature in market_features:
+    #     y=market_features_dict[market_feature]
+    #     plt.plot(x, y, color, label=market_feature)
+    # plt.xlabel('Trading times',size=18)
+    # plt.ylabel(metric_name,size=18)
 
     buy_trade_points=trading_points['buy']
     sell_trade_points=trading_points['sell']
 
     # plot trading points(buy_trade_points and sell_trade_points) as bars using the second y axis
-    ax2 = plt.twinx()
+    ax2 = ax1.twinx()
     ax2.set_ylabel('Trading',size=18)
     ax2.set_ylim(-1,1)
     ax2.set_yticks([-1,0,1])
@@ -504,8 +515,7 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
     #     plt.annotate(f'sell {sell_volume}', xy=(sell_trade_point, 0), xytext=(sell_trade_point, 0.5),
     #                  arrowprops=dict(facecolor='green', shrink=0.05),)
 
-    plt.grid(ls='--')
-    plt.legend(loc='upper center', fancybox=True, ncol=1)
+
     # set title
     plt.title(f'{metric_name} of {alg} in {task}')
     if save_dir is not None:
