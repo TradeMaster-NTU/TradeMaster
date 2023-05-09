@@ -85,6 +85,7 @@ class OrderExecutionPDEnvironment(Environments):
         self.terminal = False
         self.money_sold = 0
         self.private_state_list = [self.private_state] * self.state_length
+        self.money_sold_list = []
 
     def reset(self):
         self.terminal = False
@@ -104,6 +105,7 @@ class OrderExecutionPDEnvironment(Environments):
         # private state indicates the
         self.private_state = np.array([1, 1])
         self.money_sold = 0
+        self.money_sold_list = []
         self.private_state_list = [self.private_state] * self.state_length
         return np.array(self.public_imperfect_state), {
             "perfect_state": np.array(self.public_perfect_state),
@@ -124,6 +126,7 @@ class OrderExecutionPDEnvironment(Environments):
                                          self.day - self.state_length:self.day, :]
             current_price = self.data_public_imperfect.iloc[-1].close
             self.money_sold += leftover_order * current_price
+            self.money_sold_list.append(self.money_sold)
             self.public_imperfect_state = np.array(self.public_imperfect_state)
             self.private_state_list.append([0, 0])
             self.private_state_list.remove(self.private_state_list[0])
@@ -139,7 +142,8 @@ class OrderExecutionPDEnvironment(Environments):
             return self.public_imperfect_state, self.reward, self.terminal, {
                 "perfect_state": np.array([self.public_perfect_state]),
                 "private_state": np.array([self.private_state_list]),
-                "money_sold":self.money_sold
+                "money_sold":self.money_sold,
+                'money_sold_list':self.money_sold_list
             }
 
         else:
@@ -179,6 +183,7 @@ class OrderExecutionPDEnvironment(Environments):
                 print(table)
             leftover_day, leftover_order = leftover_day - 1 / (len(
                 self.df) - 2 * self.state_length), leftover_order - action
+            self.money_sold_list.append(self.money_sold)
             self.private_state = np.array([leftover_day, leftover_order])
             self.private_state_list.append(self.private_state)
             self.private_state_list.remove(self.private_state_list[0])
