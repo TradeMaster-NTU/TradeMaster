@@ -325,9 +325,16 @@ class Server():
                     info = ""
             else:
                 info = "there are no train status"
+            if 'train end' in info:
+                train_end = True
+            else:
+                train_end = False
+
+
 
             res = {
                 "info": info,
+                "train_end": train_end
             }
             logger.info("get train status success")
             return jsonify(res)
@@ -394,8 +401,14 @@ class Server():
             else:
                 info = "there are no test status"
 
+            if 'test end' in info:
+                test_end = True
+            else:
+                test_end = False
+
             res = {
                 "info": info,
+                "test_end": test_end
             }
             logger.info("get train status success")
             return jsonify(res)
