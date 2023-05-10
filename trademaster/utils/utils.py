@@ -497,13 +497,22 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
     ax2.set_ylim(-1.1*scale,1.1*scale)
     ax2.set_yticks([-1.1*scale,0,1.1*scale])
     ax2.set_yticklabels(['sell','hold','buy'])
+
+    for buy_trade_point,buy_volume in buy_trade_points.items():
+        plt.annotate(f'buy {buy_volume}', xy=(buy_trade_point, 0), xytext=(buy_trade_point, 0.5),
+                     arrowprops=dict(facecolor='red', shrink=0.05),)
+    for sell_trade_point,sell_volume in sell_trade_points.items():
+        plt.annotate(f'sell {sell_volume}', xy=(sell_trade_point, 0), xytext=(sell_trade_point, 0.5),
+                     arrowprops=dict(facecolor='green', shrink=0.05),)
+
+
     # give different color for buy and sell
     # for buy_trade_point,buy_volume in buy_trade_points.items():
-    if len(buy_trade_points)>0:
-        ax2.bar(list(buy_trade_points.keys()),list(buy_trade_points.values()),label='buy',color='r')
-    # for sell_trade_point,sell_volume in sell_trade_points.items():
-    if len(sell_trade_points)>0:
-        ax2.bar(list(sell_trade_points.keys()),-1*list(sell_trade_points.values()),label='sell',color='g')
+    # if len(buy_trade_points)>0:
+    #     ax2.bar(list(buy_trade_points.keys()),list(buy_trade_points.values()),width=1,label='buy',color='r')
+    # # for sell_trade_point,sell_volume in sell_trade_points.items():
+    # if len(sell_trade_points)>0:
+    #     ax2.bar(list(sell_trade_points.keys()),-1*list(sell_trade_points.values()),width=1,label='sell',color='g')
     ax2.legend(loc='upper center', fancybox=True, ncol=1)
 
 
