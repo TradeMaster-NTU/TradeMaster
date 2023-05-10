@@ -334,7 +334,8 @@ class Server():
 
             res = {
                 "info": info,
-                "train_end": train_end
+                "train_end": train_end,
+                'result_plot': str(encoded_string, 'utf-8')
             }
             logger.info("get train status success")
             return jsonify(res)
@@ -408,7 +409,8 @@ class Server():
 
             res = {
                 "info": info,
-                "test_end": test_end
+                "test_end": test_end,
+                'result_plot': str(encoded_string, 'utf-8')
             }
             logger.info("get train status success")
             return jsonify(res)
