@@ -467,8 +467,8 @@ def plot_metric_against_baseline(total_asset,buy_and_hold,alg,task,color='darkcy
 
 def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task,color='darkcyan',save_dir=None,metric_name='Level 0 Bid and Ask Distance'):
     # parse market_features_dict to get market_features
-    print('market_features_dict is:',market_features_dict)
-    print('trading_points is:',trading_points)
+    # print('market_features_dict is:',market_features_dict)
+    # print('trading_points is:',trading_points)
     market_features=list(market_features_dict.keys())
     x = range(len(market_features_dict[market_features[0]]))
     # print('total_asset shape is:',total_asset.shape)
@@ -499,9 +499,10 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
     ax2.set_yticklabels(['sell','hold','buy'])
     # give different color for buy and sell
     # for buy_trade_point,buy_volume in buy_trade_points.items():
-    ax2.plot(list(buy_trade_points.keys()),list(buy_trade_points.values()),width=1,label='buy',color='r')
+
+    ax2.plot(list(buy_trade_points.keys()),list(buy_trade_points.values()),label='buy',color='r')
     # for sell_trade_point,sell_volume in sell_trade_points.items():
-    ax2.plot(list(sell_trade_points.keys()),-1*list(sell_trade_points.values()),width=1,label='sell',color='g')
+    ax2.plot(list(sell_trade_points.keys()),-1*list(sell_trade_points.values()),label='sell',color='g')
     ax2.legend(loc='upper center', fancybox=True, ncol=1)
 
 
