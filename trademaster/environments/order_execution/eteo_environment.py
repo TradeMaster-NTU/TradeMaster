@@ -84,6 +84,7 @@ class OrderExecutionETEOEnvironment(Environments):
         order_left = [self.target_order]
         self.private_state = data_left + order_left
         self.state = np.array(self.public_state + self.private_state)
+        self.all_bitcoin_lst=[]
 
     def reset(self):
         self.time_frame = 0
@@ -238,6 +239,7 @@ class OrderExecutionETEOEnvironment(Environments):
         # 调整后根据调整的self.portfolio 在进行order是否能被执行的问题 然后再进行self.portfolio的调整 如果有变化
         all_cash = self.portfolio[0] + self.portfolio[1]
         all_bitcoin = self.portfolio[2] + self.portfolio[3]
+        self.all_bitcoin_lst.append(all_bitcoin)
         old_portfolio_value = self.portfolio[0] + self.portfolio[
             1] + previous_data["midpoint"] * (self.portfolio[2] +
                                               self.portfolio[3])
@@ -395,12 +397,18 @@ class OrderExecutionETEOEnvironment(Environments):
 
             buy_points={}
             sell_points={}
-            for i,order in enumerate(self.action_history):
-                # if the action's volume is greater than 0, we are going to buy the bitcoin we are holding
-                if order[0] > 0:
-                    buy_points[i] = order[0]
-                elif order[0] < 0:
-                    sell_points[i] = order[0]
+            trade_happens_lst=self.all_bitcoin_lst-self.all_bitcoin_lst[1:]+[0]
+            for i, trade in enumerate(trade_happens_lst):
+                if trade > 0:
+                    sell_points[i] = trade
+                elif trade < 0:
+                    buy_points[i] = trade
+            # for i,order in enumerate(self.action_history):
+            #     # if the action's volume is greater than 0, we are going to buy the bitcoin we are holding
+            #     if order[0] > 0:
+            #         buy_points[i] = order[0]
+            #     elif order[0] < 0:
+            #         sell_points[i] = order[0]
             trading_points = {'buy':buy_points,'sell':sell_points}
 
             return self.state, self.reward, self.terminal, {'cash_left':cash_left,'TWAP_value':TWAP_value,
