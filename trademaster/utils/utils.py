@@ -511,8 +511,8 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
         y=market_features_dict[market_feature]
         # ax1.plot(x, y, label=market_feature)
         ax1.plot(x, y, label=market_feature)
-    ax1.xlabel('Trading times',size=12)
-    ax1.ylabel(metric_name,size=12)
+    plt.xlabel('Trading times',size=12)
+    ax1.set_ylabel(metric_name,size=12)
     ax1.grid(ls='--')
     ax1.legend(loc='lower center', fancybox=True, ncol=1)
 
