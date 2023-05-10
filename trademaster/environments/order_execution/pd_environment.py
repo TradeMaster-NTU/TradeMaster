@@ -197,15 +197,15 @@ class OrderExecutionPDEnvironment(Environments):
             self.private_state_list.remove(self.private_state_list[0])
 
 
-            market_features_dict = {'open':self.df['close'].values.tolist()}
+            market_features_dict = {'close':self.df['close'].values.tolist()}
             buy_points={}
             sell_points={}
             for i,action in enumerate(self.action_list):
                 # if the action's volume is greater than 0, we are going to buy the bitcoin we are holding
                 if action > 0:
-                    buy_points[i] = action
-                elif action < 0:
                     sell_points[i] = action
+                elif action < 0:
+                    buy_points[i] = action
             trading_points = {'buy':buy_points,'sell':sell_points}
             print(self.day,self.money_sold,leftover_order,current_price)
             self.asset_list.append(self.money_sold + leftover_order * current_price)
@@ -218,7 +218,9 @@ class OrderExecutionPDEnvironment(Environments):
                 "private_state": np.array([self.private_state_list]),
                 "money_sold": self.money_sold,
                 'money_sold_list': self.money_sold_list,
-                'Total Asset': self.asset_list
+                'Total Asset': self.asset_list,
+                'trading_points':trading_points,
+                'market_features_dict': market_features_dict
             }
 
     def find_money_sold(self):

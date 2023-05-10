@@ -11,7 +11,7 @@ import os
 import pandas as pd
 import random
 from collections import OrderedDict, namedtuple
-from trademaster.utils import get_attr, save_model, load_model, load_best_model, save_best_model, ReplayBuffer, GeneralReplayBuffer,plot_metric_against_baseline
+from trademaster.utils import get_attr, save_model, load_model, load_best_model, save_best_model, ReplayBuffer, GeneralReplayBuffer,plot_metric_against_baseline,plot_trading_decision_on_market
 
 
 @TRAINERS.register_module()
@@ -214,9 +214,13 @@ class OrderExecutionPDTrainer(Trainer):
                     break
 
         max_index = np.argmax(valid_score_list)
-        plot_metric_against_baseline(total_asset=save_dict_list[max_index]['Total Asset'], buy_and_hold=None,
-                                     alg='Oracle Policy Distillation', task='train', color='darkcyan', save_dir=self.work_dir,
-                                     metric_name='Total Asset')
+        plot_trading_decision_on_market(market_features_dict=save_dict_list[max_index]['market_features_dict'],
+                                        trading_points=save_dict_list[max_index]['trading_points'],
+                                        alg='Oracle Policy Distillation', task='train', color='darkcyan',
+                                        save_dir=self.work_dir, metric_name='Trading')
+        # plot_metric_against_baseline(total_asset=save_dict_list[max_index]['Total Asset'], buy_and_hold=None,
+        #                              alg='Oracle Policy Distillation', task='train', color='darkcyan', save_dir=self.work_dir,
+        #                              metric_name='Total Asset')
         load_model(self.checkpoints_path,
                    epoch=max_index + 1,
                    save=self.agent.get_save())
@@ -246,11 +250,15 @@ class OrderExecutionPDTrainer(Trainer):
             episode_reward_sum += reward
 
             if done:
-                print('asset: ', info['Total Asset'])
-                print('money sold:', info['money_sold_list'])
-                plot_metric_against_baseline(total_asset=info['Total Asset'], buy_and_hold=None,
-                                             alg='Oracle Policy Distillation', task='test', color='darkcyan', save_dir=self.work_dir,
-                                             metric_name='Total Asset')
+                plot_trading_decision_on_market(market_features_dict=info['market_features_dict'],
+                                                trading_points=info['trading_points'],
+                                                alg='Oracle Policy Distillation', task='test', color='darkcyan',
+                                                save_dir=self.work_dir, metric_name='Trading')
+                # print('asset: ', info['Total Asset'])
+                # print('money sold:', info['money_sold_list'])
+                # plot_metric_against_baseline(total_asset=info['Total Asset'], buy_and_hold=None,
+                #                              alg='Oracle Policy Distillation', task='test', color='darkcyan', save_dir=self.work_dir,
+                #                              metric_name='Total Asset')
                 # print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
                 break
         return info
