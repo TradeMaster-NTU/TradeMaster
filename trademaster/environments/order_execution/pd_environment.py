@@ -136,6 +136,7 @@ class OrderExecutionPDEnvironment(Environments):
             self.private_state_list.append([0, 0])
             self.private_state_list.remove(self.private_state_list[0])
 
+            print(self.day,self.money_sold, leftover_order, current_price)
             self.asset_list.append(self.money_sold + leftover_order * current_price)
             stats = OrderedDict(
                 {
@@ -206,6 +207,7 @@ class OrderExecutionPDEnvironment(Environments):
                 elif action < 0:
                     sell_points[i] = action
             trading_points = {'buy':buy_points,'sell':sell_points}
+            print(self.day,self.money_sold,leftover_order,current_price)
             self.asset_list.append(self.money_sold + leftover_order * current_price)
 
 
