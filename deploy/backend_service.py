@@ -317,6 +317,10 @@ class Server():
 
             self.sessions = self.load_sessions()
             session_id = request_json.get("session_id")
+            work_dir = self.sessions[session_id]["work_dir"]
+
+            with open(osp.join(work_dir,f"Visualization_train.png"), "rb") as image_file:
+                encoded_string = base64.b64encode(image_file.read())
             if session_id in self.sessions:
                 if os.path.exists(self.sessions[session_id]["train_log_path"]):
                     cmd = "tail -n 2000 {}".format(self.sessions[session_id]["train_log_path"])
@@ -324,7 +328,7 @@ class Server():
                 else:
                     info = ""
             else:
-                info = "there are no train status"
+                info = "waitinig for train start"
             if 'train end' in info:
                 train_end = True
             else:
@@ -396,11 +400,14 @@ class Server():
         try:
             self.sessions = self.load_sessions()
             session_id = request_json.get("session_id")
+            work_dir = self.sessions[session_id]["work_dir"]
+            with open(osp.join(work_dir,f"Visualization_train.png"), "rb") as image_file:
+                encoded_string = base64.b64encode(image_file.read())
             if session_id in self.sessions:
                 cmd = "tail -n 2000 {}".format(self.sessions[session_id]["test_log_path"])
                 info = run_cmd(cmd)
             else:
-                info = "there are no test status"
+                info = 'waiting for test start'
 
             if 'test end' in info:
                 test_end = True

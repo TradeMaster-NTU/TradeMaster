@@ -528,6 +528,6 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
     # set title
     plt.title(f'{metric_name} of {alg} in {task}')
     if save_dir is not None:
-        plt.savefig(osp.join(save_dir,f"{metric_name} of {alg} in {task}.png"))
+        plt.savefig(osp.join(save_dir,f"Visualization_{task}.png"))
 
 
