@@ -214,8 +214,6 @@ class OrderExecutionPDTrainer(Trainer):
                     break
 
         max_index = np.argmax(valid_score_list)
-        print('asset: ', save_dict_list[max_index]['Total Asset'])
-        print('money sold:', save_dict_list[max_index]['money_sold_list'])
         plot_metric_against_baseline(total_asset=save_dict_list[max_index]['Total Asset'], buy_and_hold=None,
                                      alg='Oracle Policy Distillation', task='train', color='darkcyan', save_dir=self.work_dir,
                                      metric_name='Total Asset')
@@ -248,6 +246,8 @@ class OrderExecutionPDTrainer(Trainer):
             episode_reward_sum += reward
 
             if done:
+                print('asset: ', info['Total Asset'])
+                print('money sold:', info['money_sold_list'])
                 plot_metric_against_baseline(total_asset=info['Total Asset'], buy_and_hold=None,
                                              alg='Oracle Policy Distillation', task='test', color='darkcyan', save_dir=self.work_dir,
                                              metric_name='Total Asset')
