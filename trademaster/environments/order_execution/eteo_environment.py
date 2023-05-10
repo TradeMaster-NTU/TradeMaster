@@ -380,7 +380,7 @@ class OrderExecutionETEOEnvironment(Environments):
                 self.reward = 1
             else:
                 self.reward = 0
-
+            self.all_bitcoin_lst.append(left_order)
             cash_left_by_tick = [ portfolio[0] + portfolio[1] for portfolio in self.portfolio_history]
 
             stats = OrderedDict(
@@ -415,8 +415,8 @@ class OrderExecutionETEOEnvironment(Environments):
             #     elif order[0] < 0:
             #         sell_points[i] = order[0]
             trading_points = {'buy':buy_points,'sell':sell_points}
-            print(btc_trade_lst)
-            print(trading_points)
+            # print(btc_trade_lst)
+            # print(trading_points)
             return self.state, self.reward, self.terminal, {'cash_left':cash_left,'TWAP_value':TWAP_value,
                                                             'cash_left_by_tick':cash_left_by_tick, 'portfolio_value_history':self.portfolio_value_history,
                                                             'trading_points':trading_points,
