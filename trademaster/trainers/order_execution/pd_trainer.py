@@ -214,9 +214,9 @@ class OrderExecutionPDTrainer(Trainer):
                     break
 
         max_index = np.argmax(valid_score_list)
-        plot_metric_against_baseline(total_asset=save_dict_list[max_index]['money_sold_list'], buy_and_hold=None,
+        plot_metric_against_baseline(total_asset=save_dict_list[max_index]['Total Asset'], buy_and_hold=None,
                                      alg='Oracle Policy Distillation', task='train', color='darkcyan', save_dir=self.work_dir,
-                                     metric_name='Money sold')
+                                     metric_name='Total Asset')
         load_model(self.checkpoints_path,
                    epoch=max_index + 1,
                    save=self.agent.get_save())
@@ -246,9 +246,9 @@ class OrderExecutionPDTrainer(Trainer):
             episode_reward_sum += reward
 
             if done:
-                plot_metric_against_baseline(total_asset=info['money_sold_list'], buy_and_hold=None,
+                plot_metric_against_baseline(total_asset=info['Total Asset'], buy_and_hold=None,
                                              alg='Oracle Policy Distillation', task='test', color='darkcyan', save_dir=self.work_dir,
-                                             metric_name='Money sold')
+                                             metric_name='Total Asset')
                 # print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
                 break
         return info

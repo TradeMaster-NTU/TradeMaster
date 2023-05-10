@@ -87,6 +87,7 @@ class OrderExecutionPDEnvironment(Environments):
         self.private_state_list = [self.private_state] * self.state_length
         self.money_sold_list = []
         self.action_list = []
+        self.asset_list = []
 
     def reset(self):
         self.terminal = False
@@ -109,6 +110,7 @@ class OrderExecutionPDEnvironment(Environments):
         self.money_sold_list = []
         self.action_list=[]
         self.private_state_list = [self.private_state] * self.state_length
+        self.asset_list = []
         return np.array(self.public_imperfect_state), {
             "perfect_state": np.array(self.public_perfect_state),
             "private_state": np.array([self.private_state_list])
@@ -134,6 +136,7 @@ class OrderExecutionPDEnvironment(Environments):
             self.private_state_list.append([0, 0])
             self.private_state_list.remove(self.private_state_list[0])
 
+            self.asset_list.append(self.money_sold + leftover_order * current_price)
             stats = OrderedDict(
                 {
                     "Money Sold": ["{:04f}".format(self.money_sold)],
@@ -146,7 +149,8 @@ class OrderExecutionPDEnvironment(Environments):
                 "perfect_state": np.array([self.public_perfect_state]),
                 "private_state": np.array([self.private_state_list]),
                 "money_sold":self.money_sold,
-                'money_sold_list':self.money_sold_list
+                'money_sold_list':self.money_sold_list,
+                'Total Asset':self.asset_list
             }
 
         else:
@@ -202,6 +206,7 @@ class OrderExecutionPDEnvironment(Environments):
                 elif action < 0:
                     sell_points[i] = action
             trading_points = {'buy':buy_points,'sell':sell_points}
+            self.asset_list.append(self.money_sold + leftover_order * current_price)
 
 
 
@@ -210,9 +215,7 @@ class OrderExecutionPDEnvironment(Environments):
                 "perfect_state": np.array([self.public_perfect_state]),
                 "private_state": np.array([self.private_state_list]),
                 "money_sold": self.money_sold,
-                'money_sold_list': self.money_sold_list,
-                'trading_points': trading_points,
-                'market_features_dict': market_features_dict
+                'money_sold_list': self.money_sold_list
             }
 
     def find_money_sold(self):
