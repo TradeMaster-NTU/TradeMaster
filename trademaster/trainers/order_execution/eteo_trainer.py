@@ -222,7 +222,7 @@ class OrderExecutionETEOTrainer(Trainer):
                 # print('plot_metric_against_baseline')
                 plot_trading_decision_on_market(market_features_dict=return_dict['market_features_dict'],
                                                 trading_points=return_dict['trading_points'],
-                                                alg='End-to-End Optimal', task='train', color='darkcyan',
+                                                alg='End-to-End Optimal', task='test', color='darkcyan',
                                                 save_dir=self.work_dir, metric_name='Trading')
 
                 # plot_metric_against_baseline(total_asset=return_dict['cash_left_by_tick'],buy_and_hold=None,alg='End to End Optimal',task='test',color='darkcyan',save_dir=self.work_dir,metric_name='Cash left')
