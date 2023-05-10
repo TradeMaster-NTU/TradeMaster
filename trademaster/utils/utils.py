@@ -499,10 +499,10 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
     ax2.set_yticklabels(['sell','hold','buy'])
 
     for buy_trade_point,buy_volume in buy_trade_points.items():
-        plt.annotate(f'buy {buy_volume}', xy=(buy_trade_point, 0), xytext=(buy_trade_point, 0.5),
+        plt.annotate(f'Buy {buy_volume}', xy=(buy_trade_point, 0), xytext=(buy_trade_point, 0.5),
                      arrowprops=dict(facecolor='red', shrink=0.05),)
     for sell_trade_point,sell_volume in sell_trade_points.items():
-        plt.annotate(f'sell {sell_volume}', xy=(sell_trade_point, 0), xytext=(sell_trade_point, 0.5),
+        plt.annotate(f'Sell {sell_volume}', xy=(sell_trade_point, 0), xytext=(sell_trade_point, 0.5),
                      arrowprops=dict(facecolor='green', shrink=0.05),)
 
 
@@ -524,7 +524,7 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
     plt.xlabel('Trading times',size=12)
     ax1.set_ylabel(metric_name,size=12)
     ax1.grid(ls='--')
-    ax1.legend(loc='lower center', fancybox=True, ncol=1)
+    # ax1.legend(loc='lower center', fancybox=True, ncol=1)
 
 
     # plot trading points as vertical arrows, buy points are red, sell points are green,add the volume of the trade on the arrow
