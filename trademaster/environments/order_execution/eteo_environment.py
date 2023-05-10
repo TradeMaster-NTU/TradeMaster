@@ -397,8 +397,12 @@ class OrderExecutionETEOEnvironment(Environments):
 
             buy_points={}
             sell_points={}
-            trade_happens_lst=self.all_bitcoin_lst-self.all_bitcoin_lst[1:]+[0]
-            for i, trade in enumerate(trade_happens_lst):
+            # subtract the current bitcoin price from the next bitcoin price
+            btc_trade_lst=[]
+            for i in range(len(self.all_bitcoin_lst)-1):
+                btc_trade_lst.append(self.all_bitcoin_lst[i]-self.all_bitcoin_lst[i+1])
+            btc_trade_lst.append(self.all_bitcoin_lst[-1])
+            for i, trade in enumerate(btc_trade_lst):
                 if trade > 0:
                     sell_points[i] = trade
                 elif trade < 0:
