@@ -502,15 +502,15 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
         counter+=1
         # print('buy_trade_point is:',buy_trade_point,'buy_volume is:',buy_volume)
         buy_volume=np.round(buy_volume,2)
-        plt.annotate(f'Buy {buy_volume}', xy=(buy_trade_point, 0), xytext=(buy_trade_point, 0.5*(-1**counter)),
+        plt.annotate('Buy '+str(buy_volume), xy=(buy_trade_point, 0), xytext=(buy_trade_point, 0.5*(-1**counter)),
                      arrowprops=dict(facecolor='red', shrink=0.05),)
     counter = 0
     for sell_trade_point,sell_volume in sell_trade_points.items():
         counter += 1
         # print('sell_trade_point is:', sell_trade_point, 'sell_volume is:', sell_volume,np.round(sell_volume,2),0.5*((-1)**counter),counter)
         sell_volume=np.round(sell_volume,2)
-        print('sell_volume is:',sell_volume)
-        plt.annotate(f'Sell {sell_volume}', xy=(sell_trade_point, 0), xytext=(sell_trade_point, 0.5*((-1)**counter)),
+        # print('sell_volume is:',sell_volume)
+        plt.annotate('Sell '+str(sell_volume), xy=(sell_trade_point, 0), xytext=(sell_trade_point, 0.5*((-1)**counter)),
                      arrowprops=dict(facecolor='green', shrink=0.05),)
 
 
