@@ -497,12 +497,15 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
     ax2.set_ylim(-1.1*scale,1.1*scale)
     ax2.set_yticks([-1.1*scale,0,1.1*scale])
     ax2.set_yticklabels(['sell','hold','buy'])
-
+    counter=0
     for buy_trade_point,buy_volume in buy_trade_points.items():
-        plt.annotate(f'Buy {buy_volume}', xy=(buy_trade_point, 0), xytext=(buy_trade_point, 0.5),
+        counter+=1
+        plt.annotate(f'Buy {round(buy_volume,2)}', xy=(buy_trade_point, 0), xytext=(buy_trade_point, 0.5*(-1**counter)),
                      arrowprops=dict(facecolor='red', shrink=0.05),)
+    counter = 0
     for sell_trade_point,sell_volume in sell_trade_points.items():
-        plt.annotate(f'Sell {sell_volume}', xy=(sell_trade_point, 0), xytext=(sell_trade_point, 0.5),
+        counter += 1
+        plt.annotate(f'Sell {round(sell_volume,2)}', xy=(sell_trade_point, 0), xytext=(sell_trade_point, 0.5*(-1**counter)),
                      arrowprops=dict(facecolor='green', shrink=0.05),)
 
 
