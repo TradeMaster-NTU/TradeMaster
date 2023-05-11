@@ -445,6 +445,11 @@ def plot(df,alg,color='darkcyan',save=False):
 def plot_metric_against_baseline(total_asset,buy_and_hold,alg,task,color='darkcyan',save_dir=None,metric_name='Total asset'):
     # print('total_asset shape is:',total_asset.shape)
     # print(total_asset)
+
+    #normalize total_asset and buy_and_hold by the first value
+    total_asset=total_asset/total_asset[0]
+    buy_and_hold=buy_and_hold/total_asset[0]
+
     x = range(len(total_asset))
     # print('total_asset shape is:',total_asset.shape)
     # print('x shape is:',len(x))
@@ -458,7 +463,7 @@ def plot_metric_against_baseline(total_asset,buy_and_hold,alg,task,color='darkcy
         # print('buy and hold shape is:',buy_and_hold.shape)
         plt.plot(x, buy_and_hold, 'r', label='Buy and Hold')
     plt.grid(ls='--')
-    plt.legend(loc='upper center', fancybox=True, ncol=1)
+    plt.legend(fancybox=True, ncol=1)
     # set title
     plt.title(f'{metric_name} of {alg} in {task}')
     if save_dir is not None:
@@ -507,7 +512,7 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
         # for sell_trade_point,sell_volume in sell_trade_points.items():
         if len(sell_trade_points)>0:
             ax2.bar(list(sell_trade_points.keys()),list(sell_trade_points.values()),width=1,label='sell',color='g')
-        ax2.legend(loc='upper center', fancybox=True, ncol=1)
+        ax2.legend( fancybox=True, ncol=1)
 
 
     # few trading points, use annotation to represent
@@ -544,7 +549,7 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
         # ax1.plot(x, y, label=market_feature)
         ax1.plot(x, y, label=market_feature)
     plt.xlabel('Trading times',size=12)
-    ax1.legend(loc='lower center', fancybox=True, ncol=1)
+    ax1.legend(loc='lower right',fancybox=True, ncol=1)
     ax1.set_ylabel(metric_name,size=12)
     ax1.grid(ls='--')
 
