@@ -21,6 +21,7 @@ class OrderExecutionPDTrainer(Trainer):
         self.num_envs = int(get_attr(kwargs, "num_envs", 1))
 
         self.device = get_attr(kwargs, "device", torch.device(f"cuda:0" if torch.cuda.is_available() else "cpu"))
+        self.verbose = get_attr(kwargs, "verbose", 0)
 
         self.train_environment = get_attr(kwargs, "train_environment", None)
         self.valid_environment = get_attr(kwargs, "valid_environment", None)
@@ -100,9 +101,11 @@ class OrderExecutionPDTrainer(Trainer):
         if self.if_remove:
             import shutil
             shutil.rmtree(self.work_dir, ignore_errors=True)
-            print(f"| Arguments Remove work_dir: {self.work_dir}")
+            if self.verbose:
+                print(f"| Arguments Remove work_dir: {self.work_dir}")
         else:
-            print(f"| Arguments Keep work_dir: {self.work_dir}")
+            if self.verbose:
+                print(f"| Arguments Keep work_dir: {self.work_dir}")
         os.makedirs(self.work_dir, exist_ok=True)
 
         self.checkpoints_path = os.path.join(self.work_dir, "checkpoints")

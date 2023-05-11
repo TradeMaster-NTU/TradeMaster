@@ -34,6 +34,7 @@ def parse_args():
     parser.add_argument("--test_style", type=str, default='-1')
     parser.add_argument("--auto_tuning", default=False, type=bool)
     parser.add_argument("--n_trials", default=10, type=int)
+    parser.add_argument("--verbose", type=int, default='1')
     args = parser.parse_args()
     return args
 
@@ -70,7 +71,9 @@ def test_dqn_builder(args, sampled_params):
         cfg.optimizer.update(dict(lr=lr))
         cfg.act.update(dict(explore_rate=explore_rate, dims = dims))
 
-    print(cfg)
+    if args.verbose == 1:
+        print(cfg)
+
 
     act = build_net(cfg.act)
     act_optimizer = build_optimizer(cfg, default_args=dict(params=act.parameters()))
