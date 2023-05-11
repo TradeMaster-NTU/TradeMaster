@@ -27,7 +27,6 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Download Alpaca Datasets')
     parser.add_argument("--config", default=osp.join(ROOT, "configs", "portfolio_management", "portfolio_management_exchange_ppo_ppo_adam_mse.py"),
                         help="download datasets config file path")
-    print(parser.config)
     parser.add_argument("--task_name", type=str, default="train")
     parser.add_argument("--test_dynamic", type=str, default="-1")
     parser.add_argument("--verbose", type=int, default='1')
@@ -36,6 +35,7 @@ def parse_args():
 
 def main():
     args = parse_args()
+    print(args.config)
 
     cfg = Config.fromfile(args.config)
     task_name = args.task_name
