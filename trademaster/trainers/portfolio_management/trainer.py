@@ -45,7 +45,7 @@ def select_algorithms(alg_name):
     return trainer
 
 
-ray.init(ignore_reinit_error=True)
+ray.init(ignore_reinit_error=True,log_to_driver=False)
 register_env("portfolio_management", lambda config: env_creator(
     "portfolio_management")(config))
 

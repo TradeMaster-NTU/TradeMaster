@@ -280,7 +280,7 @@ class Server():
                 "test_log_path": os.path.join(os.path.dirname(log_path), "test_log.txt")
             }})
 
-            cmd = "conda activate TradeMaster && nohup python -u {} --config {} --task_name train > {} 2>&1 &".format(
+            cmd = "conda activate TradeMaster && nohup python -u {} --config {} --task_name train --verbose 0 > {} 2>&1 &".format(
                 train_script_path,
                 cfg_path,
                 log_path)
@@ -367,7 +367,7 @@ class Server():
             cfg_path = self.sessions[session_id]["cfg_path"]
             log_path = self.sessions[session_id]["test_log_path"]
 
-            cmd = "conda activate TradeMaster && nohup python -u {} --config {} --task_name test > {} 2>&1 &".format(
+            cmd = "conda activate TradeMaster && nohup python -u {} --config {} --task_name test --verbose 0 > {} 2>&1 &".format(
                 script_path,
                 cfg_path,
                 log_path)

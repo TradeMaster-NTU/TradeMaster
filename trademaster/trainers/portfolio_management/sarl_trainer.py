@@ -43,7 +43,7 @@ def select_algorithms(alg_name):
         raise NotImplementedError
     return trainer
 
-ray.init(ignore_reinit_error=True)
+ray.init(ignore_reinit_error=True,log_to_driver=False)
 register_env("portfolio_management_sarl", lambda config: env_creator("portfolio_management_sarl")(config))
 
 @TRAINERS.register_module()
