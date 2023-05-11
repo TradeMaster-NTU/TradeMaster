@@ -447,7 +447,9 @@ def plot_metric_against_baseline(total_asset,buy_and_hold,alg,task,color='darkcy
     # print(total_asset)
 
     #normalize total_asset and buy_and_hold by the first value
-    buy_and_hold = buy_and_hold / total_asset[0]
+    # print('total_asset shape is:',total_asset.shape,total_asset)
+    if buy_and_hold is not None:
+        buy_and_hold = buy_and_hold / total_asset[0]
     total_asset=total_asset/total_asset[0]
 
     x = range(len(total_asset))
