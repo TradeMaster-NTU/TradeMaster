@@ -506,7 +506,7 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
             ax2.bar(list(buy_trade_points.keys()),list(buy_trade_points.values()),width=1,label='buy',color='r')
         # for sell_trade_point,sell_volume in sell_trade_points.items():
         if len(sell_trade_points)>0:
-            ax2.bar(list(sell_trade_points.keys()),-1*list(sell_trade_points.values()),width=1,label='sell',color='g')
+            ax2.bar(list(sell_trade_points.keys()),list(sell_trade_points.values()),width=1,label='sell',color='g')
         ax2.legend(loc='upper center', fancybox=True, ncol=1)
 
 
