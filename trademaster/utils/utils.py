@@ -447,8 +447,8 @@ def plot_metric_against_baseline(total_asset,buy_and_hold,alg,task,color='darkcy
     # print(total_asset)
 
     #normalize total_asset and buy_and_hold by the first value
+    buy_and_hold = buy_and_hold / total_asset[0]
     total_asset=total_asset/total_asset[0]
-    buy_and_hold=buy_and_hold/total_asset[0]
 
     x = range(len(total_asset))
     # print('total_asset shape is:',total_asset.shape)
@@ -463,7 +463,7 @@ def plot_metric_against_baseline(total_asset,buy_and_hold,alg,task,color='darkcy
         # print('buy and hold shape is:',buy_and_hold.shape)
         plt.plot(x, buy_and_hold, 'r', label='Buy and Hold')
     plt.grid(ls='--')
-    plt.legend(fancybox=True, ncol=1)
+    plt.legend(loc='lower right',fancybox=True, ncol=1)
     # set title
     plt.title(f'{metric_name} of {alg} in {task}')
     if save_dir is not None:
