@@ -500,6 +500,7 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
     counter=0
     for buy_trade_point,buy_volume in buy_trade_points.items():
         counter+=1
+        print('buy_trade_point is:',buy_trade_point,'buy_volume is:',buy_volume)
         plt.annotate(f'Buy {np.round(buy_volume,2)}', xy=(buy_trade_point, 0), xytext=(buy_trade_point, 0.5*(-1**counter)),
                      arrowprops=dict(facecolor='red', shrink=0.05),)
     counter = 0
