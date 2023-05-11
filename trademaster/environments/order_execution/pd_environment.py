@@ -207,7 +207,6 @@ class OrderExecutionPDEnvironment(Environments):
                 elif action < 0:
                     buy_points[i] = action
             trading_points = {'buy':buy_points,'sell':sell_points}
-            print(self.day,self.money_sold,leftover_order,current_price)
             self.asset_list.append(self.money_sold + leftover_order * current_price)
 
 
