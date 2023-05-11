@@ -463,7 +463,7 @@ def plot_metric_against_baseline(total_asset,buy_and_hold,alg,task,color='darkcy
         # print('buy and hold shape is:',buy_and_hold.shape)
         plt.plot(x, buy_and_hold, 'r', label='Buy and Hold')
     plt.grid(ls='--')
-    plt.legend(loc='upper right',fancybox=True, ncol=1)
+    plt.legend(fancybox=True, ncol=1)
     # set title
     plt.title(f'{metric_name} of {alg} in {task}')
     if save_dir is not None:
@@ -549,7 +549,7 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
         # ax1.plot(x, y, label=market_feature)
         ax1.plot(x, y, label=market_feature)
     plt.xlabel('Trading times',size=12)
-    ax1.legend(loc='lower right',fancybox=True, ncol=1)
+    ax1.legend(fancybox=True, ncol=1)
     ax1.set_ylabel(metric_name,size=12)
     ax1.grid(ls='--')
 
