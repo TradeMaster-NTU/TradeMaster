@@ -319,7 +319,7 @@ class Server():
             session_id = request_json.get("session_id")
             work_dir = self.sessions[session_id]["work_dir"]
 
-            with open(osp.join(work_dir,f"Visualization_train.png"), "rb") as image_file:
+            with open(osp.join(work_dir,f"Visualization_valid.png"), "rb") as image_file:
                 encoded_string = base64.b64encode(image_file.read())
             if session_id in self.sessions:
                 if os.path.exists(self.sessions[session_id]["train_log_path"]):
