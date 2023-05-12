@@ -37,7 +37,7 @@ class AlgorithmicTradingEnvironment(Environments):
 
         ##get data time interval
         self.initial_amount = get_attr(self.dataset, "initial_amount", 100000)
-        self.transaction_cost_pct = get_attr(self.dataset, "transaction_cost_pct", 0.000)
+        self.transaction_cost_pct = get_attr(self.dataset, "transaction_cost_pct", 0.001)
         self.tech_indicator_list = get_attr(self.dataset, "tech_indicator_list", [])
         self.forward_num_day = get_attr(self.dataset, "forward_num_day", [])
         self.backward_num_day = get_attr(self.dataset, "backward_num_day", [])
