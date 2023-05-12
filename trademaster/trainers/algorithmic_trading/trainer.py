@@ -124,6 +124,7 @@ class AlgorithmicTradingTrainer(Trainer):
 
         valid_score_list = []
         save_dict_list = []
+        return_rate_list = []
         epoch = 1
         print("Train Episode: [{}/{}]".format(epoch, self.epochs))
         while True:
@@ -155,6 +156,7 @@ class AlgorithmicTradingTrainer(Trainer):
                         break
                 valid_score_list.append(episode_reward_sum)
                 save_dict_list.append(save_dict)
+                return_rate_list.append(save_dict['return_rate'])
 
                 save_model(self.checkpoints_path,
                            epoch=epoch,
@@ -166,7 +168,9 @@ class AlgorithmicTradingTrainer(Trainer):
             if epoch > self.epochs:
                 break
 
-        max_index = np.argmax(valid_score_list)
+        # find the best epoch base on return_rate instead of reward sum
+        # max_index = np.argmax(valid_score_list)
+        max_index = np.argmax(return_rate_list)
         # plot the total asset against the baseline of the best epoch
         plot_metric_against_baseline(total_asset=save_dict_list[max_index]['total_assets'],buy_and_hold=save_dict_list[max_index]['buy_and_hold_assets'],alg='Deepscalper',task='valid',color='darkcyan',save_dir=self.work_dir)
 
