@@ -1,5 +1,5 @@
 task_name = "algorithmic_trading"
-dataset_name = "GOOG"
+dataset_name = "IBM"
 optimizer_name = "adam"
 loss_name = "mse"
 net_name = "deepscalper"
@@ -20,12 +20,12 @@ _base_ = [
 batch_size = 64
 data = dict(
     type='AlgorithmicTradingDataset',
-    data_path='data/algorithmic_trading/GOOG',
-    train_path='data/algorithmic_trading/GOOG/train.csv',
-    valid_path='data/algorithmic_trading/GOOG/valid.csv',
-    test_path='data/algorithmic_trading/GOOG/test.csv',
+    data_path='data/algorithmic_trading/IBM',
+    train_path='data/algorithmic_trading/IBM/train.csv',
+    valid_path='data/algorithmic_trading/IBM/valid.csv',
+    test_path='data/algorithmic_trading/IBM/test.csv',
     test_dynamic_path=
-    'data/algorithmic_trading/GOOG/test_labeled_3_24_-0.05_0.05.csv',
+    'data/algorithmic_trading/IBM/test_labeled_3_24_-0.05_0.05.csv',
     tech_indicator_list=[
         'high', 'low', 'open', 'close', 'adjcp', 'zopen', 'zhigh', 'zlow',
         'zadjcp', 'zclose', 'zd_5', 'zd_10', 'zd_15', 'zd_20', 'zd_25', 'zd_30'

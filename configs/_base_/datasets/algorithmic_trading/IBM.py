@@ -1,11 +1,11 @@
 
 data = dict(
     type = "AlgorithmicTradingDataset",
-    data_path = "data/algorithmic_trading/GOOG",
-    train_path = "data/algorithmic_trading/GOOG/train.csv",
-    valid_path = "data/algorithmic_trading/GOOG/valid.csv",
-    test_path = "data/algorithmic_trading/GOOG/test.csv",
-    test_dynamic_path='data/algorithmic_trading/GOOG/test_labeled_3_24_-0.15_0.15.csv',
+    data_path = "data/algorithmic_trading/IBM",
+    train_path = "data/algorithmic_trading/IBM/train.csv",
+    valid_path = "data/algorithmic_trading/IBM/valid.csv",
+    test_path = "data/algorithmic_trading/IBM/test.csv",
+    test_dynamic_path='data/algorithmic_trading/IBM/test_labeled_3_24_-0.15_0.15.csv',
     tech_indicator_list = [
         "high",
         "low",
