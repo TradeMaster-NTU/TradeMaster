@@ -219,10 +219,10 @@ class OrderExecutionPDTrainer(Trainer):
         max_index = np.argmax(valid_score_list)
         plot_trading_decision_on_market(market_features_dict=save_dict_list[max_index]['market_features_dict'],
                                         trading_points=save_dict_list[max_index]['trading_points'],
-                                        alg='Oracle Policy Distillation', task='train', color='darkcyan',
+                                        alg='Oracle Policy Distillation', task='valid', color='darkcyan',
                                         save_dir=self.work_dir, metric_name='Trading')
         # plot_metric_against_baseline(total_asset=save_dict_list[max_index]['Total Asset'], buy_and_hold=None,
-        #                              alg='Oracle Policy Distillation', task='train', color='darkcyan', save_dir=self.work_dir,
+        #                              alg='Oracle Policy Distillation', task='valid', color='darkcyan', save_dir=self.work_dir,
         #                              metric_name='Total Asset')
         load_model(self.checkpoints_path,
                    epoch=max_index + 1,

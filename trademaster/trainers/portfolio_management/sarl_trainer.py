@@ -128,7 +128,7 @@ class PortfolioManagementSARLTrainer(Trainer):
         max_index = np.argmax(valid_score_list)
         plot_metric_against_baseline(total_asset=save_dict_list[max_index]['total_assets'],
                                      buy_and_hold=None, alg='SARL',
-                                     task='train', color='darkcyan', save_dir=self.work_dir)
+                                     task='valid', color='darkcyan', save_dir=self.work_dir)
         obj = load_object(os.path.join(self.checkpoints_path, "checkpoint-{:05d}.pkl".format(max_index+1)))
         save_object(obj, os.path.join(self.checkpoints_path, "best.pkl"))
         ray.shutdown()

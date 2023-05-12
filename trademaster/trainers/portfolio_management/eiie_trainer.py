@@ -174,7 +174,7 @@ class PortfolioManagementEIIETrainer(Trainer):
         max_index = np.argmax(valid_score_list)
         plot_metric_against_baseline(total_asset=save_dict_list[max_index]['total_assets'],
                                      buy_and_hold=None, alg='Ensemble of Identical Independent Evaluators',
-                                     task='train', color='darkcyan', save_dir=self.work_dir)
+                                     task='valid', color='darkcyan', save_dir=self.work_dir)
         load_model(self.checkpoints_path,
                    epoch=max_index + 1,
                    save=self.agent.get_save())
