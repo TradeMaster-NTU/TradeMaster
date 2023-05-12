@@ -67,6 +67,7 @@ class Server():
             "dataset_name": [
                             "algorithmic_trading:BTC",
                             "algorithmic_trading:FX",
+                             "algorithmic_trading:JPM",
                              "order_excecution:BTC",
                              "order_excecution:PD_BTC",
                              "portfolio_management:dj30",
@@ -218,8 +219,14 @@ class Server():
             optimizer_name = request_json.get("optimizer_name")
             loss_name = request_json.get("loss_name")
             agent_name = request_json.get("agent_name").split(":")[-1]
-            start_date = request_json.get("start_date")
-            end_date = request_json.get("end_date")
+            try:
+                start_date = request_json.get("start_date")
+            except:
+                start_date = None
+            try:
+                end_date = request_json.get("end_date")
+            except:
+                end_date = None
             ##TODO
             session_id = str(uuid.uuid1())
 
@@ -238,24 +245,31 @@ class Server():
             cfg.trainer.work_dir = cfg.work_dir
 
             # build dataset
-            data = pd.read_csv(os.path.join(ROOT, cfg.data.data_path, "data.csv"), index_col=0)
-            data = data[(data["date"] >= start_date) & (data["date"] < end_date)]
 
-            # indexs = range(len(data.index.unique()))
-            indexs = data.index.unique()
+            if start_date and end_date:
+                data = pd.read_csv(os.path.join(ROOT, cfg.data.data_path, "data.csv"), index_col=0)
+                data = data[(data["date"] >= start_date) & (data["date"] < end_date)]
 
-            train_indexs = indexs[:int(len(indexs) * 0.8)]
-            val_indexs = indexs[int(len(indexs) * 0.8):int(len(indexs) * 0.9)]
-            test_indexs = indexs[int(len(indexs) * 0.9):]
+                # indexs = range(len(data.index.unique()))
+                indexs = data.index.unique()
 
-            train_data = data.loc[train_indexs, :]
-            train_data.index = train_data.index - train_data.index.min()
+                train_indexs = indexs[:int(len(indexs) * 0.8)]
+                val_indexs = indexs[int(len(indexs) * 0.8):int(len(indexs) * 0.9)]
+                test_indexs = indexs[int(len(indexs) * 0.9):]
 
-            val_data = data.loc[val_indexs, :]
-            val_data.index = val_data.index - val_data.index.min()
+                train_data = data.loc[train_indexs, :]
+                train_data.index = train_data.index - train_data.index.min()
 
-            test_data = data.loc[test_indexs, :]
-            test_data.index = test_data.index - test_data.index.min()
+                val_data = data.loc[val_indexs, :]
+                val_data.index = val_data.index - val_data.index.min()
+
+                test_data = data.loc[test_indexs, :]
+                test_data.index = test_data.index - test_data.index.min()
+
+            else:
+                train_data = pd.read_csv(os.path.join(ROOT, cfg.data.data_path, "train.csv"), index_col=0)
+                val_data = pd.read_csv(os.path.join(ROOT, cfg.data.data_path, "valid.csv"), index_col=0)
+                test_data = pd.read_csv(os.path.join(ROOT, cfg.data.data_path, "test.csv"), index_col=0)
 
             train_data.to_csv(os.path.join(work_dir, "train.csv"))
             cfg.data.train_path = "{}/{}".format(cfg.work_dir, "train.csv")
@@ -319,8 +333,7 @@ class Server():
             session_id = request_json.get("session_id")
             work_dir = self.sessions[session_id]["work_dir"]
 
-            with open(osp.join(work_dir,f"Visualization_valid.png"), "rb") as image_file:
-                encoded_string = base64.b64encode(image_file.read())
+
             if session_id in self.sessions:
                 if os.path.exists(self.sessions[session_id]["train_log_path"]):
                     cmd = "tail -n 2000 {}".format(self.sessions[session_id]["train_log_path"])
@@ -331,15 +344,19 @@ class Server():
                 info = "waitinig for train start"
             if 'train end' in info:
                 train_end = True
+                with open(osp.join(work_dir, f"Visualization_valid.png"), "rb") as image_file:
+                    encoded_string = base64.b64encode(image_file.read())
+                    result_plot = str(encoded_string, 'utf-8')
             else:
                 train_end = False
+                result_plot = None
 
 
 
             res = {
                 "info": info,
                 "train_end": train_end,
-                'result_plot': str(encoded_string, 'utf-8')
+                'result_plot': result_plot
             }
             logger.info("get train status success")
             return jsonify(res)
@@ -401,8 +418,6 @@ class Server():
             self.sessions = self.load_sessions()
             session_id = request_json.get("session_id")
             work_dir = self.sessions[session_id]["work_dir"]
-            with open(osp.join(work_dir,f"Visualization_train.png"), "rb") as image_file:
-                encoded_string = base64.b64encode(image_file.read())
             if session_id in self.sessions:
                 cmd = "tail -n 2000 {}".format(self.sessions[session_id]["test_log_path"])
                 info = run_cmd(cmd)
@@ -411,13 +426,17 @@ class Server():
 
             if 'test end' in info:
                 test_end = True
+                with open(osp.join(work_dir, f"Visualization_test.png"), "rb") as image_file:
+                    encoded_string = base64.b64encode(image_file.read())
+                result_plot = str(encoded_string, 'utf-8')
             else:
                 test_end = False
+                result_plot = None
 
             res = {
                 "info": info,
                 "test_end": test_end,
-                'result_plot': str(encoded_string, 'utf-8')
+                'result_plot': result_plot
             }
             logger.info("get train status success")
             return jsonify(res)

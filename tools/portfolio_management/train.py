@@ -25,7 +25,7 @@ set_seed(2023)
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Download Alpaca Datasets')
-    parser.add_argument("--config", default=osp.join(ROOT, "configs", "portfolio_management", "portfolio_management_exchange_td3_td3_adam_mse.py"),
+    parser.add_argument("--config", default=osp.join(ROOT, "configs", "portfolio_management", "portfolio_management_exchange_ppo_ppo_adam_mse.py"),
                         help="download datasets config file path")
     parser.add_argument("--task_name", type=str, default="train")
     parser.add_argument("--test_dynamic", type=str, default="-1")

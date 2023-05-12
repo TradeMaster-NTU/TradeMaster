@@ -70,7 +70,7 @@ class OrderExecutionETEOTrainer(Trainer):
             'undone': (self.buffer_size, self.num_envs),
             'next_state': (self.buffer_size, self.num_envs, self.time_steps, self.state_dim),
         })
-
+        self.verbose= get_attr(kwargs, "verbose", False)
         self.init_before_training()
 
     def init_before_training(self):
@@ -90,9 +90,11 @@ class OrderExecutionETEOTrainer(Trainer):
         if self.if_remove:
             import shutil
             shutil.rmtree(self.work_dir, ignore_errors=True)
-            print(f"| Arguments Remove work_dir: {self.work_dir}")
+            if self.verbose:
+                print(f"| Arguments Remove work_dir: {self.work_dir}")
         else:
-            print(f"| Arguments Keep work_dir: {self.work_dir}")
+            if self.verbose:
+                print(f"| Arguments Keep work_dir: {self.work_dir}")
         os.makedirs(self.work_dir, exist_ok=True)
 
         self.checkpoints_path = os.path.join(self.work_dir, "checkpoints")

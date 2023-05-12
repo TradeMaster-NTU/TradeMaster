@@ -21,7 +21,6 @@ class OrderExecutionPDTrainer(Trainer):
         self.num_envs = int(get_attr(kwargs, "num_envs", 1))
 
         self.device = get_attr(kwargs, "device", torch.device(f"cuda:0" if torch.cuda.is_available() else "cpu"))
-        self.verbose = get_attr(kwargs, "verbose", 0)
 
         self.train_environment = get_attr(kwargs, "train_environment", None)
         self.valid_environment = get_attr(kwargs, "valid_environment", None)
@@ -81,6 +80,7 @@ class OrderExecutionPDTrainer(Trainer):
             'next_public_state':(self.buffer_size, self.num_envs, self.time_steps * 2, self.public_state_dim),
             'next_private_state':(self.buffer_size, self.num_envs, self.time_steps, self.private_state_dim),
         })
+        self.verbose = get_attr(kwargs, "verbose", False)
 
         self.init_before_training()
 

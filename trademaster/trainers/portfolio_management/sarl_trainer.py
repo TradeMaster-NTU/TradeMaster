@@ -12,6 +12,7 @@ import pandas as pd
 import numpy as np
 import random
 import torch
+import logging
 
 
 def env_creator(env_name):
@@ -37,14 +38,22 @@ def select_algorithms(alg_name):
     elif alg_name == 'TD3':
         from ray.rllib.agents.ddpg.ddpg import TD3Trainer as trainer
     else:
-        print(alg_name)
-        print(alg_name == "A2C")
-        print(type(alg_name))
+        ray.get(f.remote(alg_name))
+        ray.get(f.remote(alg_name == "A2C"))
+        ray.get(f.remote(type(alg_name)))
         raise NotImplementedError
     return trainer
 
-ray.init(ignore_reinit_error=True,log_to_driver=False)
+logging.disable(logging.INFO)
+logging.disable(logging.WARNING)
+ray.init(ignore_reinit_error=True)
 register_env("portfolio_management_sarl", lambda config: env_creator("portfolio_management_sarl")(config))
+
+
+@ray.remote
+def f(msg):
+    logging.basicConfig(format='%(message)s',level=logging.DEBUG)
+    logging.info(msg)
 
 @TRAINERS.register_module()
 class PortfolioManagementSARLTrainer(Trainer):
@@ -86,9 +95,9 @@ class PortfolioManagementSARLTrainer(Trainer):
         if self.if_remove:
             import shutil
             shutil.rmtree(self.work_dir, ignore_errors=True)
-            print(f"| Arguments Remove work_dir: {self.work_dir}")
+            ray.get(f.remote(f"| Arguments Remove work_dir: {self.work_dir}"))
         else:
-            print(f"| Arguments Keep work_dir: {self.work_dir}")
+            ray.get(f.remote(f"| Arguments Keep work_dir: {self.work_dir}"))
         os.makedirs(self.work_dir, exist_ok=True)
 
         self.checkpoints_path = os.path.join(self.work_dir, "checkpoints")
@@ -102,12 +111,12 @@ class PortfolioManagementSARLTrainer(Trainer):
         self.trainer = self.trainer_name(env="portfolio_management_sarl", config=self.configs)
 
         for epoch in range(1, self.epochs+1):
-            print("Train Episode: [{}/{}]".format(epoch, self.epochs))
+            ray.get(f.remote("Train Episode: [{}/{}]".format(epoch, self.epochs)))
             self.trainer.train()
 
             config = dict(dataset=self.dataset, task="valid")
             self.valid_environment = env_creator("portfolio_management_sarl")(config)
-            print("Valid Episode: [{}/{}]".format(epoch, self.epochs))
+            ray.get(f.remote("Valid Episode: [{}/{}]".format(epoch, self.epochs)))
             state = self.valid_environment.reset()
 
             episode_reward_sum = 0
@@ -116,7 +125,7 @@ class PortfolioManagementSARLTrainer(Trainer):
                 state, reward, done, information = self.valid_environment.step(action)
                 episode_reward_sum += reward
                 if done:
-                    #print("Valid Episode Reward Sum: {:04f}".format(episode_reward_sum))
+                    #ray.get(f.remote("Valid Episode Reward Sum: {:04f}".format(episode_reward_sum))
                     break
             save_dict_list.append(information)
             valid_score_list.append(information["sharpe_ratio"])
@@ -141,7 +150,7 @@ class PortfolioManagementSARLTrainer(Trainer):
 
         config = dict(dataset=self.dataset, task="test")
         self.test_environment = env_creator("portfolio_management_sarl")(config)
-        print("Test Best Episode")
+        ray.get(f.remote("Test Best Episode"))
         state = self.test_environment.reset()
         episode_reward_sum = 0
         while True:
@@ -152,9 +161,10 @@ class PortfolioManagementSARLTrainer(Trainer):
                 plot_metric_against_baseline(total_asset=sharpe['total_assets'],
                                              buy_and_hold=None, alg='SARL',
                                              task='test', color='darkcyan', save_dir=self.work_dir)
-                # print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
+                # ray.get(f.remote("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
                 break
 
+        ray.get(f.remote(sharpe['table']))
         rewards = self.test_environment.save_asset_memory()
         assets = rewards["total assets"].values
         df_return = self.test_environment.save_portfolio_return_memory()
@@ -246,12 +256,12 @@ class PortfolioManagementSARLTrainer(Trainer):
                                                          zero_metrics)
         radar_plot_path = cfg.work_dir
         # 'metric_' + str(self.task) + '_' + str(self.test_dynamic) + '_' + str(id) + '_radar.png')
-        # print('test_metrics_scores are: ', test_metrics_scores_dict)
-        # print('test_metrics_scores are:')
+        # ray.get(f.remote('test_metrics_scores are: ', test_metrics_scores_dict)
+        # ray.get(f.remote('test_metrics_scores are:')
         # print_metrics(test_metrics_scores_dict)
         plot_radar_chart(test_metrics_scores_dict, 'radar_plot_agent_' + str(test_dynamic) + '.png',
                          radar_plot_path)
-        # print('win rate is: ', sum(float(r) > 0 for r in daily_return_list) / len(daily_return_list))
-        # print('Random_buy win rate is: ',
+        # ray.get(f.remote('win rate is: ', sum(float(r) > 0 for r in daily_return_list) / len(daily_return_list))
+        # ray.get(f.remote('Random_buy win rate is: ',
         #       sum(float(r) > 0 for r in daily_return_list_Average_holding) / len(daily_return_list_Average_holding))
-        print("dynamics test end")
+        ray.get(f.remote("dynamics test end"))

@@ -38,6 +38,9 @@ class PortfolioManagementInvestorImitatorTrainer(Trainer):
         if not os.path.exists(self.checkpoints_path):
             os.makedirs(self.checkpoints_path)
 
+
+        self.verbose = get_attr(kwargs, "verbose", False)
+
         self.init_before_training()
 
     def init_before_training(self):
@@ -57,9 +60,11 @@ class PortfolioManagementInvestorImitatorTrainer(Trainer):
         if self.if_remove:
             import shutil
             shutil.rmtree(self.work_dir, ignore_errors=True)
-            print(f"| Arguments Remove work_dir: {self.work_dir}")
+            if self.verbose:
+                print(f"| Arguments Remove work_dir: {self.work_dir}")
         else:
-            print(f"| Arguments Keep work_dir: {self.work_dir}")
+            if self.verbose:
+                print(f"| Arguments Keep work_dir: {self.work_dir}")
         os.makedirs(self.work_dir, exist_ok=True)
 
         self.checkpoints_path = os.path.join(self.work_dir, "checkpoints")
