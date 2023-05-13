@@ -227,7 +227,6 @@ class Server():
                 end_date = request_json.get("end_date")
             except:
                 end_date = None
-            print('start_date', start_date, 'end_date', end_date)
             ##TODO
             session_id = str(uuid.uuid1())
 
@@ -247,7 +246,12 @@ class Server():
 
             # build dataset
 
-            if start_date and end_date:
+            if not start_date or not end_date or (task_name == "algorithmic_trading" and dataset_name == "BTC"):
+                train_data = pd.read_csv(os.path.join(ROOT, cfg.data.data_path, "train.csv"), index_col=0)
+                val_data = pd.read_csv(os.path.join(ROOT, cfg.data.data_path, "valid.csv"), index_col=0)
+                test_data = pd.read_csv(os.path.join(ROOT, cfg.data.data_path, "test.csv"), index_col=0)
+
+            else :
                 data = pd.read_csv(os.path.join(ROOT, cfg.data.data_path, "data.csv"), index_col=0)
                 data = data[(data["date"] >= start_date) & (data["date"] < end_date)]
 
@@ -267,10 +271,7 @@ class Server():
                 test_data = data.loc[test_indexs, :]
                 test_data.index = test_data.index - test_data.index.min()
 
-            else:
-                train_data = pd.read_csv(os.path.join(ROOT, cfg.data.data_path, "train.csv"), index_col=0)
-                val_data = pd.read_csv(os.path.join(ROOT, cfg.data.data_path, "valid.csv"), index_col=0)
-                test_data = pd.read_csv(os.path.join(ROOT, cfg.data.data_path, "test.csv"), index_col=0)
+
 
             train_data.to_csv(os.path.join(work_dir, "train.csv"))
             cfg.data.train_path = "{}/{}".format(cfg.work_dir, "train.csv")

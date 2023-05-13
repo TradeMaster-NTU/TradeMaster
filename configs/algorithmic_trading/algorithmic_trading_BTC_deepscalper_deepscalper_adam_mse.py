@@ -50,9 +50,9 @@ agent = dict(
 )
 trainer = dict(
     type='AlgorithmicTradingTrainer',
-    epochs=2,
+    epochs=20,
     work_dir=work_dir,
-    seeds_list=(12345, ),
+    seeds_list=(42, ),
     batch_size=batch_size,
     horizon_len= 128,
     buffer_size=1000000.0,
