@@ -82,11 +82,13 @@ class OrderExecutionPDEnvironment(Environments):
         ]
         # private state indicates the left date and order
         self.private_state = np.array([1, 1])
+        self.private_state_start= self.private_state
         self.terminal = False
         self.money_sold = 0
         self.private_state_list = [self.private_state] * self.state_length
         self.money_sold_list = []
         self.action_list = []
+        self.price_list = []
         self.asset_list = []
 
     def reset(self):
@@ -111,6 +113,7 @@ class OrderExecutionPDEnvironment(Environments):
         self.action_list=[]
         self.private_state_list = [self.private_state] * self.state_length
         self.asset_list = []
+        self.price_list = []
         return np.array(self.public_imperfect_state), {
             "perfect_state": np.array(self.public_perfect_state),
             "private_state": np.array([self.private_state_list])
@@ -130,13 +133,13 @@ class OrderExecutionPDEnvironment(Environments):
             self.data_public_imperfect = self.df.iloc[
                                          self.day - self.state_length:self.day, :]
             current_price = self.data_public_imperfect.iloc[-1].close
+            self.price_list.append(current_price)
             self.money_sold += leftover_order * current_price
             self.money_sold_list.append(self.money_sold)
             self.public_imperfect_state = np.array(self.public_imperfect_state)
             self.private_state_list.append([0, 0])
             self.private_state_list.remove(self.private_state_list[0])
 
-            print(self.day,self.money_sold, leftover_order, current_price)
             self.asset_list.append(self.money_sold + leftover_order * current_price)
             stats = OrderedDict(
                 {
@@ -173,6 +176,7 @@ class OrderExecutionPDEnvironment(Environments):
             self.public_imperfect_state = np.array(
                 [self.public_imperfect_state])
             current_price = self.data_public_imperfect.iloc[-1].close
+            self.price_list.append(current_price)
             if np.abs(action) < np.abs(leftover_order):
                 self.money_sold += action * current_price
                 self.reward = action * (
@@ -182,10 +186,20 @@ class OrderExecutionPDEnvironment(Environments):
                 self.reward = leftover_order * (
                         current_price / previous_average_price - 1)
                 self.terminal = True
-                stats = OrderedDict(
-                {
-                    "Money Sold": ["{:04f}".format(self.money_sold)],
-                }
+                # calculate avg price in the self.price_list
+                avg_money_sold = np.mean(self.price_list) * self.private_state_start[1]
+                if self.task.startswith("test"):
+                    stats = OrderedDict(
+                    {
+                        "Money Sold": ["{:04f}".format(self.money_sold)],
+                        "Money Sold on average price in trading period": ["{:04f}".format(avg_money_sold)]
+                    }
+                    )
+                else:
+                    stats = OrderedDict(
+                        {
+                            "Money Sold": ["{:04f}".format(self.money_sold)],
+                        }
                 )
                 table = print_metrics(stats)
                 print(table)

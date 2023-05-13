@@ -482,7 +482,7 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
     # print('total_asset shape is:',total_asset.shape)
     # print('x shape is:',len(x))
     # set figure size
-    plt.figure(figsize=(12, 8))
+    plt.figure(figsize=(20, 12))
     fig, ax2 = plt.subplots()
 
     # plot the market_features on the first y axis and give a different color for each market_feature
@@ -498,7 +498,7 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
     sell_trade_points=trading_points['sell']
 
     # plot trading points(buy_trade_points and sell_trade_points) as bars using the second y axis
-    ax2.set_ylabel('Trading Size',size=12)
+    ax2.set_ylabel('Trading',size=12)
     buy_max=max(buy_trade_points.values()) if len(buy_trade_points)>0 else 0
     sell_max=max(sell_trade_points.values()) if len(sell_trade_points)>0 else 0
     scale=max(buy_max,sell_max)
@@ -515,7 +515,7 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
         # for sell_trade_point,sell_volume in sell_trade_points.items():
         if len(sell_trade_points)>0:
             ax2.bar(list(sell_trade_points.keys()),list(sell_trade_points.values()),width=1,label='sell',color='g')
-        ax2.legend( fancybox=True, ncol=1)
+        # ax2.legend( fancybox=True, ncol=1)
 
 
     # few trading points, use annotation to represent
@@ -551,10 +551,19 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
         y=market_features_dict[market_feature]
         # ax1.plot(x, y, label=market_feature)
         ax1.plot(x, y, label=market_feature)
-    plt.xlabel('Trading times',size=12)
-    ax1.legend(fancybox=True, ncol=1)
-    ax1.set_ylabel(metric_name,size=12)
+    ax1.set_ylabel('Market', size=12)
+    # ax1.legend(loc='lower right',fancybox=True, ncol=1)
+    # ax1.set_ylabel(metric_name,size=12)
     ax1.grid(ls='--')
+    # resize the figure so taht ax1 and ax2 can be shown completely and clearly
+    plt.tight_layout()
+    # leave blank space fot title
+    plt.subplots_adjust(top=0.9)
+
+    # add legend for ax1 and ax2 in one legend
+    lines, labels = ax1.get_legend_handles_labels()
+    lines2, labels2 = ax2.get_legend_handles_labels()
+    ax2.legend(lines + lines2, labels + labels2, loc='lower right', fancybox=True, ncol=1)
 
 
     # plot trading points as vertical arrows, buy points are red, sell points are green,add the volume of the trade on the arrow
