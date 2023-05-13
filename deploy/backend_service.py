@@ -352,6 +352,11 @@ class Server():
                 train_end = False
                 result_plot = None
 
+            # parse every line of info with 'm ' and get the latter part
+            info = [line.split('m ')[-1] if 'm ' in line else line for line in info.split('\n')]
+            # remove 'nohup: ignoring input' in info
+            info = [line for line in info if 'nohup: ignoring input' not in line]
+            info = '\n'.join(info)
 
 
             res = {
@@ -433,6 +438,11 @@ class Server():
             else:
                 test_end = False
                 result_plot = None
+
+            # parse every line of info with 'm ' and get the latter part if 'm ' in line else keep the line
+            info = [line.split('m ')[-1] if 'm ' in line else line for line in info.split('\n')]
+            info = [line for line in info if 'nohup: ignoring input' not in line]
+            info = '\n'.join(info)
 
             res = {
                 "info": info,
