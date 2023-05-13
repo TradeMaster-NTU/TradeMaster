@@ -227,6 +227,7 @@ class Server():
                 end_date = request_json.get("end_date")
             except:
                 end_date = None
+            print('start_date', start_date, 'end_date', end_date)
             ##TODO
             session_id = str(uuid.uuid1())
 
@@ -366,7 +367,7 @@ class Server():
             info = "request data error, {}".format(e)
             res = {
                 "error_code": error_code,
-                "info": info,
+                "info": '',
                 "session_id": ""
             }
             logger.info(info)
@@ -446,7 +447,7 @@ class Server():
             info = "request data error, {}".format(e)
             res = {
                 "error_code": error_code,
-                "info": info,
+                "info": '',
                 "session_id": ""
             }
             logger.info(info)
