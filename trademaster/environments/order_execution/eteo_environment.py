@@ -399,9 +399,11 @@ class OrderExecutionETEOEnvironment(Environments):
             # Quantization bid distance and ask distance into 10 levels according to max value and round each point to the nearest level
             bid_distance_lst = []
             ask_distance_lst = []
+            bid_scale=max(bid_distance) // 10
+            ask_scale=max(ask_distance) // 10
             for i in range(len(bid_distance)):
-                bid_distance_lst.append(round(bid_distance[i] / max(bid_distance) * 10))
-                ask_distance_lst.append(round(ask_distance[i] / max(ask_distance) * 10))
+                bid_distance_lst.append( round(bid_distance[i] / bid_scale)*bid_scale)
+                ask_distance_lst.append( round(ask_distance[i] / ask_scale)*ask_scale)
 
 
 

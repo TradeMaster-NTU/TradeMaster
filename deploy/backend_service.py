@@ -99,7 +99,7 @@ class Server():
             "end_date": {
                 "algorithmic_trading:BTC": "2021-07-06",
                 "algorithmic_trading:FX": "2019-12-31",
-                "order_excecution:BTC": "2021-04-19",
+                "order_excecution:BTC": "2021-03-19",
                 "order_excecution:PD_BTC": "2021-07-05",
                 "portfolio_management:dj30": "2021-12-31",
                 "portfolio_management:exchange": "2019-12-31",
