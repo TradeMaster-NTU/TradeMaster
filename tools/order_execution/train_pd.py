@@ -116,6 +116,7 @@ def main():
         print("train end")
     elif task_name.startswith("test"):
         trainer.test()
+        print("test end")
     elif task_name.startswith("dynamics_test"):
         r_list = []
         for trainer in trainers:

@@ -393,8 +393,19 @@ class OrderExecutionETEOEnvironment(Environments):
             table = print_metrics(stats)
             print(table)
             self.cash_left=cash_left
+            bid_distance= self.df['bids_distance_0']*self.df['midpoint']
+            ask_distance= self.df['asks_distance_0']*self.df['midpoint']
 
-            market_features_dict = {'bids_distance_0':self.df['bids_distance_0']*self.df['midpoint'],'asks_distance_0':self.df['asks_distance_0']*self.df['midpoint']}
+            # Quantization bid distance and ask distance into 10 levels according to max value and round each point to the nearest level
+            bid_distance_lst = []
+            ask_distance_lst = []
+            for i in range(len(bid_distance)):
+                bid_distance_lst.append(round(bid_distance[i] / max(bid_distance) * 10))
+                ask_distance_lst.append(round(ask_distance[i] / max(ask_distance) * 10))
+
+
+
+            market_features_dict = {'bids distance':bid_distance_lst,'asks distance ':ask_distance_lst}
 
             buy_points={}
             sell_points={}

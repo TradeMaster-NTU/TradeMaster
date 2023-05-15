@@ -129,19 +129,32 @@ class AlgorithmicTradingEnvironment(Environments):
             last_close = data.iloc[-1, :].close
             buy_and_hold_asset = (self.initial_amount/self.first_close) * self.df.iloc[self.backward_num_day:last_day,:].close
             buy_and_hold_profit=100*(last_close-self.first_close)/self.first_close
-
-            stats = OrderedDict(
-                {
-                    "Total Return": ["{:04f}%".format(tr * 100)],
-                    # "Buy and Hold Profit": ["{:04f}%".format(buy_and_hold_profit)],
-                    # "Excess Profit": ["{:04f}%".format(tr * 100 - buy_and_hold_profit)],
-                    "Sharp Ratio": ["{:04f}".format(sharpe_ratio)],
-                    "Volatility": ["{:04f}%".format(vol* 100)],
-                    "Max Drawdown": ["{:04f}%".format(mdd* 100)],
-                    # "Calmar Ratio": ["{:04f}".format(cr)],
-                    # "Sortino Ratio": ["{:04f}".format(sor)],
-                }
-            )
+            if self.task.startswith("test"):
+                stats = OrderedDict(
+                    {
+                        "Total Return": ["{:04f}%".format(tr * 100)],
+                        # "Buy and Hold Profit": ["{:04f}%".format(buy_and_hold_profit)],
+                        # "Excess Profit": ["{:04f}%".format(tr * 100 - buy_and_hold_profit)],
+                        "Sharp Ratio": ["{:04f}".format(sharpe_ratio)],
+                        "Volatility": ["{:04f}%".format(vol* 100)],
+                        "Max Drawdown": ["{:04f}%".format(mdd* 100)],
+                        # "Calmar Ratio": ["{:04f}".format(cr)],
+                        # "Sortino Ratio": ["{:04f}".format(sor)],
+                    }
+                )
+            else:
+                stats = OrderedDict(
+                    {
+                        "Total Return": ["{:04f}%".format(tr * 100)],
+                        # "Buy and Hold Profit": ["{:04f}%".format(buy_and_hold_profit)],
+                        # "Excess Profit": ["{:04f}%".format(tr * 100 - buy_and_hold_profit)],
+                        # "Sharp Ratio": ["{:04f}".format(sharpe_ratio)],
+                        # "Volatility": ["{:04f}%".format(vol * 100)],
+                        # "Max Drawdown": ["{:04f}%".format(mdd * 100)],
+                        # "Calmar Ratio": ["{:04f}".format(cr)],
+                        # "Sortino Ratio": ["{:04f}".format(sor)],
+                    }
+                )
             table = print_metrics(stats)
             print(table)
             df_return = self.save_portfolio_return_memory()

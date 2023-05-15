@@ -550,7 +550,9 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
     for market_feature in market_features:
         y=market_features_dict[market_feature]
         # ax1.plot(x, y, label=market_feature)
-        ax1.plot(x, y, label=market_feature)
+        # force line plot
+        ax1.plot(x, y, label=market_feature,drawstyle='steps-post')
+        # ax1.plot(x, y, label=market_feature)
     ax1.set_ylabel('Market', size=12)
     # ax1.legend(loc='lower right',fancybox=True, ncol=1)
     # ax1.set_ylabel(metric_name,size=12)
