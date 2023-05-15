@@ -7,7 +7,7 @@ ROOT = Path(__file__).resolve().parents[3]
 from ..custom import Trainer
 from ..builder import TRAINERS
 
-from trademaster.utils import get_attr, save_model, load_model, load_best_model, save_best_model, GeneralReplayBuffer
+from trademaster.utils import get_attr, save_model, load_model, load_best_model, save_best_model, GeneralReplayBuffer,plot_metric_against_baseline,plot_trading_decision_on_market
 import numpy as np
 import os
 import pandas as pd
@@ -70,7 +70,7 @@ class OrderExecutionETEOTrainer(Trainer):
             'undone': (self.buffer_size, self.num_envs),
             'next_state': (self.buffer_size, self.num_envs, self.time_steps, self.state_dim),
         })
-
+        self.verbose= get_attr(kwargs, "verbose", False)
         self.init_before_training()
 
     def init_before_training(self):
@@ -90,9 +90,11 @@ class OrderExecutionETEOTrainer(Trainer):
         if self.if_remove:
             import shutil
             shutil.rmtree(self.work_dir, ignore_errors=True)
-            print(f"| Arguments Remove work_dir: {self.work_dir}")
+            if self.verbose:
+                print(f"| Arguments Remove work_dir: {self.work_dir}")
         else:
-            print(f"| Arguments Keep work_dir: {self.work_dir}")
+            if self.verbose:
+                print(f"| Arguments Keep work_dir: {self.work_dir}")
         os.makedirs(self.work_dir, exist_ok=True)
 
         self.checkpoints_path = os.path.join(self.work_dir, "checkpoints")
@@ -132,6 +134,7 @@ class OrderExecutionETEOTrainer(Trainer):
                                          device=self.device)
 
         valid_score_list = []
+        save_dict_list = []
         epoch = 1
         print("Train Episode: [{}/{}]".format(epoch, self.epochs))
         while True:
@@ -157,7 +160,7 @@ class OrderExecutionETEOTrainer(Trainer):
                     action = torch.tensor(action, dtype=torch.float32, device=self.device)
 
                     ary_action = action.detach().cpu().numpy()
-                    ary_state, reward, done, _ = self.valid_environment.step(ary_action)  # next_state
+                    ary_state, reward, done, save_dict = self.valid_environment.step(ary_action)  # next_state
                     ary_state = torch.as_tensor(ary_state, dtype=torch.float32, device=self.device)
 
                     # compress state
@@ -169,7 +172,7 @@ class OrderExecutionETEOTrainer(Trainer):
                         #print("Valid Episode Reward Sum: {:04f}".format(episode_reward_sum))
                         break
                 valid_score_list.append(self.valid_environment.cash_left)
-
+                save_dict_list.append(save_dict)
                 save_model(self.checkpoints_path,
                            epoch=epoch,
                            save=self.agent.get_save())
@@ -181,6 +184,8 @@ class OrderExecutionETEOTrainer(Trainer):
                 break
 
         max_index = np.argmax(valid_score_list)
+        plot_trading_decision_on_market(market_features_dict=save_dict_list[max_index]['market_features_dict'],trading_points=save_dict_list[max_index]['trading_points'],alg='End-to-End Optimal',task='valid',color='darkcyan',save_dir=self.work_dir,metric_name='Trading')
+        # plot_metric_against_baseline(total_asset=save_dict_list[max_index]['cash_left_by_tick'],buy_and_hold=None,alg='End-to-End Optimal',task='valid',color='darkcyan',save_dir=self.work_dir,metric_name='Cash left')
         load_model(self.checkpoints_path,
                    epoch=max_index + 1,
                    save=self.agent.get_save())
@@ -216,6 +221,13 @@ class OrderExecutionETEOTrainer(Trainer):
 
             episode_reward_sum += reward
             if done:
+                # print('plot_metric_against_baseline')
+                plot_trading_decision_on_market(market_features_dict=return_dict['market_features_dict'],
+                                                trading_points=return_dict['trading_points'],
+                                                alg='End-to-End Optimal', task='test', color='darkcyan',
+                                                save_dir=self.work_dir, metric_name='Trading')
+
+                # plot_metric_against_baseline(total_asset=return_dict['cash_left_by_tick'],buy_and_hold=None,alg='End to End Optimal',task='test',color='darkcyan',save_dir=self.work_dir,metric_name='Cash left')
 #                print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
                 break
 

@@ -263,6 +263,9 @@ class Server():
             args['bear_threshold'] = request_json.get("bear_threshold")
             args['bull_threshold'] = request_json.get("bull_threshold")
             args['task_name']=request_json.get("task_name")
+
+            #TODO: assign a session id if no session id is provided
+
             session_id = request_json.get("session_id")
 
 

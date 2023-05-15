@@ -127,20 +127,34 @@ class AlgorithmicTradingEnvironment(Environments):
             data = self.df.iloc[last_day -
                                 self.backward_num_day:last_day, :]
             last_close = data.iloc[-1, :].close
+            buy_and_hold_asset = (self.initial_amount/self.first_close) * self.df.iloc[self.backward_num_day:last_day,:].close
             buy_and_hold_profit=100*(last_close-self.first_close)/self.first_close
-
-            stats = OrderedDict(
-                {
-                    "Total Return": ["{:04f}%".format(tr * 100)],
-                    # "Buy and Hold Profit": ["{:04f}%".format(buy_and_hold_profit)],
-                    # "Excess Profit": ["{:04f}%".format(tr * 100 - 0)],
-                    "Sharp Ratio": ["{:04f}".format(sharpe_ratio)],
-                    "Volatility": ["{:04f}%".format(vol* 100)],
-                    "Max Drawdown": ["{:04f}%".format(mdd* 100)],
-                    # "Calmar Ratio": ["{:04f}".format(cr)],
-                    # "Sortino Ratio": ["{:04f}".format(sor)],
-                }
-            )
+            if self.task.startswith("test"):
+                stats = OrderedDict(
+                    {
+                        "Total Return": ["{:04f}%".format(tr * 100)],
+                        # "Buy and Hold Profit": ["{:04f}%".format(buy_and_hold_profit)],
+                        # "Excess Profit": ["{:04f}%".format(tr * 100 - buy_and_hold_profit)],
+                        "Sharp Ratio": ["{:04f}".format(sharpe_ratio)],
+                        "Volatility": ["{:04f}%".format(vol* 100)],
+                        "Max Drawdown": ["{:04f}%".format(mdd* 100)],
+                        # "Calmar Ratio": ["{:04f}".format(cr)],
+                        # "Sortino Ratio": ["{:04f}".format(sor)],
+                    }
+                )
+            else:
+                stats = OrderedDict(
+                    {
+                        "Total Return": ["{:04f}%".format(tr * 100)],
+                        # "Buy and Hold Profit": ["{:04f}%".format(buy_and_hold_profit)],
+                        # "Excess Profit": ["{:04f}%".format(tr * 100 - buy_and_hold_profit)],
+                        # "Sharp Ratio": ["{:04f}".format(sharpe_ratio)],
+                        # "Volatility": ["{:04f}%".format(vol * 100)],
+                        # "Max Drawdown": ["{:04f}%".format(mdd * 100)],
+                        # "Calmar Ratio": ["{:04f}".format(cr)],
+                        # "Sortino Ratio": ["{:04f}".format(sor)],
+                    }
+                )
             table = print_metrics(stats)
             print(table)
             df_return = self.save_portfolio_return_memory()
@@ -161,8 +175,13 @@ class AlgorithmicTradingEnvironment(Environments):
                 with open(metric_save_path, 'wb') as handle:
                     pickle.dump(save_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
             # print('metric result saved to '+metric_save_path)
+            # print("total_assets",assets,
+            #     'buy_and_hold_assets',buy_and_hold_asset)
             return self.state, self.reward, self.terminal, {
-                "volidality": self.var
+                'return_rate': tr*100,
+                "volidality": self.var,
+                "total_assets": assets,
+                'buy_and_hold_assets':buy_and_hold_asset
             }
         else:
             # self.actions_counter+=1

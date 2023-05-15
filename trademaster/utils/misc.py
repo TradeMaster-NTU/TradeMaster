@@ -427,7 +427,7 @@ def load_model(output_dir,
                save,
                epoch = None,
                resume = None,
-               is_train = True):
+               is_train = True,verbose = False):
 
     if resume is None:
         resume = get_last_checkpoint(output_dir)
@@ -440,16 +440,18 @@ def load_model(output_dir,
     for name, model in save["models"].items():
         if model:
             model.load_state_dict(checkpoint[name])
-    print("Resume checkpoint %s" % resume)
+    if verbose:
+        print("Resume checkpoint %s" % resume)
     if is_train:
         for name, optimizer in save["optimizers"].items():
             optimizer.load_state_dict(checkpoint[name])
-        print("With optim & sched!")
+        if verbose:
+            print("With optim & sched!")
 
 def load_best_model(output_dir,
                save,
                resume = None,
-               is_train = True):
+               is_train = True,verbose = False):
     if not resume:
         resume = os.path.join(output_dir, "best.pth")
 
@@ -460,7 +462,8 @@ def load_best_model(output_dir,
         for name, model in save["models"].items():
             if model:
                 model.load_state_dict(checkpoint[name])
-        print("Resume checkpoint %s" % resume)
+        if verbose:
+            print("Resume checkpoint %s" % resume)
         if is_train:
             for name, optimizer in save["optimizers"].items():
                 optimizer.load_state_dict(checkpoint[name])

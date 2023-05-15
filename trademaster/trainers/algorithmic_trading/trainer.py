@@ -6,7 +6,7 @@ import torch
 ROOT = Path(__file__).resolve().parents[3]
 from ..custom import Trainer
 from ..builder import TRAINERS
-from trademaster.utils import get_attr, save_model, load_model, load_best_model, save_best_model, save_best_model_trial, ReplayBuffer, GeneralReplayBuffer
+from trademaster.utils import get_attr, save_model, load_model, load_best_model, save_best_model, save_best_model_trial, ReplayBuffer, GeneralReplayBuffer,plot_metric_against_baseline
 import numpy as np
 import os
 import pandas as pd
@@ -63,7 +63,7 @@ class AlgorithmicTradingTrainer(Trainer):
             'undone': (self.buffer_size, self.num_envs),
             'next_state':(self.buffer_size, self.num_envs, self.state_dim),
         })
-
+        self.verbose= get_attr(kwargs, "verbose", False)
         self.init_before_training()
 
     def init_before_training(self):
@@ -83,9 +83,11 @@ class AlgorithmicTradingTrainer(Trainer):
         if self.if_remove:
             import shutil
             shutil.rmtree(self.work_dir, ignore_errors=True)
-            print(f"| Arguments Remove work_dir: {self.work_dir}")
+            if self.verbose:
+                print(f"| Arguments Remove work_dir: {self.work_dir}")
         else:
-            print(f"| Arguments Keep work_dir: {self.work_dir}")
+            if self.verbose:
+                print(f"| Arguments Keep work_dir: {self.work_dir}")
         os.makedirs(self.work_dir, exist_ok=True)
 
         self.checkpoints_path = os.path.join(self.work_dir, "checkpoints")
@@ -123,6 +125,8 @@ class AlgorithmicTradingTrainer(Trainer):
             buffer = []
 
         valid_score_list = []
+        save_dict_list = []
+        return_rate_list = []
         epoch = 1
         print("Train Episode: [{}/{}]".format(epoch, self.epochs))
         while True:
@@ -147,12 +151,14 @@ class AlgorithmicTradingTrainer(Trainer):
                         tensor_action = tensor_action.argmax(dim=1)
                     action = tensor_action.detach().cpu().numpy()[
                         0]  # not need detach(), because using torch.no_grad() outside
-                    state, reward, done, _ = self.valid_environment.step(action)
+                    state, reward, done, save_dict = self.valid_environment.step(action)
                     episode_reward_sum += reward
                     if done:
                         #print("Valid Episode Reward Sum: {:04f}".format(episode_reward_sum))
                         break
                 valid_score_list.append(episode_reward_sum)
+                save_dict_list.append(save_dict)
+                return_rate_list.append(save_dict['return_rate'])
 
                 save_model(self.checkpoints_path,
                            epoch=epoch,
@@ -164,7 +170,12 @@ class AlgorithmicTradingTrainer(Trainer):
             if epoch > self.epochs:
                 break
 
-        max_index = np.argmax(valid_score_list)
+        # find the best epoch base on return_rate instead of reward sum
+        # max_index = np.argmax(valid_score_list)
+        max_index = np.argmax(return_rate_list)
+        # plot the total asset against the baseline of the best epoch
+        plot_metric_against_baseline(total_asset=save_dict_list[max_index]['total_assets'],buy_and_hold=save_dict_list[max_index]['buy_and_hold_assets'],alg='Deepscalper',task='valid',color='darkcyan',save_dir=self.work_dir)
+
         load_model(self.checkpoints_path,
                    epoch=max_index + 1,
                    save=self.agent.get_save())
@@ -273,10 +284,13 @@ class AlgorithmicTradingTrainer(Trainer):
                 tensor_action = tensor_action.argmax(dim=1)
             action = tensor_action.detach().cpu().numpy()[
                 0]  # not need detach(), because using torch.no_grad() outside
-            state, reward, done, _ = self.test_environment.step(action)
+            state, reward, done, save_dict = self.test_environment.step(action)
             episode_reward_sum += reward
             if done:
                 # print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
+                plot_metric_against_baseline(total_asset=save_dict['total_assets'],
+                                             buy_and_hold=save_dict['buy_and_hold_assets'],
+                                             alg='Deepscalper', task='test', color='darkcyan', save_dir=self.work_dir)
                 break
 
         rewards = self.test_environment.save_asset_memory()

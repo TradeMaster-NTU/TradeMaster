@@ -50,6 +50,7 @@ class OrderExecutionETEOEnvironment(Environments):
 
         self.time_frame = 0
         self.order_history = []
+        self.action_history = []
         self.action_space = spaces.Box(low=-np.inf, high=np.inf, shape=(2,))
         # set action第一个为volume 正为买 负为卖 第二个为价格
         self.observation_space = spaces.Box(
@@ -83,12 +84,14 @@ class OrderExecutionETEOEnvironment(Environments):
         order_left = [self.target_order]
         self.private_state = data_left + order_left
         self.state = np.array(self.public_state + self.private_state)
+        self.all_bitcoin_lst=[]
 
     def reset(self):
         self.time_frame = 0
         self.portfolio = [self.initial_amount] + [0] + [0] + [0]
         self.portfolio_history = [self.portfolio]
         self.order_history = []
+        self.action_history = []
         self.data = self.df.loc[self.time_frame, :]
         self.data_normal = self.data.copy()
         self.data_normal["order_money"] = self.data_normal[
@@ -110,6 +113,7 @@ class OrderExecutionETEOEnvironment(Environments):
         order_left = [self.target_order]
         self.private_state = data_left + order_left
         self.state = np.array(self.public_state + self.private_state)
+        self.all_bitcoin_lst = []
         return self.state
 
     def step(self, action: np.array):
@@ -183,6 +187,7 @@ class OrderExecutionETEOEnvironment(Environments):
         if action[0] == 0:
             action = [0, 0, 0]
         order = action
+        self.action_history.append(action)
         self.order_history.append(order)
         if len(self.order_history) > self.order_length:
             self.order_history.pop(0)
@@ -235,6 +240,7 @@ class OrderExecutionETEOEnvironment(Environments):
         # 调整后根据调整的self.portfolio 在进行order是否能被执行的问题 然后再进行self.portfolio的调整 如果有变化
         all_cash = self.portfolio[0] + self.portfolio[1]
         all_bitcoin = self.portfolio[2] + self.portfolio[3]
+        self.all_bitcoin_lst.append(all_bitcoin)
         old_portfolio_value = self.portfolio[0] + self.portfolio[
             1] + previous_data["midpoint"] * (self.portfolio[2] +
                                               self.portfolio[3])
@@ -374,6 +380,8 @@ class OrderExecutionETEOEnvironment(Environments):
                 self.reward = 1
             else:
                 self.reward = 0
+            self.all_bitcoin_lst.append(left_order)
+            cash_left_by_tick = [ portfolio[0] + portfolio[1] for portfolio in self.portfolio_history]
 
             stats = OrderedDict(
                 {
@@ -385,7 +393,46 @@ class OrderExecutionETEOEnvironment(Environments):
             table = print_metrics(stats)
             print(table)
             self.cash_left=cash_left
+            bid_distance= self.df['bids_distance_0']*self.df['midpoint']
+            ask_distance= self.df['asks_distance_0']*self.df['midpoint']
 
-            return self.state, self.reward, self.terminal, {'cash_left':cash_left,'TWAP_value':TWAP_value}
+            # Quantization bid distance and ask distance into 10 levels according to max value and round each point to the nearest level
+            bid_distance_lst = []
+            ask_distance_lst = []
+            bid_scale=max(bid_distance) // 10
+            ask_scale=max(ask_distance) // 10
+            for i in range(len(bid_distance)):
+                bid_distance_lst.append( round(bid_distance[i] / bid_scale)*bid_scale)
+                ask_distance_lst.append( round(ask_distance[i] / ask_scale)*ask_scale)
+
+
+
+            market_features_dict = {'bids distance':bid_distance_lst,'asks distance ':ask_distance_lst}
+
+            buy_points={}
+            sell_points={}
+            # subtract the current bitcoin price from the next bitcoin price
+            btc_trade_lst=[]
+            btc_trade_lst.append(self.all_bitcoin_lst[0])
+            for i in range(len(self.all_bitcoin_lst)-1):
+                btc_trade_lst.append(self.all_bitcoin_lst[i+1]-self.all_bitcoin_lst[i])
+            for i, trade in enumerate(btc_trade_lst):
+                if trade < 0:
+                    sell_points[i] = trade
+                elif trade > 0:
+                    buy_points[i] = trade
+            # for i,order in enumerate(self.action_history):
+            #     # if the action's volume is greater than 0, we are going to buy the bitcoin we are holding
+            #     if order[0] > 0:
+            #         buy_points[i] = order[0]
+            #     elif order[0] < 0:
+            #         sell_points[i] = order[0]
+            trading_points = {'buy':buy_points,'sell':sell_points}
+            # print(btc_trade_lst)
+            # print(trading_points)
+            return self.state, self.reward, self.terminal, {'cash_left':cash_left,'TWAP_value':TWAP_value,
+                                                            'cash_left_by_tick':cash_left_by_tick, 'portfolio_value_history':self.portfolio_value_history,
+                                                            'trading_points':trading_points,
+                                                            'market_features_dict':market_features_dict}
         else:
             return self.state, 0, self.terminal, {}

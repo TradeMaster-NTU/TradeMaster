@@ -1,5 +1,5 @@
 task_name = "algorithmic_trading"
-dataset_name = "BTC"
+dataset_name = "AAPL"
 optimizer_name = "adam"
 loss_name = "mse"
 net_name = "deepscalper"
@@ -20,12 +20,12 @@ _base_ = [
 batch_size = 64
 data = dict(
     type='AlgorithmicTradingDataset',
-    data_path='data/algorithmic_trading/BTC',
-    train_path='data/algorithmic_trading/BTC/train.csv',
-    valid_path='data/algorithmic_trading/BTC/valid.csv',
-    test_path='data/algorithmic_trading/BTC/test.csv',
+    data_path='data/algorithmic_trading/AAPL',
+    train_path='data/algorithmic_trading/AAPL/train.csv',
+    valid_path='data/algorithmic_trading/AAPL/valid.csv',
+    test_path='data/algorithmic_trading/AAPL/test.csv',
     test_dynamic_path=
-    'data/algorithmic_trading/BTC/test_labeled_3_24_-0.15_0.15.csv',
+    'data/algorithmic_trading/AAPL/test_labeled_3_24_-0.05_0.05.csv',
     tech_indicator_list=[
         'high', 'low', 'open', 'close', 'adjcp', 'zopen', 'zhigh', 'zlow',
         'zadjcp', 'zclose', 'zd_5', 'zd_10', 'zd_15', 'zd_20', 'zd_25', 'zd_30'
@@ -50,9 +50,9 @@ agent = dict(
 )
 trainer = dict(
     type='AlgorithmicTradingTrainer',
-    epochs=20,
+    epochs=400,
     work_dir=work_dir,
-    seeds_list=(42, ),
+    seeds_list=(12345, ),
     batch_size=batch_size,
     horizon_len= 128,
     buffer_size=1000000.0,

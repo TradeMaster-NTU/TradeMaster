@@ -103,6 +103,8 @@ class PortfolioManagementDeepTraderEnvironment(Environments):
             if self.task.startswith("test_dynamic"):
                 print(f'Date from {self.start_date} to {self.end_date}')
             tr, sharpe_ratio, vol, mdd, cr, sor = self.analysis_result()
+            df_value = self.save_asset_memory()
+            assets = df_value["total assets"].values
             stats = OrderedDict(
                 {
                     "Total Return": ["{:04f}%".format(tr * 100)],
@@ -115,7 +117,7 @@ class PortfolioManagementDeepTraderEnvironment(Environments):
             )
             table = print_metrics(stats)
             print(table)
-            return self.state, 0, self.terminal, {"sharpe_ratio": sharpe_ratio}
+            return self.state, 0, self.terminal, {"sharpe_ratio": sharpe_ratio,'total_assets':assets}
 
         else:  # directly use the process of
             self.weights_memory.append(weights)

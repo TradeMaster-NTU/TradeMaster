@@ -29,6 +29,7 @@ def set_seed(random_seed):
     torch.set_default_dtype(torch.float32)
 def print_metrics(stats):
     table = prettytable.PrettyTable()
+    # table.add_row(['' for _ in range(len(stats))])
     for key, value in stats.items():
         table.add_column(key, value)
     return table
@@ -440,5 +441,145 @@ def plot(df,alg,color='darkcyan',save=False):
     if save:
         plt.savefig("{}.pdf".format(alg))
     plt.show()
+
+
+def plot_metric_against_baseline(total_asset,buy_and_hold,alg,task,color='darkcyan',save_dir=None,metric_name='Total asset'):
+    # print('total_asset shape is:',total_asset.shape)
+    # print(total_asset)
+
+    #normalize total_asset and buy_and_hold by the first value
+    # print('total_asset shape is:',total_asset.shape,total_asset)
+    if buy_and_hold is not None:
+        buy_and_hold = buy_and_hold / total_asset[0]
+    total_asset=total_asset/total_asset[0]
+
+    x = range(len(total_asset))
+    # print('total_asset shape is:',total_asset.shape)
+    # print('x shape is:',len(x))
+    # set figure size
+    plt.figure(figsize=(10, 6))
+    y=total_asset
+    plt.plot(x, y, color, label=alg)
+    plt.xlabel('Trading times',size=18)
+    plt.ylabel(metric_name,size=18)
+    if buy_and_hold is not None:
+        # print('buy and hold shape is:',buy_and_hold.shape)
+        plt.plot(x, buy_and_hold, 'r', label='Buy and Hold')
+    plt.grid(ls='--')
+    plt.legend(fancybox=True, ncol=1)
+    # set title
+    plt.title(f'{metric_name} of {alg} in {task}')
+    if save_dir is not None:
+        plt.savefig(osp.join(save_dir,f"Visualization_{task}.png"))
+    # plt.show()
+
+def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task,color='darkcyan',save_dir=None,metric_name='Level 0 Bid and Ask Distance'):
+    # parse market_features_dict to get market_features
+    # print('market_features_dict is:',market_features_dict)
+    # print('trading_points is:',trading_points)
+    market_features=list(market_features_dict.keys())
+    x = range(len(market_features_dict[market_features[0]]))
+    # print('total_asset shape is:',total_asset.shape)
+    # print('x shape is:',len(x))
+    # set figure size
+    plt.figure(figsize=(20, 12))
+    fig, ax2 = plt.subplots()
+
+    # plot the market_features on the first y axis and give a different color for each market_feature
+
+
+    # for market_feature in market_features:
+    #     y=market_features_dict[market_feature]
+    #     plt.plot(x, y, color, label=market_feature)
+    # plt.xlabel('Trading times',size=18)
+    # plt.ylabel(metric_name,size=18)
+
+    buy_trade_points=trading_points['buy']
+    sell_trade_points=trading_points['sell']
+
+    # plot trading points(buy_trade_points and sell_trade_points) as bars using the second y axis
+    ax2.set_ylabel('Trading',size=12)
+    buy_max=max(buy_trade_points.values()) if len(buy_trade_points)>0 else 0
+    sell_max=max(sell_trade_points.values()) if len(sell_trade_points)>0 else 0
+    scale=max(buy_max,sell_max)
+    ax2.set_ylim(-1.1*scale,1.1*scale)
+    ax2.set_yticks([-1.1*scale,0,1.1*scale])
+    ax2.set_yticklabels(['sell','hold','buy'])
+    counter=0
+    # many trading points, use line to represent
+    if len(buy_trade_points)+len(sell_trade_points)>10:
+        # give different color for buy and sell
+        # for buy_trade_point,buy_volume in buy_trade_points.items():
+        if len(buy_trade_points)>0:
+            ax2.bar(list(buy_trade_points.keys()),list(buy_trade_points.values()),width=1,label='buy',color='r')
+        # for sell_trade_point,sell_volume in sell_trade_points.items():
+        if len(sell_trade_points)>0:
+            ax2.bar(list(sell_trade_points.keys()),list(sell_trade_points.values()),width=1,label='sell',color='g')
+        # ax2.legend( fancybox=True, ncol=1)
+
+
+    # few trading points, use annotation to represent
+    else:
+        for buy_trade_point,buy_volume in buy_trade_points.items():
+            counter+=1
+            # print('buy_trade_point is:',buy_trade_point,'buy_volume is:',buy_volume)
+            buy_volume=np.round(buy_volume,2)
+            plt.annotate('Buy '+str(buy_volume), xy=(buy_trade_point, 0), xytext=(buy_trade_point, 0.5*(-1**counter)),
+                         arrowprops=dict(facecolor='red', shrink=0.05),)
+        counter = 0
+        for sell_trade_point,sell_volume in sell_trade_points.items():
+            counter += 1
+            # print('sell_trade_point is:', sell_trade_point, 'sell_volume is:', sell_volume,np.round(sell_volume,2),0.5*((-1)**counter),counter)
+            sell_volume=np.round(sell_volume,2)
+            # print('sell_volume is:',sell_volume)
+            plt.annotate('Sell '+str(sell_volume), xy=(sell_trade_point, 0), xytext=(sell_trade_point, 0.5*((-1)**counter)),
+                         arrowprops=dict(facecolor='green', shrink=0.05),)
+
+
+    # give different color for buy and sell
+    # for buy_trade_point,buy_volume in buy_trade_points.items():
+    # if len(buy_trade_points)>0:
+    #     ax2.bar(list(buy_trade_points.keys()),list(buy_trade_points.values()),width=1,label='buy',color='r')
+    # # for sell_trade_point,sell_volume in sell_trade_points.items():
+    # if len(sell_trade_points)>0:
+    #     ax2.bar(list(sell_trade_points.keys()),-1*list(sell_trade_points.values()),width=1,label='sell',color='g')
+    # ax2.legend(loc='upper center', fancybox=True, ncol=1)
+
+
+    ax1 = ax2.twinx()
+    for market_feature in market_features:
+        y=market_features_dict[market_feature]
+        # ax1.plot(x, y, label=market_feature)
+        # force line plot
+        ax1.plot(x, y, label=market_feature,drawstyle='steps-post')
+        # ax1.plot(x, y, label=market_feature)
+    ax1.set_ylabel('Market', size=12)
+    # ax1.legend(loc='lower right',fancybox=True, ncol=1)
+    # ax1.set_ylabel(metric_name,size=12)
+    ax1.grid(ls='--')
+    # resize the figure so taht ax1 and ax2 can be shown completely and clearly
+    plt.tight_layout()
+    # leave blank space fot title
+    plt.subplots_adjust(top=0.9)
+
+    # add legend for ax1 and ax2 in one legend
+    lines, labels = ax1.get_legend_handles_labels()
+    lines2, labels2 = ax2.get_legend_handles_labels()
+    ax2.legend(lines + lines2, labels + labels2, loc='lower right', fancybox=True, ncol=1)
+
+
+    # plot trading points as vertical arrows, buy points are red, sell points are green,add the volume of the trade on the arrow
+    # for buy_trade_point,buy_volume in buy_trade_points.items():
+    #     plt.annotate(f'buy {buy_volume}', xy=(buy_trade_point, 0), xytext=(buy_trade_point, 0.5),
+    #                  arrowprops=dict(facecolor='red', shrink=0.05),)
+    # for sell_trade_point,sell_volume in sell_trade_points.items():
+    #     plt.annotate(f'sell {sell_volume}', xy=(sell_trade_point, 0), xytext=(sell_trade_point, 0.5),
+    #                  arrowprops=dict(facecolor='green', shrink=0.05),)
+
+
+    # set title
+    plt.title(f'{metric_name} of {alg} in {task}')
+    if save_dir is not None:
+        plt.savefig(osp.join(save_dir,f"Visualization_{task}.png"))
 
 

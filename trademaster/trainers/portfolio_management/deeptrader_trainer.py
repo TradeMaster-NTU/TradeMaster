@@ -8,7 +8,7 @@ from ..custom import Trainer
 from ..builder import TRAINERS
 from trademaster.utils import get_attr, \
     save_model, save_best_model, load_model, \
-    load_best_model, GeneralReplayBuffer
+    load_best_model, GeneralReplayBuffer,plot_metric_against_baseline
 import numpy as np
 import os
 import pandas as pd
@@ -176,6 +176,7 @@ class PortfolioManagementDeepTraderTrainer(Trainer):
             buffer = []
 
         valid_score_list = []
+        save_dict_list = []
         for epoch in range(1, self.epochs+1):
 
             print("Train Episode: [{}/{}]".format(epoch, self.epochs))
@@ -203,7 +204,7 @@ class PortfolioManagementDeepTraderTrainer(Trainer):
                     torch.from_numpy(old_asset_state).float().to(self.device),
                     corr_matrix_old)
                 action_market = self.agent.market_net(old_market_state)
-                s, reward, done, _ = self.train_environment.step(weights)
+                s, reward, done, save_dict = self.train_environment.step(weights)
                 new_asset_state = s
                 new_market_state = torch.from_numpy(
                     make_market_information(
@@ -254,8 +255,12 @@ class PortfolioManagementDeepTraderTrainer(Trainer):
                     #print("Valid Episode Reward Sum: {:04f}".format(episode_reward_sum))
                     break
             valid_score_list.append(episode_reward_sum)
+            save_dict_list.append(save_dict)
 
         max_index = np.argmax(valid_score_list)
+        plot_metric_against_baseline(total_asset=save_dict_list[max_index]['total_assets'],
+                                     buy_and_hold=None, alg='Deeptrader',
+                                     task='valid', color='darkcyan', save_dir=self.work_dir)
         load_model(self.checkpoints_path,
                    epoch=max_index + 1,
                    save=self.agent.get_save())
@@ -281,9 +286,12 @@ class PortfolioManagementDeepTraderTrainer(Trainer):
                     self.test_environment.data,
                     technical_indicator=self.test_environment.tech_indicator_list),
                 corr_matrix_old)
-            s, reward, done, _ = self.test_environment.step(weights)
+            s, reward, done, save_dict = self.test_environment.step(weights)
             episode_reward_sum += reward
             if done:
+                plot_metric_against_baseline(total_asset=save_dict['total_assets'],
+                                             buy_and_hold=None, alg='Deeptrader',
+                                             task='test', color='darkcyan', save_dir=self.work_dir)
                 # print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
                 break
 

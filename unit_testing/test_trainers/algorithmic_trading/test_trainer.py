@@ -31,6 +31,7 @@ def test_dqn():
     cfg = Config.fromfile(args.config)
 
     cfg = replace_cfg_vals(cfg)
+    if args.verbose==1:
     print(cfg)
 
     dataset = build_dataset(cfg)

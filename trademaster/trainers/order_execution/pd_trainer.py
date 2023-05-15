@@ -11,7 +11,7 @@ import os
 import pandas as pd
 import random
 from collections import OrderedDict, namedtuple
-from trademaster.utils import get_attr, save_model, load_model, load_best_model, save_best_model, ReplayBuffer, GeneralReplayBuffer
+from trademaster.utils import get_attr, save_model, load_model, load_best_model, save_best_model, ReplayBuffer, GeneralReplayBuffer,plot_metric_against_baseline,plot_trading_decision_on_market
 
 
 @TRAINERS.register_module()
@@ -80,6 +80,7 @@ class OrderExecutionPDTrainer(Trainer):
             'next_public_state':(self.buffer_size, self.num_envs, self.time_steps * 2, self.public_state_dim),
             'next_private_state':(self.buffer_size, self.num_envs, self.time_steps, self.private_state_dim),
         })
+        self.verbose = get_attr(kwargs, "verbose", False)
 
         self.init_before_training()
 
@@ -100,9 +101,11 @@ class OrderExecutionPDTrainer(Trainer):
         if self.if_remove:
             import shutil
             shutil.rmtree(self.work_dir, ignore_errors=True)
-            print(f"| Arguments Remove work_dir: {self.work_dir}")
+            if self.verbose:
+                print(f"| Arguments Remove work_dir: {self.work_dir}")
         else:
-            print(f"| Arguments Keep work_dir: {self.work_dir}")
+            if self.verbose:
+                print(f"| Arguments Keep work_dir: {self.work_dir}")
         os.makedirs(self.work_dir, exist_ok=True)
 
         self.checkpoints_path = os.path.join(self.work_dir, "checkpoints")
@@ -150,6 +153,7 @@ class OrderExecutionPDTrainer(Trainer):
                                                  device=self.device)
 
         valid_score_list = []
+        save_dict_list = []
         for epoch in range(1, self.epochs+1):
             print("Train Episode: [{}/{}]".format(epoch, self.epochs))
             # train teacher
@@ -193,6 +197,7 @@ class OrderExecutionPDTrainer(Trainer):
                     state, info = self.valid_environment.reset()
 
                     episode_reward_sum = 0.0  # sum of rewards in an episode
+
                     while True:
                         public_state = torch.from_numpy(state).to(self.device).float()
                         private_state = torch.from_numpy(info["private_state"]).to(self.device).float()
@@ -203,6 +208,8 @@ class OrderExecutionPDTrainer(Trainer):
                         if done:
                             #print("Valid Episode Reward Sum: {:04f}".format(episode_reward_sum))
                             break
+
+                    save_dict_list.append(info)
                     valid_score_list.append(episode_reward_sum)
                     save_model(self.checkpoints_path,
                                epoch=epoch,
@@ -210,6 +217,13 @@ class OrderExecutionPDTrainer(Trainer):
                     break
 
         max_index = np.argmax(valid_score_list)
+        plot_trading_decision_on_market(market_features_dict=save_dict_list[max_index]['market_features_dict'],
+                                        trading_points=save_dict_list[max_index]['trading_points'],
+                                        alg='Oracle Policy Distillation', task='valid', color='darkcyan',
+                                        save_dir=self.work_dir, metric_name='Trading')
+        # plot_metric_against_baseline(total_asset=save_dict_list[max_index]['Total Asset'], buy_and_hold=None,
+        #                              alg='Oracle Policy Distillation', task='valid', color='darkcyan', save_dir=self.work_dir,
+        #                              metric_name='Total Asset')
         load_model(self.checkpoints_path,
                    epoch=max_index + 1,
                    save=self.agent.get_save())
@@ -239,6 +253,15 @@ class OrderExecutionPDTrainer(Trainer):
             episode_reward_sum += reward
 
             if done:
+                plot_trading_decision_on_market(market_features_dict=info['market_features_dict'],
+                                                trading_points=info['trading_points'],
+                                                alg='Oracle Policy Distillation', task='test', color='darkcyan',
+                                                save_dir=self.work_dir, metric_name='Trading')
+                # print('asset: ', info['Total Asset'])
+                # print('money sold:', info['money_sold_list'])
+                # plot_metric_against_baseline(total_asset=info['Total Asset'], buy_and_hold=None,
+                #                              alg='Oracle Policy Distillation', task='test', color='darkcyan', save_dir=self.work_dir,
+                #                              metric_name='Total Asset')
                 # print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
                 break
         return info

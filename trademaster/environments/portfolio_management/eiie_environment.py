@@ -146,7 +146,7 @@ class PortfolioManagementEIIEEnvironment(Environments):
                 with open(metric_save_path, 'wb') as handle:
                     pickle.dump(save_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-            return self.state, 0, self.terminal, {"sharpe_ratio": sharpe_ratio}
+            return self.state, 0, self.terminal, {"sharpe_ratio": sharpe_ratio,"total_assets": assets}
 
         else:  # directly use the process of
             self.weights_memory.append(weights)

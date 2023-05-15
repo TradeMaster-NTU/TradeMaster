@@ -7,7 +7,7 @@ from ..custom import Trainer
 from ..builder import TRAINERS
 from trademaster.utils import get_attr, save_model, \
     save_best_model, load_model, \
-    load_best_model, GeneralReplayBuffer
+    load_best_model, GeneralReplayBuffer,plot_metric_against_baseline
 import numpy as np
 import os
 import pandas as pd
@@ -69,6 +69,8 @@ class PortfolioManagementEIIETrainer(Trainer):
                       self.state_dim),
         })
 
+        self.verbose = get_attr(kwargs, "verbose", False)
+
         self.init_before_training()
 
     def init_before_training(self):
@@ -88,9 +90,11 @@ class PortfolioManagementEIIETrainer(Trainer):
         if self.if_remove:
             import shutil
             shutil.rmtree(self.work_dir, ignore_errors=True)
-            print(f"| Arguments Remove work_dir: {self.work_dir}")
+            if self.verbose:
+                print(f"| Arguments Remove work_dir: {self.work_dir}")
         else:
-            print(f"| Arguments Keep work_dir: {self.work_dir}")
+            if self.verbose:
+                print(f"| Arguments Keep work_dir: {self.work_dir}")
         os.makedirs(self.work_dir, exist_ok=True)
 
         self.checkpoints_path = os.path.join(self.work_dir, "checkpoints")
@@ -128,6 +132,7 @@ class PortfolioManagementEIIETrainer(Trainer):
             buffer = []
 
         valid_score_list = []
+        save_dict_list = []
         epoch = 1
         print("Train Episode: [{}/{}]".format(epoch, self.epochs))
         while True:
@@ -152,12 +157,13 @@ class PortfolioManagementEIIETrainer(Trainer):
                     if self.if_discrete:
                         tensor_action = tensor_action.argmax(dim=1)
                     action = tensor_action.detach().cpu().numpy()[0]
-                    state, reward, done, _ = self.valid_environment.step(action)
+                    state, reward, done, save_dict = self.valid_environment.step(action)
                     episode_reward_sum += reward
                     if done:
                         #print("Valid Episode Reward Sum: {:04f}".format(episode_reward_sum))
                         break
                 valid_score_list.append(episode_reward_sum)
+                save_dict_list.append(save_dict)
 
                 save_model(self.checkpoints_path,
                            epoch=epoch,
@@ -170,6 +176,9 @@ class PortfolioManagementEIIETrainer(Trainer):
                 break
 
         max_index = np.argmax(valid_score_list)
+        plot_metric_against_baseline(total_asset=save_dict_list[max_index]['total_assets'],
+                                     buy_and_hold=None, alg='Ensemble of Identical Independent Evaluators',
+                                     task='valid', color='darkcyan', save_dir=self.work_dir)
         load_model(self.checkpoints_path,
                    epoch=max_index + 1,
                    save=self.agent.get_save())
@@ -193,9 +202,12 @@ class PortfolioManagementEIIETrainer(Trainer):
             if self.if_discrete:
                 tensor_action = tensor_action.argmax(dim=1)
             action = tensor_action.detach().cpu().numpy()[0]
-            state, reward, done, _ = self.test_environment.step(action)
+            state, reward, done, return_dict = self.test_environment.step(action)
             episode_reward_sum += reward
             if done:
+                plot_metric_against_baseline(total_asset=return_dict['total_assets'],
+                                             buy_and_hold=None, alg='Ensemble of Identical Independent Evaluators',
+                                             task='test', color='darkcyan', save_dir=self.work_dir)
                 # print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
                 break
         df_return = self.test_environment.save_portfolio_return_memory()
@@ -226,6 +238,9 @@ class PortfolioManagementEIIETrainer(Trainer):
             state, reward, done, return_dict = self.test_environment.step(action)
             episode_reward_sum += reward
             if done:
+                plot_metric_against_baseline(total_asset=return_dict['total_assets'],
+                                             buy_and_hold=None, alg='Ensemble of Identical Independent Evaluators',
+                                             task='test', color='darkcyan', save_dir=self.work_dir)
                 # print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))
                 break
             weights_brandnew = return_dict["weights_brandnew"]

@@ -20,7 +20,8 @@ def parse_args():
     parser.add_argument("--config", default=osp.join(ROOT, "configs", "missing_value_imputation", "missing_value_imputation.py"),
                         help="download datasets config file path")
     parser.add_argument("--dataset", default="dj30", help="dataset name")
-    parser.add_argument("--tic", default="IBM", help="ticker name")                     
+    parser.add_argument("--tic", default="IBM", help="ticker name")
+    parser.add_argument("--verbose", type=int, default='1')
     args = parser.parse_args()
     return args
 
@@ -33,7 +34,8 @@ def imputation():
 
     cfg = replace_cfg_vals(cfg)
     cfg.data.update(dict(dataset_name=dataset_name, tic_name=tic_name))
-    print(cfg)
+    if args.verbose == 1:
+        print(cfg)
 
 
     imputation = build_imputation(cfg)

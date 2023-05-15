@@ -82,9 +82,14 @@ class OrderExecutionPDEnvironment(Environments):
         ]
         # private state indicates the left date and order
         self.private_state = np.array([1, 1])
+        self.private_state_start= self.private_state
         self.terminal = False
         self.money_sold = 0
         self.private_state_list = [self.private_state] * self.state_length
+        self.money_sold_list = []
+        self.action_list = []
+        self.price_list = []
+        self.asset_list = []
 
     def reset(self):
         self.terminal = False
@@ -104,7 +109,11 @@ class OrderExecutionPDEnvironment(Environments):
         # private state indicates the
         self.private_state = np.array([1, 1])
         self.money_sold = 0
+        self.money_sold_list = []
+        self.action_list=[]
         self.private_state_list = [self.private_state] * self.state_length
+        self.asset_list = []
+        self.price_list = []
         return np.array(self.public_imperfect_state), {
             "perfect_state": np.array(self.public_perfect_state),
             "private_state": np.array([self.private_state_list])
@@ -114,6 +123,7 @@ class OrderExecutionPDEnvironment(Environments):
         # based on the current price information, we decided whether to trade use the next day's price
         # the reward is calculated as at*(p_(t+1)-average(p))
         self.day = self.day + 1
+        self.action_list.append(action)
 
         self.terminal = (self.day >= (len(self.df) - self.state_length))
         if self.terminal:
@@ -123,11 +133,14 @@ class OrderExecutionPDEnvironment(Environments):
             self.data_public_imperfect = self.df.iloc[
                                          self.day - self.state_length:self.day, :]
             current_price = self.data_public_imperfect.iloc[-1].close
+            self.price_list.append(current_price)
             self.money_sold += leftover_order * current_price
+            self.money_sold_list.append(self.money_sold)
             self.public_imperfect_state = np.array(self.public_imperfect_state)
             self.private_state_list.append([0, 0])
             self.private_state_list.remove(self.private_state_list[0])
 
+            self.asset_list.append(self.money_sold + leftover_order * current_price)
             stats = OrderedDict(
                 {
                     "Money Sold": ["{:04f}".format(self.money_sold)],
@@ -139,7 +152,9 @@ class OrderExecutionPDEnvironment(Environments):
             return self.public_imperfect_state, self.reward, self.terminal, {
                 "perfect_state": np.array([self.public_perfect_state]),
                 "private_state": np.array([self.private_state_list]),
-                "money_sold":self.money_sold
+                "money_sold":self.money_sold,
+                'money_sold_list':self.money_sold_list,
+                'Total Asset':self.asset_list
             }
 
         else:
@@ -161,6 +176,7 @@ class OrderExecutionPDEnvironment(Environments):
             self.public_imperfect_state = np.array(
                 [self.public_imperfect_state])
             current_price = self.data_public_imperfect.iloc[-1].close
+            self.price_list.append(current_price)
             if np.abs(action) < np.abs(leftover_order):
                 self.money_sold += action * current_price
                 self.reward = action * (
@@ -170,22 +186,54 @@ class OrderExecutionPDEnvironment(Environments):
                 self.reward = leftover_order * (
                         current_price / previous_average_price - 1)
                 self.terminal = True
-                stats = OrderedDict(
-                {
-                    "Money Sold": ["{:04f}".format(self.money_sold)],
-                }
+                # calculate avg price in the self.price_list
+                avg_money_sold = np.mean(self.price_list) * self.private_state_start[1]
+                if self.task.startswith("test"):
+                    stats = OrderedDict(
+                    {
+                        "Money Sold": ["{:04f}".format(self.money_sold)],
+                        "Money Sold on average price in trading period": ["{:04f}".format(avg_money_sold)]
+                    }
+                    )
+                else:
+                    stats = OrderedDict(
+                        {
+                            "Money Sold": ["{:04f}".format(self.money_sold)],
+                        }
                 )
                 table = print_metrics(stats)
                 print(table)
             leftover_day, leftover_order = leftover_day - 1 / (len(
                 self.df) - 2 * self.state_length), leftover_order - action
+            self.money_sold_list.append(self.money_sold)
             self.private_state = np.array([leftover_day, leftover_order])
             self.private_state_list.append(self.private_state)
             self.private_state_list.remove(self.private_state_list[0])
+
+
+            market_features_dict = {'close':self.df['close'].values.tolist()}
+            buy_points={}
+            sell_points={}
+            for i,action in enumerate(self.action_list):
+                # if the action's volume is greater than 0, we are going to buy the bitcoin we are holding
+                if action > 0:
+                    sell_points[i] = action
+                elif action < 0:
+                    buy_points[i] = action
+            trading_points = {'buy':buy_points,'sell':sell_points}
+            self.asset_list.append(self.money_sold + leftover_order * current_price)
+
+
+
+
             return self.public_imperfect_state, self.reward, self.terminal, {
                 "perfect_state": np.array([self.public_perfect_state]),
                 "private_state": np.array([self.private_state_list]),
-                "money_sold": self.money_sold
+                "money_sold": self.money_sold,
+                'money_sold_list': self.money_sold_list,
+                'Total Asset': self.asset_list,
+                'trading_points':trading_points,
+                'market_features_dict': market_features_dict
             }
 
     def find_money_sold(self):

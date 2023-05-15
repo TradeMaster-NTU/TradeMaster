@@ -29,6 +29,7 @@ def parse_args():
                         help="download datasets config file path")
     parser.add_argument("--task_name", type=str, default="train")
     parser.add_argument("--test_dynamic", type=str, default='-1')
+    parser.add_argument("--verbose", type=int, default='1')
     args = parser.parse_args()
     return args
 
@@ -42,7 +43,9 @@ def main():
     cfg = replace_cfg_vals(cfg)
     # update test style
     cfg.data.update({'test_dynamic': args.test_dynamic})
-    print(cfg)
+    if args.verbose==1:
+        print(cfg)
+
 
     dataset = build_dataset(cfg)
 
@@ -134,6 +137,7 @@ def main():
         # print('win rate is: ', sum(float(r) > 0 for r in daily_return_list) / len(daily_return_list))
         # print('blind_bid win rate is: ', sum(float(r) > 0 for r in daily_return_list_Blind_Bid) / len(daily_return_list_Blind_Bid))
         print("dynamics test end")
+
 
 
 if __name__ == '__main__':

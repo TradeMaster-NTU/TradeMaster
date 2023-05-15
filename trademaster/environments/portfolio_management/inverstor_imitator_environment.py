@@ -277,7 +277,7 @@ class PortfolioManagementInvestorImitatorEnvironment(Environments):
                 with open(metric_save_path, 'wb') as handle:
                     pickle.dump(save_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-            return self.state, self.reward, self.terminal, {}
+            return self.state, self.reward, self.terminal, {"total_assets": assets}
 
         else:
             # transfer actino into portofolios weights
