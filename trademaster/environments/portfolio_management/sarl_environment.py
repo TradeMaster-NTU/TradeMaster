@@ -152,7 +152,7 @@ class PortfolioManagementSARLEnvironment(Environments):
                 }
             )
             table = print_metrics(stats)
-            print(table)
+            # print(table)
 
             df_return = self.save_portfolio_return_memory()
             daily_return = df_return.daily_return.values
@@ -176,7 +176,7 @@ class PortfolioManagementSARLEnvironment(Environments):
 
 
             return self.state, self.reward, self.terminal, {
-                "sharpe_ratio": sharpe_ratio,"total_assets": assets
+                "sharpe_ratio": sharpe_ratio,"total_assets": assets,'table':table
             }
         else:
             # transfer actino into portofolios weights
