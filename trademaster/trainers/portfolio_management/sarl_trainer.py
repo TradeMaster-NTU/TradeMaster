@@ -75,6 +75,7 @@ class PortfolioManagementSARLTrainer(Trainer):
         self.trainer_name = select_algorithms(self.agent_name)
         self.configs["env"] = PortfolioManagementSARLEnvironment
         self.configs["env_config"] = dict(dataset=self.dataset, task="train")
+        self.verbose = get_attr(kwargs, "verbose", False)
 
         self.init_before_training()
 
@@ -95,9 +96,11 @@ class PortfolioManagementSARLTrainer(Trainer):
         if self.if_remove:
             import shutil
             shutil.rmtree(self.work_dir, ignore_errors=True)
-            ray.get(f.remote(f"| Arguments Remove work_dir: {self.work_dir}"))
+            if self.verbose:
+                ray.get(f.remote(f"| Arguments Remove work_dir: {self.work_dir}"))
         else:
-            ray.get(f.remote(f"| Arguments Keep work_dir: {self.work_dir}"))
+            if self.verbose:
+                ray.get(f.remote(f"| Arguments Keep work_dir: {self.work_dir}"))
         os.makedirs(self.work_dir, exist_ok=True)
 
         self.checkpoints_path = os.path.join(self.work_dir, "checkpoints")
@@ -129,7 +132,7 @@ class PortfolioManagementSARLTrainer(Trainer):
                     break
             save_dict_list.append(information)
             valid_score_list.append(information["sharpe_ratio"])
-
+            ray.get(f.remote(information['table']))
             checkpoint_path = os.path.join(self.checkpoints_path, "checkpoint-{:05d}.pkl".format(epoch))
             obj = self.trainer.save_to_object()
             save_object(obj, checkpoint_path)
