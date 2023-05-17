@@ -1,15 +1,15 @@
-# Evaluation Toolbox: Market Dynamics Modeling
+# Evaluation Sandbox: Market Dynamics Modeling
 
 ## Introduction 
-The evaluation toolbox provides a sandbox for user to evaluate their policy under different scenarios . 
-The toolbox shows visualizations and reports to assist user compare policies across market dynamic.
+The evaluation sandbox provides a sandbox for user to evaluate their policy under different scenarios . 
+The sandbox shows visualizations and reports to assist user compare policies across market dynamic.
 
 ## Market Dynamics Modeling
 The Market Dynamics modeling is a module to label raw data with dynamics that is interpretable. 
 The dynamics are used as meta-information. For example, in the evaluation process, user can run evaluation on specific dynamics.
 
 ## Usage & Example
-The Evaluation Toolbox module prepare data for evaluation, to run a full test you should follow this pipeline:
+This module prepare data for evaluation, to run a full test you should follow this pipeline:
 - Run the [`run.py`]()  in tools/market_dynamics_labeling or [`run_linear_model.py`]() to prepare the dataset
   1. Tune the parameters based on the visualization results
      <div align="center">
@@ -49,7 +49,7 @@ The scores of the visualization result are calculated as described:
 
 
 ## Examples
-### Use Market Dynamics Model to prepare evaluation datasets
+### Use market dynamics model to prepare evaluation datasets
 It is recommended to run through the trademaster/evaluation/market_dynamics_labeling/example.ipynb notebook to visualize the labeling process. This will also give hints on
 deciding the parameters for your dataset. The example.html contains the visualization results from example.ipynb.
 #### Running from configuration file 
