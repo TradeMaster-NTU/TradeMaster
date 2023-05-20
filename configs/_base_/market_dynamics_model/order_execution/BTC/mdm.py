@@ -7,5 +7,6 @@ length_limit=32,
 OE_BTC=True,
 PM='',
 process_datafile_path='',
-market_dynamic_labeling_visualization_paths=''
+market_dynamic_labeling_visualization_paths='',
+key_indicator='adjcp'
 )

@@ -20,8 +20,9 @@ import re
 import matplotlib.font_manager as font_manager
 
 class Labeler():
-    def __init__(self,data,method='linear',parameters=['2/7','2/14','4']):
+    def __init__(self,data,method='linear',parameters=['2/7','2/14','4'],key_indicator='adjcp'):
         plt.ioff()
+        self.key_indicator=key_indicator
         self.preprocess(data)
         if method=='linear':
             self.method='linear'
@@ -120,11 +121,11 @@ class Labeler():
         self.data_dict = {}
         for tic in self.tics:
             try:
-                tic_data = data.loc[data['tic'] == tic, ['date','tic','open','high','low','close','adjcp']]
+                tic_data = data.loc[data['tic'] == tic, ['date','tic','open','high','low','close',self.key_indicator]]
             except:
-                tic_data = data.loc[data['tic'] == tic, ['date', 'tic', 'adjcp']]
+                tic_data = data.loc[data['tic'] == tic, ['date', 'tic', self.key_indicator]]
             tic_data.sort_values(by='date', ascending=True)
-            tic_data = tic_data.assign(pct_return=tic_data['adjcp'].pct_change().fillna(0))
+            tic_data = tic_data.assign(pct_return=tic_data[self.key_indicator].pct_change().fillna(0))
             self.data_dict[tic] = tic_data.reset_index(drop=True)
 
     def stock_DWT(self,work_dir):
@@ -132,10 +133,10 @@ class Labeler():
         data_by_tic_1 = []
         for tic in self.tics:
             try:
-                data_by_tic.append(self.data_dict[tic].loc[:, ['open', 'high', 'low', 'close', 'adjcp', 'pct_return']].values)
+                data_by_tic.append(self.data_dict[tic].loc[:, ['open', 'high', 'low', 'close', self.key_indicator, 'pct_return']].values)
             except:
                 data_by_tic.append(
-                    self.data_dict[tic].loc[:, ['adjcp', 'pct_return']].values)
+                    self.data_dict[tic].loc[:, [self.key_indicator, 'pct_return']].values)
             data_by_tic_1.append(self.data_dict[tic].loc[:, 'pct_return'].values)
         fitting_data = to_time_series_dataset(data_by_tic)
         fitting_data_1=to_time_series_dataset(data_by_tic_1)
@@ -160,7 +161,7 @@ class Labeler():
             date = data['date'].apply(lambda x: datetime.strptime(x, '%Y-%m-%d'))
         else:
             date = data['date']
-        ax.plot(date, data['adjcp'])
+        ax.plot(date, data[self.key_indicator])
         ax.xaxis.set_major_locator(mdates.YearLocator(base=1))
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%M'))
         ax.set_title(name + '_adjcp', fontsize=20)
@@ -190,7 +191,7 @@ class Labeler():
 
     def plot_filter(self,data, name, low=6, high=32, K=12):
         # see sm.tsa.filters.bkfilter for more detail, this method is not applied to the pipline for now
-        filtered_data = sm.tsa.filters.bkfilter(data[['adjcp', 'pct_return']], low, high, K)
+        filtered_data = sm.tsa.filters.bkfilter(data[[self.key_indicator, 'pct_return']], low, high, K)
         if isinstance(data['date'][0], str):
             date = data['date'][K:-K].apply(lambda x: datetime.strptime(x, '%Y-%m-%d'))
         else:
@@ -217,7 +218,7 @@ class Labeler():
         return y
 
     def adjcp_apply_filter(self,data, Wn_adjcp, Wn_pct, order):
-        data['adjcp_filtered'] = self.butter_lowpass_filter(data['adjcp'], Wn_adjcp, order)
+        data['adjcp_filtered'] = self.butter_lowpass_filter(data[self.key_indicator], Wn_adjcp, order)
         data['pct_return_filtered'] = self.butter_lowpass_filter(data['pct_return'], Wn_pct, order)
 
     def plot_lowpassfilter(self,data, name):
@@ -298,7 +299,7 @@ class Labeler():
             y_pred = y_pred_list[i]
             coef = normalized_coef_list[i]
             flag=self.regime_flag(self.regime_number,coef,[seg1, seg2, seg3])
-            ax.plot(x_seg,data['adjcp'].iloc[turning_points[i]:turning_points[i + 1]], color=colors[flag], label='market style ' + str(flag))
+            ax.plot(x_seg,data[self.key_indicator].iloc[turning_points[i]:turning_points[i + 1]], color=colors[flag], label='market style ' + str(flag))
         handles, labels = plt.gca().get_legend_handles_labels()
         by_label = dict(zip(labels, handles))
         font = font_manager.FontProperties(weight='bold',
