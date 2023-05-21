@@ -39,7 +39,7 @@ class Labeler():
             self.coef_list_dict = {}
             self.norm_coef_list_dict = {}
             self.y_pred_dict = {}
-            self.regime_number=regime_number
+            self.regime_num=regime_number
             self.length_limit=length_limit
             for tic in self.tics:
                 coef_list, turning_points, y_pred_list, norm_coef_list = self.linear_regession_turning_points(
@@ -63,7 +63,7 @@ class Labeler():
             for tic in self.tics:
                 turning_points = self.turning_points_dict[tic]
                 norm_coef_list = self.norm_coef_list_dict[tic]
-                label,data_seg,label_seg,index_seg = self.linear_regession_label(self.data_dict[tic],turning_points, low, high, norm_coef_list,tic,self.regime_number)
+                label,data_seg,label_seg,index_seg = self.linear_regession_label(self.data_dict[tic],turning_points, low, high, norm_coef_list,tic,self.regime_num)
                 self.data_dict[tic]['label'] = label
                 self.all_data_seg.extend(data_seg)
                 self.all_label_seg.extend(label_seg)
@@ -324,7 +324,7 @@ class Labeler():
             x_seg = np.asarray([j for j in range(turning_points[i], turning_points[i + 1])]).reshape(-1, 1)
             y_pred = y_pred_list[i]
             coef = normalized_coef_list[i]
-            flag=self.regime_flag(self.regime_number,coef,segments)
+            flag=self.regime_flag(self.regime_num,coef,segments)
             ax.plot(x_seg,data[self.key_indicator].iloc[turning_points[i]:turning_points[i + 1]], color=colors[flag], label='market style ' + str(flag))
         handles, labels = plt.gca().get_legend_handles_labels()
         by_label = dict(zip(labels, handles))
