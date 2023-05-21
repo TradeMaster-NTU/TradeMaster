@@ -28,6 +28,20 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
         self.timestamp = get_attr(kwargs, "timestamp", None)
         self.tic = get_attr(kwargs, "tic", None)
 
+    def file_extension_selector(self,read):
+        if self.data_path.endswith('.csv'):
+            if read:
+                return pd.read_csv
+            else:
+                return pd.to_csv
+        elif self.data_path.endswith('.feather'):
+            if read:
+                return pd.read_feather
+            else:
+                return pd.to_feather
+        else:
+            raise ValueError('invalid file extension')
+
     def run(self):
         print('labeling start')
         path_names=Path(self.data_path).resolve().parents
@@ -66,7 +80,8 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
         print('finish fitting')
         Labeler.label(self.labeling_parameters,os.path.dirname(self.data_path))
         labeled_data = pd.concat([v for v in Labeler.data_dict.values()], axis=0)
-        data = pd.read_csv(self.data_path)
+        # parse the extension of the data_path
+        data=self.file_extension_selector(read=True)(self.data_path)
         merged_data = data.merge(labeled_data, how='left', on=[self.timestamp, self.tic, self.key_indicator], suffixes=('', '_DROP')).filter(
             regex='^(?!.*_DROP)')
         low, high = self.labeling_parameters
@@ -77,10 +92,10 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
             test = pd.read_csv(self.PM, index_col=0)
             merged = test.merge(DJI, on=self.timestamp)
             process_datafile_path = os.path.splitext(output_path)[0] + '_label_by_DJIindex_' + self.model_id + '.csv'
-            merged.to_csv(process_datafile_path, index=False)
+            merged_data.self.file_extension_selector(read=False)(process_datafile_path, index=False)
         else:
             process_datafile_path = os.path.splitext(output_path)[0] + '_labeled_' + self.model_id + '.csv'
-            merged_data.to_csv(process_datafile_path
+            merged_data.self.file_extension_selector(read=False)(process_datafile_path
                                , index=False)
         print('labeling done')
         print('plotting start')
