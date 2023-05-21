@@ -86,14 +86,14 @@ class Labeler():
         low, _, high = sorted([low, high, 0])
         # segement [low , high] into regime_num parts
         segments=[]
-        for i in range(regime_num):
-            segments.append(low+(high-low)/(regime_num)*i)
+        for i in range(self.regime_num):
+            segments.append(low+(high-low)/(self.regime_num)*i)
         label = []
         label_seg = []
         index_seg = []
         for i in range(len(turning_points) - 1):
             coef = normalized_coef_list[i]
-            flag = self.regime_flag(regime_num, coef, segments)
+            flag = self.regime_flag(self.regime_num, coef, segments)
             label.extend([flag] * (turning_points[i + 1] - turning_points[i]))
             if turning_points[i + 1] - turning_points[i] > 2:
                 data_seg.append(data.iloc[turning_points[i]:turning_points[i + 1]].to_list())
@@ -313,13 +313,18 @@ class Labeler():
     def linear_regession_plot(self,data, tic, y_pred_list, turning_points, low, high, normalized_coef_list,folder_name=None):
         data = data.reset_index(drop=True)
         fig, ax = plt.subplots(1, 1, figsize=(20, 10), constrained_layout=True)
-        seg1, seg2, seg3 = sorted([low, high, 0])
+        low, _, high = sorted([low, high, 0])
+        # segement [low , high] into regime_num parts
+        segments=[]
+        for i in range(self.regime_num):
+            segments.append(low+(high-low)/(self.regime_num)*i)
+
         colors = list(dict(mcolors.BASE_COLORS, **mcolors.CSS4_COLORS).keys())
         for i in range(len(turning_points) - 1):
             x_seg = np.asarray([j for j in range(turning_points[i], turning_points[i + 1])]).reshape(-1, 1)
             y_pred = y_pred_list[i]
             coef = normalized_coef_list[i]
-            flag=self.regime_flag(self.regime_number,coef,[seg1, seg2, seg3])
+            flag=self.regime_flag(self.regime_number,coef,segments)
             ax.plot(x_seg,data[self.key_indicator].iloc[turning_points[i]:turning_points[i + 1]], color=colors[flag], label='market style ' + str(flag))
         handles, labels = plt.gca().get_legend_handles_labels()
         by_label = dict(zip(labels, handles))
