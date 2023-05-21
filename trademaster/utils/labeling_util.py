@@ -136,7 +136,7 @@ class Labeler():
             data = pd.read_feather(data)
         # assign 'data' to tic if not exist
         if self.tic not in data.columns:
-            data[self.tic] = data['data']
+            data[self.tic] = 'data'
         self.tics = data[self.tic].unique()
         self.data_dict = {}
         for tic in self.tics:
