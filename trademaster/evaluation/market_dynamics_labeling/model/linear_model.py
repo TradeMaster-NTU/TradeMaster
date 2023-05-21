@@ -28,6 +28,8 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
         self.timestamp = get_attr(kwargs, "timestamp", None)
         self.tic = get_attr(kwargs, "tic", None)
         self.mode = get_attr(kwargs, "mode", None)
+        self.hard_length_limit = get_attr(kwargs, "hard_length_limit", None)
+        self.slope_mdd_threshold=get_attr(kwargs, "slope_mdd_threshold", None)
 
     def file_extension_selector(self,read):
         if self.data_path.endswith('.csv'):
@@ -75,9 +77,11 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
             process_data_path=os.path.join(dataset_foler_name,dataset_name+'_MDM_processed.csv').replace("\\", "/")
             raw_data.to_csv(process_data_path)
             self.data_path = process_data_path
-        Labeler = util.Labeler(self.data_path, 'linear', self.fitting_parameters,key_indicator=self.key_indicator, timestamp=self.timestamp, tic=self.tic, mode=self.mode)
+        Labeler = util.Labeler(self.data_path, 'linear', self.fitting_parameters,key_indicator=self.key_indicator,
+                               timestamp=self.timestamp, tic=self.tic, mode=self.mode,hard_length_limit=self.hard_length_limit,
+                               slope_mdd_threshold=self.slope_mdd_threshold)
         print('start fitting')
-        Labeler.fit(self.dynamic_number, self.length_limit)
+        Labeler.fit(self.dynamic_number, self.length_limit, self.hard_length_limit)
         print('finish fitting')
         Labeler.label(self.labeling_parameters,os.path.dirname(self.data_path))
         labeled_data = pd.concat([v for v in Labeler.data_dict.values()], axis=0)

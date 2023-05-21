@@ -11,5 +11,7 @@ market_dynamic_labeling_visualization_paths='',
 key_indicator='adjcp',
 timestamp='date',
 tic='tic',
-mode='slope'
+mode='slope',
+hard_length_limit=-1,
+slope_mdd_threshold=0.01
 )

@@ -19,6 +19,63 @@ import pickle
 import re
 import matplotlib.font_manager as font_manager
 
+import time
+
+class Node:
+    def __init__(self, data=None,timestamp=None):
+        self.data = data
+        self.next = None
+        self.timestamp = timestamp
+
+class LinkedList:
+    def __init__(self):
+        self.head = None
+
+    def insert(self, data):
+        new_node = Node(data)
+        if not self.head:
+            self.head = new_node
+        else:
+            current_node = self.head
+            while current_node.next:
+                current_node = current_node.next
+            current_node.next = new_node
+
+    def pop(self):
+        if not self.head:
+            return None
+        if not self.head.next:
+            data = self.head.data
+            self.head = None
+            return data
+        else:
+            current_node = self.head
+            while current_node.next.next:
+                current_node = current_node.next
+            data = current_node.next.data
+            current_node.next = None
+            return data
+
+    def to_list(self):
+        lst = []
+        current_node = self.head
+        while current_node:
+            lst.append(current_node.data)
+            current_node = current_node.next
+        return lst
+
+    def set_head_by_timestamp(self, timestamp):
+        previous_node = None
+        current_node = self.head
+        while current_node:
+            if current_node.timestamp == timestamp:
+                if previous_node:
+                    previous_node.next = current_node.next
+                current_node.next = self.head
+                self.head = current_node
+                return
+            previous_node = current_node
+            current_node = current_node.next
 
 class Dynamic_labeler():
     def __init__(self,mode,dynamic_num,low,high,normalized_coef_list):
@@ -47,19 +104,21 @@ class Dynamic_labeler():
             return self.dynamic_num - 1
 
 class Labeler():
-    def __init__(self,data,method='linear',parameters=['2/7','2/14','4'],key_indicator='adjcp',timestamp='date',tic='tic',mode='slope'):
+    def __init__(self,data,method='linear',parameters=['2/7','2/14','4'],key_indicator='adjcp',timestamp='date',tic='tic',mode='slope',hard_length_limit=-1,slope_mdd_threshold=-1):
         plt.ioff()
         self.key_indicator=key_indicator
         self.timestamp=timestamp
         self.tic=tic
         self.mode=mode
+        self.hard_length_limit=hard_length_limit
+        self.slope_mdd_threshold=slope_mdd_threshold
         self.preprocess(data)
         if method=='linear':
             self.method='linear'
             self.Wn_adjcp, self.Wn_pct, self.order =[float(fractions.Fraction(x)) for x in parameters]
         else:
             raise Exception("Sorry, only linear model is provided for now.")
-    def fit(self,dynamic_number,length_limit):
+    def fit(self,dynamic_number,length_limit,hard_length_limit):
         if self.method=='linear':
             for tic in self.tics:
                 self.adjcp_apply_filter(self.data_dict[tic], self.Wn_adjcp, self.Wn_pct, self.order)
@@ -69,6 +128,7 @@ class Labeler():
             self.y_pred_dict = {}
             self.dynamic_num=dynamic_number
             self.length_limit=length_limit
+            self.hard_length_limit=hard_length_limit
             for tic in self.tics:
                 coef_list, turning_points, y_pred_list, norm_coef_list = self.linear_regession_turning_points(
                     data_ori=self.data_dict[tic], tic=tic,length_constrain=self.length_limit)
@@ -100,7 +160,7 @@ class Labeler():
             try:
               self.TSNE_run(interpolated_pct_return_data_seg)
             except:
-              print('not able to do TSNE') 
+              print('not able to do TSNE')
             try:
               self.stock_DWT(work_dir)
             except:
@@ -240,7 +300,7 @@ class Labeler():
         return y
 
     def adjcp_apply_filter(self,data, Wn_adjcp, Wn_pct, order):
-        data['adjcp_filtered'] = self.butter_lowpass_filter(data[self.key_indicator], Wn_adjcp, order)
+        data['key_indicator_filtered'] = self.butter_lowpass_filter(data[self.key_indicator], Wn_adjcp, order)
         data['pct_return_filtered'] = self.butter_lowpass_filter(data['pct_return'], Wn_pct, order)
 
     def plot_lowpassfilter(self,data, name):
@@ -249,7 +309,7 @@ class Labeler():
             date = data[self.timestamp].apply(lambda x: datetime.strptime(x, '%Y-%m-%d'))
         else:
             date = data[self.timestamp]
-        ax[0].plot(date, data['adjcp_filtered'])
+        ax[0].plot(date, data['key_indicator_filtered'])
         ax[0].xaxis.set_major_locator(mdates.YearLocator(base=1))
         ax[0].xaxis.set_major_formatter(mdates.DateFormatter('%Y-%M'))
         ax[0].set_title(name + '_adjcp_filtered', fontsize=20)
@@ -271,27 +331,114 @@ class Labeler():
             turning_points.append(data['pct_return_filtered'].size)
         return turning_points
 
+    def get_mdd(self,seg):
+        # get max drawdown of a segment
+        mdd = 0
+        peak=seg[0]
+        for value in seg:
+            if value>peak:
+                peak=value
+            dd=(peak-value)/peak
+            if dd>mdd:
+                mdd=dd
+        return mdd
+
+
     def linear_regession_turning_points(self,data_ori, tic,length_constrain=0):
         data = data_ori.reset_index(drop=True)
         turning_points = self.find_index_of_turning(data)
-        turning_points_new = [turning_points[0]]
+        #get timestamp of turning points
+        # turning_points_timestamp = data[self.timestamp][turning_points]
+        # make every element in turning_points as a list
+        turning_points = turning_points.apply(lambda x: [x])
+        turning_points_ori= turning_points.copy()
+        turning_points_new = [turning_points[0][0]]
+
+        # 1.merge turning points if the chunk is too short
+        # if length_constrain != 0:
+        #     for num,i in enumerate(range(1, len(turning_points) - 1)):
+        #         if turning_points[i] - turning_points_new[-1] >= length_constrain:
+        #             turning_points_new.append(turning_points[i])
+        #     turning_points_new.append(turning_points[-1])
+        #     turning_points = turning_points_new
         if length_constrain != 0:
             for i in range(1, len(turning_points) - 1):
-                if turning_points[i] - turning_points_new[-1] >= length_constrain:
+                if turning_points[i][0] - turning_points_new[-1][0] >= length_constrain:
+                    #no need to merge
                     turning_points_new.append(turning_points[i])
-            turning_points_new.append(turning_points[-1])
+                else:
+                    # merge this point into the current segment
+                    turning_points_new[-1].extend(turning_points[i])
             turning_points = turning_points_new
+
+
+        # 2. Get slope of each segment
+        coef_list = []
+        normalized_coef_list = []
+        y_pred_list = []
+        # for i in range(len(turning_points) - 1):
+        #     x_seg = np.asarray([j for j in range(turning_points[i], turning_points[i + 1])]).reshape(-1, 1)
+        #     adj_cp_model = LinearRegression().fit(x_seg,
+        #                                           data['key_indicator_filtered'].iloc[turning_points[i]:turning_points[i + 1]])
+        #     y_pred = adj_cp_model.predict(x_seg)
+        #     normalized_coef_list.append(100 * adj_cp_model.coef_ / data['key_indicator_filtered'].iloc[turning_points[i]])
+        #     coef_list.append(adj_cp_model.coef_)
+        #     y_pred_list.append(y_pred)
+        for i in range(len(turning_points) - 1):
+            x_seg = np.asarray([j for j in range(turning_points[i][0], turning_points[i + 1][0])]).reshape(-1, 1)
+            adj_cp_model = LinearRegression().fit(x_seg,
+                                                  data['key_indicator_filtered'].iloc[turning_points[i][0]:turning_points[i + 1][0]])
+            y_pred = adj_cp_model.predict(x_seg)
+            normalized_coef_list.append(100 * adj_cp_model.coef_ / data['key_indicator_filtered'].iloc[turning_points[i][0]])
+            coef_list.append(adj_cp_model.coef_)
+            y_pred_list.append(y_pred)
+
+        # 3. Get max drawdown of each segment
+        if self.slope_mdd_threshold!=-1:
+            mdd_list = []
+            for i in range(len(turning_points) - 1):
+                mdd_list.append(self.get_mdd(data['key_indicator_filtered'].iloc[turning_points[i][0]:turning_points[i + 1][0]]))
+
+        # 4. re-slice the segment if the if slope/ mdd is smaller than threshold
+            turning_points_new = []
+            for i in range(len(turning_points)):
+                if abs(coef_list[i])/abs(mdd_list[i])<self.slope_mdd_threshold:
+                    for j in turning_points_ori[i]:
+                        turning_points_new.append([j])
+                else:
+                    turning_points_new.append(turning_points[i])
+        # 4.force merge if the hard constraint is not satisfied
+        if self.hard_length_limit!=-1:
+            turning_points_new = [turning_points_new[0]]
+            for i in range(1, len(turning_points_new) - 1):
+                if turning_points_new[i][0] - turning_points_new[-1][0] >= self.hard_length_limit:
+                    # no need to merge
+                    turning_points_new.append(turning_points_new[i])
+                else:
+                    # merge this point into the current segment
+                    turning_points_new[-1].extend(turning_points_new[i])
+            turning_points = turning_points_new
+
+        # 5. re-calculate the slope
         coef_list = []
         normalized_coef_list = []
         y_pred_list = []
         for i in range(len(turning_points) - 1):
-            x_seg = np.asarray([j for j in range(turning_points[i], turning_points[i + 1])]).reshape(-1, 1)
+            x_seg = np.asarray([j for j in range(turning_points[i][0], turning_points[i + 1][0])]).reshape(-1, 1)
             adj_cp_model = LinearRegression().fit(x_seg,
-                                                  data['adjcp_filtered'].iloc[turning_points[i]:turning_points[i + 1]])
+                                                  data['key_indicator_filtered'].iloc[turning_points[i][0]:turning_points[i + 1][0]])
             y_pred = adj_cp_model.predict(x_seg)
-            normalized_coef_list.append(100 * adj_cp_model.coef_ / data['adjcp_filtered'].iloc[turning_points[i]])
+            normalized_coef_list.append(100 * adj_cp_model.coef_ / data['key_indicator_filtered'].iloc[turning_points[i][0]])
             coef_list.append(adj_cp_model.coef_)
             y_pred_list.append(y_pred)
+
+
+
+
+
+
+
+
         return np.asarray(coef_list), np.asarray(turning_points), y_pred_list, normalized_coef_list
 
     def plot(self,tics,parameters,data_path,model_id):
@@ -342,13 +489,13 @@ class Labeler():
     def linear_regession_timewindow(self,data_ori, tic, adjcp_timewindow):
         # This is the version of linear regession that does not use a turning point to segment. Instead, it applys a fixed-length time winodw.
         # This can be helpful to process data that is extremely volatile, or you simply want a long-term dynamic. However you can achieve similar result by applying stronger filter.
-        data = data_ori.iloc[:adjcp_timewindow * (data_ori['adjcp_filtered'].size // adjcp_timewindow), :]
+        data = data_ori.iloc[:adjcp_timewindow * (data_ori['key_indicator_filtered'].size // adjcp_timewindow), :]
         adjcp_window_data = [
-            data[['adjcp_filtered']][i * adjcp_timewindow:(i + 1) * adjcp_timewindow].to_numpy().reshape(-1) for i in
-            range(data['adjcp_filtered'].size // adjcp_timewindow)]
+            data[['key_indicator_filtered']][i * adjcp_timewindow:(i + 1) * adjcp_timewindow].to_numpy().reshape(-1) for i in
+            range(data['key_indicator_filtered'].size // adjcp_timewindow)]
         coef_list = []
         fig, ax = plt.subplots(2, 1, figsize=(20, 10), constrained_layout=True)
-        ax[0].plot([i for i in range(data.shape[0])], data['adjcp_filtered'])
+        ax[0].plot([i for i in range(data.shape[0])], data['key_indicator_filtered'])
         for i, data_seg in enumerate(adjcp_window_data):
             x_seg = np.asarray([i * adjcp_timewindow + j for j in range(adjcp_timewindow)]).reshape(-1, 1)
             adj_cp_model = LinearRegression().fit(x_seg, data_seg)
