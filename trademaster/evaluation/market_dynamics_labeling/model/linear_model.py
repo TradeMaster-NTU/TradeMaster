@@ -81,6 +81,7 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
         Labeler.label(self.labeling_parameters,os.path.dirname(self.data_path))
         labeled_data = pd.concat([v for v in Labeler.data_dict.values()], axis=0)
         file_writer=self.file_extension_selector(read=False)
+        print('file_writer',file_writer)
         flie_reader=self.file_extension_selector(read=True)
         data=flie_reader(self.data_path)
         if self.tic in data.columns:
