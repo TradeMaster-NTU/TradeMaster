@@ -80,9 +80,10 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
         print('finish fitting')
         Labeler.label(self.labeling_parameters,os.path.dirname(self.data_path))
         labeled_data = pd.concat([v for v in Labeler.data_dict.values()], axis=0)
-        file_writer=self.file_extension_selector(read=False)
-        print('file_writer',file_writer)
+        # file_writer=self.file_extension_selector(read=False)
+        # print('file_writer',file_writer)
         flie_reader=self.file_extension_selector(read=True)
+        extension=self.data_path.split('.')[-1]
         data=flie_reader(self.data_path)
         if self.tic in data.columns:
             merge_keys = [self.timestamp, self.tic, self.key_indicator]
@@ -97,12 +98,14 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
             DJI = merged_data.loc[:, [self.timestamp, 'label']]
             test = pd.read_csv(self.PM, index_col=0)
             merged = test.merge(DJI, on=self.timestamp)
-            process_datafile_path = os.path.splitext(output_path)[0] + '_label_by_DJIindex_' + self.model_id + '.csv'
-            merged_data.file_writer(process_datafile_path, index=False)
+            process_datafile_path = os.path.splitext(output_path)[0] + '_label_by_DJIindex_' + self.model_id + extension
+            merged_data.to_csv(process_datafile_path, index=False)
         else:
-            process_datafile_path = os.path.splitext(output_path)[0] + '_labeled_' + self.model_id + '.csv'
-            merged_data.file_writer(process_datafile_path
-                               , index=False)
+            process_datafile_path = os.path.splitext(output_path)[0] + '_labeled_' + self.model_id + extension
+            if extension == 'csv':
+                merged_data.to_csv(process_datafile_path, index=False)
+            elif extension == 'feather':
+                merged_data.to_feather(process_datafile_path)
         print('labeling done')
         print('plotting start')
         # a list the path to all the modeling visulizations
