@@ -35,7 +35,7 @@ def main(args):
         process_data_path = os.path.join(dataset_foler_name, dataset_name + '_MDM_processed.csv').replace("\\", "/")
         raw_data.to_csv(process_data_path)
         args.data_path = process_data_path
-    Labeler = util.Labeler(args.data_path, 'linear',args.fitting_parameters,key_indicator=args.key_indicator)
+    Labeler = util.Labeler(args.data_path, 'linear',args.fitting_parameters,key_indicator=args.key_indicator,timestamp=args.timestamp,tic=args.tic)
     Labeler.fit(args.regime_number, args.length_limit)
     Labeler.label(args.labeling_parameters,os.path.dirname(args.data_path))
     labeled_data = pd.concat([v for v in Labeler.data_dict.values()], axis=0)
