@@ -80,9 +80,12 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
         print('finish fitting')
         Labeler.label(self.labeling_parameters,os.path.dirname(self.data_path))
         labeled_data = pd.concat([v for v in Labeler.data_dict.values()], axis=0)
-        # parse the extension of the data_path
         data=self.file_extension_selector(read=True)(self.data_path)
-        merged_data = data.merge(labeled_data, how='left', on=[self.timestamp, self.tic, self.key_indicator], suffixes=('', '_DROP')).filter(
+        if self.tic in data.columns:
+            merge_keys = [self.timestamp, self.tic, self.key_indicator]
+        else:
+            merge_keys = [self.timestamp, self.key_indicator]
+        merged_data = data.merge(labeled_data, how='left', on=merge_keys, suffixes=('', '_DROP')).filter(
             regex='^(?!.*_DROP)')
         low, high = self.labeling_parameters
         self.model_id = str(self.regime_number) + '_' + str(
