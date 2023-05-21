@@ -130,9 +130,10 @@ class Labeler():
         #     raise Exception('This regime num is currently not supported')
         # return flag
     def preprocess(self,data):
-        try:
+        # parse the extention of the data file
+        if data.split('.')[-1] == 'csv':
             data = pd.read_csv(data)
-        except:
+        elif data.split('.')[-1] == 'feather':
             data = pd.read_feather(data)
         # assign 'data' to tic if not exist
         if self.tic not in data.columns:
