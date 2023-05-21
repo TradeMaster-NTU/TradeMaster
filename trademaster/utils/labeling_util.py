@@ -80,13 +80,18 @@ class Labeler():
                                regime_num=4):
         data = data.reset_index(drop=True)['pct_return_filtered']
         data_seg = []
-        seg1, seg2, seg3 = sorted([low, high, 0])
+
+        low, _, high = sorted([low, high, 0])
+        # segement [low , high] into regime_num parts
+        segments=[]
+        for i in range(regime_num):
+            segments.append(low+(high-low)/(regime_num)*i)
         label = []
         label_seg = []
         index_seg = []
         for i in range(len(turning_points) - 1):
             coef = normalized_coef_list[i]
-            flag = self.regime_flag(regime_num, coef, [seg1, seg2, seg3])
+            flag = self.regime_flag(regime_num, coef, segments)
             label.extend([flag] * (turning_points[i + 1] - turning_points[i]))
             if turning_points[i + 1] - turning_points[i] > 2:
                 data_seg.append(data.iloc[turning_points[i]:turning_points[i + 1]].to_list())
@@ -94,29 +99,39 @@ class Labeler():
                 index_seg.append(tic + '_' + str(i))
         return label, data_seg, label_seg, index_seg
 
-    def regime_flag(self,regime_num, coef, parameters):
-        seg1, seg2, seg3 = parameters
-        if regime_num == 4:
-            if coef <= seg1:
-                flag = 0
-            elif coef > seg1 and coef <= seg2:
-                flag = 1
-            elif coef > seg2 and coef <= seg3:
-                flag = 2
-            elif coef > seg3:
-                flag = 3
-        elif regime_num == 3:
-            if coef <= seg1:
-                flag = 0
-            elif coef > seg1 and coef <= seg3:
-                flag = 1
-            elif coef > seg3:
-                flag = 2
-        else:
-            raise Exception('This regime num is currently not supported')
+    def regime_flag(self,regime_num, coef, segments):
+        # find the place where coef falls into in segments
+        for i in range(regime_num):
+            if coef <= segments[i]:
+                flag = i
+                break
         return flag
+
+        # seg1, seg2, seg3 = parameters
+        # if regime_num == 4:
+        #     if coef <= seg1:
+        #         flag = 0
+        #     elif coef > seg1 and coef <= seg2:
+        #         flag = 1
+        #     elif coef > seg2 and coef <= seg3:
+        #         flag = 2
+        #     elif coef > seg3:
+        #         flag = 3
+        # elif regime_num == 3:
+        #     if coef <= seg1:
+        #         flag = 0
+        #     elif coef > seg1 and coef <= seg3:
+        #         flag = 1
+        #     elif coef > seg3:
+        #         flag = 2
+        # else:
+        #     raise Exception('This regime num is currently not supported')
+        # return flag
     def preprocess(self,data):
-        data = pd.read_csv(data)
+        try:
+            data = pd.read_csv(data)
+        except:
+            data = pd.read_feather(data)
         self.tics = data['tic'].unique()
         self.data_dict = {}
         for tic in self.tics:
