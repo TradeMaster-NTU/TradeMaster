@@ -80,7 +80,9 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
         print('finish fitting')
         Labeler.label(self.labeling_parameters,os.path.dirname(self.data_path))
         labeled_data = pd.concat([v for v in Labeler.data_dict.values()], axis=0)
-        data=self.file_extension_selector(read=True)(self.data_path)
+        file_writer=self.file_extension_selector(read=False)
+        flie_reader=self.file_extension_selector(read=True)
+        data=flie_reader(self.data_path)
         if self.tic in data.columns:
             merge_keys = [self.timestamp, self.tic, self.key_indicator]
         else:
@@ -95,10 +97,10 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
             test = pd.read_csv(self.PM, index_col=0)
             merged = test.merge(DJI, on=self.timestamp)
             process_datafile_path = os.path.splitext(output_path)[0] + '_label_by_DJIindex_' + self.model_id + '.csv'
-            merged_data.self.file_extension_selector(read=False)(process_datafile_path, index=False)
+            merged_data.file_writer(process_datafile_path, index=False)
         else:
             process_datafile_path = os.path.splitext(output_path)[0] + '_labeled_' + self.model_id + '.csv'
-            merged_data.self.file_extension_selector(read=False)(process_datafile_path
+            merged_data.file_writer(process_datafile_path
                                , index=False)
         print('labeling done')
         print('plotting start')
