@@ -33,12 +33,12 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
             if read:
                 return pd.read_csv
             else:
-                return pd.to_csv
+                return pd.DataFrame.to_feather
         elif self.data_path.endswith('.feather'):
             if read:
                 return pd.read_feather
             else:
-                return pd.to_feather
+                return pd.DataFrame.to_feather
         else:
             raise ValueError('invalid file extension')
 
