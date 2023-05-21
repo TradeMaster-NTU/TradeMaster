@@ -54,6 +54,7 @@ def run_mdm():
     # test_dynamic=args.test_dynamic
 
     cfg = replace_cfg_vals(cfg)
+    print(cfg.pretty_text)
     # update test style
 
     model = build_market_dynamics_model(cfg)
