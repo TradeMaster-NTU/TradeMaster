@@ -98,10 +98,10 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
             DJI = merged_data.loc[:, [self.timestamp, 'label']]
             test = pd.read_csv(self.PM, index_col=0)
             merged = test.merge(DJI, on=self.timestamp)
-            process_datafile_path = os.path.splitext(output_path)[0] + '_label_by_DJIindex_' + self.model_id + extension
+            process_datafile_path = os.path.splitext(output_path)[0] + '_label_by_DJIindex_' + self.model_id + '.'+ extension
             merged_data.to_csv(process_datafile_path, index=False)
         else:
-            process_datafile_path = os.path.splitext(output_path)[0] + '_labeled_' + self.model_id + extension
+            process_datafile_path = os.path.splitext(output_path)[0] + '_labeled_' + self.model_id +'.'+ extension
             if extension == 'csv':
                 merged_data.to_csv(process_datafile_path, index=False)
             elif extension == 'feather':
