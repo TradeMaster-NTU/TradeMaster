@@ -24,6 +24,9 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
         self.length_limit = get_attr(kwargs, "length_limit", None)
         self.OE_BTC = get_attr(kwargs, "OE_BTC", None)
         self.PM = get_attr(kwargs, "PM", None)
+        self.key_indicator = get_attr(kwargs, "key_indicator", None)
+        self.timestamp = get_attr(kwargs, "timestamp", None)
+        self.tic = get_attr(kwargs, "tic", None)
 
     def run(self):
         print('labeling start')
@@ -34,9 +37,9 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
         output_path = self.data_path
         if dataset_name=='small_BTC' and task_name=='high_frequency_trading':
             raw_data = pd.read_csv(self.data_path,index_col=0)
-            raw_data['tic'] = 'HFT_small_BTC'
-            raw_data['adjcp'] = raw_data["close"]
-            raw_data['date'] = raw_data.index
+            raw_data[self.tic] = 'HFT_small_BTC'
+            raw_data[self.key_indicator] = raw_data["close"]
+            raw_data[self.timestamp] = raw_data.index
             # if not os.path.exists('./temp'):
             #     os.makedirs('./temp')
             process_data_path=os.path.join(dataset_foler_name,dataset_name+'_MDM_processed.csv').replace("\\", "/")
@@ -44,12 +47,12 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
             self.data_path = process_data_path
         if self.OE_BTC == True:
             raw_data = pd.read_csv(self.data_path)
-            raw_data['tic'] = 'OE_BTC'
-            raw_data['adjcp'] = raw_data["midpoint"]
+            raw_data[self.tic] = 'OE_BTC'
+            raw_data[self.key_indicator] = raw_data["midpoint"]
             try:
-                raw_data['date'] = raw_data["system_time"]
+                raw_data[self.timestamp] = raw_data["system_time"]
             except:
-                raw_data['date'] = raw_data["date"]
+                raw_data[self.timestamp] = raw_data["date"]
             # if not os.path.exists('./temp'):
             #     os.makedirs('./temp')
             # raw_data.to_csv('./temp/OE_BTC_processed.csv')
@@ -57,22 +60,22 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
             process_data_path=os.path.join(dataset_foler_name,dataset_name+'_MDM_processed.csv').replace("\\", "/")
             raw_data.to_csv(process_data_path)
             self.data_path = process_data_path
-        Labeler = util.Labeler(self.data_path, 'linear', self.fitting_parameters)
+        Labeler = util.Labeler(self.data_path, 'linear', self.fitting_parameters,key_indicator=self.key_indicator, timestamp=self.timestamp, tic=self.tic)
         print('start fitting')
         Labeler.fit(self.regime_number, self.length_limit)
         print('finish fitting')
         Labeler.label(self.labeling_parameters,os.path.dirname(self.data_path))
         labeled_data = pd.concat([v for v in Labeler.data_dict.values()], axis=0)
         data = pd.read_csv(self.data_path)
-        merged_data = data.merge(labeled_data, how='left', on=['date', 'tic', 'adjcp'], suffixes=('', '_DROP')).filter(
+        merged_data = data.merge(labeled_data, how='left', on=[self.timestamp, self.tic, self.key_indicator], suffixes=('', '_DROP')).filter(
             regex='^(?!.*_DROP)')
         low, high = self.labeling_parameters
         self.model_id = str(self.regime_number) + '_' + str(
             self.length_limit) + '_' + str(low) + '_' + str(high)
         if self.PM :
-            DJI = merged_data.loc[:, ['date', 'label']]
+            DJI = merged_data.loc[:, [self.timestamp, 'label']]
             test = pd.read_csv(self.PM, index_col=0)
-            merged = test.merge(DJI, on='date')
+            merged = test.merge(DJI, on=self.timestamp)
             process_datafile_path = os.path.splitext(output_path)[0] + '_label_by_DJIindex_' + self.model_id + '.csv'
             merged.to_csv(process_datafile_path, index=False)
         else:
