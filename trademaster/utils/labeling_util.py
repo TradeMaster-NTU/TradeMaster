@@ -330,7 +330,7 @@ class Labeler():
         font = font_manager.FontProperties(weight='bold',
                                            style='normal', size=16)
         plt.legend(by_label.values(), by_label.keys(), prop=font)
-        ax.set_title(tic + '_linear_regression_dynamic', fontsize=20)
+        ax.set_title(f"Dynamics_of_{tic}_linear_{self.mode}", fontsize=20)
         plot_path=folder_name
         if not os.path.exists(plot_path):
             os.makedirs(plot_path)
