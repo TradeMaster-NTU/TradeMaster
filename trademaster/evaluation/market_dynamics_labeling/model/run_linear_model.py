@@ -36,14 +36,14 @@ def main(args):
         raw_data.to_csv(process_data_path)
         args.data_path = process_data_path
     Labeler = util.Labeler(args.data_path, 'linear',args.fitting_parameters,key_indicator=args.key_indicator,timestamp=args.timestamp,tic=args.tic)
-    Labeler.fit(args.regime_number, args.length_limit)
+    Labeler.fit(args.dynamic_number, args.length_limit)
     Labeler.label(args.labeling_parameters,os.path.dirname(args.data_path))
     labeled_data = pd.concat([v for v in Labeler.data_dict.values()], axis=0)
     data = pd.read_csv(args.data_path)
     merged_data = data.merge(labeled_data, how='left', on=[args.timestamp, args.tic, args.key_indicator], suffixes=('', '_DROP')).filter(
         regex='^(?!.*_DROP)')
     low, high = args.labeling_parameters
-    model_id = str(args.regime_number) + '_' + str(
+    model_id = str(args.dynamic_number) + '_' + str(
         args.length_limit) + '_' + str(low) + '_' + str(high)
     if args.PM:
         DJI = merged_data.loc[:, [args.timestamp, 'label']]
@@ -72,7 +72,7 @@ if __name__=="__main__":
     parser.add_argument("--method", type=str)
     parser.add_argument("--fitting_parameters",nargs='+', type=str)
     parser.add_argument("--labeling_parameters",  nargs="+", type=float)
-    parser.add_argument('--regime_number',type=int,default=4)
+    parser.add_argument('--dynamic_number',type=int,default=4)
     parser.add_argument('--length_limit',type=int,default=0)
     parser.add_argument('--OE_BTC',type=bool,default=False)
     parser.add_argument('--PM',type=str,default='')

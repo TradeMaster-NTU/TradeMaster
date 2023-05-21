@@ -20,13 +20,14 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
         self.method = 'linear'
         self.fitting_parameters = get_attr(kwargs, "fitting_parameters", None)
         self.labeling_parameters = get_attr(kwargs, "labeling_parameters", None)
-        self.regime_number = get_attr(kwargs, "regime_number", None)
+        self.dynamic_number = get_attr(kwargs, "dynamic_number", None)
         self.length_limit = get_attr(kwargs, "length_limit", None)
         self.OE_BTC = get_attr(kwargs, "OE_BTC", None)
         self.PM = get_attr(kwargs, "PM", None)
         self.key_indicator = get_attr(kwargs, "key_indicator", None)
         self.timestamp = get_attr(kwargs, "timestamp", None)
         self.tic = get_attr(kwargs, "tic", None)
+        self.mode = get_attr(kwargs, "mode", None)
 
     def file_extension_selector(self,read):
         if self.data_path.endswith('.csv'):
@@ -74,9 +75,9 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
             process_data_path=os.path.join(dataset_foler_name,dataset_name+'_MDM_processed.csv').replace("\\", "/")
             raw_data.to_csv(process_data_path)
             self.data_path = process_data_path
-        Labeler = util.Labeler(self.data_path, 'linear', self.fitting_parameters,key_indicator=self.key_indicator, timestamp=self.timestamp, tic=self.tic)
+        Labeler = util.Labeler(self.data_path, 'linear', self.fitting_parameters,key_indicator=self.key_indicator, timestamp=self.timestamp, tic=self.tic, mode=self.mode)
         print('start fitting')
-        Labeler.fit(self.regime_number, self.length_limit)
+        Labeler.fit(self.dynamic_number, self.length_limit)
         print('finish fitting')
         Labeler.label(self.labeling_parameters,os.path.dirname(self.data_path))
         labeled_data = pd.concat([v for v in Labeler.data_dict.values()], axis=0)
@@ -92,7 +93,7 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
         merged_data = data.merge(labeled_data, how='left', on=merge_keys, suffixes=('', '_DROP')).filter(
             regex='^(?!.*_DROP)')
         low, high = self.labeling_parameters
-        self.model_id = str(self.regime_number) + '_' + str(
+        self.model_id = str(self.dynamic_number) + '_' + str(
             self.length_limit) + '_' + str(low) + '_' + str(high)
         if self.PM :
             DJI = merged_data.loc[:, [self.timestamp, 'label']]

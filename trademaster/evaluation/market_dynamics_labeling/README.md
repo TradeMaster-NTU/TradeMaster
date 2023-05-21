@@ -31,9 +31,9 @@ The Evaluation Toolbox module prepare data for evaluation, to run a full test yo
         </div> 
 #### Parameters 
 - `fitting_parameters`: This is a set of parameters for the filter, please refer to the comment in lines for detailed description. 
-- `labeling_parameters`: This is a set of parameters for regime classification, please refer to the comment in lines for detailed description. 
-- `regime_number`: This is the number of regimes. 
-- `length_limit`: This is the minimum length of a consecutive time-series of same regime. 
+- `labeling_parameters`: This is a set of parameters for dynamic classification, please refer to the comment in lines for detailed description. 
+- `dynamic_number`: This is the number of dynamics. 
+- `length_limit`: This is the minimum length of a consecutive time-series of same dynamic. 
 
 #### Scoring
 The scores of the visualization result are calculated as described:
@@ -56,41 +56,41 @@ deciding the parameters for your dataset. The example.html contains the visualiz
 An example of labeling the data
 <br />
    ```
-  $ python tools/MarketRegimeLabeling/Label.py --data_path data/algorithmic_trading/BTC/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.5 0.5
+  $ python tools/MarketdynamicLabeling/Label.py --data_path data/algorithmic_trading/BTC/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.5 0.5
    ```
 
 DJ30
     ```
-  $ python tools/MarketRegimeLabeling/Label.py --data_path data/portfolio_management/dj30/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.25 0.25 --regime_number 3 --length_limit 24
+  $ python tools/MarketdynamicLabeling/Label.py --data_path data/portfolio_management/dj30/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.25 0.25 --dynamic_number 3 --length_limit 24
     ```
-for DJ30 applied in PM use-case, we would like to define the market regime based on DJ30 index. We have provided an example of
+for DJ30 applied in PM use-case, we would like to define the market dynamic based on DJ30 index. We have provided an example of
 test_labeled_3_24.csv which is DJI_labeled_3_24.csv and test.csv merged on 'date' where  DJI_labeled_3_24.csv is got from running 
 
 DJI index
    ```
-   $ python tools/MarketRegimeLabeling/Label.py --data_path  data/portfolio_management/dj30/DJI.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.25 0.25  --regime_number 3 --length_limit 24  --PM data/portfolio_management/dj30/test.csv
+   $ python tools/MarketdynamicLabeling/Label.py --data_path  data/portfolio_management/dj30/DJI.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.25 0.25  --dynamic_number 3 --length_limit 24  --PM data/portfolio_management/dj30/test.csv
    ```
 
 BTC 
 
-    $ python tools/MarketRegimeLabeling/Label.py --data_path data/algorithmic_trading/BTC/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.15 0.15 --regime_number 3 --length_limit 24
+    $ python tools/MarketdynamicLabeling/Label.py --data_path data/algorithmic_trading/BTC/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.15 0.15 --dynamic_number 3 --length_limit 24
 PD_BTC
 
-    $ python tools/MarketRegimeLabeling/Label.py --data_path data/order_execution/PD_BTC/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.15 0.15 --regime_number 3 --length_limit 24
+    $ python tools/MarketdynamicLabeling/Label.py --data_path data/order_execution/PD_BTC/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.15 0.15 --dynamic_number 3 --length_limit 24
 
 OE_BTC
 
-    $ python tools/MarketRegimeLabeling/Label.py --data_path data/order_execution/BTC/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.01 0.01 --regime_number 3 --length_limit 32 --OE_BTC True
+    $ python tools/MarketdynamicLabeling/Label.py --data_path data/order_execution/BTC/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.01 0.01 --dynamic_number 3 --length_limit 32 --OE_BTC True
 
 Exchange
 
-    $ python tools/MarketRegimeLabeling/Label.py --data_path data/portfolio_management/exchange/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.05 0.05 --regime_number 3 --length_limit 24
+    $ python tools/MarketdynamicLabeling/Label.py --data_path data/portfolio_management/exchange/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.05 0.05 --dynamic_number 3 --length_limit 24
  
 
 <br />
 
 
-The script will take in a data file and output the file with a market regime label column. Besides the market label, we also provide a stock group label column based on DWT clustering.
+The script will take in a data file and output the file with a market dynamic label column. Besides the market label, we also provide a stock group label column based on DWT clustering.
 
 ### Testing agent under a specific market dynamic
 ```

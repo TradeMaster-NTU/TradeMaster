@@ -540,7 +540,7 @@ class Server():
             MDM_cfg.market_dynamics_model.update({'data_path': args['data_path'],
                                                   'fitting_parameters': args['fitting_parameters'],
                                                   'labeling_parameters': args['labeling_parameters'],
-                                                  'regime_number': args['regime_number'],
+                                                  'dynamic_number': args['dynamic_number'],
                                                   'length_limit': args['length_limit'],
                                                   'OE_BTC': args['OE_BTC'],
                                                   'PM': args['PM']

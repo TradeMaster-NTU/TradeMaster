@@ -19,19 +19,47 @@ import pickle
 import re
 import matplotlib.font_manager as font_manager
 
+
+class Dynamic_labeler():
+    def __init__(self,mode,dynamic_num,low,high,normalized_coef_list):
+        self.mode=mode
+        self.dynamic_num=dynamic_num
+        if self.mode == 'slope':
+            low, _, high = sorted([low, high, 0])
+            self.segments = []
+            for i in range(self.dynamic_num):
+                self.segments.append(low + (high - low) / (dynamic_num) * i)
+        elif self.mode == 'quantile':
+            self.segments = []
+            # find the quantile of normalized_coef_list
+            for i in range(self.dynamic_num):
+                self.segments.append(np.quantile(normalized_coef_list, i / dynamic_num))
+        else:
+            raise Exception("Sorry, only slope and quantile mode are provided for now.")
+
+
+    def get(self, coef):
+            # find the place where coef falls into in segments
+            for i in range(self.dynamic_num - 1):
+                if coef <= self.segments[i]:
+                    flag = i
+                    return flag
+            return self.dynamic_num - 1
+
 class Labeler():
-    def __init__(self,data,method='linear',parameters=['2/7','2/14','4'],key_indicator='adjcp',timestamp='date',tic='tic'):
+    def __init__(self,data,method='linear',parameters=['2/7','2/14','4'],key_indicator='adjcp',timestamp='date',tic='tic',mode='slope'):
         plt.ioff()
         self.key_indicator=key_indicator
         self.timestamp=timestamp
         self.tic=tic
+        self.mode=mode
         self.preprocess(data)
         if method=='linear':
             self.method='linear'
             self.Wn_adjcp, self.Wn_pct, self.order =[float(fractions.Fraction(x)) for x in parameters]
         else:
             raise Exception("Sorry, only linear model is provided for now.")
-    def fit(self,regime_number,length_limit):
+    def fit(self,dynamic_number,length_limit):
         if self.method=='linear':
             for tic in self.tics:
                 self.adjcp_apply_filter(self.data_dict[tic], self.Wn_adjcp, self.Wn_pct, self.order)
@@ -39,7 +67,7 @@ class Labeler():
             self.coef_list_dict = {}
             self.norm_coef_list_dict = {}
             self.y_pred_dict = {}
-            self.regime_num=regime_number
+            self.dynamic_num=dynamic_number
             self.length_limit=length_limit
             for tic in self.tics:
                 coef_list, turning_points, y_pred_list, norm_coef_list = self.linear_regession_turning_points(
@@ -56,14 +84,14 @@ class Labeler():
                 low, high = parameters
             except:
                 raise Exception(
-                    "parameters shoud be [low,high] where the series would be split into 4 regimes by low,high and 0 as threshold based on slope. A value of -0.5 and 0.5 stand for -0.5% and 0.5% change per step.")
+                    "parameters shoud be [low,high] where the series would be split into 4 dynamics by low,high and 0 as threshold based on slope. A value of -0.5 and 0.5 stand for -0.5% and 0.5% change per step.")
             self.all_data_seg = []
             self.all_label_seg = []
             self.all_index_seg = []
             for tic in self.tics:
                 turning_points = self.turning_points_dict[tic]
                 norm_coef_list = self.norm_coef_list_dict[tic]
-                label,data_seg,label_seg,index_seg = self.linear_regession_label(self.data_dict[tic],turning_points, low, high, norm_coef_list,tic,self.regime_num)
+                label,data_seg,label_seg,index_seg = self.linear_regession_label(self.data_dict[tic],turning_points, low, high, norm_coef_list,tic,self.dynamic_num)
                 self.data_dict[tic]['label'] = label
                 self.all_data_seg.extend(data_seg)
                 self.all_label_seg.extend(label_seg)
@@ -76,24 +104,23 @@ class Labeler():
             try:
               self.stock_DWT(work_dir)
             except:
-              print('not able to do clustering') 
+              print('not able to do clustering')
+
 
     def linear_regession_label(self,data, turning_points, low, high, normalized_coef_list, tic,
-                               regime_num=4):
+                               dynamic_num=4):
         data = data.reset_index(drop=True)['pct_return_filtered']
         data_seg = []
 
-        low, _, high = sorted([low, high, 0])
-        # segement [low , high] into regime_num parts
-        segments=[]
-        for i in range(self.regime_num):
-            segments.append(low+(high-low)/(self.regime_num)*i)
+
         label = []
         label_seg = []
         index_seg = []
+        self.dynamic_flag = Dynamic_labeler(mode=self.mode, dynamic_num=dynamic_num, low=low, high=high,
+                                            normalized_coef_list=normalized_coef_list)
         for i in range(len(turning_points) - 1):
             coef = normalized_coef_list[i]
-            flag = self.regime_flag(self.regime_num, coef, segments)
+            flag = self.dynamic_flag.get(coef)
             label.extend([flag] * (turning_points[i + 1] - turning_points[i]))
             if turning_points[i + 1] - turning_points[i] > 2:
                 data_seg.append(data.iloc[turning_points[i]:turning_points[i + 1]].to_list())
@@ -101,34 +128,8 @@ class Labeler():
                 index_seg.append(tic + '_' + str(i))
         return label, data_seg, label_seg, index_seg
 
-    def regime_flag(self,regime_num, coef, segments):
-        # find the place where coef falls into in segments
-        for i in range(regime_num-1):
-            if coef <= segments[i]:
-                flag = i
-                return flag
-        return regime_num-1
 
-        # seg1, seg2, seg3 = parameters
-        # if regime_num == 4:
-        #     if coef <= seg1:
-        #         flag = 0
-        #     elif coef > seg1 and coef <= seg2:
-        #         flag = 1
-        #     elif coef > seg2 and coef <= seg3:
-        #         flag = 2
-        #     elif coef > seg3:
-        #         flag = 3
-        # elif regime_num == 3:
-        #     if coef <= seg1:
-        #         flag = 0
-        #     elif coef > seg1 and coef <= seg3:
-        #         flag = 1
-        #     elif coef > seg3:
-        #         flag = 2
-        # else:
-        #     raise Exception('This regime num is currently not supported')
-        # return flag
+
     def preprocess(self,data):
         # parse the extention of the data file
         if data.split('.')[-1] == 'csv':
@@ -301,7 +302,7 @@ class Labeler():
             try:
                 low,high=parameters
             except:
-                raise Exception("parameters shoud be [low,high] where the series would be split into 4 regimes by low,high and 0 as threshold based on slope. A value of -0.5 and 0.5 stand for -0.5% and 0.5% change per step.")
+                raise Exception("parameters shoud be [low,high] where the series would be split into 4 dynamics by low,high and 0 as threshold based on slope. A value of -0.5 and 0.5 stand for -0.5% and 0.5% change per step.")
             for tic in tics:
                 paths=[]
                 paths.append(self.linear_regession_plot(self.data_dict[tic],tic,self.y_pred_dict[tic],self.turning_points_dict[tic],low,high,normalized_coef_list=self.norm_coef_list_dict[tic],folder_name=self.plot_path))
@@ -314,24 +315,22 @@ class Labeler():
         data = data.reset_index(drop=True)
         fig, ax = plt.subplots(1, 1, figsize=(20, 10), constrained_layout=True)
         low, _, high = sorted([low, high, 0])
-        # segement [low , high] into regime_num parts
-        segments=[]
-        for i in range(self.regime_num):
-            segments.append(low+(high-low)/(self.regime_num)*i)
+        # segement [low , high] into dynamic_num parts
+
 
         colors = list(dict(mcolors.BASE_COLORS, **mcolors.CSS4_COLORS).keys())
         for i in range(len(turning_points) - 1):
             x_seg = np.asarray([j for j in range(turning_points[i], turning_points[i + 1])]).reshape(-1, 1)
             y_pred = y_pred_list[i]
             coef = normalized_coef_list[i]
-            flag=self.regime_flag(self.regime_num,coef,segments)
+            flag=self.dynamic_flag.get(coef[0])
             ax.plot(x_seg,data[self.key_indicator].iloc[turning_points[i]:turning_points[i + 1]], color=colors[flag], label='market style ' + str(flag))
         handles, labels = plt.gca().get_legend_handles_labels()
         by_label = dict(zip(labels, handles))
         font = font_manager.FontProperties(weight='bold',
                                            style='normal', size=16)
         plt.legend(by_label.values(), by_label.keys(), prop=font)
-        ax.set_title(tic + '_linear_regression_regime', fontsize=20)
+        ax.set_title(tic + '_linear_regression_dynamic', fontsize=20)
         plot_path=folder_name
         if not os.path.exists(plot_path):
             os.makedirs(plot_path)
@@ -342,7 +341,7 @@ class Labeler():
 
     def linear_regession_timewindow(self,data_ori, tic, adjcp_timewindow):
         # This is the version of linear regession that does not use a turning point to segment. Instead, it applys a fixed-length time winodw.
-        # This can be helpful to process data that is extremely volatile, or you simply want a long-term regime. However you can achieve similar result by applying stronger filter.
+        # This can be helpful to process data that is extremely volatile, or you simply want a long-term dynamic. However you can achieve similar result by applying stronger filter.
         data = data_ori.iloc[:adjcp_timewindow * (data_ori['adjcp_filtered'].size // adjcp_timewindow), :]
         adjcp_window_data = [
             data[['adjcp_filtered']][i * adjcp_timewindow:(i + 1) * adjcp_timewindow].to_numpy().reshape(-1) for i in
