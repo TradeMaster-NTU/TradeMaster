@@ -27,12 +27,12 @@ class Dynamic_labeler():
         if self.mode == 'slope':
             low, _, high = sorted([low, high, 0])
             self.segments = []
-            for i in range(self.dynamic_num):
+            for i in range(1,self.dynamic_num):
                 self.segments.append(low + (high - low) / (dynamic_num) * i)
         elif self.mode == 'quantile':
             self.segments = []
             # find the quantile of normalized_coef_list
-            for i in range(self.dynamic_num):
+            for i in range(1,self.dynamic_num):
                 self.segments.append(np.quantile(normalized_coef_list, i / dynamic_num))
         else:
             raise Exception("Sorry, only slope and quantile mode are provided for now.")
