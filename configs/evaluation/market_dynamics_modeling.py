@@ -17,5 +17,7 @@ OE_BTC=False,
 PM='',
 process_datafile_path='',
 market_dynamic_labeling_visualization_paths='',
-key_indicator='adjcp'
+key_indicator='adjcp',
+timestamp='date',
+tic='tic'
 )

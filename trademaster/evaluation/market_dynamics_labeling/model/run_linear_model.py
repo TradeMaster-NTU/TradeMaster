@@ -14,7 +14,6 @@ def main(args):
     warnings.warn("running this script as main is deprecated, you should run the run.py in "
                   "tool/market_dynamics_labeling/ to use the latest version ")
     print('labeling start')
-    output_path = args.data_path
     path_names = Path(args.data_path).resolve().parents
     dataset_name = os.path.basename(path_names[0])
     dataset_foler_name = path_names[0]
@@ -22,17 +21,17 @@ def main(args):
     output_path = args.data_path
     if dataset_name == 'small_BTC' and task_name == 'high_frequency_trading':
         raw_data = pd.read_csv(args.data_path, index_col=0)
-        raw_data['tic'] = 'HFT_small_BTC'
+        raw_data[args.tic] = 'HFT_small_BTC'
         raw_data[args.key_indicator] = raw_data["close"]
-        raw_data['date'] = raw_data.index
+        raw_data[args.timestamp] = raw_data.index
         process_data_path = os.path.join(dataset_foler_name, dataset_name + '_MDM_processed.csv').replace("\\", "/")
         raw_data.to_csv(process_data_path)
         args.data_path = process_data_path
     if args.OE_BTC == True:
         raw_data = pd.read_csv(args.data_path)
-        raw_data['tic'] = 'OE_BTC'
+        raw_data[args.tic] = 'OE_BTC'
         raw_data[args.key_indicator] = raw_data["midpoint"]
-        raw_data['date'] = raw_data["system_time"]
+        raw_data[args.timestamp] = raw_data["system_time"]
         process_data_path = os.path.join(dataset_foler_name, dataset_name + '_MDM_processed.csv').replace("\\", "/")
         raw_data.to_csv(process_data_path)
         args.data_path = process_data_path
@@ -41,15 +40,15 @@ def main(args):
     Labeler.label(args.labeling_parameters,os.path.dirname(args.data_path))
     labeled_data = pd.concat([v for v in Labeler.data_dict.values()], axis=0)
     data = pd.read_csv(args.data_path)
-    merged_data = data.merge(labeled_data, how='left', on=['date', 'tic', args.key_indicator], suffixes=('', '_DROP')).filter(
+    merged_data = data.merge(labeled_data, how='left', on=[args.timestamp, args.tic, args.key_indicator], suffixes=('', '_DROP')).filter(
         regex='^(?!.*_DROP)')
     low, high = args.labeling_parameters
     model_id = str(args.regime_number) + '_' + str(
         args.length_limit) + '_' + str(low) + '_' + str(high)
     if args.PM:
-        DJI = merged_data.loc[:, ['date', 'label']]
+        DJI = merged_data.loc[:, [args.timestamp, 'label']]
         test = pd.read_csv(args.PM, index_col=0)
-        merged = test.merge(DJI, on='date')
+        merged = test.merge(DJI, on=args.timestamp)
         process_datafile_path = os.path.splitext(output_path)[0] + '_label_by_DJIindex_' + model_id + '.csv'
         merged.to_csv(process_datafile_path, index=False)
     else:
@@ -78,5 +77,7 @@ if __name__=="__main__":
     parser.add_argument('--OE_BTC',type=bool,default=False)
     parser.add_argument('--PM',type=str,default='')
     parser.add_argument("--key_indicator", type=str, default='adjcp')
+    parser.add_argument("--timestamp", type=str, default='timestamp')
+    parser.add_argument("--tic", type=str, default='tic')
     args= parser.parse_args()
     main(args)

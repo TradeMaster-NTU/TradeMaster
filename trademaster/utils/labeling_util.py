@@ -20,9 +20,11 @@ import re
 import matplotlib.font_manager as font_manager
 
 class Labeler():
-    def __init__(self,data,method='linear',parameters=['2/7','2/14','4'],key_indicator='adjcp'):
+    def __init__(self,data,method='linear',parameters=['2/7','2/14','4'],key_indicator='adjcp',timestamp='date',tic='tic'):
         plt.ioff()
         self.key_indicator=key_indicator
+        self.timestamp=timestamp
+        self.tic=tic
         self.preprocess(data)
         if method=='linear':
             self.method='linear'
@@ -132,14 +134,17 @@ class Labeler():
             data = pd.read_csv(data)
         except:
             data = pd.read_feather(data)
-        self.tics = data['tic'].unique()
+        # assign 'data' to tic if not exist
+        if self.tic not in data.columns:
+            data[self.tic] = data['data']
+        self.tics = data[self.tic].unique()
         self.data_dict = {}
         for tic in self.tics:
-            try:
-                tic_data = data.loc[data['tic'] == tic, ['date','tic','open','high','low','close',self.key_indicator]]
-            except:
-                tic_data = data.loc[data['tic'] == tic, ['date', 'tic', self.key_indicator]]
-            tic_data.sort_values(by='date', ascending=True)
+            # try:
+                # tic_data = data.loc[data[self.tic] == tic, [self.timestamp,self.tic,'open','high','low','close',self.key_indicator]]
+            # except:
+            tic_data = data.loc[data[self.tic] == tic, [self.timestamp, self.tic, self.key_indicator]]
+            tic_data.sort_values(by=self.timestamp, ascending=True)
             tic_data = tic_data.assign(pct_return=tic_data[self.key_indicator].pct_change().fillna(0))
             self.data_dict[tic] = tic_data.reset_index(drop=True)
 
@@ -172,10 +177,10 @@ class Labeler():
 
     def plot_ori(self,data, name):
         fig, ax = plt.subplots(1, 1, figsize=(20, 10), constrained_layout=True)
-        if isinstance(data['date'][0], str):
-            date = data['date'].apply(lambda x: datetime.strptime(x, '%Y-%m-%d'))
+        if isinstance(data[self.timestamp][0], str):
+            date = data[self.timestamp].apply(lambda x: datetime.strptime(x, '%Y-%m-%d'))
         else:
-            date = data['date']
+            date = data[self.timestamp]
         ax.plot(date, data[self.key_indicator])
         ax.xaxis.set_major_locator(mdates.YearLocator(base=1))
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%M'))
@@ -187,10 +192,10 @@ class Labeler():
 
     def plot_pct(self,data, name):
         fig, ax = plt.subplots(1, 1, figsize=(20, 10), constrained_layout=True)
-        if isinstance(data['date'][0], str):
-            date = data['date'].apply(lambda x: datetime.strptime(x, '%Y-%m-%d'))
+        if isinstance(data[self.timestamp][0], str):
+            date = data[self.timestamp].apply(lambda x: datetime.strptime(x, '%Y-%m-%d'))
         else:
-            date = data['date']
+            date = data[self.timestamp]
         ax.plot(date, data['pct_return'])
         ax.xaxis.set_major_locator(mdates.YearLocator(base=1))
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%M'))
@@ -207,10 +212,10 @@ class Labeler():
     def plot_filter(self,data, name, low=6, high=32, K=12):
         # see sm.tsa.filters.bkfilter for more detail, this method is not applied to the pipline for now
         filtered_data = sm.tsa.filters.bkfilter(data[[self.key_indicator, 'pct_return']], low, high, K)
-        if isinstance(data['date'][0], str):
-            date = data['date'][K:-K].apply(lambda x: datetime.strptime(x, '%Y-%m-%d'))
+        if isinstance(data[self.timestamp][0], str):
+            date = data[self.timestamp][K:-K].apply(lambda x: datetime.strptime(x, '%Y-%m-%d'))
         else:
-            date = data['date'][K:-K]
+            date = data[self.timestamp][K:-K]
         fig, ax = plt.subplots(2, 1, figsize=(20, 10), constrained_layout=True)
         ax[0].plot(date, filtered_data['adjcp_cycle'], label='adjcp_cycle')
         ax[1].plot(date, filtered_data['pct_return_cycle'], label='pct_return_cycle')
@@ -238,10 +243,10 @@ class Labeler():
 
     def plot_lowpassfilter(self,data, name):
         fig, ax = plt.subplots(2, 1, figsize=(20, 10), constrained_layout=True)
-        if isinstance(data['date'][0], str):
-            date = data['date'].apply(lambda x: datetime.strptime(x, '%Y-%m-%d'))
+        if isinstance(data[self.timestamp][0], str):
+            date = data[self.timestamp].apply(lambda x: datetime.strptime(x, '%Y-%m-%d'))
         else:
-            date = data['date']
+            date = data[self.timestamp]
         ax[0].plot(date, data['adjcp_filtered'])
         ax[0].xaxis.set_major_locator(mdates.YearLocator(base=1))
         ax[0].xaxis.set_major_formatter(mdates.DateFormatter('%Y-%M'))

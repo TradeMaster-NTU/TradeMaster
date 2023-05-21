@@ -8,5 +8,7 @@ OE_BTC=False,
 PM="data/portfolio_management/dj30/test.csv",
 process_datafile_path='',
 market_dynamic_labeling_visualization_paths='',
-key_indicator='adjcp'
+key_indicator='adjcp',
+timestamp='date',
+tic='tic'
 )

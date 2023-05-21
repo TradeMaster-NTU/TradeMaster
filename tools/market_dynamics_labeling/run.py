@@ -35,6 +35,9 @@ def parse_args():
     parser.add_argument("--config", default=osp.join(ROOT, "configs", "evaluation", "market_dynamics_modeling.py"),
                         help="deafult mdm config path")
     parser.add_argument("--key_indicator", type=str, default='adjcp')
+    parser.add_argument("--timestamp", type=str, default='timestamp')
+    parser.add_argument("--tic", type=str, default='tic')
+
 
 
     args = parser.parse_args()
