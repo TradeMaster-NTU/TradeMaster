@@ -92,9 +92,12 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
             merge_keys = [self.timestamp, self.key_indicator]
         merged_data = data.merge(labeled_data, how='left', on=merge_keys, suffixes=('', '_DROP')).filter(
             regex='^(?!.*_DROP)')
-        low, high = self.labeling_parameters
-        self.model_id = str(self.dynamic_number) + '_' + str(
-            self.length_limit) + '_' + str(low) + '_' + str(high)
+        if self.mode=='slope':
+            low, high = self.labeling_parameters
+            self.model_id = str(self.dynamic_number) + '_' + str(
+                self.length_limit) + '_' + str(low) + '_' + str(high)
+        elif self.mode=='quantile':
+            self.model_id = f"{self.dynamic_number}_{self.length_limit}_quantile"
         if self.PM :
             DJI = merged_data.loc[:, [self.timestamp, 'label']]
             test = pd.read_csv(self.PM, index_col=0)
