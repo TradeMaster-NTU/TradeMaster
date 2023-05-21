@@ -101,11 +101,11 @@ class Labeler():
 
     def regime_flag(self,regime_num, coef, segments):
         # find the place where coef falls into in segments
-        for i in range(regime_num):
+        for i in range(regime_num-1):
             if coef <= segments[i]:
                 flag = i
-                break
-        return flag
+                return flag
+        return regime_num-1
 
         # seg1, seg2, seg3 = parameters
         # if regime_num == 4:
