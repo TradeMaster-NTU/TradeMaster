@@ -438,6 +438,9 @@ class Labeler():
             y_pred_list.append(y_pred)
 
 
+        # reshape turning_points to a 1d list
+        turning_points = [i[0] for i in turning_points]
+
 
 
 
@@ -464,6 +467,13 @@ class Labeler():
               print('not able to plot TSNE')
     def linear_regession_plot(self,data, tic, y_pred_list, turning_points, low, high, normalized_coef_list,folder_name=None):
         data = data.reset_index(drop=True)
+        # every sub-plot is contained segment of at most 100000 data points
+        # 1. split the data into segments
+
+        plot_segments=[]
+
+
+
         fig, ax = plt.subplots(1, 1, figsize=(40, 10), constrained_layout=True)
         low, _, high = sorted([low, high, 0])
         # segement [low , high] into dynamic_num parts
