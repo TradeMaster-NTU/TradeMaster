@@ -405,6 +405,7 @@ class Labeler():
             turning_points_new = []
             for i in range(len(turning_points)-1):
                 if abs(coef_list[i])/abs(mdd_list[i])<self.slope_mdd_threshold:
+                    print(abs(coef_list[i])/abs(mdd_list[i]))
                     for j in turning_points_ori[i]:
                         turning_points_new.append([j])
                 else:
