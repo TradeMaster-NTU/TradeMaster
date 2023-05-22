@@ -228,7 +228,7 @@ class Labeler():
             self.data_dict[tic] = tic_data.reset_index(drop=True)
         for tic in self.tics:
             self.adjcp_apply_filter(self.data_dict[tic], self.Wn_key_indicator, self.order)
-            self.data_dict[tic] = self.data_dict[tic].assign(pct_return_filtered=tic_data['key_indicator_filtered'].pct_change().fillna(0))
+            self.data_dict[tic] = self.data_dict[tic].assign(pct_return_filtered=self.data_dict[tic]['key_indicator_filtered'].pct_change().fillna(0))
 
     def stock_DWT(self,work_dir):
         data_by_tic = []
