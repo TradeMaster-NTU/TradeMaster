@@ -465,7 +465,7 @@ class Labeler():
         # reshape turning_points to a 1d list
         turning_points = [i[0] for i in turning_points]
 
-        print('turning_points',turning_points)
+        # print('turning_points',turning_points)
 
 
 
@@ -476,6 +476,7 @@ class Labeler():
 
     def plot(self,tics,parameters,data_path,model_id):
         self.plot_path =os.path.join(os.path.dirname(os.path.realpath(data_path)),'MDM_linear',model_id)
+        self.plot_path_filtered = os.path.join(os.path.dirname(os.path.realpath(data_path)),'MDM_linear_filtered',model_id)
         if not os.path.exists(self.plot_path):
             os.makedirs(self.plot_path)
         if self.method=='linear':
@@ -485,13 +486,17 @@ class Labeler():
                 raise Exception("parameters shoud be [low,high] where the series would be split into 4 dynamics by low,high and 0 as threshold based on slope. A value of -0.5 and 0.5 stand for -0.5% and 0.5% change per step.")
             for tic in tics:
                 paths=[]
-                paths.append(self.linear_regession_plot(self.data_dict[tic],tic,self.y_pred_dict[tic],self.turning_points_dict[tic],low,high,normalized_coef_list=self.norm_coef_list_dict[tic],folder_name=self.plot_path))
+                paths.append(self.linear_regession_plot(self.data_dict[tic],tic,self.y_pred_dict[tic],self.turning_points_dict[tic],low,high,normalized_coef_list=self.norm_coef_list_dict[tic],folder_name=self.plot_path,plot_feather=self.key_indicator))
+                self.linear_regession_plot(self.data_dict[tic], tic, self.y_pred_dict[tic],
+                                           self.turning_points_dict[tic], low, high,
+                                           normalized_coef_list=self.norm_coef_list_dict[tic],
+                                           folder_name=self.plot_path_filtered, plot_feather=self.key_indicator)
                 return paths
             try:
               self.TSNE_plot(self.tsne_results,self.all_label_seg,folder_name=self.plot_path)
             except:
               print('not able to plot TSNE')
-    def linear_regession_plot(self,data, tic, y_pred_list, turning_points, low, high, normalized_coef_list,folder_name=None):
+    def linear_regession_plot(self,data, tic, y_pred_list, turning_points, low, high, normalized_coef_list,folder_name=None,plot_feather=None):
         data = data.reset_index(drop=True)
         # every sub-plot is contained segment of at most 100000 data points
         # 1. split the data into segments
@@ -520,7 +525,7 @@ class Labeler():
                 # y_pred = y_pred_list[i]
                 coef = normalized_coef_list[i+counter]
                 flag=self.dynamic_flag.get(coef[0])
-                ax.plot(x_seg,data[self.key_indicator].iloc[turning_points_seg[i]:turning_points_seg[i + 1]], color=colors[flag], label='market style ' + str(flag))
+                ax.plot(x_seg,data[plot_feather].iloc[turning_points_seg[i]:turning_points_seg[i + 1]], color=colors[flag], label='market style ' + str(flag))
             counter+=len(turning_points_seg)-1
             handles, labels = ax.get_legend_handles_labels()
             by_label = dict(zip(labels, handles))
@@ -529,7 +534,7 @@ class Labeler():
             # legend to every sub-plot
             ax.legend(by_label.values(), by_label.keys(), prop=font)
         # set the title
-        plt.title(f"Dynamics_of_{tic}_linear_{self.mode}", fontsize=20)
+        plt.title(f"Dynamics_of_{tic}_linear_{self.mode}_{plot_feather}", fontsize=20)
         # plt.set_title(f"Dynamics_of_{tic}_linear_{self.mode}", fontsize=20)
         plot_path=folder_name
         if not os.path.exists(plot_path):
