@@ -464,7 +464,7 @@ class Labeler():
               print('not able to plot TSNE')
     def linear_regession_plot(self,data, tic, y_pred_list, turning_points, low, high, normalized_coef_list,folder_name=None):
         data = data.reset_index(drop=True)
-        fig, ax = plt.subplots(1, 1, figsize=(20, 10), constrained_layout=True)
+        fig, ax = plt.subplots(1, 1, figsize=(40, 10), constrained_layout=True)
         low, _, high = sorted([low, high, 0])
         # segement [low , high] into dynamic_num parts
 
