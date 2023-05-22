@@ -518,6 +518,7 @@ class Labeler():
                 plot_segments.append(segments_buffer)
                 segments_buffer=[turning_points[j + 1]]
                 counter=0
+        plot_segments.append(segments_buffer)
         sub_plot_num=len(plot_segments)
 
         # fig, ax = plt.subplots(1, 1, figsize=(40, 10), constrained_layout=True)
