@@ -350,7 +350,7 @@ class Labeler():
         #get timestamp of turning points
         # turning_points_timestamp = data[self.timestamp][turning_points]
         # make every element in turning_points as a list
-        tuning_points = [[i] for i in turning_points]
+        turning_points = [[i] for i in turning_points]
         turning_points_ori= turning_points.copy()
         turning_points_new = [turning_points[0][0]]
 
