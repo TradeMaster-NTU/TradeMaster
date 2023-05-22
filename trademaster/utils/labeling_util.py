@@ -226,9 +226,10 @@ class Labeler():
             tic_data = data.loc[data[self.tic] == tic, [self.timestamp, self.tic, self.key_indicator]]
             tic_data.sort_values(by=self.timestamp, ascending=True)
             tic_data = tic_data.assign(pct_return=tic_data[self.key_indicator].pct_change().fillna(0))
+            self.data_dict[tic] = tic_data.reset_index(drop=True)
+        for tic in self.tics:
             self.adjcp_apply_filter(self.data_dict[tic], self.Wn_key_indicator, self.order)
             tic_data = tic_data.assign(pct_return_filtered=tic_data['key_indicator_filtered'].pct_change().fillna(0))
-            self.data_dict[tic] = tic_data.reset_index(drop=True)
 
     def stock_DWT(self,work_dir):
         data_by_tic = []
