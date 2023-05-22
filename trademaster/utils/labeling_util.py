@@ -438,7 +438,6 @@ class Labeler():
 
 
 
-
         return np.asarray(coef_list), np.asarray(turning_points), y_pred_list, normalized_coef_list
 
     def plot(self,tics,parameters,data_path,model_id):
