@@ -13,5 +13,5 @@ timestamp='date',
 tic='tic',
 mode='slope',
 hard_length_limit=-1,
-slope_mdd_threshold=0.01
+slope_mdd_threshold=-1
 )
