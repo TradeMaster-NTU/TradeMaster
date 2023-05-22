@@ -419,6 +419,7 @@ class Labeler():
                     # merge this point into the current segment
                     turning_points_new[-1].extend(turning_points_new[i])
             turning_points = turning_points_new
+        print(len(turning_points))
 
         # 5. re-calculate the slope
         coef_list = []
