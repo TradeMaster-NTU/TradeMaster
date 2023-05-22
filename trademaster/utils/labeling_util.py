@@ -119,6 +119,7 @@ class Labeler():
             self.method='linear'
             # calculate the parameters for filtering
             self.Wn_key_indicator, self.Wn_pct, self.order =self.filter_parameters_calculation([float(fractions.Fraction(x)) for x in parameters])
+            print('Wn_key_indicator: ',self.Wn_key_indicator,' Wn_pct: ',self.Wn_pct,' order: ',self.order)
         else:
             raise Exception("Sorry, only linear model is provided for now.")
         
