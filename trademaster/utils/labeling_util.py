@@ -374,7 +374,7 @@ class Labeler():
             turning_points_new.append(turning_points[-1])
             turning_points = turning_points_new
 
-        print(len(turning_points),[i[0] for i in turning_points])
+        # print(len(turning_points),[i[0] for i in turning_points])
         # 2. Get slope of each segment
         coef_list = []
         normalized_coef_list = []
@@ -407,7 +407,7 @@ class Labeler():
             # print('coef_list',coef_list)
         # 4. re-slice the segment if the if slope/ mdd is smaller than threshold
             turning_points_new = []
-            print('len(turning_points)',len(turning_points))
+            # print('len(turning_points)',len(turning_points))
             for i in range(len(turning_points)-1):
                 if abs(coef_list[i])/abs(mdd_list[i])<self.slope_mdd_threshold:
                     print(abs(coef_list[i])/abs(mdd_list[i]))
@@ -427,7 +427,7 @@ class Labeler():
                     # merge this point into the current segment
                     turning_points_new[-1].extend(turning_points_new[i])
             turning_points = turning_points_new
-        print(len(turning_points))
+        # print(len(turning_points))
 
         # 5. re-calculate the slope
         if recalculate_flag:
@@ -477,27 +477,37 @@ class Labeler():
         # 1. split the data into segments
 
         plot_segments=[]
+        counter=0
+        segments_buffer=[turning_points[0]]
+        for index,j in enumerate(range(len(turning_points) - 1)):
+            counter+=turning_points[j + 1]-turning_points[j]
+            segments_buffer.append(turning_points[j + 1])
+            if counter>100000:
+                plot_segments.append(segments_buffer)
+                segments_buffer=[turning_points[j + 1]]
+                counter=0
+        sub_plot_num=len(plot_segments)
 
-
-
-        fig, ax = plt.subplots(1, 1, figsize=(40, 10), constrained_layout=True)
-        low, _, high = sorted([low, high, 0])
-        # segement [low , high] into dynamic_num parts
-
-
+        # fig, ax = plt.subplots(1, 1, figsize=(40, 10), constrained_layout=True)
+        fig, axs = plt.subplots(sub_plot_num, 1, figsize=(40, 10*sub_plot_num), constrained_layout=True)
         colors = list(dict(mcolors.BASE_COLORS, **mcolors.CSS4_COLORS).keys())
-        for i in range(len(turning_points) - 1):
-            x_seg = np.asarray([j for j in range(turning_points[i], turning_points[i + 1])]).reshape(-1, 1)
-            y_pred = y_pred_list[i]
-            coef = normalized_coef_list[i]
-            flag=self.dynamic_flag.get(coef[0])
-            ax.plot(x_seg,data[self.key_indicator].iloc[turning_points[i]:turning_points[i + 1]], color=colors[flag], label='market style ' + str(flag))
-        handles, labels = plt.gca().get_legend_handles_labels()
-        by_label = dict(zip(labels, handles))
-        font = font_manager.FontProperties(weight='bold',
-                                           style='normal', size=16)
-        plt.legend(by_label.values(), by_label.keys(), prop=font)
-        ax.set_title(f"Dynamics_of_{tic}_linear_{self.mode}", fontsize=20)
+
+        counter=0
+        for index,ax in enumerate(axs):
+            turning_points_seg=plot_segments[index]
+            for i in range(len(turning_points_seg) - 1):
+                x_seg = np.asarray([j for j in range(turning_points_seg[i], turning_points_seg[i + 1])]).reshape(-1, 1)
+                # y_pred = y_pred_list[i]
+                coef = normalized_coef_list[i+counter]
+                flag=self.dynamic_flag.get(coef[0])
+                ax.plot(x_seg,data[self.key_indicator].iloc[turning_points_seg[i]:turning_points_seg[i + 1]], color=colors[flag], label='market style ' + str(flag))
+            counter+=len(turning_points_seg)
+            handles, labels = plt.gca().get_legend_handles_labels()
+            by_label = dict(zip(labels, handles))
+            font = font_manager.FontProperties(weight='bold',
+                                               style='normal', size=16)
+            ax.legend(by_label.values(), by_label.keys(), prop=font)
+        plt.set_title(f"Dynamics_of_{tic}_linear_{self.mode}", fontsize=20)
         plot_path=folder_name
         if not os.path.exists(plot_path):
             os.makedirs(plot_path)
