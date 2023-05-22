@@ -369,6 +369,7 @@ class Labeler():
         recalculate_flag = False
         data = data_ori.reset_index(drop=True)
         turning_points = self.find_index_of_turning(data)
+        print(turning_points)
         #get timestamp of turning points
         # turning_points_timestamp = data[self.timestamp][turning_points]
         # make every element in turning_points as a list
