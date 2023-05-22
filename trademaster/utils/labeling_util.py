@@ -373,7 +373,7 @@ class Labeler():
         #             turning_points_new[-1].extend(turning_points[i])
         #     turning_points = turning_points_new
 
-        print(len(turning_points))
+        print(len(turning_points),turning_points)
         # 2. Get slope of each segment
         coef_list = []
         normalized_coef_list = []
