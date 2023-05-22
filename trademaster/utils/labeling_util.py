@@ -352,7 +352,7 @@ class Labeler():
         # make every element in turning_points as a list
         turning_points = [[i] for i in turning_points]
         turning_points_ori= turning_points.copy()
-        turning_points_new = [turning_points[0][0]]
+        turning_points_new = [[turning_points[0][0]]]
 
         # 1.merge turning points if the chunk is too short
         # if length_constrain != 0:
