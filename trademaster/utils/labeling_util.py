@@ -320,7 +320,9 @@ class Labeler():
     def adjcp_apply_filter(self,data, Wn_adjcp, Wn_pct, order):
         data['key_indicator_filtered'] = self.butter_lowpass_filter(data[self.key_indicator], Wn_adjcp, order)
         data['pct_return_filtered'] = self.butter_lowpass_filter(data['pct_return'], Wn_pct, order)
-        print(data[['key_indicator_filtered', 'pct_return_filtered']])
+        # plot the filtered data and save it to res folder
+        self.plot_lowpassfilter(data, 'test')
+        # print(data[['key_indicator_filtered', 'pct_return_filtered']])
 
     def plot_lowpassfilter(self,data, name):
         fig, ax = plt.subplots(2, 1, figsize=(20, 10), constrained_layout=True)
