@@ -502,7 +502,7 @@ class Labeler():
                 flag=self.dynamic_flag.get(coef[0])
                 ax.plot(x_seg,data[self.key_indicator].iloc[turning_points_seg[i]:turning_points_seg[i + 1]], color=colors[flag], label='market style ' + str(flag))
             counter+=len(turning_points_seg)-1
-            handles, labels = ax.gca().get_legend_handles_labels()
+            handles, labels = ax.get_legend_handles_labels()
             by_label = dict(zip(labels, handles))
             font = font_manager.FontProperties(weight='bold',
                                                style='normal', size=16)
