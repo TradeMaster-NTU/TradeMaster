@@ -490,7 +490,7 @@ class Labeler():
                 self.linear_regession_plot(self.data_dict[tic], tic, self.y_pred_dict[tic],
                                            self.turning_points_dict[tic], low, high,
                                            normalized_coef_list=self.norm_coef_list_dict[tic],
-                                           folder_name=self.plot_path_filtered, plot_feather=self.key_indicator)
+                                           folder_name=self.plot_path_filtered, plot_feather=f'{self.key_indicator}_filtered')
                 return paths
             try:
               self.TSNE_plot(self.tsne_results,self.all_label_seg,folder_name=self.plot_path)
