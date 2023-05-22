@@ -432,7 +432,7 @@ class Labeler():
             # print('len(turning_points)',len(turning_points))
             for i in range(len(turning_points)-1):
                 if abs(coef_list[i])/abs(mdd_list[i])<self.slope_mdd_threshold:
-                    print(abs(coef_list[i])/abs(mdd_list[i]))
+                    # print(abs(coef_list[i])/abs(mdd_list[i]))
                     for j in turning_points_ori[i]:
                         turning_points_new.append([j])
                 else:
@@ -449,7 +449,7 @@ class Labeler():
                     # merge this point into the current segment
                     turning_points_new[-1].extend(turning_points_new[i])
             turning_points = turning_points_new
-        # print(len(turning_points))
+        print(len(turning_points))
 
         # 5. re-calculate the slope
         if recalculate_flag:
