@@ -114,7 +114,6 @@ class Labeler():
         # with length less than the hard length limit will be considered as noise.
         self.hard_length_limit=hard_length_limit
         self.slope_diff_threshold=slope_diff_threshold
-        self.preprocess(data)
         if method=='linear':
             self.method='linear'
             # calculate the parameters for filtering
@@ -123,6 +122,7 @@ class Labeler():
             # print('Wn_key_indicator: ',self.Wn_key_indicator,' Wn_pct: ',self.Wn_pct,' order: ',self.order)
         else:
             raise Exception("Sorry, only linear model is provided for now.")
+        self.preprocess(data)
         
     def filter_parameters_calculation(self,parameters):
         Wn_key_indicator_factor=parameters
