@@ -351,48 +351,49 @@ class Labeler():
         #get timestamp of turning points
         # turning_points_timestamp = data[self.timestamp][turning_points]
         # make every element in turning_points as a list
-        turning_points = [[i] for i in turning_points]
-        turning_points_ori= turning_points.copy()
-        turning_points_new = [[turning_points[0][0]]]
+        # turning_points = [[i] for i in turning_points]
+        turning_points_ori = turning_points.copy()
+        # turning_points_new = [[turning_points[0][0]]]
+        turning_points_new = [[turning_points[0]]]
 
         # 1.merge turning points if the chunk is too short
-        # if length_constrain != 0:
-        #     for num,i in enumerate(range(1, len(turning_points) - 1)):
-        #         if turning_points[i] - turning_points_new[-1] >= length_constrain:
-        #             turning_points_new.append(turning_points[i])
-        #     turning_points_new.append(turning_points[-1])
-        #     turning_points = turning_points_new
         if length_constrain != 0:
-            for i in range(1, len(turning_points) - 1):
-                if turning_points[i][0] - turning_points_new[-1][0] >= length_constrain:
-                    #no need to merge
+            for num,i in enumerate(range(1, len(turning_points) - 1)):
+                if turning_points[i] - turning_points_new[-1] >= length_constrain:
                     turning_points_new.append(turning_points[i])
-                else:
-                    # merge this point into the current segment
-                    turning_points_new[-1].extend(turning_points[i])
+            turning_points_new.append(turning_points[-1])
             turning_points = turning_points_new
+        # if length_constrain != 0:
+        #     for i in range(1, len(turning_points) - 1):
+        #         if turning_points[i][0] - turning_points_new[-1][0] >= length_constrain:
+        #             #no need to merge
+        #             turning_points_new.append(turning_points[i])
+        #         else:
+        #             # merge this point into the current segment
+        #             turning_points_new[-1].extend(turning_points[i])
+        #     turning_points = turning_points_new
 
         print(len(turning_points))
         # 2. Get slope of each segment
         coef_list = []
         normalized_coef_list = []
         y_pred_list = []
-        # for i in range(len(turning_points) - 1):
-        #     x_seg = np.asarray([j for j in range(turning_points[i], turning_points[i + 1])]).reshape(-1, 1)
-        #     adj_cp_model = LinearRegression().fit(x_seg,
-        #                                           data['key_indicator_filtered'].iloc[turning_points[i]:turning_points[i + 1]])
-        #     y_pred = adj_cp_model.predict(x_seg)
-        #     normalized_coef_list.append(100 * adj_cp_model.coef_ / data['key_indicator_filtered'].iloc[turning_points[i]])
-        #     coef_list.append(adj_cp_model.coef_)
-        #     y_pred_list.append(y_pred)
         for i in range(len(turning_points) - 1):
-            x_seg = np.asarray([j for j in range(turning_points[i][0], turning_points[i + 1][0])]).reshape(-1, 1)
+            x_seg = np.asarray([j for j in range(turning_points[i], turning_points[i + 1])]).reshape(-1, 1)
             adj_cp_model = LinearRegression().fit(x_seg,
-                                                  data['key_indicator_filtered'].iloc[turning_points[i][0]:turning_points[i + 1][0]])
+                                                  data['key_indicator_filtered'].iloc[turning_points[i]:turning_points[i + 1]])
             y_pred = adj_cp_model.predict(x_seg)
-            normalized_coef_list.append(100 * adj_cp_model.coef_ / data['key_indicator_filtered'].iloc[turning_points[i][0]])
+            normalized_coef_list.append(100 * adj_cp_model.coef_ / data['key_indicator_filtered'].iloc[turning_points[i]])
             coef_list.append(adj_cp_model.coef_)
             y_pred_list.append(y_pred)
+        # for i in range(len(turning_points) - 1):
+        #     x_seg = np.asarray([j for j in range(turning_points[i][0], turning_points[i + 1][0])]).reshape(-1, 1)
+        #     adj_cp_model = LinearRegression().fit(x_seg,
+        #                                           data['key_indicator_filtered'].iloc[turning_points[i][0]:turning_points[i + 1][0]])
+        #     y_pred = adj_cp_model.predict(x_seg)
+        #     normalized_coef_list.append(100 * adj_cp_model.coef_ / data['key_indicator_filtered'].iloc[turning_points[i][0]])
+        #     coef_list.append(adj_cp_model.coef_)
+        #     y_pred_list.append(y_pred)
 
         # 3. Get max drawdown of each segment
         if self.slope_mdd_threshold!=-1:
