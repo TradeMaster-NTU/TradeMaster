@@ -1,6 +1,6 @@
 market_dynamics_model = dict(
     data_path="data/portfolio_management/exchange/test.csv",
-fitting_parameters=['1'],
+filter_strength=1,
 labeling_parameters=[-0.05,0.05],
 dynamic_number=3,
 length_limit=24,

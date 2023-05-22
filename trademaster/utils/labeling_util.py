@@ -104,7 +104,7 @@ class Dynamic_labeler():
             return self.dynamic_num - 1
 
 class Labeler():
-    def __init__(self,data,method='linear',parameters=['1'],key_indicator='adjcp',timestamp='date',tic='tic',mode='slope',hard_length_limit=-1,slope_diff_threshold=-1):
+    def __init__(self,data,method='linear',filter_strength=1,key_indicator='adjcp',timestamp='date',tic='tic',mode='slope',hard_length_limit=-1,slope_diff_threshold=-1):
         plt.ioff()
         self.key_indicator=key_indicator
         self.timestamp=timestamp
@@ -118,14 +118,13 @@ class Labeler():
             self.method='linear'
             # calculate the parameters for filtering
             self.order=4
-            self.Wn_key_indicator=self.filter_parameters_calculation([float(fractions.Fraction(x)) for x in parameters])
+            self.Wn_key_indicator=self.filter_parameters_calculation(filter_strength)
             # print('Wn_key_indicator: ',self.Wn_key_indicator,' Wn_pct: ',self.Wn_pct,' order: ',self.order)
         else:
             raise Exception("Sorry, only linear model is provided for now.")
         self.preprocess(data)
         
-    def filter_parameters_calculation(self,parameters):
-        Wn_key_indicator_factor=parameters
+    def filter_parameters_calculation(self,filter_strength):
         if self.hard_length_limit!=-1:
             filter_period=self.hard_length_limit
         else:
@@ -133,7 +132,7 @@ class Labeler():
 
         # use the hard_length_limit to calculate the Wn_key_indicator and Wn_pct
         # the max Wn_key_indicator is 2, and the max Wn_pct is 2 for not filtering
-        Wn_key_indicator=min(2/(filter_period*Wn_key_indicator_factor),2)
+        Wn_key_indicator=min(2/(filter_period*filter_strength),2)
         # Wn_pct=min(2,2/(filter_period*Wn_pct_factor))
         return Wn_key_indicator
         

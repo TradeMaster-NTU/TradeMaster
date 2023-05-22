@@ -18,7 +18,7 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
         # print('data_path',get_attr(kwargs, "data_path", None))
         self.data_path=get_attr(kwargs, "data_path", None)
         self.method = 'linear'
-        self.fitting_parameters = get_attr(kwargs, "fitting_parameters", None)
+        self.filter_strength = get_attr(kwargs, "filter_strength", None)
         self.labeling_parameters = get_attr(kwargs, "labeling_parameters", None)
         self.dynamic_number = get_attr(kwargs, "dynamic_number", None)
         self.length_limit = get_attr(kwargs, "length_limit", None)
@@ -77,7 +77,7 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
             process_data_path=os.path.join(dataset_foler_name,dataset_name+'_MDM_processed.csv').replace("\\", "/")
             raw_data.to_csv(process_data_path)
             self.data_path = process_data_path
-        Labeler = util.Labeler(self.data_path, 'linear', self.fitting_parameters,key_indicator=self.key_indicator,
+        Labeler = util.Labeler(self.data_path, 'linear', filter_strength=self.filter_strength,key_indicator=self.key_indicator,
                                timestamp=self.timestamp, tic=self.tic, mode=self.mode,hard_length_limit=self.hard_length_limit,
                                slope_diff_threshold=self.slope_diff_threshold)
         print('start fitting')
