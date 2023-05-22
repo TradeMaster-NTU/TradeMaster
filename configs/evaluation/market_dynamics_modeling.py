@@ -9,7 +9,7 @@ _base_ = [
 market_dynamics_model = dict(
     type='Linear_Market_Dynamics_Model',
     data_path="data/high_frequency_trading/small_BTC/test.csv",
-fitting_parameters=['1','2','4'],
+fitting_parameters=['1'],
 labeling_parameters=[-0.01,0.01],
 dynamic_number=3,
 length_limit=300,
@@ -22,5 +22,5 @@ timestamp='date',
 tic='tic',
 mode='slope',
 hard_length_limit=-1,
-slope_mdd_threshold=-1
+slope_diff_threshold=-1
 )

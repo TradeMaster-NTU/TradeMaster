@@ -104,7 +104,7 @@ class Dynamic_labeler():
             return self.dynamic_num - 1
 
 class Labeler():
-    def __init__(self,data,method='linear',parameters=['1','2','4'],key_indicator='adjcp',timestamp='date',tic='tic',mode='slope',hard_length_limit=-1,slope_mdd_threshold=-1):
+    def __init__(self,data,method='linear',parameters=['1'],key_indicator='adjcp',timestamp='date',tic='tic',mode='slope',hard_length_limit=-1,slope_diff_threshold=-1):
         plt.ioff()
         self.key_indicator=key_indicator
         self.timestamp=timestamp
@@ -113,18 +113,19 @@ class Labeler():
         # the hard length limit is the hard constraint of the minium ticks of a continuous segment, which means that any volatility
         # with length less than the hard length limit will be considered as noise.
         self.hard_length_limit=hard_length_limit
-        self.slope_mdd_threshold=slope_mdd_threshold
+        self.slope_diff_threshold=slope_diff_threshold
         self.preprocess(data)
         if method=='linear':
             self.method='linear'
             # calculate the parameters for filtering
-            self.Wn_key_indicator, self.Wn_pct, self.order =self.filter_parameters_calculation([float(fractions.Fraction(x)) for x in parameters])
+            self.order=4
+            self.Wn_key_indicator=self.filter_parameters_calculation([float(fractions.Fraction(x)) for x in parameters])
             # print('Wn_key_indicator: ',self.Wn_key_indicator,' Wn_pct: ',self.Wn_pct,' order: ',self.order)
         else:
             raise Exception("Sorry, only linear model is provided for now.")
         
     def filter_parameters_calculation(self,parameters):
-        Wn_key_indicator_factor,Wn_pct_factor,order=parameters
+        Wn_key_indicator_factor=parameters
         if self.hard_length_limit!=-1:
             filter_period=self.hard_length_limit
         else:
@@ -133,13 +134,11 @@ class Labeler():
         # use the hard_length_limit to calculate the Wn_key_indicator and Wn_pct
         # the max Wn_key_indicator is 2, and the max Wn_pct is 2 for not filtering
         Wn_key_indicator=min(2/(filter_period*Wn_key_indicator_factor),2)
-        Wn_pct=min(2,2/(filter_period*Wn_pct_factor))
-        return Wn_key_indicator,Wn_pct,order
+        # Wn_pct=min(2,2/(filter_period*Wn_pct_factor))
+        return Wn_key_indicator
         
     def fit(self,dynamic_number,length_limit,hard_length_limit):
         if self.method=='linear':
-            for tic in self.tics:
-                self.adjcp_apply_filter(self.data_dict[tic], self.Wn_key_indicator, self.Wn_pct, self.order)
             self.turning_points_dict = {}
             self.coef_list_dict = {}
             self.norm_coef_list_dict = {}
@@ -219,13 +218,16 @@ class Labeler():
             data[self.tic] = 'data'
         self.tics = data[self.tic].unique()
         self.data_dict = {}
+
+
+
+
         for tic in self.tics:
-            # try:
-                # tic_data = data.loc[data[self.tic] == tic, [self.timestamp,self.tic,'open','high','low','close',self.key_indicator]]
-            # except:
             tic_data = data.loc[data[self.tic] == tic, [self.timestamp, self.tic, self.key_indicator]]
             tic_data.sort_values(by=self.timestamp, ascending=True)
             tic_data = tic_data.assign(pct_return=tic_data[self.key_indicator].pct_change().fillna(0))
+            self.adjcp_apply_filter(self.data_dict[tic], self.Wn_key_indicator, self.order)
+            tic_data = tic_data.assign(pct_return_filtered=tic_data['key_indicator_filtered'].pct_change().fillna(0))
             self.data_dict[tic] = tic_data.reset_index(drop=True)
 
     def stock_DWT(self,work_dir):
@@ -317,11 +319,11 @@ class Labeler():
         y = filtfilt(b, a, data)
         return y
 
-    def adjcp_apply_filter(self,data, Wn_adjcp, Wn_pct, order):
+    def adjcp_apply_filter(self,data, Wn_adjcp, order):
         data['key_indicator_filtered'] = self.butter_lowpass_filter(data[self.key_indicator], Wn_adjcp, order)
-        data['pct_return_filtered'] = self.butter_lowpass_filter(data['pct_return'], Wn_pct, order)
+        # data['pct_return_filtered'] = self.butter_lowpass_filter(data['pct_return'], Wn_pct, order)
         # plot the filtered data and save it to res folder
-        self.plot_lowpassfilter(data, 'test')
+        # self.plot_lowpassfilter(data, 'test')
         # print(data[['key_indicator_filtered', 'pct_return_filtered']])
 
     def plot_lowpassfilter(self,data, name):
@@ -419,7 +421,7 @@ class Labeler():
             y_pred_list.append(y_pred)
 
         # 3. Get max drawdown of each segment
-        if self.slope_mdd_threshold!=-1:
+        if self.slope_diff_threshold!=-1:
             recalculate_flag=True
             mdd_list = []
             for i in range(len(turning_points) - 1):
@@ -431,7 +433,7 @@ class Labeler():
             turning_points_new = []
             # print('len(turning_points)',len(turning_points))
             for i in range(len(turning_points)-1):
-                if abs(coef_list[i])/abs(mdd_list[i])<self.slope_mdd_threshold:
+                if abs(coef_list[i])/abs(mdd_list[i])<self.slope_diff_threshold:
                     # print(abs(coef_list[i])/abs(mdd_list[i]))
                     for j in turning_points_ori[i]:
                         turning_points_new.append([j])

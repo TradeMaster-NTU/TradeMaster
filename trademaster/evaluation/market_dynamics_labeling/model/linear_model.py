@@ -29,7 +29,7 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
         self.tic = get_attr(kwargs, "tic", None)
         self.mode = get_attr(kwargs, "mode", None)
         self.hard_length_limit = get_attr(kwargs, "hard_length_limit", None)
-        self.slope_mdd_threshold=get_attr(kwargs, "slope_mdd_threshold", None)
+        self.slope_diff_threshold=get_attr(kwargs, "slope_diff_threshold", None)
 
     def file_extension_selector(self,read):
         if self.data_path.endswith('.csv'):
@@ -79,7 +79,7 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
             self.data_path = process_data_path
         Labeler = util.Labeler(self.data_path, 'linear', self.fitting_parameters,key_indicator=self.key_indicator,
                                timestamp=self.timestamp, tic=self.tic, mode=self.mode,hard_length_limit=self.hard_length_limit,
-                               slope_mdd_threshold=self.slope_mdd_threshold)
+                               slope_diff_threshold=self.slope_diff_threshold)
         print('start fitting')
         Labeler.fit(self.dynamic_number, self.length_limit, self.hard_length_limit)
         print('finish fitting')
