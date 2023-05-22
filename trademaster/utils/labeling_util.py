@@ -465,7 +465,7 @@ class Labeler():
         # reshape turning_points to a 1d list
         turning_points = [i[0] for i in turning_points]
 
-        # print('turning_points',turning_points)
+        print('turning_points',turning_points)
 
 
 
