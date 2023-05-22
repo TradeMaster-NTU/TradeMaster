@@ -104,24 +104,41 @@ class Dynamic_labeler():
             return self.dynamic_num - 1
 
 class Labeler():
-    def __init__(self,data,method='linear',parameters=['2/7','2/14','4'],key_indicator='adjcp',timestamp='date',tic='tic',mode='slope',hard_length_limit=-1,slope_mdd_threshold=-1):
+    def __init__(self,data,method='linear',parameters=['1','2','4'],key_indicator='adjcp',timestamp='date',tic='tic',mode='slope',hard_length_limit=-1,slope_mdd_threshold=-1):
         plt.ioff()
         self.key_indicator=key_indicator
         self.timestamp=timestamp
         self.tic=tic
         self.mode=mode
+        # the hard length limit is the hard constraint of the minium ticks of a continuous segment, which means that any volatility
+        # with length less than the hard length limit will be considered as noise.
         self.hard_length_limit=hard_length_limit
         self.slope_mdd_threshold=slope_mdd_threshold
         self.preprocess(data)
         if method=='linear':
             self.method='linear'
-            self.Wn_adjcp, self.Wn_pct, self.order =[float(fractions.Fraction(x)) for x in parameters]
+            # calculate the parameters for filtering
+            self.Wn_key_indicator, self.Wn_pct, self.order =self.filter_parameters_calculation([float(fractions.Fraction(x)) for x in parameters])
         else:
             raise Exception("Sorry, only linear model is provided for now.")
+        
+    def filter_parameters_calculation(self,parameters):
+        Wn_key_indicator_factor,Wn_pct_factor,order=parameters
+        if self.hard_length_limit!=-1:
+            filter_period=self.hard_length_limit
+        else:
+            filter_period=7 # default filter period
+
+        # use the hard_length_limit to calculate the Wn_key_indicator and Wn_pct
+        # the max Wn_key_indicator is 2, and the max Wn_pct is 2 for not filtering
+        Wn_key_indicator=min(2/(filter_period*Wn_key_indicator_factor),2)
+        Wn_pct=min(2,2/(filter_period*Wn_pct_factor))
+        return Wn_key_indicator,Wn_pct,order
+        
     def fit(self,dynamic_number,length_limit,hard_length_limit):
         if self.method=='linear':
             for tic in self.tics:
-                self.adjcp_apply_filter(self.data_dict[tic], self.Wn_adjcp, self.Wn_pct, self.order)
+                self.adjcp_apply_filter(self.data_dict[tic], self.Wn_key_indicator, self.Wn_pct, self.order)
             self.turning_points_dict = {}
             self.coef_list_dict = {}
             self.norm_coef_list_dict = {}

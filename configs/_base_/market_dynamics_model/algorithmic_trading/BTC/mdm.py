@@ -1,6 +1,6 @@
 market_dynamics_model = dict(
     data_path="data/algorithmic_trading/BTC/test.csv",
-fitting_parameters=['2/7','2/14','4'],
+fitting_parameters=['1','2','4'],
 labeling_parameters=[-0.15,0.15],
 dynamic_number=3,
 length_limit=24,

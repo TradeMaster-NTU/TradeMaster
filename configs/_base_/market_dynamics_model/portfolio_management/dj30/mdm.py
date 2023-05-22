@@ -1,6 +1,6 @@
 market_dynamics_model = dict(
     data_path='data/portfolio_management/dj30/DJI.csv',
-fitting_parameters=['2/7','2/14','4'],
+fitting_parameters=['1','2','4'],
 labeling_parameters=[-0.25,0.25],
 dynamic_number=3,
 length_limit=24,
