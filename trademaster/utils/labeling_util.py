@@ -399,9 +399,10 @@ class Labeler():
             for i in range(len(turning_points) - 1):
                 mdd_list.append(self.get_mdd(data['key_indicator_filtered'].iloc[turning_points[i][0]:turning_points[i + 1][0]].tolist()))
 
+
         # 4. re-slice the segment if the if slope/ mdd is smaller than threshold
             turning_points_new = []
-            for i in range(len(turning_points)):
+            for i in range(len(turning_points)-1):
                 if abs(coef_list[i])/abs(mdd_list[i])<self.slope_mdd_threshold:
                     for j in turning_points_ori[i]:
                         turning_points_new.append([j])
