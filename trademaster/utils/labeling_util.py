@@ -440,14 +440,15 @@ class Labeler():
         # 4.force merge if the hard constraint is not satisfied
         if self.hard_length_limit!=-1:
             recalculate_flag=True
-            turning_points_new = [turning_points_new[0]]
-            for i in range(1, len(turning_points_new) - 1):
-                if turning_points_new[i][0] - turning_points_new[-1][0] >= self.hard_length_limit:
-                    # no need to merge
-                    turning_points_new.append(turning_points_new[i])
+            turning_points_new = [[turning_points[0][0]]]
+            for i in range(1, len(turning_points) - 1):
+                if turning_points[i][0] - turning_points_new[-1][0] >= self.hard_length_limit:
+                    #no need to merge
+                    turning_points_new.append(turning_points[i])
                 else:
                     # merge this point into the current segment
-                    turning_points_new[-1].extend(turning_points_new[i])
+                    turning_points_new[-1].extend(turning_points[i])
+            turning_points_new.append(turning_points[-1])
             turning_points = turning_points_new
         print(len(turning_points))
 
