@@ -178,6 +178,7 @@ class Labeler():
                 self.all_data_seg.extend(data_seg)
                 self.all_label_seg.extend(label_seg)
                 self.all_index_seg.extend(index_seg)
+            print('finish labeling')
             # interpolated_pct_return_data_seg = np.array(self.interpolation(self.all_data_seg))
             # try:
             #   self.TSNE_run(interpolated_pct_return_data_seg)
