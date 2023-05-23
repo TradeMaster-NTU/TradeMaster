@@ -83,7 +83,7 @@ class LinkedList:
             current_node = current_node.next
 
 class Dynamic_labeler():
-    def __init__(self,mode,dynamic_num,low,high,normalized_coef_list):
+    def __init__(self,mode,dynamic_num,low,high,normalized_coef_list,data,turning_points):
         self.mode=mode
         self.dynamic_num=dynamic_num
         if self.mode == 'slope':
@@ -96,11 +96,28 @@ class Dynamic_labeler():
             # find the quantile of normalized_coef_list
             for i in range(1,self.dynamic_num):
                 self.segments.append(np.quantile(normalized_coef_list, i / dynamic_num))
+        elif self.mode == 'DTW':
+            # segment the data by turning points
+            self.segments = []
+            for i in range(len(turning_points) - 1):
+                self.segments.append(data[turning_points[i]:turning_points[i + 1]])
+            self.segments.append(data[turning_points[-1]:])
+            # run the DTW algorithm to cluster the segments into dynamic_num clusters
+            self.labels = self.DTW_clustering(self.segments)
         else:
-            raise Exception("Sorry, only slope and quantile mode are provided for now.")
+            raise Exception("Sorry, only slope,quantile and DTW mode are provided for now.")
 
+    def DTW_clustering(self,data):
+        fitting_data = to_time_series_dataset(data)
+        km_stock = TimeSeriesKMeans(n_clusters=self.dynamic_num, metric="dtw", max_iter=100, max_iter_barycenter=100, n_jobs=50,
+                                    verbose=0).fit(fitting_data)
+        labels = km_stock.predict(fitting_data)
+        return labels
 
     def get(self, coef):
+        if self.mode == 'DTW':
+            return self.labels[coef]
+        elif self.mode == 'slope' or self.mode == 'quantile':
             # find the place where coef falls into in segments
             for i in range(self.dynamic_num - 1):
                 if coef <= self.segments[i]:
@@ -200,9 +217,12 @@ class Labeler():
         label_seg = []
         index_seg = []
         self.dynamic_flag = Dynamic_labeler(mode=self.mode, dynamic_num=dynamic_num, low=low, high=high,
-                                            normalized_coef_list=normalized_coef_list)
+                                            normalized_coef_list=normalized_coef_list,data=data,turning_points=turning_points)
         for i in range(len(turning_points) - 1):
-            coef = normalized_coef_list[i]
+            if self.mode == 'slope' or self.mode=='quantile':
+                coef = normalized_coef_list[i]
+            elif self.mode == 'DTW':
+                coef = i
             flag = self.dynamic_flag.get(coef)
             label.extend([flag] * (turning_points[i + 1] - turning_points[i]))
             if turning_points[i + 1] - turning_points[i] > 2:
