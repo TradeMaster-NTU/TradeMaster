@@ -378,7 +378,7 @@ class Labeler():
             mode=self.merging_metric
         if mode=='DTW_distance':
             # the sampling time increase as the iteration_count increase
-            distance=self.calculate_dtw_distance(seg1,seg2,iteration_count+3)
+            distance=self.calculate_dtw_distance(seg1,seg2,iteration_count*3+10)
         return distance
     def calculate_dtw_distance(self,seg1,seg2,max_sample_number=3):
         # calculate the dynamic time warping distance between two segments
@@ -492,14 +492,14 @@ class Labeler():
                 change = False
                 # find the index list from turning_points that is not empty
                 index_list=[]
-                for i in range(len(turning_points) - 1):
+                for i in range(len(turning_points)):
                     if turning_points[i]!=[]:
                         index_list.append(i)
                 # for every segment that does not reach self.length_limit, calculate the the DTW distance between the segment and its neighbor
                 for ii,i in tqdm(enumerate(index_list[:-1])):
                     # find the first non-empty segment on right side
-                    if turning_points[i]==[]:
-                        continue
+                    # if turning_points[i]==[]:
+                    #     continue
                     # have_next_index=False
                     # for j in range(i + 1, len(turning_points) - 1):
                     #     if turning_points[j]!=[]:
