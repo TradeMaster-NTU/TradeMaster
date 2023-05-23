@@ -490,8 +490,9 @@ class Labeler():
                                 if turning_points[j]!=[]:
                                     left_index=j
                                     break
-                            left_neighbor = data['key_indicator_filtered'].iloc[turning_points[left_index][0]:turning_points[i][0]].tolist()
-                            left_distance=self.calculate_distance(left_neighbor,this_seg)
+                            if left_index is not None:
+                                left_neighbor = data['key_indicator_filtered'].iloc[turning_points[left_index][0]:turning_points[i][0]].tolist()
+                                left_distance=self.calculate_distance(left_neighbor,this_seg)
                         if i<len(turning_points)-2:
                             # find the first and second non-empty segment on right side
                             right_index=None
