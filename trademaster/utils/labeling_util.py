@@ -366,7 +366,14 @@ class Labeler():
                 mdd=dd
         return mdd
 
-    def calulate_dtw_distance(self,seg1,seg2,max_sample_number=30):
+    def calculate_distance(self,seg1,seg2,mode='default'):
+        # calculate the distance between two segments
+        if mode=='default':
+            mode=self.merging_metric
+        if mode=='DTW_distance':
+            distance=self.calculate_dtw_distance(seg1,seg2)
+        return distance
+    def calculate_dtw_distance(self,seg1,seg2,max_sample_number=30):
         # calculate the dynamic time warping distance between two segments
         # roll the shorter segment on the longer one with step_size, and calculate the mean distance
 
@@ -484,7 +491,7 @@ class Labeler():
                                     left_index=j
                                     break
                             left_neighbor = data['key_indicator_filtered'].iloc[turning_points[left_index][0]:turning_points[i][0]].tolist()
-                            left_distance=self.calulate_dtw_distance(left_neighbor,this_seg)
+                            left_distance=self.calculate_distance(left_neighbor,this_seg)
                         if i<len(turning_points)-2:
                             # find the first and second non-empty segment on right side
                             right_index=None
@@ -497,7 +504,7 @@ class Labeler():
                                     break
                             if right_index_2 is not None:
                                 right_neighbor = data['key_indicator_filtered'].iloc[turning_points[right_index][0]:turning_points[right_index_2][0]].tolist()
-                                right_distance=self.calulate_dtw_distance(this_seg,right_neighbor)
+                                right_distance=self.calculate_distance(this_seg,right_neighbor)
                         # pick the min distance that is smaller than the threshold to merge
                         # may choose to merge with the shorter neighbor for balanced segment length
                         if min(left_distance,right_distance)<self.merging_threshold:
