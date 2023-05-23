@@ -178,11 +178,11 @@ class Labeler():
                 self.all_data_seg.extend(data_seg)
                 self.all_label_seg.extend(label_seg)
                 self.all_index_seg.extend(index_seg)
-            interpolated_pct_return_data_seg = np.array(self.interpolation(self.all_data_seg))
-            try:
-              self.TSNE_run(interpolated_pct_return_data_seg)
-            except:
-              print('not able to do TSNE')
+            # interpolated_pct_return_data_seg = np.array(self.interpolation(self.all_data_seg))
+            # try:
+            #   self.TSNE_run(interpolated_pct_return_data_seg)
+            # except:
+            #   print('not able to do TSNE')
             try:
               self.stock_DWT(work_dir)
             except:
@@ -429,7 +429,7 @@ class Labeler():
 
         # 1. segment the data into chunks based on turning points(where all neighbors have the opposite slope)
         turning_points = self.find_index_of_turning(data)
-        print(turning_points)
+        # print(turning_points)
         # make every element in turning_points as a list
         turning_points = [[i] for i in turning_points]
         turning_points_ori = turning_points.copy()
@@ -532,7 +532,7 @@ class Labeler():
                                 right_distance=self.calculate_distance(this_seg,right_neighbor,merging_round)
                         # pick the min distance that is smaller than the threshold to merge
                         # may choose to merge with the shorter neighbor for balanced segment length
-                        print(min(left_distance,right_distance))
+                        # print(min(left_distance,right_distance))
                         if min(left_distance,right_distance)<self.merging_threshold:
                             change=True
                             if left_distance<right_distance:
@@ -622,7 +622,7 @@ class Labeler():
         # reshape turning_points to a 1d list
         turning_points = [i[0] for i in turning_points]
 
-        print('turning_points',turning_points)
+        # print('turning_points',turning_points)
 
 
 
