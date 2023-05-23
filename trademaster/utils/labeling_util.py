@@ -23,7 +23,8 @@ import matplotlib.font_manager as font_manager
 from dtaidistance import dtw
 import time
 from tqdm import tqdm
-
+from scipy.spatial.distance import euclidean
+from fastdtw import fastdtw
 
 class Node:
     def __init__(self, data=None,timestamp=None):
@@ -401,7 +402,7 @@ class Labeler():
         distances=[]
         for i in range(0,len(longer)-len(shorter),step_size):
             # print(i)
-            distance, paths = dtw.warping_paths(shorter, longer[i:i+slice_length])
+            distance, paths = fastdtw(shorter, longer[i:i+slice_length],dist=euclidean)
             distances.append(distance)
         #normalize the distance by the length of the shorter segment and mean value of the shorter segment
         return np.mean(distances)/(slice_length*np.mean(shorter))
