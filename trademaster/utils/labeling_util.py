@@ -487,7 +487,7 @@ class Labeler():
                             # find the first non-empty segment on left side
                             left_index=None
                             for j in range(i-1,-1,-1):
-                                if turning_points[j + 1]!=[]:
+                                if turning_points[j]!=[]:
                                     left_index=j
                                     break
                             left_neighbor = data['key_indicator_filtered'].iloc[turning_points[left_index][0]:turning_points[i][0]].tolist()
@@ -497,9 +497,9 @@ class Labeler():
                             right_index=None
                             right_index_2=None
                             for j in range(i+1,len(turning_points)-1):
-                                if (right_index is None) and (turning_points[j + 1]!=[]):
+                                if (right_index is None) and (turning_points[j]!=[]):
                                     right_index=j
-                                elif (right_index is not None) and (turning_points[j + 1]!=[]):
+                                elif (right_index is not None) and (turning_points[j]!=[]):
                                     right_index_2=j
                                     break
                             if right_index_2 is not None:
