@@ -493,6 +493,8 @@ class Labeler():
                 # for every segment that does not reach self.length_limit, calculate the the DTW distance between the segment and its neighbor
                 for i in tqdm(range(len(turning_points) - 1)):
                     # find the first non-empty segment on right side
+                    if turning_points[i]==[]:
+                        continue
                     have_next_index=False
                     for j in range(i + 1, len(turning_points) - 1):
                         if turning_points[j]!=[]:
@@ -501,7 +503,6 @@ class Labeler():
                             break
                     if have_next_index==False:
                         break
-                    print('next index: ',next_index,'turning_points: ',turning_points[next_index])
                     if turning_points[next_index][0] - turning_points[i][0] < self.length_limit:
                         left_distance=float('inf')
                         right_distance=float('inf')
