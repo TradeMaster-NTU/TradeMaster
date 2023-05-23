@@ -547,6 +547,20 @@ class Labeler():
                 if turning_points[i]!=[]:
                     turning_points_new.append(turning_points[i])
             turning_points=turning_points_new
+            # calculate the slope again
+            coef_list = []
+            normalized_coef_list = []
+            y_pred_list = []
+            for i in range(len(turning_points) - 1):
+                x_seg = np.asarray([j for j in range(turning_points[i][0], turning_points[i + 1][0])]).reshape(-1, 1)
+                adj_cp_model = LinearRegression().fit(x_seg,
+                                                      data['key_indicator_filtered'].iloc[
+                                                      turning_points[i][0]:turning_points[i + 1][0]])
+                y_pred = adj_cp_model.predict(x_seg)
+                normalized_coef_list.append(
+                    100 * adj_cp_model.coef_ / data['key_indicator_filtered'].iloc[turning_points[i][0]])
+                coef_list.append(adj_cp_model.coef_)
+                y_pred_list.append(y_pred)
 
 
 
