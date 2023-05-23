@@ -403,7 +403,7 @@ class Labeler():
         for i in range(0,len(longer)-len(shorter),step_size):
             # print(i)
             print(shorter,longer[i:i+slice_length])
-            distance, paths = fastdtw(shorter, longer[i:i+slice_length],dist=euclidean)
+            distance, paths = fastdtw(shorter, longer[i:i+slice_length])
             distances.append(distance)
         #normalize the distance by the length of the shorter segment and mean value of the shorter segment
         return np.mean(distances)/(slice_length*np.mean(shorter))
