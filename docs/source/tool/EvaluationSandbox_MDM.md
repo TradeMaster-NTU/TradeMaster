@@ -57,53 +57,6 @@ Change the parameters in `configs/evaluation/market_dynamics_modeling.py` and ru
 ```
 $ python tools/market_dynamics_labeling/run.py
 ```
-#### Running from command lines 
-An example of labeling the data
-<br />
-   ```
-  $ python trademaster/evaluation/market_dynamics_labeling/model/run_linear_model.py --data_path data/algorithmic_trading/BTC/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.5 0.5
-   ```
-FX
-```
-$ python trademaster/evaluation/market_dynamics_labeling/model/run_linear_model.py --data_path data/algorithmic_trading/FX/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.05 0.05 --dynamic_number 3 --length_limit 24
-```
-DJ30
-    ```
-  $ python trademaster/evaluation/market_dynamics_labeling/model/run_linear_model.py --data_path data/portfolio_management/dj30/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.25 0.25 --dynamic_number 3 --length_limit 24
-    ```
-for DJ30 applied in PM use-case, we would like to define the market dynamic based on DJ30 index. We have provided an example of
-test_labeled_3_24.csv which is DJI_labeled_3_24.csv and test.csv merged on 'date' where  DJI_labeled_3_24.csv is got from running 
-
-DJI index
-   ```
-   $ python trademaster/evaluation/market_dynamics_labeling/model/run_linear_model.py --data_path  data/portfolio_management/dj30/DJI.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.25 0.25  --dynamic_number 3 --length_limit 24  --PM data/portfolio_management/dj30/test.csv
-   ```
-
-BTC 
-
-    $ python trademaster/evaluation/market_dynamics_labeling/model/run_linear_model.py --data_path data/algorithmic_trading/BTC/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.15 0.15 --dynamic_number 3 --length_limit 24
-PD_BTC
-
-    $ python trademaster/evaluation/market_dynamics_labeling/model/run_linear_model.py --data_path data/order_execution/PD_BTC/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.15 0.15 --dynamic_number 3 --length_limit 24
-
-high_frequency_trading small_BTC
-    
-    $ python trademaster/evaluation/market_dynamics_labeling/model/run_linear_model.py --data_path data/high_frequency_trading/small_BTC/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.01 0.01 --dynamic_number 3 --length_limit 300
-
-
-OE_BTC
-
-    $ python trademaster/evaluation/market_dynamics_labeling/model/run_linear_model.py --data_path data/order_execution/BTC/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.01 0.01 --dynamic_number 3 --length_limit 32 --OE_BTC True
-
-Exchange
-
-    $ python trademaster/evaluation/market_dynamics_labeling/model/run_linear_model.py --data_path data/portfolio_management/exchange/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.05 0.05 --dynamic_number 3 --length_limit 24
- 
-
-<br />
-
-
-The script will take in a data file and output the file with a market dynamic label column. Besides the market label, we also provide a stock group label column based on DWT clustering.
 
 ### Testing agent under a specific market dynamic
 ```

@@ -204,10 +204,11 @@ class Labeler():
             #   self.TSNE_run(interpolated_pct_return_data_seg)
             # except:
             #   print('not able to do TSNE')
-            try:
-              self.stock_DWT(work_dir)
-            except:
-              print('not able to do clustering')
+            if len(self.tics)>1:
+                try:
+                  self.stock_DWT(work_dir)
+                except:
+                  print('not able to do clustering')
 
 
     def linear_regession_label(self,data, turning_points, low, high, normalized_coef_list, tic,
