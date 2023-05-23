@@ -521,6 +521,7 @@ class Labeler():
                                 right_distance=self.calculate_distance(this_seg,right_neighbor,merging_round)
                         # pick the min distance that is smaller than the threshold to merge
                         # may choose to merge with the shorter neighbor for balanced segment length
+                        print(min(left_distance,right_distance))
                         if min(left_distance,right_distance)<self.merging_threshold:
                             change=True
                             if left_distance<right_distance:
