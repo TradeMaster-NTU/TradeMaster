@@ -492,10 +492,19 @@ class Labeler():
                 change = False
                 # for every segment that does not reach self.length_limit, calculate the the DTW distance between the segment and its neighbor
                 for i in tqdm(range(len(turning_points) - 1)):
-                    if turning_points[i + 1][0] - turning_points[i][0] < self.length_limit:
+                    # find the first non-empty segment on right side
+                    have_next_index=False
+                    for j in range(i + 1, len(turning_points) - 1):
+                        if turning_points[j]!=[]:
+                            next_index = j
+                            have_next_index=True
+                            break
+                    if have_next_index==False:
+                        break
+                    if turning_points[next_index][0] - turning_points[i][0] < self.length_limit:
                         left_distance=float('inf')
                         right_distance=float('inf')
-                        this_seg=data['key_indicator_filtered'].iloc[turning_points[i][0]:turning_points[i + 1][0]].tolist()
+                        this_seg=data['key_indicator_filtered'].iloc[turning_points[i][0]:turning_points[next_index][0]].tolist()
                         if i>0:
                             # find the first non-empty segment on left side
                             left_index=None
@@ -507,17 +516,17 @@ class Labeler():
                                 left_neighbor = data['key_indicator_filtered'].iloc[turning_points[left_index][0]:turning_points[i][0]].tolist()
                                 left_distance=self.calculate_distance(left_neighbor,this_seg,merging_round)
                         if i<len(turning_points)-2:
-                            # find the first and second non-empty segment on right side
-                            right_index=None
-                            right_index_2=None
-                            for j in range(i+1,len(turning_points)-1):
-                                if (right_index is None) and (turning_points[j]!=[]):
-                                    right_index=j
-                                elif (right_index is not None) and (turning_points[j]!=[]):
+                            # find the second non-empty segment on right side
+                            next_index_2=None
+                            for j in range(next_index+1,len(turning_points)-1):
+                                if turning_points[j]!=[]:
                                     right_index_2=j
                                     break
-                            if right_index_2 is not None:
-                                right_neighbor = data['key_indicator_filtered'].iloc[turning_points[right_index][0]:turning_points[right_index_2][0]].tolist()
+                            if next_index_2 is not None:
+                                right_neighbor = data['key_indicator_filtered'].iloc[turning_points[next_index][0]:turning_points[next_index_2][0]].tolist()
+                                right_distance=self.calculate_distance(this_seg,right_neighbor,merging_round)
+                            else:
+                                right_neighbor = data['key_indicator_filtered'].iloc[turning_points[next_index][0]:].tolist()
                                 right_distance=self.calculate_distance(this_seg,right_neighbor,merging_round)
                         # pick the min distance that is smaller than the threshold to merge
                         # may choose to merge with the shorter neighbor for balanced segment length
@@ -527,7 +536,7 @@ class Labeler():
                             if left_distance<right_distance:
                                 turning_points[left_index]=turning_points[left_index]+turning_points[i]
                             else:
-                                turning_points[right_index]=turning_points[i]+turning_points[right_index]
+                                turning_points[next_index]=turning_points[i]+turning_points[next_index]
                             turning_points[i]=[]
             print(f'merging_round in total: {merging_round}')
             # remove empty segments
