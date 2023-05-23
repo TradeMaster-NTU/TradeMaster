@@ -711,7 +711,11 @@ class Labeler():
                 x_seg = np.asarray([j for j in range(turning_points_seg[i], turning_points_seg[i + 1])]).reshape(-1, 1)
                 # y_pred = y_pred_list[i]
                 coef = normalized_coef_list[i+counter]
-                flag=self.dynamic_flag.get(coef[0])
+                if self.mode == 'slope' or self.mode == 'quantile':
+                    coef = coef[0]
+                elif self.mode == 'DTW':
+                    coef = i+counter
+                flag=self.dynamic_flag.get(coef)
                 ax.plot(x_seg,data[plot_feather].iloc[turning_points_seg[i]:turning_points_seg[i + 1]], color=colors[flag], label='market style ' + str(flag))
             counter+=len(turning_points_seg)-1
             handles, labels = ax.get_legend_handles_labels()
