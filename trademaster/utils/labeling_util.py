@@ -368,14 +368,15 @@ class Labeler():
                 mdd=dd
         return mdd
 
-    def calculate_distance(self,seg1,seg2,mode='default'):
+    def calculate_distance(self,seg1,seg2,iteration_count,mode='default'):
         # calculate the distance between two segments
         if mode=='default':
             mode=self.merging_metric
         if mode=='DTW_distance':
-            distance=self.calculate_dtw_distance(seg1,seg2)
+            # the sampling time increase as the iteration_count increase
+            distance=self.calculate_dtw_distance(seg1,seg2,iteration_count+3)
         return distance
-    def calculate_dtw_distance(self,seg1,seg2,max_sample_number=10):
+    def calculate_dtw_distance(self,seg1,seg2,max_sample_number=3):
         # calculate the dynamic time warping distance between two segments
         # roll the shorter segment on the longer one with step_size, and calculate the mean distance
 
@@ -399,7 +400,7 @@ class Labeler():
 
         distances=[]
         for i in range(0,len(longer)-len(shorter),step_size):
-            print(i)
+            # print(i)
             distance, paths = dtw.warping_paths(shorter, longer[i:i+slice_length])
             distances.append(distance)
         #normalize the distance by the length of the shorter segment and mean value of the shorter segment
@@ -478,7 +479,7 @@ class Labeler():
             change = True
             while change:
                 merging_round += 1
-                print('merging round: ', merging_round)
+                print('merging round: ', merging_round, 'current number of segments: ', len(turning_points))
                 change = False
                 # for every segment that does not reach self.length_limit, calculate the the DTW distance between the segment and its neighbor
                 for i in tqdm(range(len(turning_points) - 1)):
@@ -495,7 +496,7 @@ class Labeler():
                                     break
                             if left_index is not None:
                                 left_neighbor = data['key_indicator_filtered'].iloc[turning_points[left_index][0]:turning_points[i][0]].tolist()
-                                left_distance=self.calculate_distance(left_neighbor,this_seg)
+                                left_distance=self.calculate_distance(left_neighbor,this_seg,merging_round)
                         if i<len(turning_points)-2:
                             # find the first and second non-empty segment on right side
                             right_index=None
@@ -508,7 +509,7 @@ class Labeler():
                                     break
                             if right_index_2 is not None:
                                 right_neighbor = data['key_indicator_filtered'].iloc[turning_points[right_index][0]:turning_points[right_index_2][0]].tolist()
-                                right_distance=self.calculate_distance(this_seg,right_neighbor)
+                                right_distance=self.calculate_distance(this_seg,right_neighbor,merging_round)
                         # pick the min distance that is smaller than the threshold to merge
                         # may choose to merge with the shorter neighbor for balanced segment length
                         if min(left_distance,right_distance)<self.merging_threshold:
