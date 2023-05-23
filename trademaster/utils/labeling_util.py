@@ -22,6 +22,8 @@ import re
 import matplotlib.font_manager as font_manager
 from dtaidistance import dtw
 import time
+from tqdm import tqdm
+
 
 class Node:
     def __init__(self, data=None,timestamp=None):
@@ -373,7 +375,7 @@ class Labeler():
         if mode=='DTW_distance':
             distance=self.calculate_dtw_distance(seg1,seg2)
         return distance
-    def calculate_dtw_distance(self,seg1,seg2,max_sample_number=30):
+    def calculate_dtw_distance(self,seg1,seg2,max_sample_number=10):
         # calculate the dynamic time warping distance between two segments
         # roll the shorter segment on the longer one with step_size, and calculate the mean distance
 
@@ -397,6 +399,7 @@ class Labeler():
 
         distances=[]
         for i in range(0,len(longer)-len(shorter),step_size):
+            print(i)
             distance, paths = dtw.warping_paths(shorter, longer[i:i+slice_length])
             distances.append(distance)
         #normalize the distance by the length of the shorter segment and mean value of the shorter segment
@@ -478,7 +481,7 @@ class Labeler():
                 print('merging round: ', merging_round)
                 change = False
                 # for every segment that does not reach self.length_limit, calculate the the DTW distance between the segment and its neighbor
-                for i in range(len(turning_points) - 1):
+                for i in tqdm(range(len(turning_points) - 1)):
                     if turning_points[i + 1][0] - turning_points[i][0] < self.length_limit:
                         left_distance=float('inf')
                         right_distance=float('inf')
