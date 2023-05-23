@@ -484,7 +484,11 @@ class Labeler():
             change = True
             while change:
                 merging_round += 1
-                print('merging round: ', merging_round, 'current number of segments: ', len(turning_points))
+                counter=0
+                for i in range(len(turning_points) - 1):
+                    if turning_points[i]!=[]:
+                        counter+=1
+                print('merging round: ', merging_round, 'current number of segments: ', counter)
                 change = False
                 # for every segment that does not reach self.length_limit, calculate the the DTW distance between the segment and its neighbor
                 for i in tqdm(range(len(turning_points) - 1)):
