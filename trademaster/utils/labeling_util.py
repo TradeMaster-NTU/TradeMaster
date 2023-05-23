@@ -101,7 +101,9 @@ class Dynamic_labeler():
             self.segments = []
             for i in range(len(turning_points) - 1):
                 self.segments.append(data['key_indicator_filtered'][turning_points[i]:turning_points[i + 1]])
-            self.segments.append(data['key_indicator_filtered'][turning_points[-1]:])
+            # self.segments.append(data['key_indicator_filtered'][turning_points[-1]:])
+            print('len of data: ',data['key_indicator_filtered'].shape)
+            print('last turning_points ',turning_points[-1])
             # print(self.segments)
             # run the DTW algorithm to cluster the segments into dynamic_num clusters
             self.labels = self.DTW_clustering(self.segments)
