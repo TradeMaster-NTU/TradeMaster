@@ -540,7 +540,11 @@ class Labeler():
                             else:
                                 turning_points[next_index]=turning_points[i]+turning_points[next_index]
                             turning_points[i]=[]
-            print(f'merging_round in total: {merging_round}')
+            counter = 0
+            for i in range(len(turning_points) - 1):
+                if turning_points[i] != []:
+                    counter += 1
+            print(f'merging_round in total: {merging_round}, number of segments: {counter}')
             # remove empty segments
             turning_points_new = []
             for i in range(len(turning_points)):
