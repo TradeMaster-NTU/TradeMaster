@@ -27,9 +27,9 @@ def parse_args():
     parser.add_argument("--data_path", type=str)
     parser.add_argument("--method", type=str)
     parser.add_argument("--fitting_parameters",nargs='+', type=str)
-    parser.add_argument("--labeling_parameters",  nargs="+", type=float)
+    parser.add_argument("--slope_interval",  nargs="+", type=float)
     parser.add_argument('--dynamic_number',type=int,default=4)
-    parser.add_argument('--length_limit',type=int,default=0)
+    parser.add_argument('--max_length_expectation',type=int,default=0)
     parser.add_argument('--OE_BTC',type=bool,default=False)
     parser.add_argument('--PM',type=str,default='False')
     parser.add_argument("--config", default=osp.join(ROOT, "configs", "evaluation", "market_dynamics_modeling.py"),
@@ -37,7 +37,7 @@ def parse_args():
     parser.add_argument("--key_indicator", type=str, default='adjcp')
     parser.add_argument("--timestamp", type=str, default='timestamp')
     parser.add_argument("--tic", type=str, default='tic')
-    parser.add_argument("--mode", type=str, default='slope', help='quantile or slope')
+    parser.add_argument("--labeling_method", type=str, default='slope', help='quantile/slope/DTW')
 
 
 

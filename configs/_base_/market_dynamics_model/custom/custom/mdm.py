@@ -1,9 +1,9 @@
 market_dynamics_model = dict(
     data_path='',
 filter_strength=1,
-labeling_parameters=[-0.05,0.05],
+slope_interval=[-0.05,0.05],
 dynamic_number=3,
-length_limit=24,
+max_length_expectation=24,
 OE_BTC=False,
 PM='',
 process_datafile_path='',
@@ -12,7 +12,7 @@ key_indicator='adjcp',
 timestamp='date',
 tic='tic',
 mode='slope',
-hard_length_limit=-1,
+min_length_limit=-1,
 merging_metric='DTW_distance',
 merging_threshold=-1
 )

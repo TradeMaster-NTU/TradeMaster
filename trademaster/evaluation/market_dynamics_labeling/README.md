@@ -15,11 +15,11 @@ The Evaluation Toolbox module prepare data for evaluation, to run a full test yo
      <div align="center">
        <img src="example_figs/dm_result_1.png" width = 400 height =  />
      </div>
-  1. Increase `length_limit`
+  1. Increase `max_length_expectation`
       <div align="center">
        <img src="example_figs/dm_result_2.png" width = 400 height =  />
       </div>
-  1. Modify `labeling_parameters`
+  1. Modify `slope_interval`
       <div align="center">
         <img src="example_figs/dm_result_3.png" width = 400 height =  />
       </div> 
@@ -31,9 +31,9 @@ The Evaluation Toolbox module prepare data for evaluation, to run a full test yo
         </div> 
 #### Parameters 
 - `fitting_parameters`: This is a set of parameters for the filter, please refer to the comment in lines for detailed description. 
-- `labeling_parameters`: This is a set of parameters for dynamic classification, please refer to the comment in lines for detailed description. 
+- `slope_interval`: This is a set of parameters for dynamic classification, please refer to the comment in lines for detailed description. 
 - `dynamic_number`: This is the number of dynamics. 
-- `length_limit`: This is the minimum length of a consecutive time-series of same dynamic. 
+- `max_length_expectation`: This is the minimum length of a consecutive time-series of same dynamic. 
 
 #### Scoring
 The scores of the visualization result are calculated as described:
@@ -56,35 +56,35 @@ deciding the parameters for your dataset. The example.html contains the visualiz
 An example of labeling the data
 <br />
    ```
-  $ python tools/MarketdynamicLabeling/Label.py --data_path data/algorithmic_trading/BTC/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.5 0.5
+  $ python tools/MarketdynamicLabeling/Label.py --data_path data/algorithmic_trading/BTC/test.csv --method linear --fitting_parameters 2/7 2/14 4 --slope_interval -0.5 0.5
    ```
 
 DJ30
     ```
-  $ python tools/MarketdynamicLabeling/Label.py --data_path data/portfolio_management/dj30/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.25 0.25 --dynamic_number 3 --length_limit 24
+  $ python tools/MarketdynamicLabeling/Label.py --data_path data/portfolio_management/dj30/test.csv --method linear --fitting_parameters 2/7 2/14 4 --slope_interval -0.25 0.25 --dynamic_number 3 --max_length_expectation 24
     ```
 for DJ30 applied in PM use-case, we would like to define the market dynamic based on DJ30 index. We have provided an example of
 test_labeled_3_24.csv which is DJI_labeled_3_24.csv and test.csv merged on 'date' where  DJI_labeled_3_24.csv is got from running 
 
 DJI index
    ```
-   $ python tools/MarketdynamicLabeling/Label.py --data_path  data/portfolio_management/dj30/DJI.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.25 0.25  --dynamic_number 3 --length_limit 24  --PM data/portfolio_management/dj30/test.csv
+   $ python tools/MarketdynamicLabeling/Label.py --data_path  data/portfolio_management/dj30/DJI.csv --method linear --fitting_parameters 2/7 2/14 4 --slope_interval -0.25 0.25  --dynamic_number 3 --max_length_expectation 24  --PM data/portfolio_management/dj30/test.csv
    ```
 
 BTC 
 
-    $ python tools/MarketdynamicLabeling/Label.py --data_path data/algorithmic_trading/BTC/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.15 0.15 --dynamic_number 3 --length_limit 24
+    $ python tools/MarketdynamicLabeling/Label.py --data_path data/algorithmic_trading/BTC/test.csv --method linear --fitting_parameters 2/7 2/14 4 --slope_interval -0.15 0.15 --dynamic_number 3 --max_length_expectation 24
 PD_BTC
 
-    $ python tools/MarketdynamicLabeling/Label.py --data_path data/order_execution/PD_BTC/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.15 0.15 --dynamic_number 3 --length_limit 24
+    $ python tools/MarketdynamicLabeling/Label.py --data_path data/order_execution/PD_BTC/test.csv --method linear --fitting_parameters 2/7 2/14 4 --slope_interval -0.15 0.15 --dynamic_number 3 --max_length_expectation 24
 
 OE_BTC
 
-    $ python tools/MarketdynamicLabeling/Label.py --data_path data/order_execution/BTC/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.01 0.01 --dynamic_number 3 --length_limit 32 --OE_BTC True
+    $ python tools/MarketdynamicLabeling/Label.py --data_path data/order_execution/BTC/test.csv --method linear --fitting_parameters 2/7 2/14 4 --slope_interval -0.01 0.01 --dynamic_number 3 --max_length_expectation 32 --OE_BTC True
 
 Exchange
 
-    $ python tools/MarketdynamicLabeling/Label.py --data_path data/portfolio_management/exchange/test.csv --method linear --fitting_parameters 2/7 2/14 4 --labeling_parameters -0.05 0.05 --dynamic_number 3 --length_limit 24
+    $ python tools/MarketdynamicLabeling/Label.py --data_path data/portfolio_management/exchange/test.csv --method linear --fitting_parameters 2/7 2/14 4 --slope_interval -0.05 0.05 --dynamic_number 3 --max_length_expectation 24
  
 
 <br />

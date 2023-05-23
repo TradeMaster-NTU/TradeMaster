@@ -19,16 +19,16 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
         self.data_path=get_attr(kwargs, "data_path", None)
         self.method = 'linear'
         self.filter_strength = get_attr(kwargs, "filter_strength", None)
-        self.labeling_parameters = get_attr(kwargs, "labeling_parameters", None)
+        self.slope_interval = get_attr(kwargs, "slope_interval", None)
         self.dynamic_number = get_attr(kwargs, "dynamic_number", None)
-        self.length_limit = get_attr(kwargs, "length_limit", None)
+        self.max_length_expectation = get_attr(kwargs, "max_length_expectation", None)
         self.OE_BTC = get_attr(kwargs, "OE_BTC", None)
         self.PM = get_attr(kwargs, "PM", None)
         self.key_indicator = get_attr(kwargs, "key_indicator", None)
         self.timestamp = get_attr(kwargs, "timestamp", None)
         self.tic = get_attr(kwargs, "tic", None)
-        self.mode = get_attr(kwargs, "mode", None)
-        self.hard_length_limit = get_attr(kwargs, "hard_length_limit", None)
+        self.labeling_method = get_attr(kwargs, "labeling_method", None)
+        self.min_length_limit = get_attr(kwargs, "min_length_limit", None)
         self.merging_metric=get_attr(kwargs, "merging_metric", None)
         self.merging_threshold=get_attr(kwargs, "merging_threshold", None)
 
@@ -79,12 +79,12 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
             raw_data.to_csv(process_data_path)
             self.data_path = process_data_path
         Labeler = util.Labeler(self.data_path, 'linear', filter_strength=self.filter_strength,key_indicator=self.key_indicator,
-                               timestamp=self.timestamp, tic=self.tic, mode=self.mode,hard_length_limit=self.hard_length_limit,
+                               timestamp=self.timestamp, tic=self.tic, labeling_method=self.labeling_method,min_length_limit=self.min_length_limit,
                                merging_threshold=self.merging_threshold,merging_metric=self.merging_metric)
         print('start fitting')
-        Labeler.fit(self.dynamic_number, self.length_limit, self.hard_length_limit)
+        Labeler.fit(self.dynamic_number, self.max_length_expectation, self.min_length_limit)
         print('finish fitting')
-        Labeler.label(self.labeling_parameters,os.path.dirname(self.data_path))
+        Labeler.label(self.slope_interval,os.path.dirname(self.data_path))
         labeled_data = pd.concat([v for v in Labeler.data_dict.values()], axis=0)
         # file_writer=self.file_extension_selector(read=False)
         # print('file_writer',file_writer)
@@ -97,12 +97,12 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
             merge_keys = [self.timestamp, self.key_indicator]
         merged_data = data.merge(labeled_data, how='left', on=merge_keys, suffixes=('', '_DROP')).filter(
             regex='^(?!.*_DROP)')
-        if self.mode=='slope':
-            low, high = self.labeling_parameters
+        if self.labeling_method=='slope':
+            low, high = self.slope_interval
             self.model_id = str(self.dynamic_number) + '_' + str(
-                self.length_limit) + '_' + str(low) + '_' + str(high)
+                self.max_length_expectation) + '_' + str(low) + '_' + str(high)
         else:
-            self.model_id = f"{self.dynamic_number}_{self.length_limit}_{self.mode}"
+            self.model_id = f"{self.dynamic_number}_{self.max_length_expectation}_{self.labeling_method}"
         if self.PM :
             DJI = merged_data.loc[:, [self.timestamp, 'label']]
             test = pd.read_csv(self.PM, index_col=0)
@@ -118,7 +118,7 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
         print('labeling done')
         print('plotting start')
         # a list the path to all the modeling visulizations
-        market_dynamic_labeling_visualization_paths=Labeler.plot(Labeler.tics, self.labeling_parameters, output_path,self.model_id)
+        market_dynamic_labeling_visualization_paths=Labeler.plot(Labeler.tics, self.slope_interval, output_path,self.model_id)
         print('plotting done')
         # if self.OE_BTC == True:
         #     os.remove('./temp/OE_BTC_processed.csv')

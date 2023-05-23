@@ -83,20 +83,20 @@ class LinkedList:
             current_node = current_node.next
 
 class Dynamic_labeler():
-    def __init__(self,mode,dynamic_num,low,high,normalized_coef_list,data,turning_points):
-        self.mode=mode
+    def __init__(self,labeling_method,dynamic_num,low,high,normalized_coef_list,data,turning_points):
+        self.labeling_method=labeling_method
         self.dynamic_num=dynamic_num
-        if self.mode == 'slope':
+        if self.labeling_method == 'slope':
             low, _, high = sorted([low, high, 0])
             self.segments = []
             for i in range(1,self.dynamic_num):
                 self.segments.append(low + (high - low) / (dynamic_num) * i)
-        elif self.mode == 'quantile':
+        elif self.labeling_method == 'quantile':
             self.segments = []
             # find the quantile of normalized_coef_list
             for i in range(1,self.dynamic_num):
                 self.segments.append(np.quantile(normalized_coef_list, i / dynamic_num))
-        elif self.mode == 'DTW':
+        elif self.labeling_method == 'DTW':
             # segment the data by turning points
             self.segments = []
             for i in range(len(turning_points) - 1):
@@ -108,7 +108,7 @@ class Dynamic_labeler():
             # run the DTW algorithm to cluster the segments into dynamic_num clusters
             self.labels = self.DTW_clustering(self.segments)
         else:
-            raise Exception("Sorry, only slope,quantile and DTW mode are provided for now.")
+            raise Exception("Sorry, only slope,quantile and DTW labeling_method are provided for now.")
 
     def DTW_clustering(self,data):
         fitting_data = to_time_series_dataset(data)
@@ -118,9 +118,9 @@ class Dynamic_labeler():
         return labels
 
     def get(self, coef):
-        if self.mode == 'DTW':
+        if self.labeling_method == 'DTW':
             return self.labels[coef]
-        elif self.mode == 'slope' or self.mode == 'quantile':
+        elif self.labeling_method == 'slope' or self.labeling_method == 'quantile':
             # find the place where coef falls into in segments
             for i in range(self.dynamic_num - 1):
                 if coef <= self.segments[i]:
@@ -129,15 +129,15 @@ class Dynamic_labeler():
             return self.dynamic_num - 1
 
 class Labeler():
-    def __init__(self,data,method='linear',filter_strength=1,key_indicator='adjcp',timestamp='date',tic='tic',mode='slope',hard_length_limit=-1,merging_threshold=-1,merging_metric='DTW_distance'):
+    def __init__(self,data,method='linear',filter_strength=1,key_indicator='adjcp',timestamp='date',tic='tic',labeling_method='slope',min_length_limit=-1,merging_threshold=-1,merging_metric='DTW_distance'):
         plt.ioff()
         self.key_indicator=key_indicator
         self.timestamp=timestamp
         self.tic=tic
-        self.mode=mode
+        self.labeling_method=labeling_method
         # the hard length limit is the hard constraint of the minium ticks of a continuous segment, which means that any volatility
         # with length less than the hard length limit will be considered as noise.
-        self.hard_length_limit=hard_length_limit
+        self.min_length_limit=min_length_limit
         self.merging_metric=merging_metric
         self.merging_threshold=merging_threshold
         if method=='linear':
@@ -151,29 +151,29 @@ class Labeler():
         self.preprocess(data)
         
     def filter_parameters_calculation(self,filter_strength):
-        if self.hard_length_limit!=-1:
-            filter_period=self.hard_length_limit
+        if self.min_length_limit!=-1:
+            filter_period=self.min_length_limit
         else:
             filter_period=7 # default filter period
 
-        # use the hard_length_limit to calculate the Wn_key_indicator and Wn_pct
+        # use the min_length_limit to calculate the Wn_key_indicator and Wn_pct
         # the max Wn_key_indicator is 2, and the max Wn_pct is 2 for not filtering
         Wn_key_indicator=min(2/(filter_period*filter_strength),2)
         # Wn_pct=min(2,2/(filter_period*Wn_pct_factor))
         return Wn_key_indicator
         
-    def fit(self,dynamic_number,length_limit,hard_length_limit):
+    def fit(self,dynamic_number,max_length_expectation,min_length_limit):
         if self.method=='linear':
             self.turning_points_dict = {}
             self.coef_list_dict = {}
             self.norm_coef_list_dict = {}
             self.y_pred_dict = {}
             self.dynamic_num=dynamic_number
-            self.length_limit=length_limit
-            self.hard_length_limit=hard_length_limit
+            self.max_length_expectation=max_length_expectation
+            self.min_length_limit=min_length_limit
             for tic in self.tics:
                 coef_list, turning_points, y_pred_list, norm_coef_list = self.linear_regession_turning_points(
-                    data_ori=self.data_dict[tic], tic=tic,length_constrain=self.length_limit)
+                    data_ori=self.data_dict[tic], tic=tic,length_constrain=self.max_length_expectation)
                 self.turning_points_dict[tic] = turning_points
                 self.coef_list_dict[tic] = coef_list
                 self.y_pred_dict[tic] = y_pred_list
@@ -221,13 +221,13 @@ class Labeler():
         label = []
         label_seg = []
         index_seg = []
-        self.dynamic_flag = Dynamic_labeler(mode=self.mode, dynamic_num=dynamic_num, low=low, high=high,
+        self.dynamic_flag = Dynamic_labeler(labeling_method=self.labeling_method, dynamic_num=dynamic_num, low=low, high=high,
                                             normalized_coef_list=normalized_coef_list,data=data,turning_points=turning_points)
         data=data['pct_return_filtered']
         for i in range(len(turning_points) - 1):
-            if self.mode == 'slope' or self.mode=='quantile':
+            if self.labeling_method == 'slope' or self.labeling_method=='quantile':
                 coef = normalized_coef_list[i]
-            elif self.mode == 'DTW':
+            elif self.labeling_method == 'DTW':
                 coef = i
             flag = self.dynamic_flag.get(coef)
             label.extend([flag] * (turning_points[i + 1] - turning_points[i]))
@@ -399,11 +399,11 @@ class Labeler():
                 mdd=dd
         return mdd
 
-    def calculate_distance(self,seg1,seg2,iteration_count,mode='default'):
+    def calculate_distance(self,seg1,seg2,iteration_count,labeling_method='default'):
         # calculate the distance between two segments
-        if mode=='default':
-            mode=self.merging_metric
-        if mode=='DTW_distance':
+        if labeling_method=='default':
+            labeling_method=self.merging_metric
+        if labeling_method=='DTW_distance':
             # the sampling time increase as the iteration_count increase
             distance=self.calculate_dtw_distance(seg1,seg2,iteration_count*3+10)
         return distance
@@ -442,7 +442,7 @@ class Labeler():
     def linear_regession_turning_points(self,data_ori, tic,length_constrain=0):
         """
         1. segment the data into chunks based on turning points(where all neighbors have the opposite slope)
-        2. if the length is smaller than hard_length_limit, merge the chunk with its neighbor
+        2. if the length is smaller than min_length_limit, merge the chunk with its neighbor
         3. Calculate the slope
         5. While the chunk does not satisfy the length limit, and metric satisfied the merging_threshold:
              1.merge the chunk with its neighbor
@@ -463,7 +463,7 @@ class Labeler():
         turning_points_new = [[turning_points[0][0]]]
         # turning_points_new = [turning_points[0]]
 
-        # 2.if the length is smaller than hard_length_limit, merge the chunk with its neighbor
+        # 2.if the length is smaller than min_length_limit, merge the chunk with its neighbor
 
         # if length_constrain != 0:
         #     for num,i in enumerate(range(1, len(turning_points) - 1)):
@@ -473,7 +473,7 @@ class Labeler():
         #     turning_points = turning_points_new
         if length_constrain != 0:
             for i in range(1, len(turning_points) - 1):
-                if turning_points[i][0] - turning_points_new[-1][0] >= self.hard_length_limit:
+                if turning_points[i][0] - turning_points_new[-1][0] >= self.min_length_limit:
                     #no need to merge
                     turning_points_new.append(turning_points[i])
                 else:
@@ -517,7 +517,7 @@ class Labeler():
                         counter+=1
                 print('merging round: ', merging_round, 'current number of segments: ', counter)
                 change = False
-                # for every segment that does not reach self.length_limit, calculate the the DTW distance between the segment and its neighbor
+                # for every segment that does not reach self.max_length_expectation, calculate the the DTW distance between the segment and its neighbor
                 for i in tqdm(range(len(turning_points) - 1)):
                     # find the first non-empty segment on right side
                     if turning_points[i]==[]:
@@ -530,7 +530,7 @@ class Labeler():
                             break
                     if have_next_index==False:
                         break
-                    if turning_points[next_index][0] - turning_points[i][0] < self.length_limit:
+                    if turning_points[next_index][0] - turning_points[i][0] < self.max_length_expectation:
                         left_distance=float('inf')
                         right_distance=float('inf')
                         this_seg=data['key_indicator_filtered'].iloc[turning_points[i][0]:turning_points[next_index][0]].tolist()
@@ -617,11 +617,11 @@ class Labeler():
         #         else:
         #             turning_points_new.append(turning_points[i])
         # # 4.force merge if the hard constraint is not satisfied
-        # if self.hard_length_limit!=-1:
+        # if self.min_length_limit!=-1:
         #     recalculate_flag=True
         #     turning_points_new = [[turning_points[0][0]]]
         #     for i in range(1, len(turning_points) - 1):
-        #         if turning_points[i][0] - turning_points_new[-1][0] >= self.hard_length_limit:
+        #         if turning_points[i][0] - turning_points_new[-1][0] >= self.min_length_limit:
         #             #no need to merge
         #             turning_points_new.append(turning_points[i])
         #         else:

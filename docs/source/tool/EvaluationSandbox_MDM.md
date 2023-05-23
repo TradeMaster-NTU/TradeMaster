@@ -15,11 +15,11 @@ This module prepare data for evaluation, to run a full test you should follow th
      <div align="center">
        <img src="example_figs/dm_result_1.png" width = 400 height =  />
      </div>
-  1. Increase `length_limit`
+  1. Increase `max_length_expectation`
       <div align="center">
        <img src="example_figs/dm_result_2.png" width = 400 height =  />
       </div>
-  1. Modify `labeling_parameters`
+  1. Modify `slope_interval`
       <div align="center">
         <img src="example_figs/dm_result_3.png" width = 400 height =  />
       </div> 
@@ -31,9 +31,9 @@ This module prepare data for evaluation, to run a full test you should follow th
         </div> 
 #### Parameters 
 - `fitting_parameters`: This is a set of parameters for the filter, please refer to the comment in lines for detailed description. 
-- `labeling_parameters`: This is a set of parameters for dynamic classification, please refer to the comment in lines for detailed description. 
+- `slope_interval`: This is a set of parameters for dynamic classification, please refer to the comment in lines for detailed description. 
 - `dynamic_number`: This is the number of dynamics. 
-- `length_limit`: This is the minimum length of a consecutive time-series of same dynamic. 
+- `max_length_expectation`: This is the minimum length of a consecutive time-series of same dynamic. 
 
 #### Scoring
 The scores of the visualization result are calculated as described:
