@@ -669,6 +669,8 @@ class Labeler():
 
         # fig, ax = plt.subplots(1, 1, figsize=(40, 10), constrained_layout=True)
         fig, axs = plt.subplots(sub_plot_num, 1, figsize=(50, 15*sub_plot_num), constrained_layout=True)
+        if sub_plot_num==1:
+            axs=[axs]
         colors = list(dict(mcolors.BASE_COLORS, **mcolors.CSS4_COLORS).keys())
 
         counter=0
