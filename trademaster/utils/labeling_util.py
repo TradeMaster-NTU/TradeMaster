@@ -100,9 +100,9 @@ class Dynamic_labeler():
             # segment the data by turning points
             self.segments = []
             for i in range(len(turning_points) - 1):
-                self.segments.append(data[turning_points[i]:turning_points[i + 1]])
-            self.segments.append(data[turning_points[-1]:])
-            print(self.segments)
+                self.segments.append(data['key_indicator_filtered'][turning_points[i]:turning_points[i + 1]])
+            self.segments.append(data['key_indicator_filtered'][turning_points[-1]:])
+            # print(self.segments)
             # run the DTW algorithm to cluster the segments into dynamic_num clusters
             self.labels = self.DTW_clustering(self.segments)
         else:
@@ -210,7 +210,8 @@ class Labeler():
 
     def linear_regession_label(self,data, turning_points, low, high, normalized_coef_list, tic,
                                dynamic_num=4):
-        data = data.reset_index(drop=True)['pct_return_filtered']
+        # data = data.reset_index(drop=True)['pct_return_filtered']
+        data = data.reset_index(drop=True)
         data_seg = []
 
 
@@ -219,6 +220,7 @@ class Labeler():
         index_seg = []
         self.dynamic_flag = Dynamic_labeler(mode=self.mode, dynamic_num=dynamic_num, low=low, high=high,
                                             normalized_coef_list=normalized_coef_list,data=data,turning_points=turning_points)
+        data=data['pct_return_filtered']
         for i in range(len(turning_points) - 1):
             if self.mode == 'slope' or self.mode=='quantile':
                 coef = normalized_coef_list[i]
