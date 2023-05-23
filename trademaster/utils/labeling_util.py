@@ -516,6 +516,7 @@ class Labeler():
                         if ii>0:
                             # find the first non-empty segment on left side
                             left_index=index_list[ii-1]
+                            print(left_index,i)
                             left_neighbor = data['key_indicator_filtered'].iloc[turning_points[left_index][0]:turning_points[i][0]].tolist()
                             left_distance=self.calculate_distance(left_neighbor,this_seg,merging_round)
                         if ii<len(index_list)-1:
