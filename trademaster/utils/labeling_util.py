@@ -482,7 +482,7 @@ class Labeler():
         merging_round = 0
         if self.merging_threshold!=-1:
             change = True
-            while change:
+            while change and merging_round<20:
                 merging_round += 1
                 counter=0
                 for i in range(len(turning_points) - 1):
