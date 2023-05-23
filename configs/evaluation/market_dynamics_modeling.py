@@ -22,5 +22,6 @@ timestamp='date',
 tic='tic',
 mode='slope',
 hard_length_limit=-1,
-slope_diff_threshold=-1
+merging_metric='DTW_distance',
+merging_threshold=-1
 )

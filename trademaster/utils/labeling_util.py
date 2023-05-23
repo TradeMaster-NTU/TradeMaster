@@ -1,3 +1,5 @@
+import math
+
 import pandas as pd
 import yfinance as yf
 import matplotlib.dates as mdates
@@ -18,7 +20,7 @@ from tslearn.utils import to_time_series_dataset
 import pickle
 import re
 import matplotlib.font_manager as font_manager
-
+from dtaidistance import dtw
 import time
 
 class Node:
@@ -104,7 +106,7 @@ class Dynamic_labeler():
             return self.dynamic_num - 1
 
 class Labeler():
-    def __init__(self,data,method='linear',filter_strength=1,key_indicator='adjcp',timestamp='date',tic='tic',mode='slope',hard_length_limit=-1,slope_diff_threshold=-1):
+    def __init__(self,data,method='linear',filter_strength=1,key_indicator='adjcp',timestamp='date',tic='tic',mode='slope',hard_length_limit=-1,merging_threshold=-1,merging_metric='DTW_distance'):
         plt.ioff()
         self.key_indicator=key_indicator
         self.timestamp=timestamp
@@ -113,7 +115,8 @@ class Labeler():
         # the hard length limit is the hard constraint of the minium ticks of a continuous segment, which means that any volatility
         # with length less than the hard length limit will be considered as noise.
         self.hard_length_limit=hard_length_limit
-        self.slope_diff_threshold=slope_diff_threshold
+        self.merging_metric=merging_metric
+        self.merging_threshold=merging_threshold
         if method=='linear':
             self.method='linear'
             # calculate the parameters for filtering
@@ -217,9 +220,6 @@ class Labeler():
             data[self.tic] = 'data'
         self.tics = data[self.tic].unique()
         self.data_dict = {}
-
-
-
 
         for tic in self.tics:
             tic_data = data.loc[data[self.tic] == tic, [self.timestamp, self.tic, self.key_indicator]]
@@ -366,21 +366,62 @@ class Labeler():
                 mdd=dd
         return mdd
 
+    def calulate_dtw_distance(self,seg1,seg2,max_sample_number=30):
+        # calculate the dynamic time warping distance between two segments
+        # roll the shorter segment on the longer one with step_size, and calculate the mean distance
+
+        # decide the step size and slice length based on the max_calulation_number
+        # we want to include every point in the longer segment at least once/ the longer segment slice length is comparable to the shorter segment/ step size is not too small
+
+
+        if len(seg1)>len(seg2):
+            longer=seg1
+            shorter=seg2
+        else:
+            longer=seg2
+            shorter=seg1
+
+
+
+        step_size=max(1,math.floor((len(longer)-len(shorter))/max_sample_number))
+        # slice_length=int(len(longer)/max_sample_number)
+        slice_length = len(shorter)
+
+
+        distances=[]
+        for i in range(0,len(longer)-len(shorter),step_size):
+            distance, paths = dtw.warping_paths(shorter, longer[i:i+slice_length])
+            distances.append(distance)
+        #normalize the distance by the length of the shorter segment and mean value of the shorter segment
+        return np.mean(distances)/(slice_length*np.mean(shorter))
+
 
     def linear_regession_turning_points(self,data_ori, tic,length_constrain=0):
-        recalculate_flag = False
+        """
+        1. segment the data into chunks based on turning points(where all neighbors have the opposite slope)
+        2. if the length is smaller than hard_length_limit, merge the chunk with its neighbor
+        3. Calculate the slope
+        5. While the chunk does not satisfy the length limit, and metric satisfied the merging_threshold:
+             1.merge the chunk with its neighbor
+             2.recalculate the slope
+        """
+
+
+        # recalculate_flag = False
         data = data_ori.reset_index(drop=True)
+
+
+        # 1. segment the data into chunks based on turning points(where all neighbors have the opposite slope)
         turning_points = self.find_index_of_turning(data)
         print(turning_points)
-        #get timestamp of turning points
-        # turning_points_timestamp = data[self.timestamp][turning_points]
         # make every element in turning_points as a list
         turning_points = [[i] for i in turning_points]
         turning_points_ori = turning_points.copy()
         turning_points_new = [[turning_points[0][0]]]
         # turning_points_new = [turning_points[0]]
 
-        # 1.merge turning points if the chunk is too short
+        # 2.if the length is smaller than hard_length_limit, merge the chunk with its neighbor
+
         # if length_constrain != 0:
         #     for num,i in enumerate(range(1, len(turning_points) - 1)):
         #         if turning_points[i] - turning_points_new[-1] >= length_constrain:
@@ -389,7 +430,7 @@ class Labeler():
         #     turning_points = turning_points_new
         if length_constrain != 0:
             for i in range(1, len(turning_points) - 1):
-                if turning_points[i][0] - turning_points_new[-1][0] >= length_constrain:
+                if turning_points[i][0] - turning_points_new[-1][0] >= self.hard_length_limit:
                     #no need to merge
                     turning_points_new.append(turning_points[i])
                 else:
@@ -398,8 +439,7 @@ class Labeler():
             turning_points_new.append(turning_points[-1])
             turning_points = turning_points_new
 
-        # print(len(turning_points),[i[0] for i in turning_points])
-        # 2. Get slope of each segment
+        # 2. Calculate the slope
         coef_list = []
         normalized_coef_list = []
         y_pred_list = []
@@ -420,53 +460,112 @@ class Labeler():
             coef_list.append(adj_cp_model.coef_)
             y_pred_list.append(y_pred)
 
-        # 3. Get max drawdown of each segment
-        if self.slope_diff_threshold!=-1:
-            recalculate_flag=True
-            mdd_list = []
-            for i in range(len(turning_points) - 1):
-                mdd_list.append(self.get_mdd(data['key_indicator_filtered'].iloc[turning_points[i][0]:turning_points[i + 1][0]].tolist()))
+        # 3. While the chunk does not satisfy the length limit, and metric satisfied the merging_threshold
+        #     1.merge the chunk with its neighbor
+        #     2.recalculate the slope
+        merging_round = 0
+        if self.merging_threshold!=-1:
+            change = True
+            while change:
+                merging_round += 1
+                print('merging round: ', merging_round)
+                change = False
+                # for every segment that does not reach self.length_limit, calculate the the DTW distance between the segment and its neighbor
+                for i in range(len(turning_points) - 1):
+                    if turning_points[i + 1][0] - turning_points[i][0] < self.length_limit:
+                        left_distance=float('inf')
+                        right_distance=float('inf')
+                        this_seg=data['key_indicator_filtered'].iloc[turning_points[i][0]:turning_points[i + 1][0]].tolist()
+                        if i>0:
+                            # find the first non-empty segment on left side
+                            left_index=None
+                            for j in range(i-1,-1,-1):
+                                if turning_points[j + 1]!=[]:
+                                    left_index=j
+                                    break
+                            left_neighbor = data['key_indicator_filtered'].iloc[turning_points[left_index][0]:turning_points[i][0]].tolist()
+                            left_distance=self.calulate_dtw_distance(left_neighbor,this_seg)
+                        if i<len(turning_points)-2:
+                            # find the first and second non-empty segment on right side
+                            right_index=None
+                            right_index_2=None
+                            for j in range(i+1,len(turning_points)-1):
+                                if (right_index is None) and (turning_points[j + 1]!=[]):
+                                    right_index=j
+                                elif (right_index is not None) and (turning_points[j + 1]!=[]):
+                                    right_index_2=j
+                                    break
+                            if right_index_2 is not None:
+                                right_neighbor = data['key_indicator_filtered'].iloc[turning_points[right_index][0]:turning_points[right_index_2][0]].tolist()
+                                right_distance=self.calulate_dtw_distance(this_seg,right_neighbor)
+                        # pick the min distance that is smaller than the threshold to merge
+                        # may choose to merge with the shorter neighbor for balanced segment length
+                        if min(left_distance,right_distance)<self.merging_threshold:
+                            change=True
+                            if left_distance<right_distance:
+                                turning_points[left_index]=turning_points[left_index]+turning_points[i]
+                            else:
+                                turning_points[right_index]=turning_points[i]+turning_points[right_index]
+                            turning_points[i]=[]
+            print(f'merging_round in total: {merging_round}')
+            # remove empty segments
+            turning_points_new = []
+            for i in range(len(turning_points)):
+                if turning_points[i]!=[]:
+                    turning_points_new.append(turning_points[i])
+            turning_points=turning_points_new
+
+
+
+
+
+        # # 3. Get max drawdown of each segment
+        # if self.merging_threshold!=-1:
+        #     recalculate_flag=True
+        #     mdd_list = []
+        #     for i in range(len(turning_points) - 1):
+        #         mdd_list.append(self.get_mdd(data['key_indicator_filtered'].iloc[turning_points[i][0]:turning_points[i + 1][0]].tolist()))
 
             # print('mdd_list',mdd_list)
             # print('coef_list',coef_list)
-        # 4. re-slice the segment if the if slope/ mdd is smaller than threshold
-            turning_points_new = []
-            # print('len(turning_points)',len(turning_points))
-            for i in range(len(turning_points)-1):
-                if abs(coef_list[i])/abs(mdd_list[i])<self.slope_diff_threshold:
-                    # print(abs(coef_list[i])/abs(mdd_list[i]))
-                    for j in turning_points_ori[i]:
-                        turning_points_new.append([j])
-                else:
-                    turning_points_new.append(turning_points[i])
-        # 4.force merge if the hard constraint is not satisfied
-        if self.hard_length_limit!=-1:
-            recalculate_flag=True
-            turning_points_new = [[turning_points[0][0]]]
-            for i in range(1, len(turning_points) - 1):
-                if turning_points[i][0] - turning_points_new[-1][0] >= self.hard_length_limit:
-                    #no need to merge
-                    turning_points_new.append(turning_points[i])
-                else:
-                    # merge this point into the current segment
-                    turning_points_new[-1].extend(turning_points[i])
-            turning_points_new.append(turning_points[-1])
-            turning_points = turning_points_new
-        print(len(turning_points))
-
-        # 5. re-calculate the slope
-        if recalculate_flag:
-            coef_list = []
-            normalized_coef_list = []
-            y_pred_list = []
-            for i in range(len(turning_points) - 1):
-                x_seg = np.asarray([j for j in range(turning_points[i][0], turning_points[i + 1][0])]).reshape(-1, 1)
-                adj_cp_model = LinearRegression().fit(x_seg,
-                                                      data['key_indicator_filtered'].iloc[turning_points[i][0]:turning_points[i + 1][0]])
-                y_pred = adj_cp_model.predict(x_seg)
-                normalized_coef_list.append(100 * adj_cp_model.coef_ / data['key_indicator_filtered'].iloc[turning_points[i][0]])
-                coef_list.append(adj_cp_model.coef_)
-                y_pred_list.append(y_pred)
+        # # 4. re-slice the segment if the if slope/ mdd is smaller than threshold
+        #     turning_points_new = []
+        #     # print('len(turning_points)',len(turning_points))
+        #     for i in range(len(turning_points)-1):
+        #         if abs(coef_list[i])/abs(mdd_list[i])<self.merging_threshold:
+        #             # print(abs(coef_list[i])/abs(mdd_list[i]))
+        #             for j in turning_points_ori[i]:
+        #                 turning_points_new.append([j])
+        #         else:
+        #             turning_points_new.append(turning_points[i])
+        # # 4.force merge if the hard constraint is not satisfied
+        # if self.hard_length_limit!=-1:
+        #     recalculate_flag=True
+        #     turning_points_new = [[turning_points[0][0]]]
+        #     for i in range(1, len(turning_points) - 1):
+        #         if turning_points[i][0] - turning_points_new[-1][0] >= self.hard_length_limit:
+        #             #no need to merge
+        #             turning_points_new.append(turning_points[i])
+        #         else:
+        #             # merge this point into the current segment
+        #             turning_points_new[-1].extend(turning_points[i])
+        #     turning_points_new.append(turning_points[-1])
+        #     turning_points = turning_points_new
+        # print(len(turning_points))
+        #
+        # # 5. re-calculate the slope
+        # if recalculate_flag:
+        #     coef_list = []
+        #     normalized_coef_list = []
+        #     y_pred_list = []
+        #     for i in range(len(turning_points) - 1):
+        #         x_seg = np.asarray([j for j in range(turning_points[i][0], turning_points[i + 1][0])]).reshape(-1, 1)
+        #         adj_cp_model = LinearRegression().fit(x_seg,
+        #                                               data['key_indicator_filtered'].iloc[turning_points[i][0]:turning_points[i + 1][0]])
+        #         y_pred = adj_cp_model.predict(x_seg)
+        #         normalized_coef_list.append(100 * adj_cp_model.coef_ / data['key_indicator_filtered'].iloc[turning_points[i][0]])
+        #         coef_list.append(adj_cp_model.coef_)
+        #         y_pred_list.append(y_pred)
 
 
         # reshape turning_points to a 1d list
