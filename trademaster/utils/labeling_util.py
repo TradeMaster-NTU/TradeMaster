@@ -246,8 +246,8 @@ class Labeler():
         elif data.split('.')[-1] == 'feather':
             data = pd.read_feather(data)
             # slice the first 20000 rows for testing
-            # TODO: remove this line
-            data = data.iloc[:20000]
+            # # TODO: remove this line
+            # data = data.iloc[:20000]
         # assign 'data' to tic if not exist
         if self.tic not in data.columns:
             data[self.tic] = 'data'
