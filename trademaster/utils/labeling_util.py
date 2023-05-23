@@ -711,9 +711,9 @@ class Labeler():
                 x_seg = np.asarray([j for j in range(turning_points_seg[i], turning_points_seg[i + 1])]).reshape(-1, 1)
                 # y_pred = y_pred_list[i]
                 coef = normalized_coef_list[i+counter]
-                if self.mode == 'slope' or self.mode == 'quantile':
+                if self.labeling_method == 'slope' or self.labeling_method == 'quantile':
                     coef = coef[0]
-                elif self.mode == 'DTW':
+                elif self.labeling_method == 'DTW':
                     coef = i+counter
                 flag=self.dynamic_flag.get(coef)
                 ax.plot(x_seg,data[plot_feather].iloc[turning_points_seg[i]:turning_points_seg[i + 1]], color=colors[flag], label='market style ' + str(flag))
@@ -725,8 +725,8 @@ class Labeler():
             # legend to every sub-plot
             ax.legend(by_label.values(), by_label.keys(), prop=font)
         # set the title
-        plt.title(f"Dynamics_of_{tic}_linear_{self.mode}_{plot_feather}", fontsize=20)
-        # plt.set_title(f"Dynamics_of_{tic}_linear_{self.mode}", fontsize=20)
+        plt.title(f"Dynamics_of_{tic}_linear_{self.labeling_method}_{plot_feather}", fontsize=20)
+        # plt.set_title(f"Dynamics_of_{tic}_linear_{self.labeling_method}", fontsize=20)
         plot_path=folder_name
         if not os.path.exists(plot_path):
             os.makedirs(plot_path)
