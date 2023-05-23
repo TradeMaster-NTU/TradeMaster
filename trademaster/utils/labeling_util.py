@@ -100,7 +100,7 @@ class Dynamic_labeler():
             # segment the data by turning points
             self.segments = []
             for i in range(len(turning_points) - 1):
-                self.segments.append(data['key_indicator_filtered'][turning_points[i]:turning_points[i + 1]])
+                self.segments.append(data['pct_return_filtered'][turning_points[i]:turning_points[i + 1]])
             # self.segments.append(data['key_indicator_filtered'][turning_points[-1]:])
             # print('len of data: ',data['key_indicator_filtered'].shape)
             # print('last turning_points ',turning_points[-1])
