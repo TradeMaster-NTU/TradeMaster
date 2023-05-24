@@ -38,6 +38,11 @@ def parse_args():
     parser.add_argument("--timestamp", type=str, default='timestamp')
     parser.add_argument("--tic", type=str, default='tic')
     parser.add_argument("--labeling_method", type=str, default='slope', help='quantile/slope/DTW')
+    parser.add_argument("--min_length_limit", type=int, default=-1)
+    parser.add_argument("--merging_metric", type=str, default='DTW_distance')
+    parser.add_argument("--merging_threshold", type=float, default=-1)
+    parser.add_argument("--merging_dynamic_constraint", type=int, default=-1)
+    parser.add_argument("--filter_strength", type=int, default=1)
 
 
 

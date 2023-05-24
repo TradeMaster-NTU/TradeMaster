@@ -451,16 +451,32 @@ class Worker():
 
                 # if we use the dynamic constraint, we would label the segment every time before merging
                 if self.merging_dynamic_constraint !=float('inf'):
+
+
+
+
                     # calculate the slope
                     coef_list = []
                     normalized_coef_list = []
                     y_pred_list = []
                     for i in range(len(turning_points) - 1):
-                        x_seg = np.asarray([j for j in range(turning_points[i][0], turning_points[i + 1][0])]).reshape(
+
+
+                        if turning_points[i] == []:
+                            continue
+                        have_next_index = False
+                        for j in range(i + 1, len(turning_points) - 1):
+                            if turning_points[j] != []:
+                                next_index = j
+                                have_next_index = True
+                                break
+                        if have_next_index == False:
+                            break
+                        x_seg = np.asarray([j for j in range(turning_points[i][0], turning_points[next_index][0])]).reshape(
                             -1, 1)
                         adj_cp_model = LinearRegression().fit(x_seg,
                                                               data['key_indicator_filtered'].iloc[
-                                                              turning_points[i][0]:turning_points[i + 1][0]])
+                                                              turning_points[i][0]:turning_points[next_index][0]])
                         y_pred = adj_cp_model.predict(x_seg)
                         normalized_coef_list.append(
                             100 * adj_cp_model.coef_ / data['key_indicator_filtered'].iloc[turning_points[i][0]])
@@ -483,7 +499,7 @@ class Worker():
                                                                            dynamic_num=self.dynamic_num,
                                                                            labeling_method='quantile')
                     # label the segments
-                    label_seg=[None for i in range(len(turning_points)-1)]
+                    label_seg=[None for _ in range(len(turning_points)-1)]
                     for i in range(len(indexs)-1):
                         label_seg[indexs[i]]=label_seg_raw[i]
 
