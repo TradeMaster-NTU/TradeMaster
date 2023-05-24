@@ -482,6 +482,7 @@ class Worker():
                         y_pred_list.append(y_pred)
                         indexs.append(i)
                         turning_points_temp_flat.append(turning_points[i][0])
+                    indexs.append(len(turning_points)-1)
                     turning_points_temp_flat.append(turning_points[-1][0])
                     # calculate the label
                     label, data_seg, label_seg_raw, index_seg = self.get_label(data=data, turning_points=turning_points_temp_flat,
@@ -541,8 +542,11 @@ class Worker():
                                 right_distance = self.calculate_distance(this_seg, right_neighbor, merging_round)
                         # pick the min distance that is smaller than the threshold to merge
                         # may choose to merge with the shorter neighbor for balanced segment length
-                        if right_distance!=float('inf'):
-                            print(next_index,len(turning_points),len(label_seg),turning_points[next_index][0],data['key_indicator_filtered'].shape[0])
+
+
+                        # if right_distance!=float('inf'):
+                        #     print(next_index,len(turning_points),len(label_seg),turning_points[next_index][0],data['key_indicator_filtered'].shape[0])
+
                         # if we activate the dynamic constraint
                         if self.merging_dynamic_constraint != float('inf'):
                             # check right
