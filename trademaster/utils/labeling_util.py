@@ -434,160 +434,160 @@ class Worker():
         #     1.merge the chunk with its neighbor
         #     2.recalculate the slope
 
-        # if self.merging_dynamic_constraint != float('inf'):
-        #     print('Only merge dynamic <= distance: ', self.merging_dynamic_constraint)
-        # merging_round = 0
-        # if self.merging_threshold != -1:
-        #     change = True
-        #     while change and merging_round < 20:
-        #
-        #
-        #         merging_round += 1
-        #         counter = 0
-        #         for i in range(len(turning_points) - 1):
-        #             if turning_points[i] != []:
-        #                 counter += 1
-        #         print('merging round: ', merging_round, 'current number of segments: ', counter)
-        #         change = False
-        #
-        #         # if we use the dynamic constraint, we would label the segment every time before merging
-        #         if self.merging_dynamic_constraint !=float('inf'):
-        #             # calculate the slope
-        #             coef_list = []
-        #             normalized_coef_list = []
-        #             y_pred_list = []
-        #             indexs = []
-        #             turning_points_temp_flat = []
-        #             for i in range(len(turning_points) - 1):
-        #                 if turning_points[i] == []:
-        #                     continue
-        #                 for j in range(i + 1, len(turning_points)):
-        #                     if turning_points[j] != []:
-        #                         next_index = j
-        #                         break
-        #                 x_seg = np.asarray([j for j in range(turning_points[i][0], turning_points[next_index][0])]).reshape(
-        #                     -1, 1)
-        #                 adj_cp_model = LinearRegression().fit(x_seg,
-        #                                                       data['key_indicator_filtered'].iloc[
-        #                                                       turning_points[i][0]:turning_points[next_index][0]])
-        #                 y_pred = adj_cp_model.predict(x_seg)
-        #                 normalized_coef_list.append(
-        #                     100 * adj_cp_model.coef_ / data['key_indicator_filtered'].iloc[turning_points[i][0]])
-        #                 coef_list.append(adj_cp_model.coef_)
-        #                 y_pred_list.append(y_pred)
-        #                 indexs.append(i)
-        #                 turning_points_temp_flat.append(turning_points[i][0])
-        #             # indexs.append(len(turning_points)-1)
-        #             turning_points_temp_flat.append(turning_points[-1][0])
-        #             # calculate the label
-        #             label, data_seg, label_seg_raw, index_seg = self.get_label(data=data, turning_points=turning_points_temp_flat,
-        #                                                                    low=None, high=None, normalized_coef_list=normalized_coef_list, tic=tic,
-        #                                                                    dynamic_num=self.dynamic_num,
-        #                                                                    labeling_method='quantile')
-        #             # label the segments
-        #             label_seg=[None for _ in range(len(turning_points)-1)]
-        #             for i in range(len(indexs)):
-        #                 label_seg[indexs[i]]=label_seg_raw[i]
-        #             # print('label_seg: ', label_seg)
-        #
-        #
-        #         # for every segment that does not reach self.max_length_expectation, calculate the the DTW distance between the segment and its neighbor
-        #         for i in tqdm(range(len(turning_points) - 1)):
-        #             # find the first non-empty segment on right side
-        #             if turning_points[i] == []:
-        #                 continue
-        #             have_next_index = False
-        #             for j in range(i + 1, len(turning_points)):
-        #                 if turning_points[j] != []:
-        #                     next_index = j
-        #                     have_next_index = True
-        #                     break
-        #             if have_next_index == False:
-        #                 break
-        #             if turning_points[next_index][0] - turning_points[i][0] < self.max_length_expectation:
-        #                 left_distance = float('inf')
-        #                 right_distance = float('inf')
-        #                 this_seg = data['key_indicator_filtered'].iloc[
-        #                            turning_points[i][0]:turning_points[next_index][0]].tolist()
-        #                 if i > 0 and i < len(turning_points) - 1:
-        #                     # the last turning point is the end of the data, and it should not be merged
-        #                     # find the first non-empty segment on left side
-        #                     left_index = None
-        #                     for j in range(i - 1, -1, -1):
-        #                         if turning_points[j] != []:
-        #                             left_index = j
-        #                             break
-        #                     if left_index is not None:
-        #                         left_neighbor = data['key_indicator_filtered'].iloc[
-        #                                         turning_points[left_index][0]:turning_points[i][0]].tolist()
-        #                         left_distance = self.calculate_distance(left_neighbor, this_seg, merging_round)
-        #                 if i < len(turning_points) - 2:
-        #                     # find the second non-empty segment on right side
-        #                     next_index_2 = None
-        #                     for j in range(next_index + 1, len(turning_points) - 1):
-        #                         if turning_points[j] != []:
-        #                             next_index_2 = j
-        #                             break
-        #                     if next_index_2 is not None:
-        #                         right_neighbor = data['key_indicator_filtered'].iloc[
-        #                                          turning_points[next_index][0]:turning_points[next_index_2][0]].tolist()
-        #                         right_distance = self.calculate_distance(this_seg, right_neighbor, merging_round)
-        #                     else:
-        #                         right_neighbor = data['key_indicator_filtered'].iloc[
-        #                                          turning_points[next_index][0]:].tolist()
-        #                         right_distance = self.calculate_distance(this_seg, right_neighbor, merging_round)
-        #                 # pick the min distance that is smaller than the threshold to merge
-        #                 # may choose to merge with the shorter neighbor for balanced segment length
-        #
-        #
-        #                 # if we activate the dynamic constraint
-        #                 if self.merging_dynamic_constraint != float('inf'):
-        #                     # check right
-        #                     if right_distance!=float('inf') and self.merging_dynamic_constraint < abs(label_seg[i] - label_seg[next_index]):
-        #                         if right_distance < self.merging_threshold:
-        #                             print(f'prohibit merging right of {label_seg[i]} and {label_seg[next_index]}')
-        #                         right_distance = float('inf')
-        #                     # check left
-        #                     if i > 0:
-        #                         if left_distance!=float('inf') and self.merging_dynamic_constraint < abs(label_seg[i] - label_seg[left_index]):
-        #                             if left_distance < self.merging_threshold:
-        #                                 print(f'prohibit merging left of {label_seg[i]} and {label_seg[left_index]}')
-        #                             left_distance = float('inf')
-        #
-        #
-        #                 if min(left_distance, right_distance) < self.merging_threshold:
-        #                     # merge with the closer neighbor
-        #                     if left_distance < right_distance:
-        #                         turning_points[left_index] = turning_points[left_index] + turning_points[i]
-        #                     else:
-        #                         turning_points[next_index] = turning_points[i] + turning_points[next_index]
-        #                     change = True
-        #                     turning_points[i] = []
-        #     counter = 0
-        #     for i in range(len(turning_points) - 1):
-        #         if turning_points[i] != []:
-        #             counter += 1
-        #     print(f'merging_round in total: {merging_round}, number of segments: {counter}')
-        #     # remove empty segments
-        #     turning_points_new = []
-        #     for i in range(len(turning_points)):
-        #         if turning_points[i] != []:
-        #             turning_points_new.append(turning_points[i])
-        #     turning_points = turning_points_new
-        #     # calculate the slope again
-        #     coef_list = []
-        #     normalized_coef_list = []
-        #     y_pred_list = []
-        #     for i in range(len(turning_points) - 1):
-        #         x_seg = np.asarray([j for j in range(turning_points[i][0], turning_points[i + 1][0])]).reshape(-1, 1)
-        #         adj_cp_model = LinearRegression().fit(x_seg,
-        #                                               data['key_indicator_filtered'].iloc[
-        #                                               turning_points[i][0]:turning_points[i + 1][0]])
-        #         y_pred = adj_cp_model.predict(x_seg)
-        #         normalized_coef_list.append(
-        #             100 * adj_cp_model.coef_ / data['key_indicator_filtered'].iloc[turning_points[i][0]])
-        #         coef_list.append(adj_cp_model.coef_)
-        #         y_pred_list.append(y_pred)
+        if self.merging_dynamic_constraint != float('inf'):
+            print('Only merge dynamic <= distance: ', self.merging_dynamic_constraint)
+        merging_round = 0
+        if self.merging_threshold != -1:
+            change = True
+            while change and merging_round < 20:
+
+
+                merging_round += 1
+                counter = 0
+                for i in range(len(turning_points) - 1):
+                    if turning_points[i] != []:
+                        counter += 1
+                print('merging round: ', merging_round, 'current number of segments: ', counter)
+                change = False
+
+                # if we use the dynamic constraint, we would label the segment every time before merging
+                if self.merging_dynamic_constraint !=float('inf'):
+                    # calculate the slope
+                    coef_list = []
+                    normalized_coef_list = []
+                    y_pred_list = []
+                    indexs = []
+                    turning_points_temp_flat = []
+                    for i in range(len(turning_points) - 1):
+                        if turning_points[i] == []:
+                            continue
+                        for j in range(i + 1, len(turning_points)):
+                            if turning_points[j] != []:
+                                next_index = j
+                                break
+                        x_seg = np.asarray([j for j in range(turning_points[i][0], turning_points[next_index][0])]).reshape(
+                            -1, 1)
+                        adj_cp_model = LinearRegression().fit(x_seg,
+                                                              data['key_indicator_filtered'].iloc[
+                                                              turning_points[i][0]:turning_points[next_index][0]])
+                        y_pred = adj_cp_model.predict(x_seg)
+                        normalized_coef_list.append(
+                            100 * adj_cp_model.coef_ / data['key_indicator_filtered'].iloc[turning_points[i][0]])
+                        coef_list.append(adj_cp_model.coef_)
+                        y_pred_list.append(y_pred)
+                        indexs.append(i)
+                        turning_points_temp_flat.append(turning_points[i][0])
+                    # indexs.append(len(turning_points)-1)
+                    turning_points_temp_flat.append(turning_points[-1][0])
+                    # calculate the label
+                    label, data_seg, label_seg_raw, index_seg = self.get_label(data=data, turning_points=turning_points_temp_flat,
+                                                                           low=None, high=None, normalized_coef_list=normalized_coef_list, tic=tic,
+                                                                           dynamic_num=self.dynamic_num,
+                                                                           labeling_method='quantile')
+                    # label the segments
+                    label_seg=[None for _ in range(len(turning_points)-1)]
+                    for i in range(len(indexs)):
+                        label_seg[indexs[i]]=label_seg_raw[i]
+                    # print('label_seg: ', label_seg)
+
+
+                # for every segment that does not reach self.max_length_expectation, calculate the the DTW distance between the segment and its neighbor
+                for i in tqdm(range(len(turning_points) - 1)):
+                    # find the first non-empty segment on right side
+                    if turning_points[i] == []:
+                        continue
+                    have_next_index = False
+                    for j in range(i + 1, len(turning_points)):
+                        if turning_points[j] != []:
+                            next_index = j
+                            have_next_index = True
+                            break
+                    if have_next_index == False:
+                        break
+                    if turning_points[next_index][0] - turning_points[i][0] < self.max_length_expectation:
+                        left_distance = float('inf')
+                        right_distance = float('inf')
+                        this_seg = data['key_indicator_filtered'].iloc[
+                                   turning_points[i][0]:turning_points[next_index][0]].tolist()
+                        if i > 0 and i < len(turning_points) - 1:
+                            # the last turning point is the end of the data, and it should not be merged
+                            # find the first non-empty segment on left side
+                            left_index = None
+                            for j in range(i - 1, -1, -1):
+                                if turning_points[j] != []:
+                                    left_index = j
+                                    break
+                            if left_index is not None:
+                                left_neighbor = data['key_indicator_filtered'].iloc[
+                                                turning_points[left_index][0]:turning_points[i][0]].tolist()
+                                left_distance = self.calculate_distance(left_neighbor, this_seg, merging_round)
+                        if i < len(turning_points) - 2:
+                            # find the second non-empty segment on right side
+                            next_index_2 = None
+                            for j in range(next_index + 1, len(turning_points) - 1):
+                                if turning_points[j] != []:
+                                    next_index_2 = j
+                                    break
+                            if next_index_2 is not None:
+                                right_neighbor = data['key_indicator_filtered'].iloc[
+                                                 turning_points[next_index][0]:turning_points[next_index_2][0]].tolist()
+                                right_distance = self.calculate_distance(this_seg, right_neighbor, merging_round)
+                            else:
+                                right_neighbor = data['key_indicator_filtered'].iloc[
+                                                 turning_points[next_index][0]:].tolist()
+                                right_distance = self.calculate_distance(this_seg, right_neighbor, merging_round)
+                        # pick the min distance that is smaller than the threshold to merge
+                        # may choose to merge with the shorter neighbor for balanced segment length
+
+
+                        # if we activate the dynamic constraint
+                        if self.merging_dynamic_constraint != float('inf'):
+                            # check right
+                            if right_distance!=float('inf') and self.merging_dynamic_constraint < abs(label_seg[i] - label_seg[next_index]):
+                                if right_distance < self.merging_threshold:
+                                    print(f'prohibit merging right of {label_seg[i]} and {label_seg[next_index]}')
+                                right_distance = float('inf')
+                            # check left
+                            if i > 0:
+                                if left_distance!=float('inf') and self.merging_dynamic_constraint < abs(label_seg[i] - label_seg[left_index]):
+                                    if left_distance < self.merging_threshold:
+                                        print(f'prohibit merging left of {label_seg[i]} and {label_seg[left_index]}')
+                                    left_distance = float('inf')
+
+
+                        if min(left_distance, right_distance) < self.merging_threshold:
+                            # merge with the closer neighbor
+                            if left_distance < right_distance:
+                                turning_points[left_index] = turning_points[left_index] + turning_points[i]
+                            else:
+                                turning_points[next_index] = turning_points[i] + turning_points[next_index]
+                            change = True
+                            turning_points[i] = []
+            counter = 0
+            for i in range(len(turning_points) - 1):
+                if turning_points[i] != []:
+                    counter += 1
+            print(f'merging_round in total: {merging_round}, number of segments: {counter}')
+            # remove empty segments
+            turning_points_new = []
+            for i in range(len(turning_points)):
+                if turning_points[i] != []:
+                    turning_points_new.append(turning_points[i])
+            turning_points = turning_points_new
+            # calculate the slope again
+            coef_list = []
+            normalized_coef_list = []
+            y_pred_list = []
+            for i in range(len(turning_points) - 1):
+                x_seg = np.asarray([j for j in range(turning_points[i][0], turning_points[i + 1][0])]).reshape(-1, 1)
+                adj_cp_model = LinearRegression().fit(x_seg,
+                                                      data['key_indicator_filtered'].iloc[
+                                                      turning_points[i][0]:turning_points[i + 1][0]])
+                y_pred = adj_cp_model.predict(x_seg)
+                normalized_coef_list.append(
+                    100 * adj_cp_model.coef_ / data['key_indicator_filtered'].iloc[turning_points[i][0]])
+                coef_list.append(adj_cp_model.coef_)
+                y_pred_list.append(y_pred)
 
         # reshape turning_points to a 1d list
         turning_points = [i[0] for i in turning_points]
