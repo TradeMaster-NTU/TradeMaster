@@ -483,8 +483,7 @@ class Worker():
                                                                            dynamic_num=self.dynamic_num,
                                                                            labeling_method='quantile')
                     # label the segments
-                    label_seg=[None for i in range(len(turning_points))]
-                    print(len(label_seg_raw),len(indexs))
+                    label_seg=[None for i in range(len(turning_points)-1)]
                     for i in range(len(indexs)):
                         label_seg[indexs[i]]=label_seg_raw[i]
 
