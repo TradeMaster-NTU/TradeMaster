@@ -490,7 +490,7 @@ class Worker():
                                                                            labeling_method='quantile')
                     # label the segments
                     label_seg=[None for _ in range(len(turning_points)-1)]
-                    for i in range(len(indexs)-1):
+                    for i in range(len(indexs)):
                         label_seg[indexs[i]]=label_seg_raw[i]
                     print('label_seg: ', label_seg)
 
