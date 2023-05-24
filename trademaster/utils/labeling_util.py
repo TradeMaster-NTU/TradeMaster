@@ -491,6 +491,7 @@ class Worker():
                     label_seg=[None for _ in range(len(turning_points)-1)]
                     for i in range(len(indexs)-1):
                         label_seg[indexs[i]]=label_seg_raw[i]
+                    print('label_seg: ', label_seg)
 
 
                 # for every segment that does not reach self.max_length_expectation, calculate the the DTW distance between the segment and its neighbor
@@ -541,6 +542,7 @@ class Worker():
                         # may choose to merge with the shorter neighbor for balanced segment length
 
                         # if we activate the dynamic constraint
+                        print(len(label_seg), i, next_index, left_index)
                         if self.merging_dynamic_constraint != float('inf'):
                             # check right
                             if next_index and self.merging_dynamic_constraint < abs(label_seg[i] - label_seg[next_index]):
