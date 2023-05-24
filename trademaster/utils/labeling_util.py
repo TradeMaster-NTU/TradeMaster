@@ -550,10 +550,14 @@ class Worker():
                         if self.merging_dynamic_constraint != float('inf'):
                             # check right
                             if right_distance!=float('inf') and self.merging_dynamic_constraint < abs(label_seg[i] - label_seg[next_index]):
+                                if right_distance < self.merging_threshold:
+                                    print(f'prohibit merging right of {label_seg[i]} and {label_seg[next_index]}')
                                 right_distance = float('inf')
                             # check left
                             if i > 0:
                                 if left_distance!=float('inf') and self.merging_dynamic_constraint < abs(label_seg[i] - label_seg[left_index]):
+                                    if left_distance < self.merging_threshold:
+                                        print(f'prohibit merging left of {label_seg[i]} and {label_seg[left_index]}')
                                     left_distance = float('inf')
 
 
