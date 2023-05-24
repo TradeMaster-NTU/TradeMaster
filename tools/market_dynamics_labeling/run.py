@@ -77,7 +77,7 @@ def run_mdm():
 
     #log to file
     # get the folder of args.data_path
-    outputfolder = os.path.dirname(cfg.data_path)
+    outputfolder = os.path.dirname(cfg['data_path'])
     f = open(f"{outputfolder}/res.log", 'a')
     backup = sys.stdout
     sys.stdout = Tee(sys.stdout, f)
