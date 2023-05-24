@@ -477,7 +477,7 @@ class Worker():
                         y_pred_list.append(y_pred)
                         indexs.append(i)
                         turning_points_temp_flat.append(turning_points[i][0])
-                    # indexs.append(len(turning_points)-1)
+
                     turning_points_temp_flat.append(turning_points[-1][0])
                     # calculate the label
                     label, data_seg, label_seg_raw, index_seg = self.get_label(data=data, turning_points=turning_points_temp_flat,
@@ -488,7 +488,7 @@ class Worker():
                     label_seg=[None for _ in range(len(turning_points)-1)]
                     for i in range(len(indexs)):
                         label_seg[indexs[i]]=label_seg_raw[i]
-                    # print('label_seg: ', label_seg)
+
 
 
                 # for every segment that does not reach self.max_length_expectation, calculate the the DTW distance between the segment and its neighbor
