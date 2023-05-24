@@ -48,11 +48,29 @@ def parse_args():
     args = parser.parse_args()
     return args
 
+class Tee(object):
+    def __init__(self, *files):
+        self.files = files
+    def write(self, obj):
+        for f in self.files:
+            f.write(obj)
+
 
 def run_mdm():
+
+
+
+
     args = parse_args()
 
     cfg = Config.fromfile(args.config)
+
+    #log to file
+    # get the folder of args.data_path
+    outputfolder = os.path.dirname(args.data_path)
+    f = open(f"{outputfolder}/res.log", 'a')
+    backup = sys.stdout
+    sys.stdout = Tee(sys.stdout, f)
 
 
     # task_name = args.task_name
@@ -68,6 +86,7 @@ def run_mdm():
     print(f'the processed datafile is at {process_datafile_path}')
     plot_dir = os.path.dirname(os.path.realpath(market_dynamic_labeling_visualization_paths[0]))
     print(f'the visualizations are at {plot_dir}')
+    print(f'The experiment log is at {outputfolder}/res.log')
 
     ## wirte path to cfg
     cfg.market_dynamics_model.process_datafile_path=process_datafile_path.replace("\\", "/")

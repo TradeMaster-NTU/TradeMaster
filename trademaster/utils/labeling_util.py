@@ -489,8 +489,9 @@ class Worker():
                     for i in range(len(indexs)):
                         label_seg[indexs[i]]=label_seg_raw[i]
 
-
-
+                # record the distance
+                distance_list=[]
+                merge_prohibit_times=0
                 # for every segment that does not reach self.max_length_expectation, calculate the the DTW distance between the segment and its neighbor
                 for i in tqdm(range(len(turning_points) - 1)):
                     # find the first non-empty segment on right side
@@ -539,19 +540,25 @@ class Worker():
                         # pick the min distance that is smaller than the threshold to merge
                         # may choose to merge with the shorter neighbor for balanced segment length
 
+                        if left_distance!=float('inf'):
+                            distance_list.append(left_distance)
+                        if right_distance!=float('inf'):
+                            distance_list.append(right_distance)
 
                         # if we activate the dynamic constraint
                         if self.merging_dynamic_constraint != float('inf'):
                             # check right
                             if right_distance!=float('inf') and self.merging_dynamic_constraint < abs(label_seg[i] - label_seg[next_index]):
                                 if right_distance < self.merging_threshold:
-                                    print(f'prohibit merging right of {label_seg[i]} and {label_seg[next_index]}')
+                                    merge_prohibit_times+=1
+                                    # print(f'prohibit merging right of {label_seg[i]} and {label_seg[next_index]}')
                                 right_distance = float('inf')
                             # check left
                             if i > 0:
                                 if left_distance!=float('inf') and self.merging_dynamic_constraint < abs(label_seg[i] - label_seg[left_index]):
                                     if left_distance < self.merging_threshold:
-                                        print(f'prohibit merging left of {label_seg[i]} and {label_seg[left_index]}')
+                                        merge_prohibit_times+=1
+                                        # print(f'prohibit merging left of {label_seg[i]} and {label_seg[left_index]}')
                                     left_distance = float('inf')
 
                         if min(left_distance, right_distance) < self.merging_threshold:
@@ -562,17 +569,31 @@ class Worker():
                                 turning_points[next_index] = turning_points[i] + turning_points[next_index]
                             change = True
                             turning_points[i] = []
-            counter = 0
-            for i in range(len(turning_points) - 1):
-                if turning_points[i] != []:
-                    counter += 1
-            print(f'merging_round in total: {merging_round}, number of segments: {counter}')
+                print('All distance statistics:')
+                print(pd.Series(distance_list).describe())
+                print('Your merging_threshold is: ', self.merging_threshold)
+                print(f'Merge prohibit times by merging_dynamic_constraint: {merge_prohibit_times}')
+
+
+
             # remove empty segments
             turning_points_new = []
             for i in range(len(turning_points)):
                 if turning_points[i] != []:
                     turning_points_new.append(turning_points[i])
             turning_points = turning_points_new
+
+            counter = 0
+            for i in range(len(turning_points) - 1):
+                if turning_points[i] != []:
+                    counter += 1
+
+            #log merging details to guide the tuning of parameters
+            print(f'merging_round in total: {merging_round}, number of segments: {counter}')
+            #describe the distribution of distance by using pd.describe()
+            print('You may want to tune the merging_threshold and merging_dynamic_constraint to get a better result.')
+
+
             # calculate the slope again
             coef_list = []
             normalized_coef_list = []
