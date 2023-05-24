@@ -84,7 +84,7 @@ class Worker():
         self.min_length_limit = min_length_limit
         self.merging_metric = merging_metric
         self.merging_threshold = merging_threshold
-        if self.merging_dynamic_constraint < 0:
+        if merging_dynamic_constraint < 0:
             self.merging_dynamic_constraint = float('inf')
         else:
             self.merging_dynamic_constraint = merging_dynamic_constraint
