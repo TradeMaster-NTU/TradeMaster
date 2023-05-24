@@ -78,14 +78,14 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
             process_data_path=os.path.join(dataset_foler_name,dataset_name+'_MDM_processed.csv').replace("\\", "/")
             raw_data.to_csv(process_data_path)
             self.data_path = process_data_path
-        Labeler = util.Labeler(self.data_path, 'linear', filter_strength=self.filter_strength,key_indicator=self.key_indicator,
-                               timestamp=self.timestamp, tic=self.tic, labeling_method=self.labeling_method,min_length_limit=self.min_length_limit,
-                               merging_threshold=self.merging_threshold,merging_metric=self.merging_metric)
+        worker = util.Worker(self.data_path, 'linear', filter_strength=self.filter_strength, key_indicator=self.key_indicator,
+                             timestamp=self.timestamp, tic=self.tic, labeling_method=self.labeling_method, min_length_limit=self.min_length_limit,
+                             merging_threshold=self.merging_threshold, merging_metric=self.merging_metric)
         print('start fitting')
-        Labeler.fit(self.dynamic_number, self.max_length_expectation, self.min_length_limit)
+        worker.fit(self.dynamic_number, self.max_length_expectation, self.min_length_limit)
         print('finish fitting')
-        Labeler.label(self.slope_interval,os.path.dirname(self.data_path))
-        labeled_data = pd.concat([v for v in Labeler.data_dict.values()], axis=0)
+        worker.label(self.slope_interval, os.path.dirname(self.data_path))
+        labeled_data = pd.concat([v for v in worker.data_dict.values()], axis=0)
         # file_writer=self.file_extension_selector(read=False)
         # print('file_writer',file_writer)
         flie_reader=self.file_extension_selector(read=True)
@@ -118,7 +118,7 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
         print('labeling done')
         print('plotting start')
         # a list the path to all the modeling visulizations
-        market_dynamic_labeling_visualization_paths=Labeler.plot(Labeler.tics, self.slope_interval, output_path,self.model_id)
+        market_dynamic_labeling_visualization_paths=worker.plot(worker.tics, self.slope_interval, output_path, self.model_id)
         print('plotting done')
         # if self.OE_BTC == True:
         #     os.remove('./temp/OE_BTC_processed.csv')
