@@ -11,9 +11,9 @@ market_dynamic_labeling_visualization_paths='',
 key_indicator='adjcp',
 timestamp='date',
 tic='tic',
-labeling_method='slope',
+labeling_method='quantile',
 min_length_limit=-1,
 merging_metric='DTW_distance',
 merging_threshold=-1,
-merging_dynamic_constraint=-1
+merging_dynamic_constraint=1
 )
