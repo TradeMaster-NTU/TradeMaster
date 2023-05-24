@@ -481,7 +481,7 @@ class Worker():
                     label, data_seg, label_seg_raw, index_seg = self.get_label(data=data, turning_points=turning_points_temp_flat,
                                                                            low=None, high=None, normalized_coef_list=normalized_coef_list, tic=tic,
                                                                            dynamic_num=self.dynamic_num,
-                                                                           labeling_method=self.labeling_method)
+                                                                           labeling_method='quantile')
                     # label the segments
                     label_seg=[None for i in range(len(turning_points))]
                     for i in range(len(indexs)):
