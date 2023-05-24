@@ -29,8 +29,8 @@ def parse_args():
     parser.add_argument("--slope_interval",  nargs="+", type=float,help='The low, high slope when labeling_method=slope')
     parser.add_argument('--dynamic_number',type=int,default=3,help='The number of dynamics to be modeled')
     parser.add_argument('--max_length_expectation',type=int,default=300,help='Slice longer than this number will not merge actively')
-    parser.add_argument('--OE_BTC',type=bool,default=False)
-    parser.add_argument('--PM',type=str,default='False')
+    parser.add_argument('--OE_BTC',type=bool,default=False,help='If dataset is OE_BTC')
+    parser.add_argument('--PM',type=str,default='False',help='If dataset is PM')
     parser.add_argument("--config", default=osp.join(ROOT, "configs", "evaluation", "market_dynamics_modeling.py"),
                         help="deafult mdm config path")
     parser.add_argument("--key_indicator", type=str, default='adjcp')
