@@ -31,6 +31,7 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
         self.min_length_limit = get_attr(kwargs, "min_length_limit", None)
         self.merging_metric=get_attr(kwargs, "merging_metric", None)
         self.merging_threshold=get_attr(kwargs, "merging_threshold", None)
+        self.merging_dynamic_constraint=get_attr(kwargs, "merging_dynamic_constraint", None)
 
     def file_extension_selector(self,read):
         if self.data_path.endswith('.csv'):
@@ -45,6 +46,11 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
                 return pd.DataFrame.to_feather
         else:
             raise ValueError('invalid file extension')
+
+    def wirte_data_as_segments(self,data,process_datafile_path):
+        # get file name and extension from process_datafile_path
+        file_name, file_extension = os.path.splitext(process_datafile_path)
+
 
     def run(self):
         print('labeling start')
@@ -80,7 +86,7 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
             self.data_path = process_data_path
         worker = util.Worker(self.data_path, 'linear', filter_strength=self.filter_strength, key_indicator=self.key_indicator,
                              timestamp=self.timestamp, tic=self.tic, labeling_method=self.labeling_method, min_length_limit=self.min_length_limit,
-                             merging_threshold=self.merging_threshold, merging_metric=self.merging_metric)
+                             merging_threshold=self.merging_threshold, merging_metric=self.merging_metric,merging_dynamic_constraint=self.merging_dynamic_constraint)
         print('start fitting')
         worker.fit(self.dynamic_number, self.max_length_expectation, self.min_length_limit)
         print('finish fitting')

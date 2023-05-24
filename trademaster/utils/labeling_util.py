@@ -73,7 +73,7 @@ class Dynamic_labeler():
 
 class Worker():
     def __init__(self, data, method='linear', filter_strength=1, key_indicator='adjcp', timestamp='date', tic='tic',
-                 labeling_method='slope', min_length_limit=-1, merging_threshold=-1, merging_metric='DTW_distance'):
+                 labeling_method='slope', min_length_limit=-1, merging_threshold=-1, merging_metric='DTW_distance',merging_dynamic_constraint=-1):
         plt.ioff()
         self.key_indicator = key_indicator
         self.timestamp = timestamp
@@ -84,6 +84,10 @@ class Worker():
         self.min_length_limit = min_length_limit
         self.merging_metric = merging_metric
         self.merging_threshold = merging_threshold
+        if self.merging_dynamic_constraint < 0:
+            self.merging_dynamic_constraint = float('inf')
+        else:
+            self.merging_dynamic_constraint = merging_dynamic_constraint
         self.TSNE=False
         if method == 'linear':
             self.method = 'linear'
@@ -139,7 +143,7 @@ class Worker():
                 norm_coef_list = self.norm_coef_list_dict[tic]
                 label, data_seg, label_seg, index_seg = self.get_label(self.data_dict[tic], turning_points,
                                                                        low, high, norm_coef_list, tic,
-                                                                       self.dynamic_num)
+                                                                       self.dynamic_num,labeling_method=self.labeling_method)
                 self.data_dict[tic]['label'] = label
                 self.all_data_seg.extend(data_seg)
                 self.all_label_seg.extend(label_seg)
@@ -158,22 +162,22 @@ class Worker():
                     print('not able to do clustering')
 
     def get_label(self, data, turning_points, low, high, normalized_coef_list, tic,
-                  dynamic_num=4):
+                  dynamic_num=4,labeling_method=None):
         data = data.reset_index(drop=True)
         data_seg = []
 
         label = []
         label_seg = []
         index_seg = []
-        self.dynamic_flag = Dynamic_labeler(labeling_method=self.labeling_method, dynamic_num=dynamic_num, low=low,
+        self.dynamic_flag = Dynamic_labeler(labeling_method=labeling_method, dynamic_num=dynamic_num, low=low,
                                             high=high,
                                             normalized_coef_list=normalized_coef_list, data=data,
                                             turning_points=turning_points)
         data = data['pct_return_filtered']
         for i in range(len(turning_points) - 1):
-            if self.labeling_method == 'slope' or self.labeling_method == 'quantile':
+            if labeling_method == 'slope' or labeling_method == 'quantile':
                 coef = normalized_coef_list[i]
-            elif self.labeling_method == 'DTW':
+            elif labeling_method == 'DTW':
                 coef = i
             flag = self.dynamic_flag.get(coef)
             label.extend([flag] * (turning_points[i + 1] - turning_points[i]))
@@ -381,12 +385,18 @@ class Worker():
         1. segment the data into chunks based on turning points(where all neighbors have the opposite slope)
         2. if the length is smaller than min_length_limit, merge the chunk with its neighbor
         3. Calculate the slope
-        5. While the chunk does not satisfy the length limit, and metric satisfied the merging_threshold:
+        4. While the chunk does not satisfy the length limit, and metric satisfied the merging_threshold:
              1.merge the chunk with its neighbor
              2.recalculate the slope
+        if the self.merging_dynamic_constraint is not -1, we would label the segment every time before merging(except the first time) /
+        and prohibit the merging if the distance of the label if larger than the merging_dynamic_constraint (the labeling method is 'quantile')
         """
 
-        # recalculate_flag = False
+
+
+
+
+
         data = data_ori.reset_index(drop=True)
 
         # 1. segment the data into chunks based on turning points(where all neighbors have the opposite slope)
@@ -426,10 +436,15 @@ class Worker():
         # 3. While the chunk does not satisfy the length limit, and metric satisfied the merging_threshold
         #     1.merge the chunk with its neighbor
         #     2.recalculate the slope
+
+        if self.merging_dynamic_constraint != float('inf'):
+            print('Only merge dynamic <= distance: ', self.merging_dynamic_constraint)
         merging_round = 0
         if self.merging_threshold != -1:
             change = True
             while change and merging_round < 20:
+
+
                 merging_round += 1
                 counter = 0
                 for i in range(len(turning_points) - 1):
@@ -437,6 +452,34 @@ class Worker():
                         counter += 1
                 print('merging round: ', merging_round, 'current number of segments: ', counter)
                 change = False
+
+                # if we use the dynamic constraint, we would label the segment every time before merging
+                if self.merging_dynamic_constraint !=float('inf'):
+                    # calculate the slope
+                    coef_list = []
+                    normalized_coef_list = []
+                    y_pred_list = []
+                    for i in range(len(turning_points) - 1):
+                        x_seg = np.asarray([j for j in range(turning_points[i][0], turning_points[i + 1][0])]).reshape(
+                            -1, 1)
+                        adj_cp_model = LinearRegression().fit(x_seg,
+                                                              data['key_indicator_filtered'].iloc[
+                                                              turning_points[i][0]:turning_points[i + 1][0]])
+                        y_pred = adj_cp_model.predict(x_seg)
+                        normalized_coef_list.append(
+                            100 * adj_cp_model.coef_ / data['key_indicator_filtered'].iloc[turning_points[i][0]])
+                        coef_list.append(adj_cp_model.coef_)
+                        y_pred_list.append(y_pred)
+
+                    turning_points_flat = [i[0] for i in turning_points]
+                    # calculate the label
+                    label, data_seg, label_seg, index_seg = self.get_label(data=data, turning_points=turning_points_flat,
+                                                                           low=None, high=None, normalized_coef_list=normalized_coef_list, tic=tic,
+                                                                           dynamic_num=self.dynamic_num,
+                                                                           labeling_method=self.labeling_method)
+
+
+
                 # for every segment that does not reach self.max_length_expectation, calculate the the DTW distance between the segment and its neighbor
                 for i in tqdm(range(len(turning_points) - 1)):
                     # find the first non-empty segment on right side
@@ -483,12 +526,25 @@ class Worker():
                                 right_distance = self.calculate_distance(this_seg, right_neighbor, merging_round)
                         # pick the min distance that is smaller than the threshold to merge
                         # may choose to merge with the shorter neighbor for balanced segment length
+
+                        # if we activate the dynamic constraint
+                        if self.merging_dynamic_constraint != float('inf'):
+                            # check right
+                            if self.merging_dynamic_constraint < abs(label_seg[i] - label_seg[next_index]):
+                                right_distance = float('inf')
+                            # check left
+                            if i > 0:
+                                if self.merging_dynamic_constraint < abs(label_seg[i] - label_seg[left_index]):
+                                    left_distance = float('inf')
+
+
                         if min(left_distance, right_distance) < self.merging_threshold:
-                            change = True
+                            # merge with the closer neighbor
                             if left_distance < right_distance:
                                 turning_points[left_index] = turning_points[left_index] + turning_points[i]
                             else:
                                 turning_points[next_index] = turning_points[i] + turning_points[next_index]
+                            change = True
                             turning_points[i] = []
             counter = 0
             for i in range(len(turning_points) - 1):
