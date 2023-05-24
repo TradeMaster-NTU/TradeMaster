@@ -1,5 +1,5 @@
 market_dynamics_model = dict(
-    data_path="data/algorithmic_trading/BTC/data.csv",
+    data_path="data/algorithmic_trading/BTC/test.csv",
 filter_strength=1,
 slope_interval=[-0.15,0.15],
 dynamic_number=5,
