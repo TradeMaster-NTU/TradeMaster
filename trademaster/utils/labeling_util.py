@@ -484,9 +484,9 @@ class Worker():
                                                                            labeling_method='quantile')
                     # label the segments
                     label_seg=[None for i in range(len(turning_points))]
+                    print(len(label_seg_raw),len(indexs))
                     for i in range(len(indexs)):
                         label_seg[indexs[i]]=label_seg_raw[i]
-
 
 
                 # for every segment that does not reach self.max_length_expectation, calculate the the DTW distance between the segment and its neighbor
