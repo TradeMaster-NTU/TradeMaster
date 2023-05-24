@@ -583,13 +583,9 @@ class Worker():
                     turning_points_new.append(turning_points[i])
             turning_points = turning_points_new
 
-            counter = 0
-            for i in range(len(turning_points) - 1):
-                if turning_points[i] != []:
-                    counter += 1
 
             #log merging details to guide the tuning of parameters
-            print(f'merging_round in total: {merging_round}, number of segments: {counter}')
+            print(f'merging_round in total: {merging_round}, number of segments: {len(turning_points)}')
             #describe the distribution of distance by using pd.describe()
             print('You may want to tune the merging_threshold and merging_dynamic_constraint to get a better result.')
 
