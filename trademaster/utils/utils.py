@@ -421,7 +421,7 @@ def plot_radar_chart(data,plot_name,radar_save_path):
 def MRL_F2B_args_converter(args):
     output_args={}
     output_args['data_path']=args['dataset_path']
-    output_args['method']='linear'
+    output_args['method']='slice_and_merge'
     #convert Granularity to fitting_parameters
     # Granularity=0-> base=5 Granularity=1-> base=25
     G=args['Granularity']

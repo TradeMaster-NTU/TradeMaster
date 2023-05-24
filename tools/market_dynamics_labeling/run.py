@@ -24,8 +24,8 @@ from trademaster.evaluation.market_dynamics_labeling.builder import build_market
 def parse_args():
     parser = argparse.ArgumentParser(description='Market_Dynamics_modeling args')
 
-    parser.add_argument("--data_path", type=str)
-    parser.add_argument("--method", type=str)
+    parser.add_argument("--data_path", type=str,help="data path to read")
+    parser.add_argument("--method", type=str, help='method to use: slice_and_merge')
     parser.add_argument("--fitting_parameters",nargs='+', type=str)
     parser.add_argument("--slope_interval",  nargs="+", type=float)
     parser.add_argument('--dynamic_number',type=int,default=4)

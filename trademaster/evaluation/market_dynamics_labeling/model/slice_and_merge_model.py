@@ -17,7 +17,7 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
         super(Linear_Market_Dynamics_Model, self).__init__()
         # print('data_path',get_attr(kwargs, "data_path", None))
         self.data_path=get_attr(kwargs, "data_path", None)
-        self.method = 'linear'
+        self.method = 'slice_and_merge'
         self.filter_strength = get_attr(kwargs, "filter_strength", None)
         self.slope_interval = get_attr(kwargs, "slope_interval", None)
         self.dynamic_number = get_attr(kwargs, "dynamic_number", None)
@@ -84,7 +84,7 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
             process_data_path=os.path.join(dataset_foler_name,dataset_name+'_MDM_processed.csv').replace("\\", "/")
             raw_data.to_csv(process_data_path)
             self.data_path = process_data_path
-        worker = util.Worker(self.data_path, 'linear', filter_strength=self.filter_strength, key_indicator=self.key_indicator,
+        worker = util.Worker(self.data_path, 'slice_and_merge', filter_strength=self.filter_strength, key_indicator=self.key_indicator,
                              timestamp=self.timestamp, tic=self.tic, labeling_method=self.labeling_method, min_length_limit=self.min_length_limit,
                              merging_threshold=self.merging_threshold, merging_metric=self.merging_metric,merging_dynamic_constraint=self.merging_dynamic_constraint)
         print('start fitting')

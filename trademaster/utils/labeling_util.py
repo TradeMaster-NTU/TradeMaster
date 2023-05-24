@@ -72,7 +72,7 @@ class Dynamic_labeler():
 
 
 class Worker():
-    def __init__(self, data, method='linear', filter_strength=1, key_indicator='adjcp', timestamp='date', tic='tic',
+    def __init__(self, data, method='slice_and_merge', filter_strength=1, key_indicator='adjcp', timestamp='date', tic='tic',
                  labeling_method='slope', min_length_limit=-1, merging_threshold=-1, merging_metric='DTW_distance',merging_dynamic_constraint=-1):
         plt.ioff()
         self.key_indicator = key_indicator
@@ -89,8 +89,8 @@ class Worker():
         else:
             self.merging_dynamic_constraint = merging_dynamic_constraint
         self.TSNE=False
-        if method == 'linear':
-            self.method = 'linear'
+        if method == 'slice_and_merge':
+            self.method = 'slice_and_merge'
             # calculate the parameters for filtering
             self.order = 4
             self.Wn_key_indicator = self.filter_parameters_calculation(filter_strength)
@@ -111,7 +111,7 @@ class Worker():
         return Wn_key_indicator
 
     def fit(self, dynamic_number, max_length_expectation, min_length_limit):
-        if self.method == 'linear':
+        if self.method == 'slice_and_merge':
             self.turning_points_dict = {}
             self.coef_list_dict = {}
             self.norm_coef_list_dict = {}
@@ -129,7 +129,7 @@ class Worker():
 
     def label(self, parameters, work_dir=os.getcwd()):
         # return a dict of label where key is the ticker and value is the label of time-series
-        if self.method == 'linear':
+        if self.method == 'slice_and_merge':
             try:
                 low, high = parameters
             except:
@@ -332,6 +332,7 @@ class Worker():
                 turning_points.append(i + 1)
         if turning_points[-1] != data['pct_return_filtered'].size:
             turning_points.append(data['pct_return_filtered'].size)
+        # the last turning point is the end of the data
         return turning_points
 
     def get_mdd(self, seg):
@@ -542,11 +543,11 @@ class Worker():
                         # if we activate the dynamic constraint
                         if self.merging_dynamic_constraint != float('inf'):
                             # check right
-                            if self.merging_dynamic_constraint < abs(label_seg[i] - label_seg[next_index]):
+                            if next_index and self.merging_dynamic_constraint < abs(label_seg[i] - label_seg[next_index]):
                                 right_distance = float('inf')
                             # check left
                             if i > 0:
-                                if self.merging_dynamic_constraint < abs(label_seg[i] - label_seg[left_index]):
+                                if left_index and self.merging_dynamic_constraint < abs(label_seg[i] - label_seg[left_index]):
                                     left_distance = float('inf')
 
 
@@ -596,7 +597,7 @@ class Worker():
                                                model_id)
         if not os.path.exists(self.plot_path):
             os.makedirs(self.plot_path)
-        if self.method == 'linear':
+        if self.method == 'slice_and_merge':
             try:
                 low, high = parameters
             except:
