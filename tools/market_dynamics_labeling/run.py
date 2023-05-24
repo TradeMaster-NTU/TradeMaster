@@ -65,12 +65,7 @@ def run_mdm():
 
     cfg = Config.fromfile(args.config)
 
-    #log to file
-    # get the folder of args.data_path
-    outputfolder = os.path.dirname(args.data_path)
-    f = open(f"{outputfolder}/res.log", 'a')
-    backup = sys.stdout
-    sys.stdout = Tee(sys.stdout, f)
+
 
 
     # task_name = args.task_name
@@ -78,8 +73,16 @@ def run_mdm():
 
     cfg = replace_cfg_vals(cfg)
     print(cfg.pretty_text)
-    # update test style
 
+
+    #log to file
+    # get the folder of args.data_path
+    outputfolder = os.path.dirname(cfg.data_path)
+    f = open(f"{outputfolder}/res.log", 'a')
+    backup = sys.stdout
+    sys.stdout = Tee(sys.stdout, f)
+
+    # update test style
     model = build_market_dynamics_model(cfg)
 
     process_datafile_path, market_dynamic_labeling_visualization_paths=model.run()
