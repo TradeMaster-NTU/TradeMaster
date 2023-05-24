@@ -461,8 +461,7 @@ class Worker():
                     for i in range(len(turning_points) - 1):
                         if turning_points[i] == []:
                             continue
-
-                        for j in range(i + 1, len(turning_points) - 1):
+                        for j in range(i + 1, len(turning_points)):
                             if turning_points[j] != []:
                                 next_index = j
                                 break
