@@ -479,7 +479,6 @@ class Worker():
                         turning_points_temp_flat.append(turning_points[i][0])
                     # indexs.append(len(turning_points)-1)
                     turning_points_temp_flat.append(turning_points[-1][0])
-                    print('turning_points_temp_flat: ', turning_points_temp_flat)
                     # calculate the label
                     label, data_seg, label_seg_raw, index_seg = self.get_label(data=data, turning_points=turning_points_temp_flat,
                                                                            low=None, high=None, normalized_coef_list=normalized_coef_list, tic=tic,
@@ -501,7 +500,7 @@ class Worker():
                     if turning_points[i] == []:
                         continue
                     have_next_index = False
-                    for j in range(i + 1, len(turning_points) - 1):
+                    for j in range(i + 1, len(turning_points)):
                         if turning_points[j] != []:
                             next_index = j
                             have_next_index = True
@@ -513,7 +512,8 @@ class Worker():
                         right_distance = float('inf')
                         this_seg = data['key_indicator_filtered'].iloc[
                                    turning_points[i][0]:turning_points[next_index][0]].tolist()
-                        if i > 0:
+                        if i > 0 and i < len(turning_points) - 1:
+                            # the last turning point is the end of the data, and it should not be merged
                             # find the first non-empty segment on left side
                             left_index = None
                             for j in range(i - 1, -1, -1):
