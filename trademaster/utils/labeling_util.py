@@ -462,14 +462,10 @@ class Worker():
                         if turning_points[i] == []:
                             continue
 
-                        have_next_index = False
                         for j in range(i + 1, len(turning_points) - 1):
                             if turning_points[j] != []:
                                 next_index = j
-                                have_next_index = True
                                 break
-                        if have_next_index == False:
-                            break
                         x_seg = np.asarray([j for j in range(turning_points[i][0], turning_points[next_index][0])]).reshape(
                             -1, 1)
                         adj_cp_model = LinearRegression().fit(x_seg,
@@ -490,13 +486,13 @@ class Worker():
                                                                            dynamic_num=self.dynamic_num,
                                                                            labeling_method='quantile')
                     # label the segments
-                    print(len(turning_points))
-                    print(len(turning_points_temp_flat))
-                    print(len(label_seg_raw))
+                    # print(len(turning_points))
+                    # print(len(turning_points_temp_flat))
+                    # print(len(label_seg_raw))
                     label_seg=[None for _ in range(len(turning_points)-1)]
                     for i in range(len(indexs)):
                         label_seg[indexs[i]]=label_seg_raw[i]
-                    print('label_seg: ', label_seg)
+                    # print('label_seg: ', label_seg)
 
 
                 # for every segment that does not reach self.max_length_expectation, calculate the the DTW distance between the segment and its neighbor
