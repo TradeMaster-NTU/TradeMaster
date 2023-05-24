@@ -469,12 +469,12 @@ class Worker():
 
                     # get the indexs of the segments that are not empty
                     indexs = []
-                    for i in range(len(turning_points) - 1):
+                    for i in range(len(turning_points)):
                         if turning_points[i] != []:
                             indexs.append(i)
                     # get the segments that are not empty
                     turning_points_temp_flat = []
-                    for i in range(len(turning_points) - 1):
+                    for i in range(len(turning_points)):
                         if turning_points[i] != []:
                             turning_points_temp_flat.append(turning_points[i][0])
                     # calculate the label
@@ -484,7 +484,7 @@ class Worker():
                                                                            labeling_method='quantile')
                     # label the segments
                     label_seg=[None for i in range(len(turning_points)-1)]
-                    for i in range(len(indexs)):
+                    for i in range(len(indexs)-1):
                         label_seg[indexs[i]]=label_seg_raw[i]
 
 
