@@ -393,10 +393,6 @@ class Worker():
         """
 
 
-
-
-
-
         data = data_ori.reset_index(drop=True)
 
         # 1. segment the data into chunks based on turning points(where all neighbors have the opposite slope)
@@ -471,12 +467,25 @@ class Worker():
                         coef_list.append(adj_cp_model.coef_)
                         y_pred_list.append(y_pred)
 
-                    turning_points_flat = [i[0] for i in turning_points]
+                    # get the indexs of the segments that are not empty
+                    indexs = []
+                    for i in range(len(turning_points) - 1):
+                        if turning_points[i] != []:
+                            indexs.append(i)
+                    # get the segments that are not empty
+                    turning_points_temp_flat = []
+                    for i in range(len(turning_points) - 1):
+                        if turning_points[i] != []:
+                            turning_points_temp_flat.append(turning_points[i][0])
                     # calculate the label
-                    label, data_seg, label_seg, index_seg = self.get_label(data=data, turning_points=turning_points_flat,
+                    label, data_seg, label_seg_raw, index_seg = self.get_label(data=data, turning_points=turning_points_temp_flat,
                                                                            low=None, high=None, normalized_coef_list=normalized_coef_list, tic=tic,
                                                                            dynamic_num=self.dynamic_num,
                                                                            labeling_method=self.labeling_method)
+                    # label the segments
+                    label_seg=[None for i in range(len(turning_points))]
+                    for i in range(len(indexs)):
+                        label_seg[indexs[i]]=label_seg_raw[i]
 
 
 
