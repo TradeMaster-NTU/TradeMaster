@@ -608,33 +608,34 @@ class Worker():
                     "parameters shoud be [low,high] where the series would be split into 4 dynamics by low,high and 0 as threshold based on slope. A value of -0.5 and 0.5 stand for -0.5% and 0.5% change per step.")
             for tic in tics:
                 paths = []
-                paths.append(self.linear_regession_plot(self.data_dict[tic], tic, self.y_pred_dict[tic],
-                                                        self.turning_points_dict[tic], low, high,
-                                                        normalized_coef_list=self.norm_coef_list_dict[tic],
-                                                        folder_name=self.plot_path, plot_feather=self.key_indicator))
-                self.linear_regession_plot(self.data_dict[tic], tic, self.y_pred_dict[tic],
-                                           self.turning_points_dict[tic], low, high,
-                                           normalized_coef_list=self.norm_coef_list_dict[tic],
-                                           folder_name=self.plot_path_filtered, plot_feather='key_indicator_filtered')
+                paths.append(self.plot_to_file(self.data_dict[tic], tic, self.y_pred_dict[tic],
+                                               self.turning_points_dict[tic], low, high,
+                                               normalized_coef_list=self.norm_coef_list_dict[tic],
+                                               folder_name=self.plot_path, plot_feather=self.key_indicator))
+                self.plot_to_file(self.data_dict[tic], tic, self.y_pred_dict[tic],
+                                  self.turning_points_dict[tic], low, high,
+                                  normalized_coef_list=self.norm_coef_list_dict[tic],
+                                  folder_name=self.plot_path_filtered, plot_feather='key_indicator_filtered')
                 return paths
             try:
                 self.TSNE_plot(self.tsne_results, self.all_label_seg, folder_name=self.plot_path)
             except:
                 print('not able to plot TSNE')
 
-    def linear_regession_plot(self, data, tic, y_pred_list, turning_points, low, high, normalized_coef_list,
-                              folder_name=None, plot_feather=None):
+    def plot_to_file(self, data, tic, y_pred_list, turning_points, low, high, normalized_coef_list,
+                     folder_name=None, plot_feather=None):
         data = data.reset_index(drop=True)
         # every sub-plot is contained segment of at most 100000 data points
-        # 1. split the data into segments
-
+        # 1. split the data into segments if the length is too long
+        # For the case that the data of a long period may have significant value change, we split the data into 4 segments
+        segment_length = min(100000, data.shape[0]//4)
         plot_segments = []
         counter = 0
         segments_buffer = [turning_points[0]]
         for index, j in enumerate(range(len(turning_points) - 1)):
             counter += turning_points[j + 1] - turning_points[j]
             segments_buffer.append(turning_points[j + 1])
-            if counter > 100000:
+            if counter > segment_length:
                 plot_segments.append(segments_buffer)
                 segments_buffer = [turning_points[j + 1]]
                 counter = 0
