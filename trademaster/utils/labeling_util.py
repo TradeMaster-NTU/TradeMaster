@@ -541,7 +541,8 @@ class Worker():
                                 right_distance = self.calculate_distance(this_seg, right_neighbor, merging_round)
                         # pick the min distance that is smaller than the threshold to merge
                         # may choose to merge with the shorter neighbor for balanced segment length
-
+                        if right_distance!=float('inf'):
+                            print(next_index,len(turning_points),len(label_seg),turning_points[next_index][0],data['key_indicator_filtered'].shape[0])
                         # if we activate the dynamic constraint
                         if self.merging_dynamic_constraint != float('inf'):
                             # check right
