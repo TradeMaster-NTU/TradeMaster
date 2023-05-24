@@ -516,58 +516,9 @@ class Worker():
                 coef_list.append(adj_cp_model.coef_)
                 y_pred_list.append(y_pred)
 
-        # # 3. Get max drawdown of each segment
-        # if self.merging_threshold!=-1:
-        #     recalculate_flag=True
-        #     mdd_list = []
-        #     for i in range(len(turning_points) - 1):
-        #         mdd_list.append(self.get_mdd(data['key_indicator_filtered'].iloc[turning_points[i][0]:turning_points[i + 1][0]].tolist()))
-
-        # print('mdd_list',mdd_list)
-        # print('coef_list',coef_list)
-        # # 4. re-slice the segment if the if slope/ mdd is smaller than threshold
-        #     turning_points_new = []
-        #     # print('len(turning_points)',len(turning_points))
-        #     for i in range(len(turning_points)-1):
-        #         if abs(coef_list[i])/abs(mdd_list[i])<self.merging_threshold:
-        #             # print(abs(coef_list[i])/abs(mdd_list[i]))
-        #             for j in turning_points_ori[i]:
-        #                 turning_points_new.append([j])
-        #         else:
-        #             turning_points_new.append(turning_points[i])
-        # # 4.force merge if the hard constraint is not satisfied
-        # if self.min_length_limit!=-1:
-        #     recalculate_flag=True
-        #     turning_points_new = [[turning_points[0][0]]]
-        #     for i in range(1, len(turning_points) - 1):
-        #         if turning_points[i][0] - turning_points_new[-1][0] >= self.min_length_limit:
-        #             #no need to merge
-        #             turning_points_new.append(turning_points[i])
-        #         else:
-        #             # merge this point into the current segment
-        #             turning_points_new[-1].extend(turning_points[i])
-        #     turning_points_new.append(turning_points[-1])
-        #     turning_points = turning_points_new
-        # print(len(turning_points))
-        #
-        # # 5. re-calculate the slope
-        # if recalculate_flag:
-        #     coef_list = []
-        #     normalized_coef_list = []
-        #     y_pred_list = []
-        #     for i in range(len(turning_points) - 1):
-        #         x_seg = np.asarray([j for j in range(turning_points[i][0], turning_points[i + 1][0])]).reshape(-1, 1)
-        #         adj_cp_model = LinearRegression().fit(x_seg,
-        #                                               data['key_indicator_filtered'].iloc[turning_points[i][0]:turning_points[i + 1][0]])
-        #         y_pred = adj_cp_model.predict(x_seg)
-        #         normalized_coef_list.append(100 * adj_cp_model.coef_ / data['key_indicator_filtered'].iloc[turning_points[i][0]])
-        #         coef_list.append(adj_cp_model.coef_)
-        #         y_pred_list.append(y_pred)
-
         # reshape turning_points to a 1d list
         turning_points = [i[0] for i in turning_points]
 
-        # print('turning_points',turning_points)
 
         return np.asarray(coef_list), np.asarray(turning_points), y_pred_list, normalized_coef_list
 
@@ -618,7 +569,6 @@ class Worker():
         plot_segments.append(segments_buffer)
         sub_plot_num = len(plot_segments)
 
-        # fig, ax = plt.subplots(1, 1, figsize=(40, 10), constrained_layout=True)
         fig, axs = plt.subplots(sub_plot_num, 1, figsize=(50, 15 * sub_plot_num), constrained_layout=True)
         if sub_plot_num == 1:
             axs = [axs]
@@ -629,7 +579,6 @@ class Worker():
             turning_points_seg = plot_segments[index]
             for i in range(len(turning_points_seg) - 1):
                 x_seg = np.asarray([j for j in range(turning_points_seg[i], turning_points_seg[i + 1])]).reshape(-1, 1)
-                # y_pred = y_pred_list[i]
                 coef = normalized_coef_list[i + counter]
                 if self.labeling_method == 'slope' or self.labeling_method == 'quantile':
                     coef = coef[0]
@@ -647,7 +596,6 @@ class Worker():
             ax.legend(by_label.values(), by_label.keys(), prop=font)
         # set the title
         plt.title(f"Dynamics_of_{tic}_linear_{self.labeling_method}_{plot_feather}", fontsize=20)
-        # plt.set_title(f"Dynamics_of_{tic}_linear_{self.labeling_method}", fontsize=20)
         plot_path = folder_name
         if not os.path.exists(plot_path):
             os.makedirs(plot_path)
