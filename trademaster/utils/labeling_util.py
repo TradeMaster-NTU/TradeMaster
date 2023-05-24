@@ -451,19 +451,16 @@ class Worker():
 
                 # if we use the dynamic constraint, we would label the segment every time before merging
                 if self.merging_dynamic_constraint !=float('inf'):
-
-
-
-
                     # calculate the slope
                     coef_list = []
                     normalized_coef_list = []
                     y_pred_list = []
+                    indexs = []
+                    turning_points_temp_flat = []
                     for i in range(len(turning_points) - 1):
-
-
                         if turning_points[i] == []:
                             continue
+
                         have_next_index = False
                         for j in range(i + 1, len(turning_points) - 1):
                             if turning_points[j] != []:
@@ -482,17 +479,8 @@ class Worker():
                             100 * adj_cp_model.coef_ / data['key_indicator_filtered'].iloc[turning_points[i][0]])
                         coef_list.append(adj_cp_model.coef_)
                         y_pred_list.append(y_pred)
-
-                    # get the indexs of the segments that are not empty
-                    indexs = []
-                    for i in range(len(turning_points)):
-                        if turning_points[i] != []:
-                            indexs.append(i)
-                    # get the segments that are not empty
-                    turning_points_temp_flat = []
-                    for i in range(len(turning_points)):
-                        if turning_points[i] != []:
-                            turning_points_temp_flat.append(turning_points[i][0])
+                        indexs.append(i)
+                        turning_points_temp_flat.append(turning_points[i][0])
                     # calculate the label
                     label, data_seg, label_seg_raw, index_seg = self.get_label(data=data, turning_points=turning_points_temp_flat,
                                                                            low=None, high=None, normalized_coef_list=normalized_coef_list, tic=tic,
