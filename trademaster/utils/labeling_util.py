@@ -480,6 +480,7 @@ class Worker():
                         turning_points_temp_flat.append(turning_points[i][0])
                     # indexs.append(len(turning_points)-1)
                     turning_points_temp_flat.append(turning_points[-1][0])
+                    print('turning_points_temp_flat: ', turning_points_temp_flat)
                     # calculate the label
                     label, data_seg, label_seg_raw, index_seg = self.get_label(data=data, turning_points=turning_points_temp_flat,
                                                                            low=None, high=None, normalized_coef_list=normalized_coef_list, tic=tic,
