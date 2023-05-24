@@ -554,7 +554,6 @@ class Worker():
                                         print(f'prohibit merging left of {label_seg[i]} and {label_seg[left_index]}')
                                     left_distance = float('inf')
 
-
                         if min(left_distance, right_distance) < self.merging_threshold:
                             # merge with the closer neighbor
                             if left_distance < right_distance:
