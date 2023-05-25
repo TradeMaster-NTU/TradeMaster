@@ -1,40 +1,33 @@
 # Evaluation Sandbox: Market Dynamics Modeling
 
 ## Introduction 
-The evaluation sandbox provides a sandbox for user to evaluate their policy under different scenarios . 
+This part of evaluation sandbox provides a tool for user to model market dynamics on datasets and evaluate their policy under the market of specific market dynamic. 
 The sandbox shows visualizations and reports to assist user compare policies across market dynamic.
 
 ## Market Dynamics Modeling
-The Market Dynamics modeling is a module to label raw data with dynamics that is interpretable. 
-The dynamics are used as meta-information. For example, in the evaluation process, user can run evaluation on specific dynamics.
+The Market Dynamics modeling is a module to label raw data with dynamics that is interpretable and controllable. Users may tune the hyperparameters to get the dynamics that are most suitable for their policy.
+The dynamics can be used as meta-information. For example, in the evaluation process, user can run evaluation on specific dynamics.
 
-## Usage & Example
-This module prepare data for evaluation, to run a full test you should follow this pipeline:
-- Run the [`run.py`]()  in tools/market_dynamics_labeling or [`run_linear_model.py`]() to prepare the dataset
-  1. Tune the parameters based on the visualization results
-     <div align="center">
-       <img src="example_figs/dm_result_1.png" width = 400 height =  />
-     </div>
-  1. Increase `max_length_expectation`
-      <div align="center">
-       <img src="example_figs/dm_result_2.png" width = 400 height =  />
-      </div>
-  1. Modify `slope_interval`
-      <div align="center">
-        <img src="example_figs/dm_result_3.png" width = 400 height =  />
-      </div> 
-- Update the 'test_style_path' in the config files to the dataset path you get from previous step.
+## Usage 
+- You may use the to label the dataset with modeled dynamics.
+  1. Configure the parameters in [`market_dynamics_modeling.py`](../../../configs/evaluation/market_dynamics_modeling.py), you may refer to [`TradeMaster_Sandbox_whitepaper.pdf`](TradeMaster_Sandbox_whitepaper.pdf) to get further information on the parameters and modeling algorithm.
+  1. Run the [`run.py`](../../../tools/market_dynamics_labeling/run.py)  in tools/market_dynamics_labeling to prepare the dataset. You may refer to the experiment logs and the result visualization to tune the parameters until you are satisfied with the result.
+  ```
+  $ python tools/market_dynamics_labeling/run.py
+  ```
 
-- Run the trainer with arguments `--task dynamics_test --test_dynamic dynamic_label` to perform evaluation on specific market dynamic. You will get reports and visualization result.
+- After you have labeled the dataset with market dynamics, you may want to test your agent under specific market dynamics.
+  1.Update the 'test_style_path' in the config files to the labeled dataset path you get from previous step.
+  1. Run the trainer with arguments `--task dynamics_test --test_dynamic dynamic_label` to perform evaluation on specific market dynamic. You will get reports and visualization result.
+  ```
+  $ python tools/algorithmic_trading/train.py --task_name dynamics_test --test_dynamic 0
+  ```
   <div align="center">
           <img src="example_figs/Radar_plot.png" width = 400 height =  />
         </div> 
+  The visualization result is a radar plot different metrics, while the 'Metric Radar' polygon is the score of metrics, the 'Profitability' is a mean score of the upper 4 metrics while the "Risk_Control" is the mean of the lower 2 metrics. Noted that the metrics various between different tasks.
 #### Parameters 
-- `fitting_parameters`: This is a set of parameters for the filter, please refer to the comment in lines for detailed description. 
-- `slope_interval`: This is a set of parameters for dynamic classification, please refer to the comment in lines for detailed description. 
-- `dynamic_number`: This is the number of dynamics. 
-- `max_length_expectation`: This is the minimum length of a consecutive time-series of same dynamic. 
-
+please check [`TradeMaster_Sandbox_whitepaper.pdf`](TradeMaster_Sandbox_whitepaper.pdf) for details on the parameters. We have provided default parameters in the config file [`market_dynamics_modeling.py`](../../../configs/evaluation/market_dynamics_modeling.py) and the [`base`](../../../configs/_base_/market_dynamics_model) folder. Noted that these parameters are just a starting point for you to play with. As each person have his or her own expectation and usage on market dynamics, please tune the parameters and run experiments to get better results.
 #### Scoring
 The scores of the visualization result are calculated as described:
 - Do nothing metrics are used as score 0
@@ -42,28 +35,17 @@ The scores of the visualization result are calculated as described:
 - The score of other agents are given based on the assumption that the scores are following a normal distribution (50,$\sqrt{50}$)
 ##### Baselines
   - Buy and Hold: This is and ideal policy where you spend all your cash on the first tick.
-  - Blind Buy: Continues buy until the cash runs out.
-  - Do Nothing: Do nothing
+  - Blind Buy: Buy as much as possible until the cash runs out.
+  - Do Nothing: Take no action at all
+## Example
+We show a use case of using the tool to label dynamics on an [`example BTCUSDT dataset`](https://datasets.tardis.dev/v1/binance-futures/book_snapshot_5/2020/09/01/BTCUSDT.csv.gz)(click to download) from the open example of a data provider [`Tardis.dev`](https://docs.tardis.dev/downloadable-csv-files)   
 
 
 
 
-## Examples
-### Use market dynamics model to prepare evaluation datasets
-It is recommended to run through the trademaster/evaluation/market_dynamics_labeling/example.ipynb notebook to visualize the labeling process. This will also give hints on
-deciding the parameters for your dataset. The example.html contains the visualization results from example.ipynb.
-#### Running from configuration file 
-Change the parameters in `configs/evaluation/market_dynamics_modeling.py` and run 
-```
-$ python tools/market_dynamics_labeling/run.py
-```
 
-### Testing agent under a specific market dynamic
-```
-$ python tools/algorithmic_trading/train.py --task_name dynamics_test --test_dynamic 0
-```
 
-## Try out the pipeline online 
+## Try Online API
 Check our [online platform](http://trademaster.ai/) for more information.
 
 

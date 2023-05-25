@@ -8,7 +8,7 @@ _base_ = [
 
 market_dynamics_model = dict(
     type='Linear_Market_Dynamics_Model',
-    data_path="data/market_dynamics_modeling/binance-futures_book_snapshot_5_2020-09-01_BTCUSDT.csv",
+    data_path="data/market_dynamics_modeling/2020-09-01-2020-09-01.feather",
 filter_strength=1,
 slope_interval=[-0.01,0.01],
 dynamic_number=5,
