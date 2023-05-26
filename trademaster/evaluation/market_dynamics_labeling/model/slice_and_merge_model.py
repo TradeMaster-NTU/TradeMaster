@@ -6,7 +6,7 @@ sys.path.append(ROOT)
 import pandas as pd
 from ..builder import Market_Dynamics_Model
 from ..custom import Market_dynamics_model
-from trademaster.utils import get_attr, labeling_util as util
+from trademaster.utils import get_attr, labeling_util as util,market_dynamics_modeling_analysis
 from pathlib import Path
 import warnings
 
@@ -128,5 +128,11 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
         print('plotting done')
         # if self.OE_BTC == True:
         #     os.remove('./temp/OE_BTC_processed.csv')
+
+        #MDM analysis
+        MDM_analysis=market_dynamics_modeling_analysis.MarketDynamicsModelingAnalysis(process_datafile_path,self.key_indicator)
+        MDM_analysis.run_analysis(process_datafile_path)
+        print('MDM analysis done')
+
         return os.path.abspath(process_datafile_path), market_dynamic_labeling_visualization_paths
 
