@@ -53,7 +53,6 @@ class MarketDynamicsModelingAnalysis(object):
         previous_mpp_end_step = 0
         current_pp_start_step = 0
         current_pp_end_step = 0
-        print(price_list)
         for i, value in zip(range(len(price_list)), price_list):
             if value < nadir:
                 nadir = value
