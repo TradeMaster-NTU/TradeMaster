@@ -155,7 +155,6 @@ class MarketDynamicsModelingAnalysis(object):
             for df in df_list:
                 df_result = pd.read_feather(os.path.join(test_df_path, df))
                 df_result.drop(columns=["index"], inplace=True)
-                print(df_result.shape)
                 average_k_list.append(self.calculate_average_k(df_result))
                 average_length_list.append(len(df_result))
                 mpp_k_list.append(self.calculate_mpp_k(df_result)[0])
