@@ -170,25 +170,27 @@ class MarketDynamicsModelingAnalysis(object):
             mdd_length_list_list.append(mdd_length_list)
             mpp_percentile_list_list.append(mpp_percentile_list)
             mdd_percentile_list_list.append(mdd_percentile_list)
-        # for i in range(dynamics_num):
-        #     print("For label {}".format(i))
-        #     print("average_k_list mean", np.mean(average_k_list_list[i]))
-        #     print("average_k_list std", np.std(average_k_list_list[i]))
-        #     print("mpp_k_list mean", np.mean(mpp_k_list_list[i]))
-        #     print("mpp_k_list std", np.std(mpp_k_list_list[i]))
-        #     print("mdd_k_list mean", np.mean(mdd_k_list_list[i]))
-        #     print("mdd_k_list std", np.std(mdd_k_list_list[i]))
-        #
-        #     print("mpp_length_list mean", np.mean(mpp_length_list_list[i]))
-        #     print("mpp_length_list std", np.std(mpp_length_list_list[i]))
-        #     print("mdd_length_list mean", np.mean(mdd_length_list_list[i]))
-        #     print("mdd_length_list std", np.std(mdd_length_list_list[i]))
-        #
-        #     print("mpp_quantile_list mean", np.mean(mpp_percentile_list_list[i]))
-        #     print("mpp_quantile_list std", np.std(mpp_percentile_list_list[i]))
-        #     print("mdd_quantile_list mean", np.mean(mdd_percentile_list_list[i]))
-        #     print("mdd_quantile_list std", np.std(mdd_percentile_list_list[i]))
-        #     print("=====================================")
+        for i in range(dynamics_num):
+            print("For label {}".format(i))
+            print("average_k_list mean", np.mean(average_k_list_list[i]))
+            print("average_k_list std", np.std(average_k_list_list[i]))
+            print('average_length_list mean', np.mean(average_length_list_list[i]))
+            print('average_length_list std', np.std(average_length_list_list[i]))
+            print("mpp_k_list mean", np.mean(mpp_k_list_list[i]))
+            print("mpp_k_list std", np.std(mpp_k_list_list[i]))
+            print("mdd_k_list mean", np.mean(mdd_k_list_list[i]))
+            print("mdd_k_list std", np.std(mdd_k_list_list[i]))
+
+            print("mpp_length_list mean", np.mean(mpp_length_list_list[i]))
+            print("mpp_length_list std", np.std(mpp_length_list_list[i]))
+            print("mdd_length_list mean", np.mean(mdd_length_list_list[i]))
+            print("mdd_length_list std", np.std(mdd_length_list_list[i]))
+
+            print("mpp_quantile_list mean", np.mean(mpp_percentile_list_list[i]))
+            print("mpp_quantile_list std", np.std(mpp_percentile_list_list[i]))
+            print("mdd_quantile_list mean", np.mean(mdd_percentile_list_list[i]))
+            print("mdd_quantile_list std", np.std(mdd_percentile_list_list[i]))
+            print("=====================================")
 
         # plot mean of average_k_list, average_length_list, mpp_k_list, mdd_k_list, mpp_length_list, mdd_length_list of each label as bar plot, each in a subplot
         fig, axs = plt.subplots(3, 2, figsize=(10, 10))
