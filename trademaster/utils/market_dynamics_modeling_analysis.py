@@ -9,6 +9,8 @@ class MarketDynamicsModelingAnalysis(object):
     def __init__(self, data_path, key_indicator):
         self.data_path = data_path
         self.key_indicator = key_indicator
+        # get extension of data_path
+        self.file_extension = os.path.splitext(self.data_path)[1]
 
     def sort_list(self,lst: list):
         convert = lambda text: int(text) if text.isdigit() else text
@@ -97,12 +99,11 @@ class MarketDynamicsModelingAnalysis(object):
         return intervals
 
     def save_data_by_dynamics(self,data_path):
-        extension =data_path.split('.')[-1]
         # if extention is .feather
-        if extension == 'feather':
+        if self.file_extension == 'feather':
             data = pd.read_feather(data_path).reset_index()
         # if extention is .csv
-        elif extension == 'csv':
+        elif self.file_extension == 'csv':
             data = pd.read_csv(data_path).reset_index()
         # segment data into dynamics with 'label' column
         # get unique label
@@ -122,9 +123,9 @@ class MarketDynamicsModelingAnalysis(object):
             for index,interval in enumerate(intervals):
                 dynamic_data_seg = dynamic_data.iloc[interval[0]:interval[1], :]
                 # save segmented data to file
-                if extension == 'feather':
+                if self.file_extension == 'feather':
                     dynamic_data_seg.reset_index().to_feather(data_folder + '/label_' + str(i) + '/label_' + str(i) + '_' + str(index) + '.' + extension)
-                elif extension == 'csv':
+                elif self.file_extension == 'csv':
                     dynamic_data_seg.to_csv(data_folder + '/label_' + str(i)  + '/label_' + str(i) + '_' + str(index) +'.'+extension)
         return data_folder,len(dynamics)
 
@@ -153,7 +154,10 @@ class MarketDynamicsModelingAnalysis(object):
             df_list = os.listdir(test_df_path)
             self.sort_list(df_list)
             for df in df_list:
-                df_result = pd.read_feather(os.path.join(test_df_path, df))
+                if self.file_extension == 'feather':
+                    df_result = pd.read_feather(os.path.join(test_df_path, df))
+                elif self.file_extension == 'csv':
+                    df_result = pd.read_csv(os.path.join(test_df_path, df))
                 df_result.drop(columns=["index"], inplace=True)
                 average_k_list.append(self.calculate_average_k(df_result))
                 average_length_list.append(len(df_result))
@@ -171,27 +175,27 @@ class MarketDynamicsModelingAnalysis(object):
             mdd_length_list_list.append(mdd_length_list)
             mpp_percentile_list_list.append(mpp_percentile_list)
             mdd_percentile_list_list.append(mdd_percentile_list)
-        for i in range(dynamics_num):
-            print("For label {}".format(i))
-            print("average_k_list mean", np.mean(average_k_list_list[i]))
-            print("average_k_list std", np.std(average_k_list_list[i]))
-            print('average_length_list mean', np.mean(average_length_list_list[i]))
-            print('average_length_list std', np.std(average_length_list_list[i]))
-            print("mpp_k_list mean", np.mean(mpp_k_list_list[i]))
-            print("mpp_k_list std", np.std(mpp_k_list_list[i]))
-            print("mdd_k_list mean", np.mean(mdd_k_list_list[i]))
-            print("mdd_k_list std", np.std(mdd_k_list_list[i]))
-
-            print("mpp_length_list mean", np.mean(mpp_length_list_list[i]))
-            print("mpp_length_list std", np.std(mpp_length_list_list[i]))
-            print("mdd_length_list mean", np.mean(mdd_length_list_list[i]))
-            print("mdd_length_list std", np.std(mdd_length_list_list[i]))
-
-            print("mpp_quantile_list mean", np.mean(mpp_percentile_list_list[i]))
-            print("mpp_quantile_list std", np.std(mpp_percentile_list_list[i]))
-            print("mdd_quantile_list mean", np.mean(mdd_percentile_list_list[i]))
-            print("mdd_quantile_list std", np.std(mdd_percentile_list_list[i]))
-            print("=====================================")
+        # for i in range(dynamics_num):
+        #     print("For label {}".format(i))
+        #     print("average_k_list mean", np.mean(average_k_list_list[i]))
+        #     print("average_k_list std", np.std(average_k_list_list[i]))
+        #     print('average_length_list mean', np.mean(average_length_list_list[i]))
+        #     print('average_length_list std', np.std(average_length_list_list[i]))
+        #     print("mpp_k_list mean", np.mean(mpp_k_list_list[i]))
+        #     print("mpp_k_list std", np.std(mpp_k_list_list[i]))
+        #     print("mdd_k_list mean", np.mean(mdd_k_list_list[i]))
+        #     print("mdd_k_list std", np.std(mdd_k_list_list[i]))
+        #
+        #     print("mpp_length_list mean", np.mean(mpp_length_list_list[i]))
+        #     print("mpp_length_list std", np.std(mpp_length_list_list[i]))
+        #     print("mdd_length_list mean", np.mean(mdd_length_list_list[i]))
+        #     print("mdd_length_list std", np.std(mdd_length_list_list[i]))
+        #
+        #     print("mpp_quantile_list mean", np.mean(mpp_percentile_list_list[i]))
+        #     print("mpp_quantile_list std", np.std(mpp_percentile_list_list[i]))
+        #     print("mdd_quantile_list mean", np.mean(mdd_percentile_list_list[i]))
+        #     print("mdd_quantile_list std", np.std(mdd_percentile_list_list[i]))
+        #     print("=====================================")
 
         # plot mean of average_k_list, average_length_list, mpp_k_list, mdd_k_list, mpp_length_list, mdd_length_list of each label as bar plot, each in a subplot
         fig, axs = plt.subplots(3, 2, figsize=(10, 10))
@@ -236,6 +240,7 @@ class MarketDynamicsModelingAnalysis(object):
         plt.tight_layout()
         # save the figure
         fig.savefig(os.path.join(data_folder,'metrics_of_each_dynamics.png'))
+        print("metrics_of_each_dynamics.png saved in",data_folder)
 
     def run_analysis(self,data_path):
         data_folder,dynamics_num=self.save_data_by_dynamics(data_path)

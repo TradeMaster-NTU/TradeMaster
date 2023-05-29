@@ -131,7 +131,7 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
         #MDM analysis
         MDM_analysis=market_dynamics_modeling_analysis.MarketDynamicsModelingAnalysis(process_datafile_path,self.key_indicator)
         MDM_analysis.run_analysis(process_datafile_path)
-        print('MDM analysis done')
+        print('Market dynamics modeling analysis done')
 
         return os.path.abspath(process_datafile_path), market_dynamic_labeling_visualization_paths
 
