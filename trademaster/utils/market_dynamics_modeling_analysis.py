@@ -10,8 +10,8 @@ class MarketDynamicsModelingAnalysis(object):
         self.data_path = data_path
         self.key_indicator = key_indicator
         # get extension of data_path
-        self.file_extension = os.path.splitext(self.data_path)[1]
-
+        self.file_extension = os.path.splitext(self.data_path)[-1]
+        print('file_extension',self.file_extension)
     def sort_list(self,lst: list):
         convert = lambda text: int(text) if text.isdigit() else text
         alphanum_key = lambda key: [convert(c) for c in re.split("([0-9]+)", key)]
