@@ -133,7 +133,7 @@ def main():
         table = print_metrics(stats)
         print('Summary of dynamics test:')
         print(table)
-        # print('The win rate of this regime is:')
+        # print('The win rate of this dynamic is:')
         # print(Counter(reward_list))
         print("dynamics test end")
 

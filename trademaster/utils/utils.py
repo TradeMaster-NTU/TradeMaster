@@ -421,14 +421,14 @@ def plot_radar_chart(data,plot_name,radar_save_path):
 def MRL_F2B_args_converter(args):
     output_args={}
     output_args['data_path']=args['dataset_path']
-    output_args['method']='linear'
+    output_args['method']='slice_and_merge'
     #convert Granularity to fitting_parameters
     # Granularity=0-> base=5 Granularity=1-> base=25
     G=args['Granularity']
     output_args['fitting_parameters']=[str(2/(20*float(G)+5)),str(1/(20*float(G)+5)),'4']#"2/7 2/14 4"
-    output_args['labeling_parameters']=[float(args['bear_threshold']),float(args['bull_threshold'])]
-    output_args['regime_number']=int(args['number_of_market_dynamics'])
-    output_args['length_limit']=int(args['minimun_length'])
+    output_args['slope_interval']=[float(args['bear_threshold']),float(args['bull_threshold'])]
+    output_args['dynamic_number']=int(args['number_of_market_dynamics'])
+    output_args['max_length_expectation']=int(args['minimun_length'])
     output_args['PM']=args['PM']
     if args['dataset_name']=="order_excecution:BTC":
         output_args['OE_BTC']=True

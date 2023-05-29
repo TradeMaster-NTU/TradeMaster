@@ -2,20 +2,28 @@
 All notable changes to this the market dynamic labelling evaluation toolbox will be documented in this file.
 
 ## Update plans
-### multi-agent testing & it's PRUDEX-Compass
-### a baseline agent for evaluation
-
+### Online Website API
 ### Synthesis data
+#### Day-level OHLCV data
+#### Minute level Limit Order Book and Trades
 
 
-
-## [0.0.1] - 2023/2/10
+## [0.0.2] - 21 May 2023
 
 ### Added
-- Traditional market dynamics labeling
-- Test on single agent
-- Evaluation report and its visualization
-- Test on customize policies 
+
+ 
+### Changed
+
+### Fixed
+
+
+
+## [0.0.1] - 5 March 2023
+
+### Added
+- Market dynamics labeling
+- Market dynamics Evaluation
  
 ### Changed
 

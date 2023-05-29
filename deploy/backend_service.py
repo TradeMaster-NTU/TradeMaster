@@ -539,9 +539,9 @@ class Server():
             args = MRL_F2B_args_converter(args)
             MDM_cfg.market_dynamics_model.update({'data_path': args['data_path'],
                                                   'fitting_parameters': args['fitting_parameters'],
-                                                  'labeling_parameters': args['labeling_parameters'],
-                                                  'regime_number': args['regime_number'],
-                                                  'length_limit': args['length_limit'],
+                                                  'slope_interval': args['slope_interval'],
+                                                  'dynamic_number': args['dynamic_number'],
+                                                  'max_length_expectation': args['max_length_expectation'],
                                                   'OE_BTC': args['OE_BTC'],
                                                   'PM': args['PM']
                                                   })
