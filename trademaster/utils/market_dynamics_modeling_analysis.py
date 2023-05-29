@@ -81,7 +81,8 @@ class MarketDynamicsModelingAnalysis(object):
     def get_intervals(self,data):
         # if no index column, add index column
         index=data['index']
-        print(index)
+        #cast index to list
+        index=index.tolist()
         last_value=index[0]-1
         last_index=0
         intervals=[]
