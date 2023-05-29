@@ -235,7 +235,7 @@ class MarketDynamicsModelingAnalysis(object):
         axs[2, 1].set_title('mdd_length_list of each dynamics')
         plt.tight_layout()
         # save the figure
-        fig.savefig(os.pathjoin(data_folder,'metrics_of_each_dynamics.png'))
+        fig.savefig(os.path.join(data_folder,'metrics_of_each_dynamics.png'))
 
     def run_analysis(self,data_path):
         data_folder,dynamics_num=self.save_data_by_dynamics(data_path)
