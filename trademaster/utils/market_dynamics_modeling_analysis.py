@@ -122,9 +122,9 @@ class MarketDynamicsModelingAnalysis(object):
                 dynamic_data_seg = dynamic_data.iloc[interval[0]:interval[1], :]
                 # save segmented data to file
                 if extension == 'feather':
-                    dynamic_data_seg.reset_index().to_feather(data_folder + '/label_' + str(i) + '_' + str(index) + '.' + extension)
+                    dynamic_data_seg.reset_index().to_feather(data_folder + '/label_' + str(i) + '/label_' + str(i) + '_' + str(index) + '.' + extension)
                 elif extension == 'csv':
-                    dynamic_data_seg.to_csv(data_folder  + '/label_' + str(i) + '_' + str(index) +'.'+extension)
+                    dynamic_data_seg.to_csv(data_folder + '/label_' + str(i)  + '/label_' + str(i) + '_' + str(index) +'.'+extension)
         return data_folder,len(dynamics)
 
 
