@@ -105,10 +105,9 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
             regex='^(?!.*_DROP)')
         if self.labeling_method=='slope':
             low, high = self.slope_interval
-            self.model_id = str(self.dynamic_number) + '_' + str(
-                self.max_length_expectation) + '_' + str(low) + '_' + str(high)
+            self.model_id =  f"slice_and_merge_model_{self.dynamic_number}dynamics_minlength{self.min_length_limit}_{self.labeling_method}_labeling_slope{low}_{high}"
         else:
-            self.model_id = f"{self.dynamic_number}_{self.max_length_expectation}_{self.labeling_method}"
+            self.model_id = f"slice_and_merge_model_{self.dynamic_number}dynamics_minlength{self.min_length_limit}_{self.labeling_method}_labeling"
         if self.PM :
             DJI = merged_data.loc[:, [self.timestamp, 'label']]
             test = pd.read_csv(self.PM, index_col=0)

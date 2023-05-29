@@ -612,9 +612,9 @@ class Worker():
         return np.asarray(coef_list), np.asarray(turning_points), y_pred_list, normalized_coef_list
 
     def plot(self, tics, parameters, data_path, model_id):
-        self.plot_path = os.path.join(os.path.dirname(os.path.realpath(data_path)), 'MDM_linear', model_id)
-        self.plot_path_filtered = os.path.join(os.path.dirname(os.path.realpath(data_path)), 'MDM_linear_filtered',
-                                               model_id)
+        self.plot_path = os.path.join(os.path.dirname(os.path.realpath(data_path)), model_id)
+        # self.plot_path_filtered = os.path.join(os.path.dirname(os.path.realpath(data_path)), 'MDM_linear_filtered',
+        #                                        model_id)
         if not os.path.exists(self.plot_path):
             os.makedirs(self.plot_path)
         if self.method == 'slice_and_merge':

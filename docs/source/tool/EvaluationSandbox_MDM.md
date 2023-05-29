@@ -10,8 +10,8 @@ The dynamics can be used as meta-information. For example, in the evaluation pro
 
 ## Usage 
 - You may use the to label the dataset with modeled dynamics.
-  1. Configure the parameters in [`market_dynamics_modeling.py`](../../../configs/evaluation/market_dynamics_modeling.py), you may refer to [`TradeMaster_Sandbox_whitepaper.pdf`](TradeMaster_Sandbox_whitepaper.pdf) to get further information on the parameters and modeling algorithm.
-  1. Run the [`run.py`](../../../tools/market_dynamics_labeling/run.py)  in tools/market_dynamics_labeling to prepare the dataset. You may refer to the experiment logs and the result visualization to tune the parameters until you are satisfied with the result.
+  1. Configure the parameters in [`market_dynamics_modeling.py`](../../../configs/evaluation/market_dynamics_modeling.py), **you may refer to[`TradeMaster_Sandbox_whitepaper.pdf`](TradeMaster_Sandbox_whitepaper.pdf) to get further information on the parameters and modeling algorithm.** 
+  1. Run the [`run.py`](../../../tools/market_dynamics_labeling/run.py)  in tools/market_dynamics_labeling to prepare the dataset. You may refer to the experiment logs and the result visualizations(metrics_of_each_dynamics.png and f"slice_and_merge_model_{dynamic_number}dynamics_minlength{min_length_limit}_{labeling_method}_labeling_{tic}.png") to tune the parameters until you are satisfied with the result.
   ```
   $ python tools/market_dynamics_labeling/run.py
   ```
@@ -44,7 +44,7 @@ With the [`configuration file`](../../../configs/evaluation/market_dynamics_mode
   <div align="center">
           <img src="example_figs/Radar_plot.png" width = 400 height =  />
         </div> 
-```
+
 
 
 
