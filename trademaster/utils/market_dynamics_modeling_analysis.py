@@ -37,7 +37,7 @@ class MarketDynamicsModelingAnalysis(object):
                 previous_mdd_start_step = current_dd_start_step
                 previous_mdd_end_step = current_dd_end_step
         return (
-            mdd / (previous_mdd_end_step - previous_mdd_start_step),
+            mdd / (previous_mdd_end_step - previous_mdd_start_step+1e-10),
             (previous_mdd_end_step - previous_mdd_start_step),
             (previous_mdd_end_step - previous_mdd_start_step) / len(df),
         )
@@ -66,7 +66,7 @@ class MarketDynamicsModelingAnalysis(object):
                 previous_mpp_end_step = current_pp_end_step
 
         return (
-            mpp / (previous_mpp_end_step - previous_mpp_start_step),
+            mpp / (previous_mpp_end_step - previous_mpp_start_step+1e-10),
             (previous_mpp_end_step - previous_mpp_start_step),
             (previous_mpp_end_step - previous_mpp_start_step) / len(df),
         )
