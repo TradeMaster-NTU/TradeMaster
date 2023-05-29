@@ -236,7 +236,7 @@ class MarketDynamicsModelingAnalysis(object):
 
     def run_analysis(self,data_path):
         data_folder,dynamics_num=self.save_data_by_dynamics(data_path)
-        self.calculate_metrics(data_folder,dynamics_num)
+        self.calculate_metrics(dynamics_num,data_folder)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
