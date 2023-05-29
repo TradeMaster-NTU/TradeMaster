@@ -130,7 +130,9 @@ class MarketDynamicsModelingAnalysis(object):
 
 
     def calculate_metrics(self,dynamics_num, data_folder):
+        dynamics_num=int(dynamics_num)
         average_k_list_list = []
+        average_length_list_list = []
         mpp_k_list_list = []
         mdd_k_list_list = []
         mpp_length_list_list = []
@@ -139,6 +141,7 @@ class MarketDynamicsModelingAnalysis(object):
         mdd_percentile_list_list = []
         for label in range(dynamics_num):
             average_k_list = []
+            average_length_list = []
             mpp_k_list = []
             mdd_k_list = []
             mpp_length_list = []
@@ -152,6 +155,7 @@ class MarketDynamicsModelingAnalysis(object):
                 df_result = pd.read_feather(os.path.join(test_df_path, df))
                 df_result.drop(columns=["index"], inplace=True)
                 average_k_list.append(self.calculate_average_k(df_result))
+                average_length_list.append(len(df_result))
                 mpp_k_list.append(self.calculate_mpp_k(df_result)[0])
                 mdd_k_list.append(self.calculate_mdd_k(df_result)[0])
                 mpp_length_list.append(self.calculate_mpp_k(df_result)[1])
@@ -159,6 +163,7 @@ class MarketDynamicsModelingAnalysis(object):
                 mpp_percentile_list.append(self.calculate_mpp_k(df_result)[2])
                 mdd_percentile_list.append(self.calculate_mdd_k(df_result)[2])
             average_k_list_list.append(average_k_list)
+            average_length_list_list.append(average_length_list)
             mpp_k_list_list.append(mpp_k_list)
             mdd_k_list_list.append(mdd_k_list)
             mpp_length_list_list.append(mpp_length_list)
@@ -184,53 +189,48 @@ class MarketDynamicsModelingAnalysis(object):
         #     print("mdd_quantile_list mean", np.mean(mdd_percentile_list_list[i]))
         #     print("mdd_quantile_list std", np.std(mdd_percentile_list_list[i]))
         #     print("=====================================")
-        # plot mean of average_k_list, mpp_k_list, mdd_k_list, mpp_length_list, mdd_length_list of each label as bar plot, each in a subplot
 
-        # plot mean of average_k_list, mpp_k_list, mdd_k_list, mpp_length_list, mdd_length_list of each label as bar plot, each in a subplot
+        # plot mean of average_k_list, average_length_list, mpp_k_list, mdd_k_list, mpp_length_list, mdd_length_list of each label as bar plot, each in a subplot
         fig, axs = plt.subplots(3, 2, figsize=(10, 10))
         fig.suptitle('Metrics of each dynamics')
-        axs[0, 0].bar(range(dynamics_num), [np.mean(average_k_list_list[i]) for i in range(dynamics_num)],
-                      yerr=[np.std(average_k_list_list[i]) for i in range(dynamics_num)], align='center', alpha=0.5,
-                      ecolor='black', capsize=10)
-        axs[0, 0].set_ylabel('average_k')
-        axs[0, 0].set_xlabel('dynamics')
+
+        axs[0, 0].bar(range(dynamics_num), [np.mean(average_k_list_list[i]) for i in range(dynamics_num)], yerr=[np.std(average_k_list_list[i]) for i in range(dynamics_num)], align='center', alpha=0.5, ecolor='black', capsize=10)
+        axs[0, 0].set_ylabel('average_k_list')
+        axs[0, 0].set_xlabel('label')
         axs[0, 0].set_xticks(range(dynamics_num))
         axs[0, 0].set_xticklabels(range(dynamics_num))
-        axs[0, 1].bar(range(dynamics_num), [np.mean(mpp_k_list_list[i]) for i in range(dynamics_num)],
-                      yerr=[np.std(mpp_k_list_list[i]) for i in range(dynamics_num)], align='center', alpha=0.5,
-                      ecolor='black', capsize=10)
-        axs[0, 1].set_ylabel('mpp_k')
-        axs[0, 1].set_xlabel('dynamics')
+        axs[0, 0].set_title('average_k_list of each dynamics')
+        axs[0, 1].bar(range(dynamics_num), [np.mean(average_length_list_list[i]) for i in range(dynamics_num)], yerr=[np.std(average_length_list_list[i]) for i in range(dynamics_num)], align='center', alpha=0.5, ecolor='black', capsize=10)
+        axs[0, 1].set_ylabel('average_length_list')
+        axs[0, 1].set_xlabel('label')
         axs[0, 1].set_xticks(range(dynamics_num))
         axs[0, 1].set_xticklabels(range(dynamics_num))
-        axs[1, 0].bar(range(dynamics_num), [np.mean(mdd_k_list_list[i]) for i in range(dynamics_num)],
-                      yerr=[np.std(mdd_k_list_list[i]) for i in range(dynamics_num)], align='center', alpha=0.5,
-                      ecolor='black', capsize=10)
-        axs[1, 0].set_ylabel('mdd_k')
-        axs[1, 0].set_xlabel('dynamics')
+        axs[0, 1].set_title('average_length_list of each dynamics')
+        axs[1, 0].bar(range(dynamics_num), [np.mean(mpp_k_list_list[i]) for i in range(dynamics_num)], yerr=[np.std(mpp_k_list_list[i]) for i in range(dynamics_num)], align='center', alpha=0.5, ecolor='black', capsize=10)
+        axs[1, 0].set_ylabel('mpp_k_list')
+        axs[1, 0].set_xlabel('label')
         axs[1, 0].set_xticks(range(dynamics_num))
         axs[1, 0].set_xticklabels(range(dynamics_num))
-        axs[1, 1].bar(range(dynamics_num), [np.mean(mpp_length_list_list[i]) for i in range(dynamics_num)],
-                      yerr=[np.std(mpp_length_list_list[i]) for i in range(dynamics_num)], align='center', alpha=0.5,
-                      ecolor='black', capsize=10)
-        axs[1, 1].set_ylabel('mpp_length')
-        axs[1, 1].set_xlabel('dynamics')
+        axs[1, 0].set_title('mpp_k_list of each dynamics')
+        axs[1, 1].bar(range(dynamics_num), [np.mean(mdd_k_list_list[i]) for i in range(dynamics_num)], yerr=[np.std(mdd_k_list_list[i]) for i in range(dynamics_num)], align='center', alpha=0.5, ecolor='black', capsize=10)
+        axs[1, 1].set_ylabel('mdd_k_list')
+        axs[1, 1].set_xlabel('label')
         axs[1, 1].set_xticks(range(dynamics_num))
         axs[1, 1].set_xticklabels(range(dynamics_num))
-        axs[2, 0].bar(range(dynamics_num), [np.mean(mdd_length_list_list[i]) for i in range(dynamics_num)],
-                      yerr=[np.std(mdd_length_list_list[i]) for i in range(dynamics_num)], align='center', alpha=0.5,
-                      ecolor='black', capsize=10)
-        axs[2, 0].set_ylabel('mdd_length')
-        axs[2, 0].set_xlabel('dynamics')
+        axs[1, 1].set_title('mdd_k_list of each dynamics')
+        axs[2, 0].bar(range(dynamics_num), [np.mean(mpp_length_list_list[i]) for i in range(dynamics_num)], yerr=[np.std(mpp_length_list_list[i]) for i in range(dynamics_num)], align='center', alpha=0.5, ecolor='black', capsize=10)
+        axs[2, 0].set_ylabel('mpp_length_list')
+        axs[2, 0].set_xlabel('label')
         axs[2, 0].set_xticks(range(dynamics_num))
         axs[2, 0].set_xticklabels(range(dynamics_num))
-        axs[2, 1].bar(range(dynamics_num), [np.mean(mpp_percentile_list_list[i]) for i in range(dynamics_num)],
-                      yerr=[np.std(mpp_percentile_list_list[i]) for i in range(dynamics_num)], align='center', alpha=0.5,
-                      ecolor='black', capsize=10)
-        axs[2, 1].set_ylabel('mpp_percentile')
-        axs[2, 1].set_xlabel('dynamics')
+        axs[2, 0].set_title('mpp_length_list of each dynamics')
+        axs[2, 1].bar(range(dynamics_num), [np.mean(mdd_length_list_list[i]) for i in range(dynamics_num)], yerr=[np.std(mdd_length_list_list[i]) for i in range(dynamics_num)], align='center', alpha=0.5, ecolor='black', capsize=10)
+        axs[2, 1].set_ylabel('mdd_length_list')
+        axs[2, 1].set_xlabel('label')
         axs[2, 1].set_xticks(range(dynamics_num))
         axs[2, 1].set_xticklabels(range(dynamics_num))
+        axs[2, 1].set_title('mdd_length_list of each dynamics')
+        plt.tight_layout()
         # save the figure
         fig.savefig('metrics_of_each_dynamics.png')
 
