@@ -118,6 +118,7 @@ class MarketDynamicsModelingAnalysis(object):
         for i in range(len(dynamics)):
             dynamic_data = data.loc[data['label'] == i, :]
             intervals=self.get_intervals(dynamic_data)
+            print(intervals)
             for index,interval in enumerate(intervals):
                 dynamic_data_seg = dynamic_data.iloc[interval[0]:interval[1], :]
                 # save segmented data to file
