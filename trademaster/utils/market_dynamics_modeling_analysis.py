@@ -4,7 +4,7 @@ import os
 import re
 import argparse
 import matplotlib.pyplot as plt
-
+import seaborn as sns
 class MarketDynamicsModelingAnalysis(object):
     def __init__(self, data_path, key_indicator):
         self.data_path = data_path
@@ -196,41 +196,41 @@ class MarketDynamicsModelingAnalysis(object):
         #     print("mdd_quantile_list std", np.std(mdd_percentile_list_list[i]))
         #     print("=====================================")
 
-        # plot mean of average_k_list, average_length_list, mpp_k_list, mdd_k_list, mpp_length_list, mdd_length_list of each label as bar plot, each in a subplot
+        # plot mean of average_k_list, average_length_list, mpp_k_list, mdd_k_list, mpp_length_list, mdd_length_list of each label in a boxplot, each in a subplot
+
         fig, axs = plt.subplots(3, 2, figsize=(10, 10))
         fig.suptitle('Metrics of each dynamics')
-
-        axs[0, 0].bar(range(dynamics_num), [np.mean(average_k_list_list[i]) for i in range(dynamics_num)], yerr=[np.std(average_k_list_list[i]) for i in range(dynamics_num)], align='center', alpha=0.5, ecolor='black', capsize=10)
+        axs[0, 0].boxplot(average_k_list_list)
         axs[0, 0].set_ylabel('Average slope')
         axs[0, 0].set_xlabel('label')
         axs[0, 0].set_xticks(range(dynamics_num))
         axs[0, 0].set_xticklabels(range(dynamics_num))
         axs[0, 0].set_title('Average slope of each dynamics')
-        axs[0, 1].bar(range(dynamics_num), [np.mean(average_length_list_list[i]) for i in range(dynamics_num)], yerr=[np.std(average_length_list_list[i]) for i in range(dynamics_num)], align='center', alpha=0.5, ecolor='black', capsize=10)
+        axs[0, 1].boxplot(average_length_list_list)
         axs[0, 1].set_ylabel('Average length')
         axs[0, 1].set_xlabel('label')
         axs[0, 1].set_xticks(range(dynamics_num))
         axs[0, 1].set_xticklabels(range(dynamics_num))
         axs[0, 1].set_title('Average length of each dynamics')
-        axs[1, 0].bar(range(dynamics_num), [np.mean(mpp_k_list_list[i]) for i in range(dynamics_num)], yerr=[np.std(mpp_k_list_list[i]) for i in range(dynamics_num)], align='center', alpha=0.5, ecolor='black', capsize=10)
+        axs[1, 0].boxplot(mpp_k_list_list)
         axs[1, 0].set_ylabel('Average max uptrend slope')
         axs[1, 0].set_xlabel('label')
         axs[1, 0].set_xticks(range(dynamics_num))
         axs[1, 0].set_xticklabels(range(dynamics_num))
         axs[1, 0].set_title('Average max uptrend slope of each dynamics')
-        axs[1, 1].bar(range(dynamics_num), [np.mean(mdd_k_list_list[i]) for i in range(dynamics_num)], yerr=[np.std(mdd_k_list_list[i]) for i in range(dynamics_num)], align='center', alpha=0.5, ecolor='black', capsize=10)
+        axs[1, 1].boxplot(mdd_k_list_list)
         axs[1, 1].set_ylabel('Average max downtrend slope')
         axs[1, 1].set_xlabel('label')
         axs[1, 1].set_xticks(range(dynamics_num))
         axs[1, 1].set_xticklabels(range(dynamics_num))
         axs[1, 1].set_title('Average max downtrend of each dynamics')
-        axs[2, 0].bar(range(dynamics_num), [np.mean(mpp_length_list_list[i]) for i in range(dynamics_num)], yerr=[np.std(mpp_length_list_list[i]) for i in range(dynamics_num)], align='center', alpha=0.5, ecolor='black', capsize=10)
+        axs[2, 0].boxplot(mpp_length_list_list)
         axs[2, 0].set_ylabel('Average max uptrend length')
         axs[2, 0].set_xlabel('label')
         axs[2, 0].set_xticks(range(dynamics_num))
         axs[2, 0].set_xticklabels(range(dynamics_num))
         axs[2, 0].set_title('Average max uptrend length of each dynamics')
-        axs[2, 1].bar(range(dynamics_num), [np.mean(mdd_length_list_list[i]) for i in range(dynamics_num)], yerr=[np.std(mdd_length_list_list[i]) for i in range(dynamics_num)], align='center', alpha=0.5, ecolor='black', capsize=10)
+        axs[2, 1].boxplot(mdd_length_list_list)
         axs[2, 1].set_ylabel('Average max downtrend length')
         axs[2, 1].set_xlabel('label')
         axs[2, 1].set_xticks(range(dynamics_num))
