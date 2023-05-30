@@ -223,7 +223,7 @@ class MarketDynamicsModelingAnalysis(object):
         axs[1, 1].set_xlabel('label')
         axs[1, 1].set_xticks(range(dynamics_num))
         axs[1, 1].set_xticklabels(range(dynamics_num))
-        axs[1, 1].set_title('Average max downtrend of each dynamics')
+        axs[1, 1].set_title('Average max downtrend slope of each dynamics')
         axs[2, 0].boxplot(mpp_length_list_list,showfliers=False)
         axs[2, 0].set_ylabel('Average max uptrend length')
         axs[2, 0].set_xlabel('label')
