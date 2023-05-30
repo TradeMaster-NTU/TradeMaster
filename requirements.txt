@@ -16,6 +16,7 @@ brotlipy
 ca-certificates
 cachetools
 certifi
+celery
 cffi
 chardet
 charset-normalizer
@@ -39,14 +40,16 @@ exceptiongroup
 executing
 fastdtw
 filelock
-flask
-flask-cors
+Flask
+Flask-Cors
 flatbuffers
 fonttools
+fvcore
 frozendict
 frozenlist
 gast
 giflib
+git+https://github.com/optuna/optuna.git
 glib
 google-auth
 google-auth-oauthlib
@@ -55,6 +58,7 @@ grpcio
 gst-plugins-base
 gstreamer
 gym
+gymnasium
 gym-notices
 h5py
 html5lib
@@ -78,7 +82,7 @@ json5
 jsonschema
 jupyter
 jupyterlab
-kaleido
+kaleido==0.1.0
 keras
 kiwisolver
 lazy-loader
@@ -108,7 +112,7 @@ matplotlib-inline
 mdurl
 mistune
 ml-dtypes
-mmcv
+mmcv==1.7.1
 model-index
 mpmath
 msgpack
@@ -127,6 +131,7 @@ oauthlib
 opencv-python
 openmim
 openssl
+openfe
 opt-einsum
 optional-django
 ordered-set
@@ -140,6 +145,7 @@ pcre
 pickleshare
 pillow
 pip
+pika
 platformdirs
 plotly
 pluggy
@@ -152,6 +158,7 @@ psutil
 pyasn1
 pyasn1-modules
 pycparser
+pydantic==1.10.2
 pygments
 pyopenssl
 pyparsing
@@ -174,7 +181,7 @@ qt-webengine
 qtconsole
 qtpy
 qtwebkit
-ray
+ray[rllib]==1.13.0
 react
 regex
 requests
@@ -191,7 +198,9 @@ six
 sklearn
 sniffio
 soupsieve
+sqlalchemy
 sqlite
+spacy
 statsmodels
 tabulate
 tenacity
@@ -199,7 +208,7 @@ tensorboard
 tensorboard-data-server
 tensorboard-plugin-wit
 tensorboardx
-tensorflow
+tensorflow==2.11.0
 tensorflow-estimator
 tensorflow-intel
 tensorflow-io-gcs-filesystem
