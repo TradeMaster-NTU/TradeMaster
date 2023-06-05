@@ -85,11 +85,12 @@ def run_mdm():
 
     # if args.data_path is a folder, then we will run the experiment on all the files in the folder
     data_file_paths=[]
-    if os.path.isdir(args.data_path):
-        for file in os.listdir(args.data_path):
-            data_file_paths.append(os.path.join(args.data_path, file))
+    print(cfg.data_path)
+    if os.path.isdir(cfg.data_path):
+        for file in os.listdir(cfg.data_path):
+            data_file_paths.append(os.path.join(cfg.data_path, file))
     else:
-        data_file_paths.append(args.data_path)
+        data_file_paths.append(cfg.data_path)
 
     for data_file_path in data_file_paths:
         # set cfg.tic to the file name

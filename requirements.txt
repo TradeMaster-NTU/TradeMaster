@@ -28,3 +28,6 @@ celery
 pika
 fvcore
 openfe
+fastdtw
+dtaidistance
+chardet
