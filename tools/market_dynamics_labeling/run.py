@@ -54,6 +54,8 @@ class Tee(object):
     def write(self, obj):
         for f in self.files:
             f.write(obj)
+    def flush(self):
+        pass
 
 
 def run_mdm():

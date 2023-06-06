@@ -54,6 +54,8 @@ class Tee(object):
     def write(self, obj):
         for f in self.files:
             f.write(obj)
+    def flush(self):
+        pass
 
 
 def run_mdm():
@@ -85,16 +87,20 @@ def run_mdm():
 
     # if args.data_path is a folder, then we will run the experiment on all the files in the folder
     data_file_paths=[]
-    print(cfg.data_path)
-    if os.path.isdir(cfg.data_path):
-        for file in os.listdir(cfg.data_path):
-            data_file_paths.append(os.path.join(cfg.data_path, file))
+    if os.path.isdir(cfg.market_dynamics_model.data_path):
+        original_data_path=cfg.market_dynamics_model.data_path
+        for file in os.listdir(cfg.market_dynamics_model.data_path):
+            # if the file is not a csv or feather file, then skip
+            if not file.endswith('.csv') and not file.endswith('.feather'):
+                continue
+            data_file_paths.append(os.path.join(cfg.market_dynamics_model.data_path, file))
     else:
-        data_file_paths.append(cfg.data_path)
+        data_file_paths.append(cfg.market_dynamics_model.data_path)
 
     for data_file_path in data_file_paths:
         # set cfg.tic to the file name
         cfg.market_dynamics_model.tic=os.path.basename(data_file_path).split('.')[0]
+        print(f'now processing tic {cfg.market_dynamics_model.tic}')
         cfg.market_dynamics_model.data_path=data_file_path
         # update test style
         model = build_market_dynamics_model(cfg)
@@ -106,6 +112,7 @@ def run_mdm():
         print(f'The experiment log is at {outputfolder}/res.log')
 
     ## wirte path to cfg
+    cfg.market_dynamics_model.data_path=original_data_path
     cfg.market_dynamics_model.process_datafile_path=process_datafile_path.replace("\\", "/")
     cfg.market_dynamics_model.market_dynamic_labeling_visualization_paths=market_dynamic_labeling_visualization_paths
     cfg.dump(args.config)

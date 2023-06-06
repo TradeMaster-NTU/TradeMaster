@@ -17,6 +17,7 @@ from scipy.stats import norm
 from argparse import Namespace
 from collections import OrderedDict
 import matplotlib.pyplot as plt
+import pandas as pd
 
 def set_seed(random_seed):
     random.seed(random_seed)
@@ -480,12 +481,12 @@ def plot_metric_against_baseline(total_asset,buy_and_hold,alg,task,color='darkcy
         plt.savefig(osp.join(save_dir,f"Visualization_{task}.png"))
     # plt.show()
 
-def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task,color='darkcyan',save_dir=None,metric_name='Level 0 Bid and Ask Distance'):
+def plot_log_trading_decision_on_market(market_features_dict, trading_points, alg, task, color='darkcyan', save_dir=None, metric_name='Level 0 Bid and Ask Distance'):
     # parse market_features_dict to get market_features
-    # print('market_features_dict is:',market_features_dict)
-    # print('trading_points is:',trading_points)
     market_features=list(market_features_dict.keys())
     x = range(len(market_features_dict[market_features[0]]))
+    # create a pd.DataFrame to store trading logs of x rows
+    trading_log = pd.DataFrame(index=x)
     # print('total_asset shape is:',total_asset.shape)
     # print('x shape is:',len(x))
     # set figure size
@@ -528,6 +529,8 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
     # few trading points, use annotation to represent
     else:
         for buy_trade_point,buy_volume in buy_trade_points.items():
+            # log the trading decision to trading_log
+            trading_log.loc[buy_trade_point,'buy']=buy_volume
             counter+=1
             # print('buy_trade_point is:',buy_trade_point,'buy_volume is:',buy_volume)
             buy_volume=np.round(buy_volume,2)
@@ -535,6 +538,8 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
                          arrowprops=dict(facecolor='red', shrink=0.05),)
         counter = 0
         for sell_trade_point,sell_volume in sell_trade_points.items():
+            # log the trading decision to trading_log
+            trading_log.loc[sell_trade_point, 'sell'] = sell_volume
             counter += 1
             # print('sell_trade_point is:', sell_trade_point, 'sell_volume is:', sell_volume,np.round(sell_volume,2),0.5*((-1)**counter),counter)
             sell_volume=np.round(sell_volume,2)
@@ -555,6 +560,8 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
 
     ax1 = ax2.twinx()
     for market_feature in market_features:
+        # log the market_feature to trading_log
+        trading_log[market_feature]=market_features_dict[market_feature]
         y=market_features_dict[market_feature]
         # ax1.plot(x, y, label=market_feature)
         # force line plot
@@ -588,5 +595,7 @@ def plot_trading_decision_on_market(market_features_dict,trading_points,alg,task
     plt.title(f'{metric_name} of {alg} in {task}')
     if save_dir is not None:
         plt.savefig(osp.join(save_dir,f"Visualization_{task}.png"))
+        # save the trading_log
+        trading_log.to_csv(osp.join(save_dir,f"trading_log_{task}.csv"))
 
 
