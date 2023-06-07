@@ -144,6 +144,10 @@ class Worker():
             for tic in self.tics:
                 turning_points = self.turning_points_dict[tic]
                 norm_coef_list = self.norm_coef_list_dict[tic]
+                if low>=high:
+                    # set low high as the min and max of the coef_list
+                    low=min(norm_coef_list)
+                    high=max(norm_coef_list)
                 label, data_seg, label_seg, index_seg = self.get_label(self.data_dict[tic], turning_points,
                                                                        low, high, norm_coef_list, tic,
                                                                        self.dynamic_num,labeling_method=self.labeling_method)
@@ -484,7 +488,6 @@ class Worker():
                         turning_points_temp_flat.append(turning_points[i][0])
 
                     turning_points_temp_flat.append(turning_points[-1][0])
-                    # calculate the label
                     label, data_seg, label_seg_raw, index_seg = self.get_label(data=data, turning_points=turning_points_temp_flat,
                                                                            low=None, high=None, normalized_coef_list=normalized_coef_list, tic=tic,
                                                                            dynamic_num=self.dynamic_num,

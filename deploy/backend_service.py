@@ -22,6 +22,7 @@ from flask_cors import CORS
 import os.path as osp
 import pickle
 import csv
+import regex as re
 
 from tools import market_dynamics_labeling
 import base64
@@ -143,7 +144,7 @@ class Server():
                 "portfolio_management:exchange": "2019-12-31",
                 'market_dynamics_modeling:second_level_BTC_LOB': "2020-09-01"
             },
-            "number_of_market_style": ["3"],
+            "number_of_market_style": ["5"],
             "length_time_slice": {
                 "algorithmic_trading:BTC": "12",
                 "algorithmic_trading:FX": "24",
@@ -769,23 +770,21 @@ class Server():
         request_json = json.loads(request.get_data(as_text=True))
         try:
             print('request_json', request_json)
-            uploaded_file = request_json.get('file')
-            if uploaded_file.filename == '':
+            file_name=request_json.get('file_name')
+            custom_data_name = file_name.split('.')[0]
+            custom_data=request_json.get('file')
+            print('type of custom_data', type(custom_data))
+            if file_name == '' or file_name is None:
                 return jsonify({'error': 'No file selected'}), 400
+            if file_name and file_name.endswith('.csv') is False:
+                return jsonify({'error': 'Only support csv file'}), 400
 
-            if uploaded_file and uploaded_file.filename.endswith('.csv'):
-                file_data = uploaded_file.stream.read().decode("utf-8")
-                #get file name without extension
-                custom_data_name = uploaded_file.filename.split('.')[0]
-                custom_data = list(csv.reader(file_data.splitlines()))
-            custom_data_name='test'
-            custom_data='1'
 
 
             session_id = request_json.get("session_id")
-            print('get session_id from request_json', session_id)
+            # print('get session_id from request_json', session_id)
             print(type(session_id))
-            if session_id is None:
+            if session_id is None or session_id == '123456789':
                 session_id = self.blank_training(task_name='market_dynamics_modeling',dataset_name='custom')
                 print('create new session_id', session_id)
 
@@ -795,9 +794,16 @@ class Server():
                 work_dir = self.sessions[session_id]["work_dir"]
             # save custom data to csv file in work_dir
             custom_datafile_path = os.path.join(work_dir, custom_data_name + ".csv")
-            with open(custom_datafile_path, 'w', newline='') as f:
-                writer = csv.writer(f)
-                writer.writerows(custom_data)
+
+            # Parse the string into a list of dictionaries
+            data = json.loads(custom_data)
+
+            # Write the data to the CSV file
+            with open(custom_datafile_path, 'w',newline='') as csvfile:
+                writer = csv.DictWriter(csvfile, fieldnames=data[0].keys())
+                writer.writeheader()
+                for row in data:
+                    writer.writerow(row)
 
             # update session info
             if "custom_datafile_paths" not in self.sessions[session_id]:
@@ -820,15 +826,22 @@ class Server():
                 "session_id": session_id
             }
             logger.info(info)
+
+
+
+
+
             return jsonify(res)
 
         except Exception as e:
             error_code = 1
-            info = "request error, {}".format(e)
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            info = "request data error, {}".format(e)
             res = {
                 "error_code": error_code,
-                "info": info,
-                "session_id": session_id
+                "info": info + str(exc_type) + str(fname) + str(exc_tb.tb_lineno),
+                "session_id": ""
             }
             logger.info(info)
             return jsonify(res)
@@ -836,9 +849,9 @@ class Server():
 
     def blank_training(self, task_name ="custom",
                        dataset_name = 'custom',
-                       optimizer_name = 'None',
-                       loss_name = "None",
-                       agent_name = "None"
+                       optimizer_name = 'adam',
+                       loss_name = "mse",
+                       agent_name = "Null"
                        ):
 
         task_name = task_name
