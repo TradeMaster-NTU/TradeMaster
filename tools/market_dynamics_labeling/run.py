@@ -31,7 +31,7 @@ def parse_args():
     parser.add_argument('--max_length_expectation',type=int,default=300,help='Slice longer than this number will not merge actively')
     parser.add_argument('--OE_BTC',type=bool,default=False,help='If dataset is OE_BTC')
     parser.add_argument('--PM',type=str,default='False',help='If dataset is PM')
-    parser.add_argument("--config", default=osp.join(ROOT, "configs", "evaluation", "market_dynamics_modeling.py"),
+    parser.add_argument("--config", default=osp.join(ROOT, "configs", "market_dynamics_modeling", "market_dynamics_modeling.py"),
                         help="deafult mdm config path")
     parser.add_argument("--key_indicator", type=str, default='adjcp',help='The column name of the feature in the data that will be used for dynamic modeling')
     parser.add_argument("--timestamp", type=str, default='timestamp',help='The column name of the feature in the data that is the timestamp')

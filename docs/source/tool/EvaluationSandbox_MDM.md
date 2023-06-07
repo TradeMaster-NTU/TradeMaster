@@ -10,7 +10,7 @@ The dynamics can be used as meta-information. For example, in the evaluation pro
 
 ## Usage 
 - You may use the to label the dataset with modeled dynamics.
-  1. Configure the parameters in [`market_dynamics_modeling.py`](../../../configs/evaluation/market_dynamics_modeling.py), **you may refer to[`TradeMaster_Sandbox_whitepaper.pdf`](TradeMaster_Sandbox_whitepaper.pdf) to get further information on the parameters and modeling algorithm.** 
+  1. Configure the parameters in [`market_dynamics_modeling.py`](../../../configs/market_dynamics_modeling/market_dynamics_modeling.py), **you may refer to[`TradeMaster_Sandbox_whitepaper.pdf`](TradeMaster_Sandbox_whitepaper.pdf) to get further information on the parameters and modeling algorithm.** 
   1. Run the [`run.py`](../../../tools/market_dynamics_labeling/run.py)  in tools/market_dynamics_labeling to prepare the dataset. You may refer to the experiment logs and the result visualizations(metrics_of_each_dynamics.png and f"slice_and_merge_model_{dynamic_number}dynamics_minlength{min_length_limit}_{labeling_method}_labeling_{tic}.png") to tune the parameters until you are satisfied with the result.
   ```
   $ python tools/market_dynamics_labeling/run.py
@@ -27,7 +27,7 @@ The dynamics can be used as meta-information. For example, in the evaluation pro
         </div> 
   The visualization result is a radar plot different metrics, while the 'Metric Radar' polygon is the score of metrics, the 'Profitability' is a mean score of the upper 4 metrics while the "Risk_Control" is the mean of the lower 2 metrics. Noted that the metrics various between different tasks.
 #### Parameters 
-please check [`TradeMaster_Sandbox_whitepaper.pdf`](TradeMaster_Sandbox_whitepaper.pdf) for details on the parameters. We have provided default parameters in the config file [`market_dynamics_modeling.py`](../../../configs/evaluation/market_dynamics_modeling.py) and the [`base`](../../../configs/_base_/market_dynamics_model) folder. Noted that these parameters are just a starting point for you to play with. As each person have his or her own expectation and usage on market dynamics, please tune the parameters and run experiments to get better results.
+please check [`TradeMaster_Sandbox_whitepaper.pdf`](TradeMaster_Sandbox_whitepaper.pdf) for details on the parameters. We have provided default parameters in the config file [`market_dynamics_modeling.py`](../../../configs/market_dynamics_modeling/market_dynamics_modeling.py) and the [`base`](../../../configs/_base_/market_dynamics_model) folder. Noted that these parameters are just a starting point for you to play with. As each person have his or her own expectation and usage on market dynamics, please tune the parameters and run experiments to get better results.
 #### Scoring
 The scores of the visualization result are calculated as described:
 - Do nothing metrics are used as score 0
@@ -39,8 +39,8 @@ The scores of the visualization result are calculated as described:
   - Do Nothing: Take no action at all
 ## Example
 We show a use case of using the tool to label dynamics on an [`example BTCUSDT dataset`](https://datasets.tardis.dev/v1/binance-futures/book_snapshot_5/2020/09/01/BTCUSDT.csv.gz)(click to download) from the open example of a data provider [`Tardis.dev`](https://docs.tardis.dev/downloadable-csv-files)   
-We have already aggregate the data to second level and the data is provided [`here`](../../../data/market_dynamics_modeling/2020-09-01-2020-09-01.feather)
-With the [`configuration file`](../../../configs/evaluation/market_dynamics_modeling.py), you will get the following dynamics modeling result:
+We have already aggregate the data to second level and the data is provided [`here`](../../../data/market_dynamics_modeling/second_level_BTC_LOB/2020-09-01-2020-09-01.feather)
+With the [`configuration file`](../../../configs/market_dynamics_modeling/market_dynamics_modeling.py), you will get the following dynamics modeling result:
   <div align="center">
           <img src="example_figs/Radar_plot.png" width = 400 height =  />
         </div> 
