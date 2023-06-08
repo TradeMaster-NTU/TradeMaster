@@ -1,29 +1,20 @@
 import math
-
 import pandas as pd
-import yfinance as yf
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 from datetime import datetime
-
 import statsmodels.api as sm
 from scipy.signal import butter, filtfilt
 from matplotlib import colors as mcolors
 from sklearn.linear_model import LinearRegression
-from random import sample
-import fractions
 import os
 from sklearn.manifold import TSNE
 from tslearn.clustering import TimeSeriesKMeans
 from tslearn.utils import to_time_series_dataset
 import pickle
-import re
 import matplotlib.font_manager as font_manager
-from dtaidistance import dtw
-import time
 from tqdm import tqdm
-from scipy.spatial.distance import euclidean
 from fastdtw import fastdtw
 
 
@@ -34,8 +25,11 @@ class Dynamic_labeler():
         if self.labeling_method == 'slope':
             low, _, high = sorted([low, high, 0])
             self.segments = []
-            for i in range(1, self.dynamic_num):
-                self.segments.append(low + (high - low) / (dynamic_num) * i)
+            if high!=low:
+                for i in range(1, self.dynamic_num):
+                    self.segments.append(low + (high - low) / (dynamic_num-2) * i)
+            else:
+                self.segments.append(low)
         elif self.labeling_method == 'quantile':
             self.segments = []
             # find the quantile of normalized_coef_list
@@ -122,7 +116,7 @@ class Worker():
             self.min_length_limit = min_length_limit
             for i,tic in enumerate(self.tics):
                 coef_list, turning_points, y_pred_list, norm_coef_list = self.get_turning_points(
-                    data_ori=self.data_dict[tic], tic=tic, length_constrain=self.max_length_expectation)
+                    data_ori=self.data_dict[tic], tic=tic, max_length_expectation=self.max_length_expectation)
                 print('finish fitting ' + tic,' Total process:',i, '/', len(self.tics))
                 self.turning_points_dict[tic] = turning_points
                 self.coef_list_dict[tic] = coef_list
@@ -144,10 +138,20 @@ class Worker():
             for tic in self.tics:
                 turning_points = self.turning_points_dict[tic]
                 norm_coef_list = self.norm_coef_list_dict[tic]
-                if low>=high:
-                    # set low high as the min and max of the coef_list
-                    low=min(norm_coef_list)
-                    high=max(norm_coef_list)
+                if low==high and self.labeling_method=='slope' and self.dynamic_num!=2:
+                    raise Exception('Forlabeling_method slope, the low and high should be different if your dynamic_num is not 2.')
+                if low>high:
+                    # auto zooming low high according to the coef_list
+                    # if dynamic number is 4, then the low and high should be the 25% and 75% of the coef_list
+                    # uf dynamic number is 3, then the low and high should be the 33% and 66% of the coef_list
+                    # if dynamic number is 2, then the low and high should be the 50% and 50% of the coef_list
+                    # the following code is to calculate the low and high
+                    coef_list = norm_coef_list
+                    coef_list = sorted(coef_list)
+                    high = coef_list[int(((self.dynamic_num - 1) / self.dynamic_num) * len(coef_list))][0]
+                    low = coef_list[int((1 / self.dynamic_num) * len(coef_list))][0]
+                    print('auto set low and high, will be used if labeling method is slope, low: ', low, ' high: ', high)
+
                 label, data_seg, label_seg, index_seg = self.get_label(self.data_dict[tic], turning_points,
                                                                        low, high, norm_coef_list, tic,
                                                                        self.dynamic_num,labeling_method=self.labeling_method)
@@ -385,7 +389,7 @@ class Worker():
         # normalize the distance by the length of the shorter segment and mean value of the shorter segment
         return np.mean(distances) / (slice_length * np.mean(shorter))
 
-    def get_turning_points(self, data_ori, tic, length_constrain=0):
+    def get_turning_points(self, data_ori, tic, max_length_expectation=0):
         """
         1. segment the data into chunks based on turning points(where all neighbors have the opposite slope)
         2. if the length is smaller than min_length_limit, merge the chunk with its neighbor
@@ -408,21 +412,21 @@ class Worker():
 
         # 2.if the length is smaller than min_length_limit, merge the chunk with its neighbor
 
-        if length_constrain != 0:
-            for i in range(1, len(turning_points) - 1):
-                if turning_points[-1][0] - turning_points[i][0] -1 < length_constrain:
-                    # there is no enough tics on the right side merge them all to the last segment
-                    for j in range(i, len(turning_points)-1):
-                        turning_points_new[-1].extend(turning_points[j])
-                    break
-                elif turning_points[i][0] - turning_points_new[-1][0] >= self.min_length_limit:
-                    # no need to merge
-                    turning_points_new.append(turning_points[i])
-                else:
-                    # merge this point into the current segment
-                    turning_points_new[-1].extend(turning_points[i])
-            turning_points_new.append(turning_points[-1])
-            turning_points = turning_points_new
+
+        for i in range(1, len(turning_points) - 1):
+            if turning_points[-1][0] - turning_points[i][0] -1 < self.min_length_limit:
+                # there is no enough tics on the right side merge them all to the last segment
+                for j in range(i, len(turning_points)-1):
+                    turning_points_new[-1].extend(turning_points[j])
+                break
+            elif turning_points[i][0] - turning_points_new[-1][0] >= self.min_length_limit:
+                # no need to merge
+                turning_points_new.append(turning_points[i])
+            else:
+                # merge this point into the current segment
+                turning_points_new[-1].extend(turning_points[i])
+        turning_points_new.append(turning_points[-1])
+        turning_points = turning_points_new
 
         # 2. Calculate the slope
         coef_list = []

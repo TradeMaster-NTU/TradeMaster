@@ -8,14 +8,12 @@ from ..builder import Market_Dynamics_Model
 from ..custom import Market_dynamics_model
 from trademaster.utils import get_attr, labeling_util as util,market_dynamics_modeling_analysis
 from pathlib import Path
-import warnings
 
 @Market_Dynamics_Model.register_module()
 
 class Linear_Market_Dynamics_Model(Market_dynamics_model):
     def __init__(self,**kwargs):
         super(Linear_Market_Dynamics_Model, self).__init__()
-        # print('data_path',get_attr(kwargs, "data_path", None))
         self.data_path=get_attr(kwargs, "data_path", None)
         self.method = 'slice_and_merge'
         self.filter_strength = get_attr(kwargs, "filter_strength", None)
@@ -146,7 +144,7 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
         print('start market dynamics modeling analysis')
         MDM_analysis=market_dynamics_modeling_analysis.MarketDynamicsModelingAnalysis(process_datafile_path,self.key_indicator)
         MDM_analysis.run_analysis(process_datafile_path)
-        print('Market dynamics modeling analysis done')
+        print('market dynamics modeling analysis done')
 
         return os.path.abspath(process_datafile_path), market_dynamic_labeling_visualization_paths
 

@@ -29,6 +29,5 @@ pika
 fvcore
 openfe
 fastdtw
-dtaidistance
 chardet
 pyarrow
