@@ -1,0 +1,3 @@
+trainer = dict(
+    type = "Null"
+)

@@ -7,7 +7,7 @@ ROOT = Path(__file__).resolve().parents[3]
 from ..custom import Trainer
 from ..builder import TRAINERS
 
-from trademaster.utils import get_attr, save_model, load_model, load_best_model, save_best_model, GeneralReplayBuffer,plot_metric_against_baseline,plot_trading_decision_on_market
+from trademaster.utils import get_attr, save_model, load_model, load_best_model, save_best_model, GeneralReplayBuffer,plot_metric_against_baseline,plot_log_trading_decision_on_market
 import numpy as np
 import os
 import pandas as pd
@@ -184,7 +184,7 @@ class OrderExecutionETEOTrainer(Trainer):
                 break
 
         max_index = np.argmax(valid_score_list)
-        plot_trading_decision_on_market(market_features_dict=save_dict_list[max_index]['market_features_dict'],trading_points=save_dict_list[max_index]['trading_points'],alg='End-to-End Optimal',task='valid',color='darkcyan',save_dir=self.work_dir,metric_name='Trading')
+        plot_log_trading_decision_on_market(market_features_dict=save_dict_list[max_index]['market_features_dict'], trading_points=save_dict_list[max_index]['trading_points'], alg='End-to-End Optimal', task='valid', color='darkcyan', save_dir=self.work_dir, metric_name='Trading')
         # plot_metric_against_baseline(total_asset=save_dict_list[max_index]['cash_left_by_tick'],buy_and_hold=None,alg='End-to-End Optimal',task='valid',color='darkcyan',save_dir=self.work_dir,metric_name='Cash left')
         load_model(self.checkpoints_path,
                    epoch=max_index + 1,
@@ -222,10 +222,10 @@ class OrderExecutionETEOTrainer(Trainer):
             episode_reward_sum += reward
             if done:
                 # print('plot_metric_against_baseline')
-                plot_trading_decision_on_market(market_features_dict=return_dict['market_features_dict'],
-                                                trading_points=return_dict['trading_points'],
-                                                alg='End-to-End Optimal', task='test', color='darkcyan',
-                                                save_dir=self.work_dir, metric_name='Trading')
+                plot_log_trading_decision_on_market(market_features_dict=return_dict['market_features_dict'],
+                                                    trading_points=return_dict['trading_points'],
+                                                    alg='End-to-End Optimal', task='test', color='darkcyan',
+                                                    save_dir=self.work_dir, metric_name='Trading')
 
                 # plot_metric_against_baseline(total_asset=return_dict['cash_left_by_tick'],buy_and_hold=None,alg='End to End Optimal',task='test',color='darkcyan',save_dir=self.work_dir,metric_name='Cash left')
 #                print("Test Best Episode Reward Sum: {:04f}".format(episode_reward_sum))

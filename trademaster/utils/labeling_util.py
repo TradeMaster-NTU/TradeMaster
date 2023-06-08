@@ -1,29 +1,20 @@
 import math
-
 import pandas as pd
-import yfinance as yf
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 from datetime import datetime
-
 import statsmodels.api as sm
 from scipy.signal import butter, filtfilt
 from matplotlib import colors as mcolors
 from sklearn.linear_model import LinearRegression
-from random import sample
-import fractions
 import os
 from sklearn.manifold import TSNE
 from tslearn.clustering import TimeSeriesKMeans
 from tslearn.utils import to_time_series_dataset
 import pickle
-import re
 import matplotlib.font_manager as font_manager
-from dtaidistance import dtw
-import time
 from tqdm import tqdm
-from scipy.spatial.distance import euclidean
 from fastdtw import fastdtw
 
 
@@ -34,8 +25,11 @@ class Dynamic_labeler():
         if self.labeling_method == 'slope':
             low, _, high = sorted([low, high, 0])
             self.segments = []
-            for i in range(1, self.dynamic_num):
-                self.segments.append(low + (high - low) / (dynamic_num) * i)
+            if high!=low:
+                for i in range(1, self.dynamic_num):
+                    self.segments.append(low + (high - low) / (dynamic_num-2) * i)
+            else:
+                self.segments.append(low)
         elif self.labeling_method == 'quantile':
             self.segments = []
             # find the quantile of normalized_coef_list
@@ -72,7 +66,7 @@ class Dynamic_labeler():
 
 
 class Worker():
-    def __init__(self, data, method='slice_and_merge', filter_strength=1, key_indicator='adjcp', timestamp='date', tic='tic',
+    def __init__(self, data_path, method='slice_and_merge', filter_strength=1, key_indicator='adjcp', timestamp='date', tic='tic',
                  labeling_method='slope', min_length_limit=-1, merging_threshold=-1, merging_metric='DTW_distance',merging_dynamic_constraint=-1):
         plt.ioff()
         self.key_indicator = key_indicator
@@ -88,7 +82,8 @@ class Worker():
             self.merging_dynamic_constraint = float('inf')
         else:
             self.merging_dynamic_constraint = merging_dynamic_constraint
-        self.TSNE=False
+        self.do_TSNE=False
+        self.do_DTW=False
         if method == 'slice_and_merge':
             self.method = 'slice_and_merge'
             # calculate the parameters for filtering
@@ -96,7 +91,7 @@ class Worker():
             self.Wn_key_indicator = self.filter_parameters_calculation(filter_strength)
         else:
             raise Exception("Sorry, only linear model is provided for now.")
-        self.preprocess(data)
+        self.preprocess(data_path)
 
     def filter_parameters_calculation(self, filter_strength):
         if self.min_length_limit != -1:
@@ -119,13 +114,15 @@ class Worker():
             self.dynamic_num = dynamic_number
             self.max_length_expectation = max_length_expectation
             self.min_length_limit = min_length_limit
-            for tic in self.tics:
+            for i,tic in enumerate(self.tics):
                 coef_list, turning_points, y_pred_list, norm_coef_list = self.get_turning_points(
-                    data_ori=self.data_dict[tic], tic=tic, length_constrain=self.max_length_expectation)
+                    data_ori=self.data_dict[tic], tic=tic, max_length_expectation=self.max_length_expectation)
+                print('finish fitting ' + tic,' Total process:',i, '/', len(self.tics))
                 self.turning_points_dict[tic] = turning_points
                 self.coef_list_dict[tic] = coef_list
                 self.y_pred_dict[tic] = y_pred_list
                 self.norm_coef_list_dict[tic] = norm_coef_list
+
 
     def label(self, parameters, work_dir=os.getcwd()):
         # return a dict of label where key is the ticker and value is the label of time-series
@@ -141,6 +138,20 @@ class Worker():
             for tic in self.tics:
                 turning_points = self.turning_points_dict[tic]
                 norm_coef_list = self.norm_coef_list_dict[tic]
+                if low==high and self.labeling_method=='slope' and self.dynamic_num!=2:
+                    raise Exception('Forlabeling_method slope, the low and high should be different if your dynamic_num is not 2.')
+                if low>high:
+                    # auto zooming low high according to the coef_list
+                    # if dynamic number is 4, then the low and high should be the 25% and 75% of the coef_list
+                    # uf dynamic number is 3, then the low and high should be the 33% and 66% of the coef_list
+                    # if dynamic number is 2, then the low and high should be the 50% and 50% of the coef_list
+                    # the following code is to calculate the low and high
+                    coef_list = norm_coef_list
+                    coef_list = sorted(coef_list)
+                    high = coef_list[int(((self.dynamic_num - 1) / self.dynamic_num) * len(coef_list))][0]
+                    low = coef_list[int((1 / self.dynamic_num) * len(coef_list))][0]
+                    print('auto set low and high, will be used if labeling method is slope, low: ', low, ' high: ', high)
+
                 label, data_seg, label_seg, index_seg = self.get_label(self.data_dict[tic], turning_points,
                                                                        low, high, norm_coef_list, tic,
                                                                        self.dynamic_num,labeling_method=self.labeling_method)
@@ -148,15 +159,16 @@ class Worker():
                 self.all_data_seg.extend(data_seg)
                 self.all_label_seg.extend(label_seg)
                 self.all_index_seg.extend(index_seg)
-            print('finish labeling')
-            if self.TSNE:
+            if self.do_TSNE:
                 interpolated_pct_return_data_seg = np.array(self.interpolation(self.all_data_seg))
                 try:
+                  print('doing TSNE on data for visualization')
                   self.TSNE_run(interpolated_pct_return_data_seg)
                 except:
                   print('not able to do TSNE')
-            if len(self.tics) > 1:
+            if len(self.tics) > 1 and self.do_DTW:
                 try:
+                    print('Doing DTW clustering of multiple tics')
                     self.tic_DTW(work_dir)
                 except:
                     print('not able to do clustering')
@@ -213,16 +225,12 @@ class Worker():
         data_by_tic = []
         data_by_tic_1 = []
         for tic in self.tics:
-            try:
-                data_by_tic.append(self.data_dict[tic].loc[:,
-                                   ['open', 'high', 'low', 'close', self.key_indicator, 'pct_return']].values)
-            except:
-                data_by_tic.append(
-                    self.data_dict[tic].loc[:, [self.key_indicator, 'pct_return']].values)
-            data_by_tic_1.append(self.data_dict[tic].loc[:, 'pct_return'].values)
+            data_by_tic.append(
+                self.data_dict[tic].loc[:, ['pct_return']].values)
+            # data_by_tic_1.append(self.data_dict[tic].loc[:, 'pct_return'].values)
         fitting_data = to_time_series_dataset(data_by_tic)
-        fitting_data_1 = to_time_series_dataset(data_by_tic_1)
-        km_stock = TimeSeriesKMeans(n_clusters=6, metric="dtw", max_iter=50, max_iter_barycenter=100, n_jobs=50,
+        # fitting_data_1 = to_time_series_dataset(data_by_tic_1)
+        km_stock = TimeSeriesKMeans(n_clusters=5, metric="dtw", max_iter=50, max_iter_barycenter=100, n_jobs=50,
                                     verbose=0).fit(fitting_data)
         tic_label = km_stock.predict(fitting_data)
         output = open(os.path.join(work_dir, 'DTW_tics.pkl'), 'wb')
@@ -233,10 +241,10 @@ class Worker():
         output.close()
         for i in range(len(self.tics)):
             self.data_dict[self.tics[i]]['tic_label'] = tic_label[i]
-        tsne_model = TSNE(n_components=3, perplexity=25, n_iter=300)
-        tsne_results = tsne_model.fit_transform(
-            fitting_data_1.reshape(fitting_data_1.shape[0], fitting_data_1.shape[1]))
-        self.TSNE_plot(tsne_results, tic_label, '_tic_cluster', folder_name=self.plot_path)
+        # tsne_model = TSNE(n_components=3, perplexity=25, n_iter=300)
+        # tsne_results = tsne_model.fit_transform(
+        #     fitting_data_1.reshape(fitting_data_1.shape[0], fitting_data_1.shape[1]))
+        # self.TSNE_plot(tsne_results, tic_label, '_tic_cluster', folder_name=self.plot_path)
 
     def plot_indicator(self, data, name):
         fig, ax = plt.subplots(1, 1, figsize=(20, 10), constrained_layout=True)
@@ -381,7 +389,7 @@ class Worker():
         # normalize the distance by the length of the shorter segment and mean value of the shorter segment
         return np.mean(distances) / (slice_length * np.mean(shorter))
 
-    def get_turning_points(self, data_ori, tic, length_constrain=0):
+    def get_turning_points(self, data_ori, tic, max_length_expectation=0):
         """
         1. segment the data into chunks based on turning points(where all neighbors have the opposite slope)
         2. if the length is smaller than min_length_limit, merge the chunk with its neighbor
@@ -404,16 +412,21 @@ class Worker():
 
         # 2.if the length is smaller than min_length_limit, merge the chunk with its neighbor
 
-        if length_constrain != 0:
-            for i in range(1, len(turning_points) - 1):
-                if turning_points[i][0] - turning_points_new[-1][0] >= self.min_length_limit:
-                    # no need to merge
-                    turning_points_new.append(turning_points[i])
-                else:
-                    # merge this point into the current segment
-                    turning_points_new[-1].extend(turning_points[i])
-            turning_points_new.append(turning_points[-1])
-            turning_points = turning_points_new
+
+        for i in range(1, len(turning_points) - 1):
+            if turning_points[-1][0] - turning_points[i][0] -1 < self.min_length_limit:
+                # there is no enough tics on the right side merge them all to the last segment
+                for j in range(i, len(turning_points)-1):
+                    turning_points_new[-1].extend(turning_points[j])
+                break
+            elif turning_points[i][0] - turning_points_new[-1][0] >= self.min_length_limit:
+                # no need to merge
+                turning_points_new.append(turning_points[i])
+            else:
+                # merge this point into the current segment
+                turning_points_new[-1].extend(turning_points[i])
+        turning_points_new.append(turning_points[-1])
+        turning_points = turning_points_new
 
         # 2. Calculate the slope
         coef_list = []
@@ -479,13 +492,13 @@ class Worker():
                         turning_points_temp_flat.append(turning_points[i][0])
 
                     turning_points_temp_flat.append(turning_points[-1][0])
-                    # calculate the label
                     label, data_seg, label_seg_raw, index_seg = self.get_label(data=data, turning_points=turning_points_temp_flat,
                                                                            low=None, high=None, normalized_coef_list=normalized_coef_list, tic=tic,
                                                                            dynamic_num=self.dynamic_num,
                                                                            labeling_method='quantile')
                     # label the segments
                     label_seg=[None for _ in range(len(turning_points)-1)]
+                    # print(indexs)
                     for i in range(len(indexs)):
                         label_seg[indexs[i]]=label_seg_raw[i]
 
@@ -548,7 +561,7 @@ class Worker():
                         # if we activate the dynamic constraint
                         if self.merging_dynamic_constraint != float('inf'):
                             # check right
-                            if right_distance!=float('inf') and self.merging_dynamic_constraint < abs(label_seg[i] - label_seg[next_index]):
+                            if next_index<len(label_seg) and right_distance!=float('inf') and self.merging_dynamic_constraint < abs(label_seg[i] - label_seg[next_index]):
                                 if right_distance < self.merging_threshold:
                                     merge_prohibit_times+=1
                                     # print(f'prohibit merging right of {label_seg[i]} and {label_seg[next_index]}')
@@ -611,8 +624,8 @@ class Worker():
 
         return np.asarray(coef_list), np.asarray(turning_points), y_pred_list, normalized_coef_list
 
-    def plot(self, tics, parameters, data_path, model_id):
-        self.plot_path = os.path.join(os.path.dirname(os.path.realpath(data_path)), model_id)
+    def plot(self, tics, parameters, output_path, model_id):
+        self.plot_path = os.path.join(output_path, model_id)
         # self.plot_path_filtered = os.path.join(os.path.dirname(os.path.realpath(data_path)), 'MDM_linear_filtered',
         #                                        model_id)
         # if not os.path.exists(self.plot_path):
@@ -628,19 +641,20 @@ class Worker():
                 paths.append(self.plot_to_file(self.data_dict[tic], tic, self.y_pred_dict[tic],
                                                self.turning_points_dict[tic], low, high,
                                                normalized_coef_list=self.norm_coef_list_dict[tic],
-                                               folder_name=self.plot_path, plot_feather=self.key_indicator))
+                                               plot_path=self.plot_path, plot_feather=self.key_indicator))
                 # self.plot_to_file(self.data_dict[tic], tic, self.y_pred_dict[tic],
                 #                   self.turning_points_dict[tic], low, high,
                 #                   normalized_coef_list=self.norm_coef_list_dict[tic],
                 #                   folder_name=self.plot_path_filtered, plot_feather='key_indicator_filtered')
-                return paths
+            return paths
             try:
+                print('plotting TSNE')
                 self.TSNE_plot(self.tsne_results, self.all_label_seg, folder_name=self.plot_path)
             except:
                 print('not able to plot TSNE')
 
     def plot_to_file(self, data, tic, y_pred_list, turning_points, low, high, normalized_coef_list,
-                     folder_name=None, plot_feather=None):
+                     plot_path=None, plot_feather=None):
         data = data.reset_index(drop=True)
         # every sub-plot is contained segment of at most 100000 data points
         # 1. split the data into segments if the length is too long
@@ -676,20 +690,18 @@ class Worker():
                     coef = i + counter
                 flag = self.dynamic_flag.get(coef)
                 ax.plot(x_seg, data[plot_feather].iloc[turning_points_seg[i]:turning_points_seg[i + 1]],
-                        color=colors[flag], label='market style ' + str(flag))
+                        color=colors[flag], label='market dynamic ' + str(flag))
             counter += len(turning_points_seg) - 1
             handles, labels = ax.get_legend_handles_labels()
             by_label = dict(zip(labels, handles))
             font = font_manager.FontProperties(weight='bold',
-                                               style='normal', size=16)
+                                               style='normal', size=48)
             # legend to every sub-plot
             ax.legend(by_label.values(), by_label.keys(), prop=font)
         # set the title
         plt.title(f"Dynamics_of_{tic}_linear_{self.labeling_method}_{plot_feather}", fontsize=20)
-        plot_path = folder_name
-        if not os.path.exists(plot_path):
-            os.makedirs(plot_path)
         fig_path = plot_path + '_' + tic + '.png'
+        print('plot to ' + fig_path)
         fig.savefig(fig_path)
         plt.close(fig)
         return os.path.abspath(fig_path).replace("\\", "/")

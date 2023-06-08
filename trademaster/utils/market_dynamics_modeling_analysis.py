@@ -96,19 +96,13 @@ class MarketDynamicsModelingAnalysis(object):
         intervals.append([last_index, i])
         return intervals
 
-    def save_data_by_dynamics(self,data_path):
-        # if extention is .feather
-        if self.file_extension == 'feather':
-            data = pd.read_feather(data_path).reset_index()
-        # if extention is .csv
-        elif self.file_extension == 'csv':
-            data = pd.read_csv(data_path).reset_index()
+    def save_data_by_dynamics(self,data,tic,data_folder):
+
         # segment data into dynamics with 'label' column
         # get unique label
         dynamics = data['label'].unique()
 
         # get folder of data_path
-        data_folder = os.path.dirname(data_path)
         # create folder for each dynamics under data_folder
         for i in range(len(dynamics)):
             if not os.path.exists(data_folder + '/label_' + str(i)):
@@ -241,8 +235,22 @@ class MarketDynamicsModelingAnalysis(object):
         print("metrics_of_each_dynamics.png saved in",data_folder)
 
     def run_analysis(self,data_path):
-        data_folder,dynamics_num=self.save_data_by_dynamics(data_path)
-        self.calculate_metrics(dynamics_num,data_folder)
+        # if extention is .feather
+        if self.file_extension == 'feather':
+            data = pd.read_feather(data_path).reset_index()
+        # if extention is .csv
+        elif self.file_extension == 'csv':
+            data = pd.read_csv(data_path).reset_index()
+        # get unique tic
+        if 'tic' not in data.columns:
+            data['tic']='default'
+        tics = data['tic'].unique()
+        for tic in tics:
+            # get data of each tic
+            data_tic = data[data['tic'] == tic]
+            data_folder = os.path.dirname(data_path) + '/' + tic
+            data_folder,dynamics_num=self.save_data_by_dynamics(data_tic,tic,data_folder)
+            self.calculate_metrics(dynamics_num,data_folder)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

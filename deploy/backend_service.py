@@ -22,6 +22,7 @@ from flask_cors import CORS
 import os.path as osp
 import pickle
 import csv
+import regex as re
 
 from tools import market_dynamics_labeling
 import base64
@@ -116,6 +117,15 @@ class Server():
 
     def evaluation_parameters(self):
         res ={
+            "dataset_name": [
+                "algorithmic_trading:BTC",
+                "algorithmic_trading:FX",
+                "algorithmic_trading:JPM",
+                "order_excecution:BTC",
+                "order_excecution:PD_BTC",
+                "portfolio_management:dj30",
+                "portfolio_management:exchange",
+            'market_dynamics_modeling:second_level_BTC_LOB'],
             "start_date": {
                 "algorithmic_trading:BTC": "2020-03-03",
                 "algorithmic_trading:FX": "2017-12-22",
@@ -123,6 +133,7 @@ class Server():
                 "order_excecution:PD_BTC": "2018-09-10",
                 "portfolio_management:dj30": "2020-04-01",
                 "portfolio_management:exchange": "2018-08-09",
+                'market_dynamics_modeling:second_level_BTC_LOB': "2020-09-01"
             },
             "end_date": {
                 "algorithmic_trading:BTC": "2021-07-05",
@@ -131,8 +142,9 @@ class Server():
                 "order_excecution:PD_BTC": "2021-07-05",
                 "portfolio_management:dj30": "2021-12-31",
                 "portfolio_management:exchange": "2019-12-31",
+                'market_dynamics_modeling:second_level_BTC_LOB': "2020-09-01"
             },
-            "number_of_market_style": ["3"],
+            "number_of_market_style": ["5"],
             "length_time_slice": {
                 "algorithmic_trading:BTC": "12",
                 "algorithmic_trading:FX": "24",
@@ -464,7 +476,14 @@ class Server():
             logger.info(info)
             return jsonify(res)
 
-    def start_market_dynamics_labeling(self, request):
+    def start_market_dynamics_modeling(self, request):
+        # there are three ways to start start_market_dynamics_modeling
+        # 1. start after the training of agents
+        # 2. start from here using customized dataset
+        # 3. start from here using the dataset from the training of agents
+
+
+
         request_json = json.loads(request.get_data(as_text=True))
         try:
             # get input args
@@ -481,11 +500,10 @@ class Server():
             args['bear_threshold'] = request_json.get("bear_threshold")
             args['bull_threshold'] = request_json.get("bull_threshold")
 
-            try:
-                session_id = request_json.get("session_id")
-            except:
-                # if no session_id, create a new session with fake_training
-                session_id = self.fake_training(dataset_name=args['dataset_name'])
+            session_id = request_json.get("session_id")
+            if session_id is None:
+                # if no session_id, create a new session with blank_training
+                session_id = self.blank_training(task_name='market_dynamics_modeling',dataset_name='custom')
             # load session
             self.sessions = self.load_sessions()
             if session_id in self.sessions:
@@ -530,7 +548,7 @@ class Server():
 
             # update MDM cfg
 
-            MDM_cfg_path = os.path.join(ROOT, "configs", 'evaluation',
+            MDM_cfg_path = os.path.join(ROOT, "configs", 'market_dynamics_modeling',
                                         f"market_dynamics_modeling.py")
 
             MDM_cfg = Config.fromfile(MDM_cfg_path)
@@ -687,6 +705,19 @@ class Server():
                 cfg_path = self.sessions[session_id]["cfg_path"]
                 train_script_path = self.sessions[session_id]["script_path"]
                 task_name = self.sessions[session_id]["task_name"]
+            # no agent to be tested if task_name is market_dynamics_labeling
+
+            if task_name == "market_dynamics_labeling":
+                # throw error
+                error_code = 1
+                info = "Illegal instruction, {}".format("no agent to be tested, you may start the from the training page to train an agent")
+                res = {
+                    "error_code": error_code,
+                    "info": info
+                }
+                logger.info(info)
+                return jsonify(res)
+
             cfg = Config.fromfile(cfg_path)
             cfg = replace_cfg_vals(cfg)
             cfg_path = os.path.join(work_dir, osp.basename(cfg_path))
@@ -738,64 +769,41 @@ class Server():
     def upload_csv(self, request):
         request_json = json.loads(request.get_data(as_text=True))
         try:
-            uploaded_file = request_json.get('file')
-            if uploaded_file.filename == '':
+            print('request_json', request_json)
+            file_name=request_json.get('file_name')
+            custom_data_name = file_name.split('.')[0]
+            custom_data=request_json.get('file')
+            print('type of custom_data', type(custom_data))
+            if file_name == '' or file_name is None:
                 return jsonify({'error': 'No file selected'}), 400
-
-            if uploaded_file and uploaded_file.filename.endswith('.csv'):
-                file_data = uploaded_file.stream.read().decode("utf-8")
-                #get file name without extension
-                custom_data_name = uploaded_file.filename.split('.')[0]
-                custom_data = list(csv.reader(file_data.splitlines()))
-
-
-            try:
-                session_id = request_json.get("session_id")
-            except:
-                # if session_id is not provided, create a new session with fake_training()
-                session_id = self.fake_training(dataset_name=custom_data_name)
-                # create new session
-                # we will use a default cfg file because we will not actually run an agent in this use case
-                # cfg_path = os.path.join(ROOT, "configs", 'algorithmic_trading',
-                #                         'algorithmic_trading_BTC_deepscalper_deepscalper_adam_mse.py')
-                # # train_script_path = self.train_scripts(task_name, dataset_name, optimizer_name, loss_name, agent_name)
-                # work_dir = os.path.join(ROOT, "work_dir", session_id,
-                #                         f"dynamic_labeling_{args['dataset_name']}")
-                # if not os.path.exists(work_dir):
-                #     os.makedirs(work_dir)
-                #
-                # cfg = Config.fromfile(cfg_path)
-                # cfg = replace_cfg_vals(cfg)
-                # cfg.work_dir = "work_dir/{}/{}".format(session_id,
-                #                                        'dynamic_labeling_{}'.format(args['dataset_name']))
-                # cfg.trainer.work_dir = cfg.work_dir
+            if file_name and file_name.endswith('.csv') is False:
+                return jsonify({'error': 'Only support csv file'}), 400
 
 
 
+            session_id = request_json.get("session_id")
+            # print('get session_id from request_json', session_id)
+            print(type(session_id))
+            if session_id is None or session_id == '123456789':
+                session_id = self.blank_training(task_name='market_dynamics_modeling',dataset_name='custom')
+                print('create new session_id', session_id)
 
-
-            # if 'file' not in request_json.files:
-            #     return jsonify({'error': 'No file found in request'}), 400
-
-            # uploaded_file = request_json.get('file')
-            # if uploaded_file.filename == '':
-            #     return jsonify({'error': 'No file selected'}), 400
-            #
-            # if uploaded_file and uploaded_file.filename.endswith('.csv'):
-            #     file_data = uploaded_file.stream.read().decode("utf-8")
-            #     #get file name without extension
-            #     custom_data_name = uploaded_file.filename.split('.')[0]
-            #     custom_data = list(csv.reader(file_data.splitlines()))
-                # return jsonify(csv_data)
 
             self.sessions = self.load_sessions()
             if session_id in self.sessions:
                 work_dir = self.sessions[session_id]["work_dir"]
             # save custom data to csv file in work_dir
             custom_datafile_path = os.path.join(work_dir, custom_data_name + ".csv")
-            with open(custom_datafile_path, 'w', newline='') as f:
-                writer = csv.writer(f)
-                writer.writerows(custom_data)
+
+            # Parse the string into a list of dictionaries
+            data = json.loads(custom_data)
+
+            # Write the data to the CSV file
+            with open(custom_datafile_path, 'w',newline='') as csvfile:
+                writer = csv.DictWriter(csvfile, fieldnames=data[0].keys())
+                writer.writeheader()
+                for row in data:
+                    writer.writerow(row)
 
             # update session info
             if "custom_datafile_paths" not in self.sessions[session_id]:
@@ -818,73 +826,59 @@ class Server():
                 "session_id": session_id
             }
             logger.info(info)
+
+
+
+
+
             return jsonify(res)
 
         except Exception as e:
             error_code = 1
-            info = "request error, {}".format(e)
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            info = "request data error, {}".format(e)
             res = {
                 "error_code": error_code,
-                "info": info,
-                "session_id": session_id
+                "info": info + str(exc_type) + str(fname) + str(exc_tb.tb_lineno),
+                "session_id": ""
             }
             logger.info(info)
             return jsonify(res)
 
 
-    def fake_training(self,task_name = "algorithmic_trading",
-        dataset_name = "algorithmic_trading:BTC".split(":")[-1],
-        optimizer_name = "adam",
-        loss_name = "mse",
-        agent_name = "algorithmic_trading:deepscalper".split(":")[-1],
-        start_date = "2015-10-01",
-        end_date = "2021-07-06"):
+    def blank_training(self, task_name ="custom",
+                       dataset_name = 'custom',
+                       optimizer_name = 'adam',
+                       loss_name = "mse",
+                       agent_name = "Null"
+                       ):
 
         task_name = task_name
         dataset_name = dataset_name
         optimizer_name = optimizer_name
         loss_name = loss_name
         agent_name = agent_name
-        start_date = start_date
-        end_date = end_date
+
         ##TODO
         session_id = str(uuid.uuid1())
 
         cfg_path = os.path.join(ROOT, "configs", task_name,
-                                f"{task_name}_algorithmic_trading_{agent_name}_{agent_name}_{optimizer_name}_{loss_name}.py")
-        train_script_path = self.train_scripts(task_name, "algorithmic_trading", optimizer_name, loss_name, agent_name)
+                                f"{task_name}_{dataset_name}_{agent_name}_{agent_name}_{optimizer_name}_{loss_name}.py")
+        train_script_path = self.train_scripts(task_name, dataset_name, optimizer_name, loss_name, agent_name)
         work_dir = os.path.join(ROOT, "work_dir", session_id,
-                                'dynamic_labeling')
+                                f"{task_name}_{dataset_name}_{agent_name}_{agent_name}_{optimizer_name}_{loss_name}")
         if not os.path.exists(work_dir):
             os.makedirs(work_dir)
+
 
         cfg = Config.fromfile(cfg_path)
         cfg = replace_cfg_vals(cfg)
         cfg.work_dir = "work_dir/{}/{}".format(session_id,
-                                               'dynamic_labeling')
+                                               task_name)
         cfg.trainer.work_dir = cfg.work_dir
 
-        # # build dataset
-        # data = pd.read_csv(os.path.join(ROOT, cfg.data.data_path, "data.csv"), index_col=0)
-        # data = data[(data["date"] >= start_date) & (data["date"] < end_date)]
-        #
-        # # indexs = range(len(data.index.unique()))
-        # indexs = data.index.unique()
-        #
-        # train_indexs = indexs[:int(len(indexs) * 0.8)]
-        # val_indexs = indexs[int(len(indexs) * 0.8):int(len(indexs) * 0.9)]
-        # test_indexs = indexs[int(len(indexs) * 0.9):]
-        #
-        # train_data = data.loc[train_indexs, :]
-        # train_data.index = train_data.index - train_data.index.min()
-        #
-        # val_data = data.loc[val_indexs, :]
-        # val_data.index = val_data.index - val_data.index.min()
-        #
-        # test_data = data.loc[test_indexs, :]
-        # test_data.index = test_data.index - test_data.index.min()
-        #
-        # train_data.to_csv(os.path.join(work_dir, "train.csv"))
+
         cfg.data.train_path = "{}/{}".format(cfg.work_dir, "train.csv")
         # val_data.to_csv(os.path.join(work_dir, "valid.csv"))
         cfg.data.valid_path = "{}/{}".format(cfg.work_dir, "valid.csv")
@@ -908,23 +902,6 @@ class Server():
         }})
 
         return session_id
-        # cmd = "conda activate TradeMaster && nohup python -u {} --config {} --task_name train > {} 2>&1 &".format(
-        #     train_script_path,
-        #     cfg_path,
-        #     log_path)
-        #
-        # executor.submit(run_cmd, cmd)
-        # logger.info(cmd)
-
-        # error_code = 0
-        # info = "request success, start train"
-        # res = {
-        #     "error_code": error_code,
-        #     "info": info,
-        #     "session_id": session_id
-        # }
-        # logger.info(info)
-        # return jsonify(res)
 
 
     def download_csv(self, request):
@@ -1066,7 +1043,7 @@ def test_status():
 
 @app.route("/api/TradeMaster/start_market_dynamics_labeling", methods=["POST"])
 def start_market_dynamics_labeling():
-    res = SERVER.start_market_dynamics_labeling(request)
+    res = SERVER.start_market_dynamics_modeling(request)
     return res
 
 

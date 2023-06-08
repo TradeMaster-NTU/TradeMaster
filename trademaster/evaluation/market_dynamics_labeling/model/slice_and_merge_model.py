@@ -8,14 +8,12 @@ from ..builder import Market_Dynamics_Model
 from ..custom import Market_dynamics_model
 from trademaster.utils import get_attr, labeling_util as util,market_dynamics_modeling_analysis
 from pathlib import Path
-import warnings
 
 @Market_Dynamics_Model.register_module()
 
 class Linear_Market_Dynamics_Model(Market_dynamics_model):
     def __init__(self,**kwargs):
         super(Linear_Market_Dynamics_Model, self).__init__()
-        # print('data_path',get_attr(kwargs, "data_path", None))
         self.data_path=get_attr(kwargs, "data_path", None)
         self.method = 'slice_and_merge'
         self.filter_strength = get_attr(kwargs, "filter_strength", None)
@@ -53,12 +51,19 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
 
 
     def run(self):
-        print('labeling start')
         path_names=Path(self.data_path).resolve().parents
         dataset_name=os.path.basename(path_names[0])
         dataset_foler_name=path_names[0]
         task_name = os.path.basename(path_names[1])
-        output_path = self.data_path
+        # create a folder by tic name to store the outputs
+        # get the folder name of self.data_path
+        folder_name=os.path.dirname(self.data_path)
+        # file name without extension
+        file_name=os.path.splitext(os.path.basename(self.data_path))[0]
+        output_path=os.path.join(folder_name,self.tic).replace("\\", "/")
+        # make output_path for tic
+        if not os.path.exists(output_path):
+            os.makedirs(output_path)
         if dataset_name=='small_BTC' and task_name=='high_frequency_trading':
             raw_data = pd.read_csv(self.data_path,index_col=0)
             raw_data[self.tic] = 'HFT_small_BTC'
@@ -84,12 +89,15 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
             process_data_path=os.path.join(dataset_foler_name,dataset_name+'_MDM_processed.csv').replace("\\", "/")
             raw_data.to_csv(process_data_path)
             self.data_path = process_data_path
-        worker = util.Worker(self.data_path, 'slice_and_merge', filter_strength=self.filter_strength, key_indicator=self.key_indicator,
+        worker = util.Worker(data_path=self.data_path, method='slice_and_merge', filter_strength=self.filter_strength, key_indicator=self.key_indicator,
                              timestamp=self.timestamp, tic=self.tic, labeling_method=self.labeling_method, min_length_limit=self.min_length_limit,
                              merging_threshold=self.merging_threshold, merging_metric=self.merging_metric,merging_dynamic_constraint=self.merging_dynamic_constraint)
+        print('----------------------------------')
         print('start fitting')
         worker.fit(self.dynamic_number, self.max_length_expectation, self.min_length_limit)
-        print('finish fitting')
+        print('fitting done')
+        print('----------------------------------')
+        print('start labeling')
         worker.label(self.slope_interval, os.path.dirname(self.data_path))
         labeled_data = pd.concat([v for v in worker.data_dict.values()], axis=0)
         # file_writer=self.file_extension_selector(read=False)
@@ -112,26 +120,31 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
             DJI = merged_data.loc[:, [self.timestamp, 'label']]
             test = pd.read_csv(self.PM, index_col=0)
             merged = test.merge(DJI, on=self.timestamp)
-            process_datafile_path = os.path.splitext(output_path)[0] + '_label_by_DJIindex_' + self.model_id + '.'+ extension
+            process_datafile_path = os.path.join(output_path,
+                                                 file_name + '_label_by_DJIindex_' + self.model_id + '.' + extension).replace(
+                "\\", "/")
             merged_data.to_csv(process_datafile_path, index=False)
         else:
-            process_datafile_path = os.path.splitext(output_path)[0] + '_labeled_' + self.model_id +'.'+ extension
+            process_datafile_path = os.path.join(output_path,file_name+ '_labeled_' + self.model_id +'.'+ extension).replace("\\", "/")
             if extension == 'csv':
                 merged_data.to_csv(process_datafile_path, index=False)
             elif extension == 'feather':
                 merged_data.to_feather(process_datafile_path)
         print('labeling done')
-        print('plotting start')
+        print('----------------------------------')
+        print('start plotting')
         # a list the path to all the modeling visulizations
         market_dynamic_labeling_visualization_paths=worker.plot(worker.tics, self.slope_interval, output_path, self.model_id)
         print('plotting done')
+        print('----------------------------------')
         # if self.OE_BTC == True:
         #     os.remove('./temp/OE_BTC_processed.csv')
 
         #MDM analysis
+        print('start market dynamics modeling analysis')
         MDM_analysis=market_dynamics_modeling_analysis.MarketDynamicsModelingAnalysis(process_datafile_path,self.key_indicator)
         MDM_analysis.run_analysis(process_datafile_path)
-        print('Market dynamics modeling analysis done')
+        print('market dynamics modeling analysis done')
 
         return os.path.abspath(process_datafile_path), market_dynamic_labeling_visualization_paths
 

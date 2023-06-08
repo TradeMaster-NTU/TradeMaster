@@ -31,7 +31,7 @@ def parse_args():
     parser.add_argument('--max_length_expectation',type=int,default=300,help='Slice longer than this number will not merge actively')
     parser.add_argument('--OE_BTC',type=bool,default=False,help='If dataset is OE_BTC')
     parser.add_argument('--PM',type=str,default='False',help='If dataset is PM')
-    parser.add_argument("--config", default=osp.join(ROOT, "configs", "market_dynamics_modeling", "market_dynamics_modeling.py"),
+    parser.add_argument("--config", default=osp.join(ROOT, "configs", "evaluation", "market_dynamics_modeling.py"),
                         help="deafult mdm config path")
     parser.add_argument("--key_indicator", type=str, default='adjcp',help='The column name of the feature in the data that will be used for dynamic modeling')
     parser.add_argument("--timestamp", type=str, default='timestamp',help='The column name of the feature in the data that is the timestamp')
@@ -84,16 +84,35 @@ def run_mdm():
     backup = sys.stdout
     sys.stdout = Tee(sys.stdout, f)
 
-    # update test style
-    model = build_market_dynamics_model(cfg)
 
-    process_datafile_path, market_dynamic_labeling_visualization_paths=model.run()
-    print(f'The processed datafile is at {process_datafile_path}')
-    plot_dir = os.path.dirname(os.path.realpath(market_dynamic_labeling_visualization_paths[0]))
-    print(f'The visualizations are at {plot_dir}')
-    print(f'The experiment log is at {outputfolder}/res.log')
+    # if args.data_path is a folder, then we will run the experiment on all the files in the folder
+    data_file_paths=[]
+    if os.path.isdir(cfg.market_dynamics_model.data_path):
+        original_data_path=cfg.market_dynamics_model.data_path
+        for file in os.listdir(cfg.market_dynamics_model.data_path):
+            # if the file is not a csv or feather file, then skip
+            if not file.endswith('.csv') and not file.endswith('.feather'):
+                continue
+            data_file_paths.append(os.path.join(cfg.market_dynamics_model.data_path, file))
+    else:
+        data_file_paths.append(cfg.market_dynamics_model.data_path)
+
+    for data_file_path in data_file_paths:
+        # set cfg.tic to the file name
+        cfg.market_dynamics_model.tic=os.path.basename(data_file_path).split('.')[0]
+        print(f'now processing tic {cfg.market_dynamics_model.tic}')
+        cfg.market_dynamics_model.data_path=data_file_path
+        # update test style
+        model = build_market_dynamics_model(cfg)
+
+        process_datafile_path, market_dynamic_labeling_visualization_paths=model.run()
+        print(f'The processed datafile is at {process_datafile_path}')
+        plot_dir = os.path.dirname(os.path.realpath(market_dynamic_labeling_visualization_paths[0]))
+        print(f'The visualizations are at {plot_dir}')
+        print(f'The experiment log is at {outputfolder}/res.log')
 
     ## wirte path to cfg
+    cfg.market_dynamics_model.data_path=original_data_path
     cfg.market_dynamics_model.process_datafile_path=process_datafile_path.replace("\\", "/")
     cfg.market_dynamics_model.market_dynamic_labeling_visualization_paths=market_dynamic_labeling_visualization_paths
     cfg.dump(args.config)
