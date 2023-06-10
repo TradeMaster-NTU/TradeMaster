@@ -80,7 +80,7 @@ We also provide a colab version of these tutorials that can be run directly. ([c
 
 ## TradeMaster Sandbox
 - [White paper](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/docs/source/tool/TradeMaster_Sandbox_whitepaper.pdf) 
-- [Market dynamic labeling](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/trademaster/evaluation/market_dynamics_labeling/example.ipynb)
+- [Market dynamic labeling](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/docs/source/tool/EvaluationSandbox_MDM.md)
 
 
 ## Dataset
