@@ -22,7 +22,7 @@ TradeMaster is a first-of-its kind, best-in-class __open-source platform__ for _
 | --                      | ------    |
 | Support [automatic feature generation and selection](https://arxiv.org/abs/2211.12507)| :hammer: Update [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/Tutorial9_Feature_Generation.ipynb) on 11 May 2023 |
 | Release TradeMaster [Python package](https://pypi.org/project/trademasterntu/) | :whale: Updated on 11 May 2023 | 
-| Build TradeMaster [website](https://trademaster.ai) | :whale: Available at [https://trademaster.ai](https://trademaster.ai on 23 April)
+| Build TradeMaster [website](https://trademaster.ai) | :whale: Available at [here](https://trademaster.ai) on 23 April
 | Write TradeMaster [software documentation](https://trademaster.readthedocs.io/en/latest/) | :speech_balloon: Updated on 11 April 2023|
 | Release [Colab](https://colab.research.google.com/drive/10M3F6qF8qJ31eQkBR7B6OHhYCR1ZUlrp#scrollTo=4TKpEroeFdT4) version | :speech_balloon: [Updated](https://github.com/TradeMaster-NTU/TradeMaster/pull/133) on 29 March 2023 |
 | Incldue [HK Stock](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/data/portfolio_management/hstech30/HSTech30.pdf) and [Future](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/data/portfolio_management/Future/future.pdf) datasets | :compass: Updated [#131](https://github.com/TradeMaster-NTU/TradeMaster/pull/131) [#132](https://github.com/TradeMaster-NTU/TradeMaster/pull/132) on 27 March 2023 |
