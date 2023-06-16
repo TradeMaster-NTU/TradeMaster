@@ -10,30 +10,20 @@ def prepart_m_lstm_data(df, num_day, technical_indicator):
     tic_list = df.tic.unique()
     df_list = []
     label_list = []
-    for index in df.index.unique()[num_day:]:
-        dfs = []
+    for tic in tqdm(tic_list):
+
         labels = []
-        df_date = df[[
-            True if i in range(index - num_day, index) else False
-            for i in df.index
-        ]]
-        for tic in tic_list:
-            df_tic = df_date[df_date.tic == tic]
-            np_tic = df_tic[technical_indicator].to_numpy()
-            # print(np_tic.shape)
-            dfs.append(np_tic)
-            old_price = float(df_tic[df_tic.index == index - 1].close)
-            new_price = float(df[(df.index == index) * (df.tic == tic)].close)
-            if new_price > old_price:
-                label = 1
-            else:
-                label = 0
-            labels.append(label)
+        df_tic = df[df.tic == tic]
+        dfs = df_tic[technical_indicator].to_numpy()
+        old_prices = df_tic[num_day-1:len(df_tic)-1]['close'].astype(float).values
+        new_prices = df_tic[num_day:len(df_tic)]['close'].astype(float).values
+
+        labels = (new_prices > old_prices).astype(int)
+        label_list.append(np.expand_dims(labels, axis=1))
         df_list.append(dfs)
-        label_list.append(labels)
-    label_list = np.array(label_list)
-    df_list = np.array(df_list)
-    return label_list, df_list
+    label_list = np.concatenate(label_list, axis=1) 
+    df_list = np.array(df_list) 
+    return label_list, df_list 
 
 
 def prepart_lstm_data(df, num_day, technical_indicator):
@@ -119,18 +109,18 @@ def dict_to_args(**kwargs):
     args = parser.parse_args()
     return args
 
-
 class m_lstm_dataset(Dataset):
-    def __init__(self, df_list, label_list):
+    def __init__(self, df_list, label_list,num_day):
         self.df = df_list
         self.label = label_list
+        self.num_day = num_day
         self.X = torch.from_numpy(self.df).float()
         self.y = torch.from_numpy(self.label).float()
 
     def __len__(self):
-        return self.df.shape[0]
+        return self.label.shape[0]
 
     def __getitem__(self, idx):
-        X = self.X[idx, :, :, :]
+        X = self.X[:, idx:idx+self.num_day, :]
         y = self.y[idx, :]
         return X, y
