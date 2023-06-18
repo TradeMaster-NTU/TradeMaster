@@ -42,7 +42,7 @@ def parse_args():
     parser.add_argument("--merging_threshold", type=float, default=-1,help='The metric threshold that is used to decide whether a slice will be merged')
     parser.add_argument("--merging_dynamic_constraint", type=int, default=-1,help='Neighbor segment of dynamics spans greater than this number will not be merged(setting this to $-1$ will disable the constraint)')
     parser.add_argument("--filter_strength", type=int, default=1,help='The strength of the low-pass Butterworth filter, the bigger the lower cutoff frequency, "1" have the cutoff frequency of min_length_limit period')
-
+    parser.add_argument("--exp_name",type=str,default='default_experiment',help='The name of the experiment')
 
 
     args = parser.parse_args()

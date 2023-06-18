@@ -30,6 +30,7 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
         self.merging_metric=get_attr(kwargs, "merging_metric", None)
         self.merging_threshold=get_attr(kwargs, "merging_threshold", None)
         self.merging_dynamic_constraint=get_attr(kwargs, "merging_dynamic_constraint", None)
+        self.exp_name=get_attr(kwargs, "exp_name", None)
 
     def file_extension_selector(self,read):
         if self.data_path.endswith('.csv'):
@@ -60,7 +61,7 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
         folder_name=os.path.dirname(self.data_path)
         # file name without extension
         file_name=os.path.splitext(os.path.basename(self.data_path))[0]
-        output_path=os.path.join(folder_name,self.tic).replace("\\", "/")
+        output_path=os.path.join(folder_name,self.exp_name,self.tic).replace("\\", "/")
         # make output_path for tic
         if not os.path.exists(output_path):
             os.makedirs(output_path)
