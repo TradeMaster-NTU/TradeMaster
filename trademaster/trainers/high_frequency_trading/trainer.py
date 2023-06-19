@@ -187,7 +187,9 @@ class HighFrequencyTradingTrainer(Trainer):
         state, info = self.test_environment.reset()
         while True:
             action = self.agent.get_action_test(state, info)
+            print(f"action:{action}\n")
             state, reward, done, info = self.test_environment.step(action)
+            print(f"state: {state} \n reward: {reward} \n info: {info}")
             if done:
                 break
         df = self.test_environment.save_asset_memoey()
