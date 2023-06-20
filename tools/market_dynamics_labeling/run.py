@@ -79,7 +79,7 @@ def run_mdm():
 
     #log to file
     # get the folder of args.data_path
-    outputfolder = os.path.dirname(cfg.market_dynamics_model.data_path)
+    outputfolder = os.path.join(os.path.dirname(cfg.market_dynamics_model.data_path),args.exp_name)
     f = open(f"{outputfolder}/res.log", 'a')
     backup = sys.stdout
     sys.stdout = Tee(sys.stdout, f)

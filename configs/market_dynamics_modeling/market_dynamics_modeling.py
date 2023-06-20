@@ -8,9 +8,9 @@ market_dynamics_model = dict(
     OE_BTC=False,
     PM='',
     process_datafile_path=
-    'D:/TradeMaster1.0.0/data/market_dynamics_modeling/second_level_BTC_LOB/BTCUSDT/2020-09-01-2020-09-01_labeled_slice_and_merge_model_5dynamics_minlength60_quantile_labeling.feather',
+    '/home/hcxia/TradeMaster/data/market_dynamics_modeling/second_level_BTC_LOB/BTCUSDT/2020-09-01-2020-09-01_labeled_slice_and_merge_model_5dynamics_minlength60_quantile_labeling.feather',
     market_dynamic_labeling_visualization_paths=[
-        'D:/TradeMaster1.0.0/data/market_dynamics_modeling/second_level_BTC_LOB/BTCUSDT/slice_and_merge_model_5dynamics_minlength60_quantile_labeling_BTCUSDT.png'
+        '/home/hcxia/TradeMaster/data/market_dynamics_modeling/second_level_BTC_LOB/BTCUSDT/slice_and_merge_model_5dynamics_minlength60_quantile_labeling_BTCUSDT.png'
     ],
     key_indicator='bid1_price',
     timestamp='timestamp',
