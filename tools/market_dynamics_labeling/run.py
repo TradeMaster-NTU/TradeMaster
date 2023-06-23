@@ -74,18 +74,21 @@ def run_mdm():
     # test_dynamic=args.test_dynamic
 
     cfg = replace_cfg_vals(cfg)
-    print(cfg.pretty_text)
+    model = build_market_dynamics_model(cfg)
+
 
 
     #log to file
     # get the folder of args.data_path
-    outputfolder = os.path.join(os.path.dirname(cfg.market_dynamics_model.data_path),args.exp_name)
+    outputfolder = os.path.join(os.path.dirname(cfg.market_dynamics_model.data_path),cfg.market_dynamics_model.exp_name)
     f = open(f"{outputfolder}/res.log", 'a')
     backup = sys.stdout
     sys.stdout = Tee(sys.stdout, f)
 
+    print(cfg.pretty_text)
     # update test style
-    model = build_market_dynamics_model(cfg)
+
+
 
     process_datafile_path, market_dynamic_labeling_visualization_paths=model.run()
     print(f'The processed datafile is at {process_datafile_path}')
