@@ -181,7 +181,7 @@ class Server():
                 "portfolio_management:exchange": "adjcp",
                 'market_dynamics_modeling:second_level_BTC_LOB': "bid1_price"
             },
-            "key_indicator": {
+            "timestamp": {
                 "algorithmic_trading:BTC": "date",
                 "algorithmic_trading:FX": "date",
                 "order_excecution:BTC": "date",
@@ -190,7 +190,7 @@ class Server():
                 "portfolio_management:exchange": "date",
                 'market_dynamics_modeling:second_level_BTC_LOB': "timestamp"
             },
-            "key_indicator": {
+            "tic": {
                 "algorithmic_trading:BTC": "data",
                 "algorithmic_trading:FX": "data",
                 "order_excecution:BTC": "data",
