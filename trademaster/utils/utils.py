@@ -428,6 +428,9 @@ def MRL_F2B_args_converter(args):
     else:
         output_args['OE_BTC']=False
 
+    if args['labeling_method']=="slope":
+        # use auto zooming for slope
+        output_args['slope_interval']=[0,0]
     # keep the same for the rest of parameters in the args for output_args
     for key in args.keys():
         if key not in output_args.keys():
