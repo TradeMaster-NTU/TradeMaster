@@ -114,7 +114,7 @@ def run_mdm():
     ## wirte path to cfg
     cfg.market_dynamics_model.data_path=original_data_path
     cfg.market_dynamics_model.process_datafile_path=process_datafile_path.replace("\\", "/")
-    cfg.market_dynamics_model.market_dynamic_labeling_visualization_paths=market_dynamic_labeling_visualization_paths
+    cfg.market_dynamics_model.market_dynamic_modeling_visualization_paths=market_dynamic_labeling_visualization_paths
     cfg.dump(args.config)
 
 

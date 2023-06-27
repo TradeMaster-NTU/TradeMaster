@@ -559,13 +559,17 @@ class Server():
             # market_dynamics_labeling parameters
             args = {}
             args['dataset_name'] = request_json.get("dataset_name")
-            args['number_of_market_dynamics'] = request_json.get("number_of_market_style")
-            if int(args['number_of_market_dynamics']) not in [3, 4]:
-                raise Exception('We only support dynamics number of 3 or 4 for now')
-            args['minimun_length'] = request_json.get("length_time_slice")
-            args['Granularity'] = request_json.get("granularity")
-            args['bear_threshold'] = request_json.get("bear_threshold")
-            args['bull_threshold'] = request_json.get("bull_threshold")
+            args['number_of_market_style'] = request_json.get("number_of_market_style")
+            args['min_length_limit'] = request_json.get("min_length_limit")
+            args['filter_strength'] = request_json.get("filter_strength")
+            args['max_length_expectation'] = request_json.get("max_length_expectation")
+            args['key_indicator'] = request_json.get("key_indicator")
+            args['timestamp'] = request_json.get("timestamp")
+            args['tic'] = request_json.get("tic")
+            args['labeling_method'] = request_json.get("labeling_method")
+            args['merging_metric'] = request_json.get("merging_metric")
+            args['merging_threshold'] = request_json.get("merging_threshold")
+            args['merging_dynamic_constraint'] = request_json.get("merging_dynamic_constraint")
 
             session_id = request_json.get("session_id")
             if session_id is None:
@@ -583,10 +587,9 @@ class Server():
 
             cfg = Config.fromfile(cfg_path)
             cfg = replace_cfg_vals(cfg)
+
             test_start_date = request_json.get("evaluation_start_date")
             test_end_date = request_json.get("evaluation_end_date")
-            # test_start_date = "2010-01-01"
-            # test_end_date = "2015-01-01"
 
             # if dataset is custom, change the cfg.data.data_path to custom data path
             if args['dataset_name'] in custom_datafile_names:
@@ -623,12 +626,19 @@ class Server():
             # front-end args to back-end args
             args = MRL_F2B_args_converter(args)
             MDM_cfg.market_dynamics_model.update({'data_path': args['data_path'],
-                                                  'fitting_parameters': args['fitting_parameters'],
-                                                  'slope_interval': args['slope_interval'],
-                                                  'dynamic_number': args['dynamic_number'],
-                                                  'max_length_expectation': args['max_length_expectation'],
-                                                  'OE_BTC': args['OE_BTC'],
-                                                  'PM': args['PM']
+                                                   'number_of_market_style': args['number_of_market_style'],
+                                                    'min_length_limit': args['min_length_limit'],
+                                                    'filter_strength': args['filter_strength'],
+                                                    'max_length_expectation': args['max_length_expectation'],
+                                                    'key_indicator': args['key_indicator'],
+                                                    'timestamp': args['timestamp'],
+                                                    'tic': args['tic'],
+                                                    'labeling_method': args['labeling_method'],
+                                                    'merging_metric': args['merging_metric'],
+                                                    'merging_threshold': args['merging_threshold'],
+                                                    'merging_dynamic_constraint': args['merging_dynamic_constraint'],
+                                                    'PM': args['PM'],
+                                                    'dataset_name': args['dataset_name']
                                                   })
             MDM_cfg_path = os.path.join(work_dir, osp.basename(MDM_cfg_path))
             MDM_cfg.dump(MDM_cfg_path)
@@ -668,10 +678,14 @@ class Server():
             MDM_cfg = Config.fromfile(MDM_cfg_path)
             MDM_cfg = replace_cfg_vals(MDM_cfg)
             MDM_datafile_path = MDM_cfg.market_dynamics_model.process_datafile_path
-            MDM_visualization_paths = MDM_cfg.market_dynamics_model.market_dynamic_labeling_visualization_paths
+            MDM_visualization_paths = MDM_cfg.market_dynamics_model.market_dynamic_modeling_visualization_paths
+            MDM_analysis_path = MDM_cfg.market_dynamics_model.market_dynamic_modeling_analysis_paths
 
             with open(MDM_visualization_paths[0], "rb") as image_file:
-                encoded_string = base64.b64encode(image_file.read())
+                encoded_string_result = base64.b64encode(image_file.read())
+
+            with open(MDM_analysis_path[0], "rb") as image_file:
+                encoded_string_analysis = base64.b64encode(image_file.read())
 
             # update session information:
             if "MDM_datafile_path" not in self.sessions[session_id]:
@@ -699,7 +713,8 @@ class Server():
             res = {
                 "error_code": error_code,
                 "info": info,
-                "market_dynamic_labeling_visulization": str(encoded_string, 'utf-8'),
+                "market_dynamic_labeling_visulization": str(encoded_string_result, 'utf-8'),
+                "market_dynamic_labeling_analysis": str(encoded_string_analysis, 'utf-8'),
                 "session_id": session_id
             }
             logger.info(info)
@@ -714,6 +729,7 @@ class Server():
                 "error_code": error_code,
                 "info": info + str(exc_type) + str(fname) + str(exc_tb.tb_lineno),
                 "market_dynamic_labeling_visulization": "",
+                "market_dynamic_labeling_analysis": "",
                 "session_id": session_id
             }
             logger.info(info)
