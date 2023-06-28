@@ -120,19 +120,18 @@ class Server():
             "dataset_name": [
                 "algorithmic_trading:BTC",
                 "algorithmic_trading:FX",
-                "algorithmic_trading:JPM",
                 "order_excecution:BTC",
                 "order_excecution:PD_BTC",
                 "portfolio_management:dj30",
                 "portfolio_management:exchange",
             'market_dynamics_modeling:second_level_BTC_LOB'],
             "start_date": {
-                "algorithmic_trading:BTC": "2020-03-03",
-                "algorithmic_trading:FX": "2017-12-22",
-                "order_excecution:BTC": "2021-04-17",
-                "order_excecution:PD_BTC": "2018-09-10",
-                "portfolio_management:dj30": "2020-04-01",
-                "portfolio_management:exchange": "2018-08-09",
+                "algorithmic_trading:BTC": "2015-10-01",
+                "algorithmic_trading:FX": "2000-01-01",
+                "order_excecution:BTC": "2021-04-07",
+                "order_excecution:PD_BTC": "2013-04-29",
+                "portfolio_management:dj30": "2012-01-04",
+                "portfolio_management:exchange": "2000-01-27",
                 'market_dynamics_modeling:second_level_BTC_LOB': "2020-09-01"
             },
             "end_date": {
@@ -227,13 +226,13 @@ class Server():
                 'market_dynamics_modeling:second_level_BTC_LOB': "0.0003"
             },
             "merging_dynamic_constraint": {
-                "algorithmic_trading:BTC": "1",
-                "algorithmic_trading:FX": "1",
-                "order_excecution:BTC": "1",
-                "order_excecution:PD_BTC": "1",
-                "portfolio_management:dj30": "1",
-                "portfolio_management:exchange": "1",
-                'market_dynamics_modeling:second_level_BTC_LOB': "1"
+                "algorithmic_trading:BTC": 1,
+                "algorithmic_trading:FX": 1,
+                "order_excecution:BTC": 1,
+                "order_excecution:PD_BTC": 1,
+                "portfolio_management:dj30": 1,
+                "portfolio_management:exchange": 1,
+                'market_dynamics_modeling:second_level_BTC_LOB': 1
             },
 
         }
@@ -574,28 +573,34 @@ class Server():
             session_id = request_json.get("session_id")
             if session_id is None:
                 # if no session_id, create a new session with blank_training
-                session_id = self.blank_training(task_name='market_dynamics_modeling',dataset_name='custom')
+                session_id = self.blank_training(task_name='market_dynamics_modeling',dataset_name=args['dataset_name'])
             # load session
             self.sessions = self.load_sessions()
             if session_id in self.sessions:
                 work_dir = self.sessions[session_id]["work_dir"]
                 cfg_path = self.sessions[session_id]["cfg_path"]
-                custom_datafile_paths = self.sessions[session_id]["custom_datafile_paths"]
-                # parse all custom data file name from custom_datafile_paths
-                custom_datafile_names = [os.path.basename(path).split('.')[0] for path in custom_datafile_paths]
+                try:
+                    custom_datafile_paths = self.sessions[session_id]["custom_datafile_paths"]
+                    # parse all custom data file name from custom_datafile_paths
+                    custom_datafile_names = [os.path.basename(path).split('.')[0] for path in custom_datafile_paths]
+                except:
+                    custom_datafile_names = []
+                    custom_datafile_paths = []
             # prepare data
 
             cfg = Config.fromfile(cfg_path)
             cfg = replace_cfg_vals(cfg)
 
-            test_start_date = request_json.get("evaluation_start_date")
-            test_end_date = request_json.get("evaluation_end_date")
-
+            test_start_date = request_json.get("startDate")
+            test_end_date = request_json.get("endDate")
+            print(test_start_date, test_end_date)
             # if dataset is custom, change the cfg.data.data_path to custom data path
             if args['dataset_name'] in custom_datafile_names:
                 cfg.data.data_path = custom_datafile_paths[custom_datafile_names.index(args['dataset_name'])]
-
-            data = pd.read_csv(os.path.join(ROOT, cfg.data.data_path, "data.csv"), index_col=0)
+            try:
+                data = pd.read_csv(os.path.join(ROOT, cfg.data.data_path, "data.csv"), index_col=0)
+            except:
+                data = pd.read_csv(os.path.join(ROOT, cfg.data.data_path, "data.feather"), index_col=0)
 
 
             data = data[(data["date"] >= test_start_date) & (data["date"] < test_end_date)]
@@ -625,20 +630,26 @@ class Server():
             MDM_cfg = replace_cfg_vals(MDM_cfg)
             # front-end args to back-end args
             args = MRL_F2B_args_converter(args)
-            MDM_cfg.market_dynamics_model.update({'data_path': args['data_path'],
-                                                   'number_of_market_style': args['number_of_market_style'],
-                                                    'min_length_limit': args['min_length_limit'],
-                                                    'filter_strength': args['filter_strength'],
-                                                    'max_length_expectation': args['max_length_expectation'],
+            print(type(args['number_of_market_style']))
+            print(args['number_of_market_style'])
+            MDM_cfg.market_dynamics_model.update({'data_path': args['dataset_path'],
+                                                   'dynamic_number': int(args['number_of_market_style']),
+                                                    'min_length_limit': int(args['min_length_limit']),
+                                                    'filter_strength': float(args['filter_strength']),
+                                                    'max_length_expectation': int(args['max_length_expectation']),
                                                     'key_indicator': args['key_indicator'],
                                                     'timestamp': args['timestamp'],
                                                     'tic': args['tic'],
                                                     'labeling_method': args['labeling_method'],
                                                     'merging_metric': args['merging_metric'],
-                                                    'merging_threshold': args['merging_threshold'],
-                                                    'merging_dynamic_constraint': args['merging_dynamic_constraint'],
+                                                    'merging_threshold': float(args['merging_threshold']),
+                                                    'merging_dynamic_constraint': int(args['merging_dynamic_constraint']),
                                                     'PM': args['PM'],
-                                                    'dataset_name': args['dataset_name']
+                                                    'dataset_name': args['dataset_name'],
+                                                    'process_datafile_path' : '',
+                                                    "market_dynamic_modeling_visualization_paths" : [],
+                                                    "market_dynamic_modeling_analysis_paths" : [],
+                                                    "exp_name":'default'
                                                   })
             MDM_cfg_path = os.path.join(work_dir, osp.basename(MDM_cfg_path))
             MDM_cfg.dump(MDM_cfg_path)
@@ -867,7 +878,7 @@ class Server():
             session_id = request_json.get("session_id")
             # print('get session_id from request_json', session_id)
             print(type(session_id))
-            if session_id is None or session_id == '123456789':
+            if session_id is None:
                 session_id = self.blank_training(task_name='market_dynamics_modeling',dataset_name='custom')
                 print('create new session_id', session_id)
 
@@ -877,6 +888,7 @@ class Server():
                 work_dir = self.sessions[session_id]["work_dir"]
             # save custom data to csv file in work_dir
             custom_datafile_path = os.path.join(work_dir, custom_data_name + ".csv")
+            print('custom_datafile_path', custom_datafile_path)
 
             # Parse the string into a list of dictionaries
             data = json.loads(custom_data)
@@ -931,26 +943,21 @@ class Server():
 
 
     def blank_training(self, task_name ="custom",
-                       dataset_name = 'custom',
+                       dataset_name = "custom",
                        optimizer_name = 'adam',
                        loss_name = "mse",
                        agent_name = "Null"
                        ):
 
-        task_name = task_name
-        dataset_name = dataset_name
-        optimizer_name = optimizer_name
-        loss_name = loss_name
-        agent_name = agent_name
 
         ##TODO
         session_id = str(uuid.uuid1())
 
         cfg_path = os.path.join(ROOT, "configs", task_name,
-                                f"{task_name}_{dataset_name}_{agent_name}_{agent_name}_{optimizer_name}_{loss_name}.py")
+                                f"{task_name}_any_{agent_name}_{agent_name}_{optimizer_name}_{loss_name}.py")
         train_script_path = self.train_scripts(task_name, dataset_name, optimizer_name, loss_name, agent_name)
         work_dir = os.path.join(ROOT, "work_dir", session_id,
-                                f"{task_name}_{dataset_name}_{agent_name}_{agent_name}_{optimizer_name}_{loss_name}")
+                                f"{task_name}_any_{agent_name}_{agent_name}_{optimizer_name}_{loss_name}")
         if not os.path.exists(work_dir):
             os.makedirs(work_dir)
 
@@ -961,7 +968,11 @@ class Server():
                                                task_name)
         cfg.trainer.work_dir = cfg.work_dir
 
-
+        #update data path according to dataset_name
+        #parse dataset_name with ':'
+        task_name, tic_name = dataset_name.split(':')
+        # check the extension name of the data file
+        cfg.data.data_path = "data/{}/{}".format(task_name, tic_name)
         cfg.data.train_path = "{}/{}".format(cfg.work_dir, "train.csv")
         # val_data.to_csv(os.path.join(work_dir, "valid.csv"))
         cfg.data.valid_path = "{}/{}".format(cfg.work_dir, "valid.csv")

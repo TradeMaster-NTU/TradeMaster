@@ -135,7 +135,7 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
         print('----------------------------------')
         print('start plotting')
         # a list the path to all the modeling visulizations
-        market_dynamic_labeling_visualization_paths=worker.plot(worker.tics, self.slope_interval, output_path, self.model_id)
+        market_dynamic_modeling_visualization_paths=worker.plot(worker.tics, self.slope_interval, output_path, self.model_id)
         print('plotting done')
         print('----------------------------------')
         # if self.OE_BTC == True:
@@ -147,5 +147,5 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
         market_dynamic_modeling_analysis_paths=MDM_analysis.run_analysis(process_datafile_path)
         print('market dynamics modeling analysis done')
 
-        return os.path.abspath(process_datafile_path), market_dynamic_labeling_visualization_paths,market_dynamic_modeling_analysis_paths
+        return os.path.abspath(process_datafile_path), market_dynamic_modeling_visualization_paths,market_dynamic_modeling_analysis_paths
 

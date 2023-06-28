@@ -81,6 +81,9 @@ def run_mdm():
     #log to file
     # get the folder of args.data_path
     outputfolder = os.path.join(os.path.dirname(cfg.market_dynamics_model.data_path),cfg.market_dynamics_model.exp_name)
+    # create folder if not exist
+    if not os.path.exists(outputfolder):
+        os.makedirs(outputfolder)
     f = open(f"{outputfolder}/res.log", 'a')
     backup = sys.stdout
     sys.stdout = Tee(sys.stdout, f)
@@ -99,7 +102,7 @@ def run_mdm():
     ## wirte path to cfg
     cfg.market_dynamics_model.process_datafile_path=process_datafile_path.replace("\\", "/")
     cfg.market_dynamics_model.market_dynamic_modeling_visualization_paths=market_dynamic_modeling_visualization_paths
-    cfg.market_dynamics_model.market_dynamic_modeling_analysis=market_dynamic_modeling_analysis_paths
+    cfg.market_dynamics_model.market_dynamic_modeling_analysis_paths=market_dynamic_modeling_analysis_paths
     cfg.dump(args.config)
 
 
