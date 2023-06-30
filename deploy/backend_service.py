@@ -61,62 +61,7 @@ class Server():
     def __init__(self):
         self.logger = None
         self.sessions = self.load_sessions()
-
-    def parameters(self):
-        res = {
-            "task_name": ["algorithmic_trading", "order_execution", "portfolio_management"],
-            "dataset_name": [
-                            "algorithmic_trading:BTC",
-                            "algorithmic_trading:FX",
-                             "algorithmic_trading:JPM",
-                             "order_excecution:BTC",
-                             "order_excecution:PD_BTC",
-                             "portfolio_management:dj30",
-                             "portfolio_management:exchange"],
-            "optimizer_name": ["adam"],
-            "loss_name": ["mse"],
-            "agent_name": [
-                "algorithmic_trading:deepscalper",
-                "order_execution:eteo",
-                "order_execution:pd",
-                "portfolio_management:a2c",
-                "portfolio_management:ddpg",
-                "portfolio_management:eiie",
-                "portfolio_management:investor_imitator",
-                "portfolio_management:pg",
-                "portfolio_management:ppo",
-                "portfolio_management:sac",
-                "portfolio_management:sarl",
-                "portfolio_management:td3"
-            ],
-            "start_date": {
-                "algorithmic_trading:BTC": "2015-10-01",
-                "algorithmic_trading:FX": "2000-01-01",
-                "order_excecution:BTC": "2021-04-07",
-                "order_excecution:PD_BTC": "2013-04-29",
-                "portfolio_management:dj30": "2012-01-04",
-                "portfolio_management:exchange": "2000-01-27",
-            },
-            "end_date": {
-                "algorithmic_trading:BTC": "2021-07-06",
-                "algorithmic_trading:FX": "2019-12-31",
-                "order_excecution:BTC": "2021-03-19",
-                "order_excecution:PD_BTC": "2021-07-05",
-                "portfolio_management:dj30": "2021-12-31",
-                "portfolio_management:exchange": "2019-12-31",
-            },
-            "dynamics_test": [
-                "bear_market",
-                "bull_market",
-                "oscillation_market"
-            ]
-
-
-        }
-        return res
-
-    def evaluation_parameters(self):
-        res ={
+        self.evaluation_parameters_dict ={
             "dataset_name": [
                 "algorithmic_trading:BTC",
                 "algorithmic_trading:FX",
@@ -236,7 +181,63 @@ class Server():
             },
 
         }
+
+    def parameters(self):
+        res = {
+            "task_name": ["algorithmic_trading", "order_execution", "portfolio_management"],
+            "dataset_name": [
+                            "algorithmic_trading:BTC",
+                            "algorithmic_trading:FX",
+                             "algorithmic_trading:JPM",
+                             "order_excecution:BTC",
+                             "order_excecution:PD_BTC",
+                             "portfolio_management:dj30",
+                             "portfolio_management:exchange"],
+            "optimizer_name": ["adam"],
+            "loss_name": ["mse"],
+            "agent_name": [
+                "algorithmic_trading:deepscalper",
+                "order_execution:eteo",
+                "order_execution:pd",
+                "portfolio_management:a2c",
+                "portfolio_management:ddpg",
+                "portfolio_management:eiie",
+                "portfolio_management:investor_imitator",
+                "portfolio_management:pg",
+                "portfolio_management:ppo",
+                "portfolio_management:sac",
+                "portfolio_management:sarl",
+                "portfolio_management:td3"
+            ],
+            "start_date": {
+                "algorithmic_trading:BTC": "2015-10-01",
+                "algorithmic_trading:FX": "2000-01-01",
+                "order_excecution:BTC": "2021-04-07",
+                "order_excecution:PD_BTC": "2013-04-29",
+                "portfolio_management:dj30": "2012-01-04",
+                "portfolio_management:exchange": "2000-01-27",
+            },
+            "end_date": {
+                "algorithmic_trading:BTC": "2021-07-06",
+                "algorithmic_trading:FX": "2019-12-31",
+                "order_excecution:BTC": "2021-03-19",
+                "order_excecution:PD_BTC": "2021-07-05",
+                "portfolio_management:dj30": "2021-12-31",
+                "portfolio_management:exchange": "2019-12-31",
+            },
+            "dynamics_test": [
+                "bear_market",
+                "bull_market",
+                "oscillation_market"
+            ]
+
+
+        }
         return res
+
+    def evaluation_parameters(self):
+
+        return self.evaluation_parameters_dict
 
     def train_scripts(self, task_name, dataset_name, optimizer_name, loss_name, agent_name):
         if task_name == "algorithmic_trading":
@@ -965,7 +966,8 @@ class Server():
                 self.sessions[session_id]["custom_datafile_paths"].append(custom_datafile_path)
                 self.sessions = self.dump_sessions({session_id: self.sessions[session_id]})
 
-
+            # update self.evaluation_parameters_dict with custom data
+            self.evaluation_parameters_dict['dataset_name'].append(custom_data_name)
 
             error_code = 0
             info = "request success, read uploaded csv file"
@@ -973,7 +975,7 @@ class Server():
                 "error_code": error_code,
                 "info": info,
                 "session_id": session_id,
-                'new_dataset_name': custom_data_name
+
             }
             logger.info(info)
 
