@@ -685,6 +685,7 @@ class Server():
             MDM_run_info = run_cmd(cmd)
             logger.info(MDM_run_info)
 
+
             # reload MDM_cfg to get results
             MDM_cfg = Config.fromfile(MDM_cfg_path)
             MDM_cfg = replace_cfg_vals(MDM_cfg)
@@ -719,7 +720,7 @@ class Server():
                 self.sessions = self.dump_sessions({session_id: self.sessions[session_id]})
 
             error_code = 0
-            info = "request success, show market dynamics labeling visualization" + info
+            info = "request success, show market dynamics labeling visualization\n" + MDM_run_info
 
             res = {
                 "error_code": error_code,
@@ -742,6 +743,55 @@ class Server():
                 "market_dynamic_labeling_visulization": "",
                 "market_dynamic_labeling_analysis": "",
                 "session_id": session_id
+            }
+            logger.info(info)
+            return jsonify(res)
+
+    def MDM_status(self, request):
+        request_json = json.loads(request.get_data(as_text=True))
+        try:
+
+            self.sessions = self.load_sessions()
+            session_id = request_json.get("session_id")
+            work_dir = self.sessions[session_id]["work_dir"]
+
+            if session_id in self.sessions:
+                if os.path.exists(self.sessions[session_id]["MDM_log_path"]):
+                    cmd = "tail -n 2000 {}".format(self.sessions[session_id]["MDM_log_path"])
+                    info = run_cmd(cmd)
+                else:
+                    info = ""
+            else:
+                info = "waiting for market dynamics modeling start"
+            if 'market dynamics modeling analysis done' in info:
+                MDM_end = True
+                # with open(osp.join(work_dir, f"Visualization_valid.png"), "rb") as image_file:
+                #     encoded_string = base64.b64encode(image_file.read())
+                #     result_plot = str(encoded_string, 'utf-8')
+            else:
+                MDM_end = False
+                result_plot = None
+
+            # parse every line of info with 'm ' and get the latter part
+            info = [line.split('m ')[-1] if 'm ' in line else line for line in info.split('\n')]
+            # remove 'nohup: ignoring input' in info
+            info = [line for line in info if 'nohup: ignoring input' not in line]
+            info = '\n'.join(info)
+
+            res = {
+                "info": info,
+                "MDM_end": MDM_end
+            }
+            logger.info("get market dynamics modeling running status success")
+            return jsonify(res)
+
+        except Exception as e:
+            error_code = 1
+            info = "request data error, {}".format(e)
+            res = {
+                "error_code": error_code,
+                "info": '',
+                "session_id": ""
             }
             logger.info(info)
             return jsonify(res)
@@ -1122,6 +1172,10 @@ def train_status():
     res = SERVER.train_status(request)
     return res
 
+@app.route("/api/TradeMaster/MDM_status", methods=["POST"])
+def train_status():
+    res = SERVER.MDM_status(request)
+    return res
 
 @app.route("/api/TradeMaster/test", methods=["POST"])
 def test():
