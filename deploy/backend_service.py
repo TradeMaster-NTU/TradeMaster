@@ -571,7 +571,7 @@ class Server():
             args['merging_dynamic_constraint'] = request_json.get("merging_dynamic_constraint")
 
             session_id = request_json.get("session_id")
-            if session_id is None:
+            if session_id == '':
                 # if no session_id, create a new session with blank_training
                 session_id = self.blank_training(task_name='market_dynamics_modeling',dataset_name=args['dataset_name'])
             # load session
@@ -597,10 +597,12 @@ class Server():
             # if dataset is custom, change the cfg.data.data_path to custom data path
             if args['dataset_name'] in custom_datafile_names:
                 cfg.data.data_path = custom_datafile_paths[custom_datafile_names.index(args['dataset_name'])]
-            try:
-                data = pd.read_csv(os.path.join(ROOT, cfg.data.data_path, "data.csv"), index_col=0)
-            except:
-                data = pd.read_csv(os.path.join(ROOT, cfg.data.data_path, "data.feather"), index_col=0)
+                pd.read_csv(os.path.join(ROOT, cfg.data.data_path, "data.csv"), index_col=0)
+            else:
+                try:
+                    data = pd.read_csv(os.path.join(ROOT, cfg.data.data_path, "data.csv"), index_col=0)
+                except:
+                    data = pd.read_csv(os.path.join(ROOT, cfg.data.data_path, "data.feather"), index_col=0)
 
 
             data = data[(data["date"] >= test_start_date) & (data["date"] < test_end_date)]
@@ -913,11 +915,9 @@ class Server():
     def upload_csv(self, request):
         request_json = json.loads(request.get_data(as_text=True))
         try:
-            print('request_json', request_json)
             file_name=request_json.get('file_name')
             custom_data_name = file_name.split('.')[0]
             custom_data=request_json.get('file')
-            print('type of custom_data', type(custom_data))
             if file_name == '' or file_name is None:
                 return jsonify({'error': 'No file selected'}), 400
             if file_name and file_name.endswith('.csv') is False:
@@ -927,9 +927,13 @@ class Server():
 
             session_id = request_json.get("session_id")
             # print('get session_id from request_json', session_id)
-            print(type(session_id))
-            if session_id is None:
-                session_id = self.blank_training(task_name='market_dynamics_modeling',dataset_name='custom')
+            if session_id=='':
+                session_id = self.blank_training(
+                    task_name="market_dynamics_modeling",
+                    dataset_name="custom",
+                    optimizer_name='adam',
+                    loss_name="mse",
+                    agent_name="Null")
                 print('create new session_id', session_id)
 
 
@@ -968,7 +972,8 @@ class Server():
             res = {
                 "error_code": error_code,
                 "info": info,
-                "session_id": session_id
+                "session_id": session_id,
+                'new_dataset_name': custom_data_name
             }
             logger.info(info)
 
@@ -982,10 +987,10 @@ class Server():
             error_code = 1
             exc_type, exc_obj, exc_tb = sys.exc_info()
             fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            info = "request data error, {}".format(e)
+            info = "request data error, {}".format(e) + str(exc_type) + str(fname) + str(exc_tb.tb_lineno)
             res = {
                 "error_code": error_code,
-                "info": info + str(exc_type) + str(fname) + str(exc_tb.tb_lineno),
+                "info": info,
                 "session_id": ""
             }
             logger.info(info)
@@ -1001,51 +1006,61 @@ class Server():
 
 
         ##TODO
-        session_id = str(uuid.uuid1())
+        try:
+            session_id = str(uuid.uuid1())
 
-        cfg_path = os.path.join(ROOT, "configs", task_name,
-                                f"{task_name}_any_{agent_name}_{agent_name}_{optimizer_name}_{loss_name}.py")
-        train_script_path = self.train_scripts(task_name, dataset_name, optimizer_name, loss_name, agent_name)
-        work_dir = os.path.join(ROOT, "work_dir", session_id,
-                                f"{task_name}_any_{agent_name}_{agent_name}_{optimizer_name}_{loss_name}")
-        if not os.path.exists(work_dir):
-            os.makedirs(work_dir)
+            cfg_path = os.path.join(ROOT, "configs", task_name,
+                                    f"{task_name}_any_{agent_name}_{agent_name}_{optimizer_name}_{loss_name}.py")
+            train_script_path = self.train_scripts(task_name, dataset_name, optimizer_name, loss_name, agent_name)
+            work_dir = os.path.join(ROOT, "work_dir", session_id,
+                                    f"{task_name}_any_{agent_name}_{agent_name}_{optimizer_name}_{loss_name}")
+            if not os.path.exists(work_dir):
+                os.makedirs(work_dir)
 
 
-        cfg = Config.fromfile(cfg_path)
-        cfg = replace_cfg_vals(cfg)
-        cfg.work_dir = "work_dir/{}/{}".format(session_id,
-                                               task_name)
-        cfg.trainer.work_dir = cfg.work_dir
+            cfg = Config.fromfile(cfg_path)
+            cfg = replace_cfg_vals(cfg)
+            cfg.work_dir = "work_dir/{}/{}".format(session_id,
+                                                   task_name)
+            cfg.trainer.work_dir = cfg.work_dir
 
-        #update data path according to dataset_name
-        #parse dataset_name with ':'
-        task_name, tic_name = dataset_name.split(':')
-        # check the extension name of the data file
-        cfg.data.data_path = "data/{}/{}".format(task_name, tic_name)
-        cfg.data.train_path = "{}/{}".format(cfg.work_dir, "train.csv")
-        # val_data.to_csv(os.path.join(work_dir, "valid.csv"))
-        cfg.data.valid_path = "{}/{}".format(cfg.work_dir, "valid.csv")
-        # test_data.to_csv(os.path.join(work_dir, "test.csv"))
-        cfg.data.test_path = "{}/{}".format(cfg.work_dir, "test.csv")
+            #update data path according to dataset_name
+            #parse dataset_name with ':'
+            if dataset_name == "custom":
+                task_name, tic_name = dataset_name, dataset_name
+            else:
+                task_name, tic_name = dataset_name.split(':')
+            # check the extension name of the data file
+            cfg.data.data_path = "data/{}/{}".format(task_name, tic_name)
+            cfg.data.train_path = "{}/{}".format(cfg.work_dir, "train.csv")
+            # val_data.to_csv(os.path.join(work_dir, "valid.csv"))
+            cfg.data.valid_path = "{}/{}".format(cfg.work_dir, "valid.csv")
+            # test_data.to_csv(os.path.join(work_dir, "test.csv"))
+            cfg.data.test_path = "{}/{}".format(cfg.work_dir, "test.csv")
 
-        cfg_path = os.path.join(work_dir, osp.basename(cfg_path))
-        cfg.dump(cfg_path)
-        logger.info(cfg)
+            cfg_path = os.path.join(work_dir, osp.basename(cfg_path))
+            cfg.dump(cfg_path)
+            logger.info(cfg)
 
-        log_path = os.path.join(work_dir, "train_log.txt")
+            log_path = os.path.join(work_dir, "train_log.txt")
 
-        self.sessions = self.dump_sessions({session_id: {
-            "dataset": dataset_name,
-            "task_name": task_name,
-            "work_dir": work_dir,
-            "cfg_path": cfg_path,
-            "script_path": train_script_path,
-            "train_log_path": log_path,
-            "test_log_path": os.path.join(os.path.dirname(log_path), "test_log.txt")
-        }})
+            self.sessions = self.dump_sessions({session_id: {
+                "dataset": dataset_name,
+                "task_name": task_name,
+                "work_dir": work_dir,
+                "cfg_path": cfg_path,
+                "script_path": train_script_path,
+                "train_log_path": log_path,
+                "test_log_path": os.path.join(os.path.dirname(log_path), "test_log.txt")
+            }})
 
-        return session_id
+            return session_id
+        except Exception as e:
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            info = str(exc_type) + str(fname) + str(exc_tb.tb_lineno)
+            print(info)
+            return None
 
 
     def download_csv(self, request):
@@ -1173,7 +1188,7 @@ def train_status():
     return res
 
 @app.route("/api/TradeMaster/MDM_status", methods=["POST"])
-def train_status():
+def MDM_status():
     res = SERVER.MDM_status(request)
     return res
 
