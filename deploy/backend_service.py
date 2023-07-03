@@ -235,9 +235,17 @@ class Server():
         }
         return res
 
-    def evaluation_parameters(self):
-
-        return self.evaluation_parameters_dict
+    def evaluation_parameters(self,request):
+        request_json = json.loads(request.get_data(as_text=True))
+        session_id = request_json.get("session_id")
+        evaluation_parameters = self.evaluation_parameters_dict
+        try:
+            self.sessions = self.load_sessions()
+            custom_dataset_names = self.sessions[session_id]["custom_data_names"]
+            custom_dataset_names['dataset_name'].extend(custom_dataset_names)
+        except:
+            pass
+        return evaluation_parameters
 
     def train_scripts(self, task_name, dataset_name, optimizer_name, loss_name, agent_name):
         if task_name == "algorithmic_trading":
@@ -958,19 +966,18 @@ class Server():
 
             # update session info
             if "custom_datafile_paths" not in self.sessions[session_id]:
-                self.sessions[session_id]["custom_datafile_paths"] = [custom_datafile_path]
                 self.sessions = self.dump_sessions({session_id: self.sessions[session_id] |
                                                                 {
-                                                                    "custom_datafile_paths":[custom_datafile_path],}
+                                                                    "custom_datafile_paths":[custom_datafile_path],
+                                                                'custom_data_names': [custom_data_name]
+                                                                }
                                                     })
             else:
                 if custom_datafile_path not in self.sessions[session_id]["custom_datafile_paths"]:
                     self.sessions[session_id]["custom_datafile_paths"].append(custom_datafile_path)
+                    self.sessions[session_id]["custom_data_names"].append(custom_data_name)
                     self.sessions = self.dump_sessions({session_id: self.sessions[session_id]})
 
-            # update self.evaluation_parameters_dict with custom data
-            if custom_data_name not in self.evaluation_parameters_dict['dataset_name']:
-                self.evaluation_parameters_dict['dataset_name'].append(custom_data_name)
 
             error_code = 0
             info = "request success, read uploaded csv file"
@@ -1178,7 +1185,7 @@ def getParameters():
 
 @app.route("/api/TradeMaster/evaluation_getParameters", methods=["GET"])
 def evaluation_getParameters():
-    res = SERVER.evaluation_parameters()
+    res = SERVER.evaluation_parameters(request)
     return res
 
 
