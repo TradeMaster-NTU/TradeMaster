@@ -572,7 +572,7 @@ class Server():
             args['merging_dynamic_constraint'] = request_json.get("merging_dynamic_constraint")
 
             session_id = request_json.get("session_id")
-            if session_id == '':
+            if session_id is None or session_id == '':
                 # if no session_id, create a new session with blank_training
                 session_id = self.blank_training(task_name='market_dynamics_modeling',dataset_name=args['dataset_name'])
             # load session
@@ -928,7 +928,7 @@ class Server():
 
             session_id = request_json.get("session_id")
             # print('get session_id from request_json', session_id)
-            if session_id=='':
+            if session_id is None or session_id=='':
                 session_id = self.blank_training(
                     task_name="market_dynamics_modeling",
                     dataset_name="custom",
@@ -948,7 +948,8 @@ class Server():
             # Parse the string into a list of dictionaries
             data = json.loads(custom_data)
 
-            # Write the data to the CSV file
+            # Write the data to the CSV file with replace the old one
+
             with open(custom_datafile_path, 'w',newline='') as csvfile:
                 writer = csv.DictWriter(csvfile, fieldnames=data[0].keys())
                 writer.writeheader()
@@ -963,11 +964,13 @@ class Server():
                                                                     "custom_datafile_paths":[custom_datafile_path],}
                                                     })
             else:
-                self.sessions[session_id]["custom_datafile_paths"].append(custom_datafile_path)
-                self.sessions = self.dump_sessions({session_id: self.sessions[session_id]})
+                if custom_datafile_path not in self.sessions[session_id]["custom_datafile_paths"]:
+                    self.sessions[session_id]["custom_datafile_paths"].append(custom_datafile_path)
+                    self.sessions = self.dump_sessions({session_id: self.sessions[session_id]})
 
             # update self.evaluation_parameters_dict with custom data
-            self.evaluation_parameters_dict['dataset_name'].append(custom_data_name)
+            if custom_data_name not in self.evaluation_parameters_dict['dataset_name']:
+                self.evaluation_parameters_dict['dataset_name'].append(custom_data_name)
 
             error_code = 0
             info = "request success, read uploaded csv file"
@@ -975,6 +978,7 @@ class Server():
                 "error_code": error_code,
                 "info": info,
                 "session_id": session_id,
+                'upload_finished': True
 
             }
             logger.info(info)
