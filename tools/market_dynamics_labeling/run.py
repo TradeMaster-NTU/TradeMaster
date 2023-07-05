@@ -43,6 +43,8 @@ def parse_args():
     parser.add_argument("--merging_dynamic_constraint", type=int, default=-1,help='Neighbor segment of dynamics spans greater than this number will not be merged(setting this to $-1$ will disable the constraint)')
     parser.add_argument("--filter_strength", type=int, default=1,help='The strength of the low-pass Butterworth filter, the bigger the lower cutoff frequency, "1" have the cutoff frequency of min_length_limit period')
     parser.add_argument("--exp_name",type=str,default='default_experiment',help='The name of the experiment')
+    # default true verbose
+    parser.add_argument("--verbose",type=int,default=1,help='Whether to print the log')
 
 
     args = parser.parse_args()
@@ -88,16 +90,17 @@ def run_mdm():
     backup = sys.stdout
     sys.stdout = Tee(sys.stdout, f)
 
-    print(cfg.pretty_text)
+    # print(cfg.pretty_text)
     # update test style
 
 
 
     process_datafile_path, market_dynamic_modeling_visualization_paths,market_dynamic_modeling_analysis_paths=model.run()
-    print(f'The processed datafile is at {process_datafile_path}')
     plot_dir = os.path.dirname(os.path.realpath(market_dynamic_modeling_visualization_paths[0]))
-    print(f'The visualizations are at {plot_dir}')
-    print(f'The experiment log is at {outputfolder}/res.log')
+    if args.verbose==1:
+        print(f'The processed datafile is at {process_datafile_path}')
+        print(f'The visualizations are at {plot_dir}')
+        print(f'The experiment log is at {outputfolder}/res.log')
 
     ## wirte path to cfg
     cfg.market_dynamics_model.process_datafile_path=process_datafile_path.replace("\\", "/")

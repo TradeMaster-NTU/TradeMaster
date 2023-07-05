@@ -233,7 +233,7 @@ class MarketDynamicsModelingAnalysis(object):
         # save the figure
         path=os.path.join(data_folder,'metrics_of_each_dynamics.png')
         fig.savefig(path)
-        print("metrics_of_each_dynamics.png saved at",path)
+        # print("metrics_of_each_dynamics.png saved at",path)
         return path
 
     def run_analysis(self,data_path):

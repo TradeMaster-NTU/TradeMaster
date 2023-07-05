@@ -23,7 +23,7 @@ import os.path as osp
 import pickle
 import csv
 import regex as re
-
+import copy
 from tools import market_dynamics_labeling
 import base64
 
@@ -181,18 +181,16 @@ class Server():
             },
 
         }
-
-    def parameters(self):
-        res = {
+        self.parameters = {
             "task_name": ["algorithmic_trading", "order_execution", "portfolio_management"],
             "dataset_name": [
-                            "algorithmic_trading:BTC",
-                            "algorithmic_trading:FX",
-                             "algorithmic_trading:JPM",
-                             "order_excecution:BTC",
-                             "order_excecution:PD_BTC",
-                             "portfolio_management:dj30",
-                             "portfolio_management:exchange"],
+                "algorithmic_trading:BTC",
+                "algorithmic_trading:FX",
+                "algorithmic_trading:JPM",
+                "order_excecution:BTC",
+                "order_excecution:PD_BTC",
+                "portfolio_management:dj30",
+                "portfolio_management:exchange"],
             "optimizer_name": ["adam"],
             "loss_name": ["mse"],
             "agent_name": [
@@ -225,26 +223,66 @@ class Server():
                 "portfolio_management:dj30": "2021-12-31",
                 "portfolio_management:exchange": "2019-12-31",
             },
+            # TODO: get the number of dynamic parameters from session
             "dynamics_test": [
                 "bear_market",
                 "bull_market",
                 "oscillation_market"
             ]
 
-
         }
-        return res
+
+    def parameters(self):
+        # copy self.parameters
+        parameters = copy.deepcopy(self.parameters)
+        #TODO
+        # update dynamic parameters
+        return parameters
 
     def evaluation_parameters(self,request):
+        # print('evaluation_parameters',request)
         request_json = json.loads(request.get_data(as_text=True))
-        session_id = request_json.get("session_id")
-        evaluation_parameters = self.evaluation_parameters_dict
         try:
+            session_id = request_json.get("session_id")
+            #copy the evaluation_parameters_dict
+            evaluation_parameters = copy.deepcopy(self.evaluation_parameters_dict)
             self.sessions = self.load_sessions()
-            custom_dataset_names = self.sessions[session_id]["custom_data_names"]
-            custom_dataset_names['dataset_name'].extend(custom_dataset_names)
-        except:
-            pass
+            # print(self.sessions[session_id])
+            try:
+                custom_dataset_names = self.sessions[session_id]["custom_data_names"]
+                for dataset_name in custom_dataset_names:
+                    data_name_frontend="custom:"+dataset_name
+                    evaluation_parameters['dataset_name'].append(data_name_frontend)
+
+                # add parameters for each dataset_name in custom_dataset_names
+                for dataset_name in custom_dataset_names:
+                    data_name_frontend = "custom:" + dataset_name
+                    evaluation_parameters['start_date'][data_name_frontend] = 'Not adjustable'
+                    evaluation_parameters['end_date'][data_name_frontend] = 'Not adjustable'
+                    evaluation_parameters['labeling_method'][data_name_frontend] = "quantile"
+                    evaluation_parameters['merging_metric'][data_name_frontend] = "DTW_distance"
+                    evaluation_parameters['merging_threshold'][data_name_frontend] = "0.03"
+                    evaluation_parameters['merging_dynamic_constraint'][data_name_frontend] = 1
+                    evaluation_parameters['filter_strength'][data_name_frontend] = "1"
+                    evaluation_parameters['max_length_expectation'][data_name_frontend] ="144"
+                    evaluation_parameters['min_length_limit'][data_name_frontend] = "24"
+                    evaluation_parameters['key_indicator'][data_name_frontend] = 'key_indicator'
+                    evaluation_parameters['timestamp'][data_name_frontend] = "timestamp"
+                    evaluation_parameters['tic'][data_name_frontend] = "data"
+            except:
+                pass
+        except Exception as e:
+            error_code = 1
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            info = "request data error, {}".format(e)
+            print(info)
+            res = {
+                "error_code": error_code,
+                "info": info + str(exc_type) + str(fname) + str(exc_tb.tb_lineno),
+                "session_id": ""
+            }
+            return jsonify(res)
         return evaluation_parameters
 
     def train_scripts(self, task_name, dataset_name, optimizer_name, loss_name, agent_name):
@@ -560,6 +598,7 @@ class Server():
 
 
         request_json = json.loads(request.get_data(as_text=True))
+        # print('start_market_dynamics_modeling',request_json)
         try:
             # get input args
 
@@ -580,6 +619,8 @@ class Server():
             args['merging_dynamic_constraint'] = request_json.get("merging_dynamic_constraint")
 
             session_id = request_json.get("session_id")
+            # print('request_json',request_json)
+            # print('session_id',session_id)
             if session_id is None or session_id == '':
                 # if no session_id, create a new session with blank_training
                 session_id = self.blank_training(task_name='market_dynamics_modeling',dataset_name=args['dataset_name'])
@@ -588,10 +629,10 @@ class Server():
             if session_id in self.sessions:
                 work_dir = self.sessions[session_id]["work_dir"]
                 cfg_path = self.sessions[session_id]["cfg_path"]
+                print(self.sessions[session_id])
                 try:
                     custom_datafile_paths = self.sessions[session_id]["custom_datafile_paths"]
-                    # parse all custom data file name from custom_datafile_paths
-                    custom_datafile_names = [os.path.basename(path).split('.')[0] for path in custom_datafile_paths]
+                    custom_datafile_names = ['custom:'+str(os.path.basename(path).split('.')[0]) for path in custom_datafile_paths]
                 except:
                     custom_datafile_names = []
                     custom_datafile_paths = []
@@ -604,17 +645,24 @@ class Server():
             test_end_date = request_json.get("endDate")
             print(test_start_date, test_end_date)
             # if dataset is custom, change the cfg.data.data_path to custom data path
+            # we do net let time slice in custom dataset
+            print(custom_datafile_paths,args['dataset_name'], custom_datafile_names)
             if args['dataset_name'] in custom_datafile_names:
                 cfg.data.data_path = custom_datafile_paths[custom_datafile_names.index(args['dataset_name'])]
-                pd.read_csv(os.path.join(ROOT, cfg.data.data_path, "data.csv"), index_col=0)
+                data=pd.read_csv(os.path.join(ROOT, cfg.data.data_path), index_col=0)
             else:
+                # print('cfg.data.data_path',cfg.data.data_path)
+                # parse the args['dataset_name'] by : into task_name and dataset_name
+                task_name, dataset_name = args['dataset_name'].split(':')
+                print('file_path', os.path.join(ROOT, 'data', task_name, dataset_name, "data.csv"))
                 try:
-                    data = pd.read_csv(os.path.join(ROOT, cfg.data.data_path, "data.csv"), index_col=0)
+                    data = pd.read_csv(os.path.join(ROOT, 'data',task_name,dataset_name, "data.csv"), index_col=0)
+                    data = data[(data["date"] >= test_start_date) & (data["date"] < test_end_date)]
                 except:
-                    data = pd.read_csv(os.path.join(ROOT, cfg.data.data_path, "data.feather"), index_col=0)
+                    data = pd.read_feather(os.path.join(ROOT, 'data',task_name,dataset_name, "data.feather"))
+                    data = data[(data["date"] >= test_start_date) & (data["date"] < test_end_date)]
 
 
-            data = data[(data["date"] >= test_start_date) & (data["date"] < test_end_date)]
             info += f"There are total {data.shape[0]} ticks in the dataset\\n"
             data_path = os.path.join(work_dir, "dynamics_test.csv").replace("\\", "/")
             data.to_csv(data_path)
@@ -688,56 +736,60 @@ class Server():
                 self.sessions = self.dump_sessions({session_id: self.sessions[session_id]})
 
             # run MDM
-            cmd = "conda activate TradeMaster && nohup python -u {} --config {} > {} 2>&1 &".format(
+            cmd = "conda activate TradeMaster && nohup python -u {} --config {} --verbose 0 > {} 2>&1 &".format(
                 MDM_script_path,
                 MDM_cfg_path,
                 MDM_log_path)
+
+
+            executor.submit(run_cmd, cmd)
             logger.info(cmd)
-            MDM_run_info = run_cmd(cmd)
-            logger.info(MDM_run_info)
+
+            # logger.info(cmd)
+            # MDM_run_info = run_cmd(cmd)
+            # logger.info(MDM_run_info)
 
 
             # reload MDM_cfg to get results
-            MDM_cfg = Config.fromfile(MDM_cfg_path)
-            MDM_cfg = replace_cfg_vals(MDM_cfg)
-            MDM_datafile_path = MDM_cfg.market_dynamics_model.process_datafile_path
-            MDM_visualization_paths = MDM_cfg.market_dynamics_model.market_dynamic_modeling_visualization_paths
-            MDM_analysis_path = MDM_cfg.market_dynamics_model.market_dynamic_modeling_analysis_paths
-
-            with open(MDM_visualization_paths[0], "rb") as image_file:
-                encoded_string_result = base64.b64encode(image_file.read())
-
-            with open(MDM_analysis_path[0], "rb") as image_file:
-                encoded_string_analysis = base64.b64encode(image_file.read())
+            # MDM_cfg = Config.fromfile(MDM_cfg_path)
+            # MDM_cfg = replace_cfg_vals(MDM_cfg)
+            # MDM_datafile_path = MDM_cfg.market_dynamics_model.process_datafile_path
+            # MDM_visualization_paths = MDM_cfg.market_dynamics_model.market_dynamic_modeling_visualization_paths
+            # MDM_analysis_path = MDM_cfg.market_dynamics_model.market_dynamic_modeling_analysis_paths
+            #
+            # with open(MDM_visualization_paths[0], "rb") as image_file:
+            #     encoded_string_result = base64.b64encode(image_file.read())
+            #
+            # with open(MDM_analysis_path[0], "rb") as image_file:
+            #     encoded_string_analysis = base64.b64encode(image_file.read())
 
             # update session information:
-            if "MDM_datafile_path" not in self.sessions[session_id]:
-                self.sessions[session_id]["MDM_cfg_path"] = MDM_cfg_path
-                self.sessions[session_id]["MDM_script_path"] = MDM_script_path
-                self.sessions[session_id]["MDM_log_path"] = MDM_log_path
-                self.sessions[session_id]["MDM_dataset_name"] = MDM_dataset_name
-                self.sessions = self.dump_sessions({session_id: self.sessions[session_id] |
-                                                                {
-                                                                    "MDM_datafile_path": MDM_datafile_path,
-                                                                    "MDM_visualization_paths": MDM_visualization_paths}
-                                                    })
-            else:
-                self.sessions[session_id]["MDM_cfg_path"] = MDM_cfg_path
-                self.sessions[session_id]["MDM_script_path"] = MDM_script_path
-                self.sessions[session_id]["MDM_log_path"] = MDM_log_path
-                self.sessions[session_id]["MDM_datafile_path"] = MDM_datafile_path
-                self.sessions[session_id]["MDM_visualization_paths"] = MDM_visualization_paths
-                self.sessions[session_id]["MDM_dataset_name"] = MDM_dataset_name
-                self.sessions = self.dump_sessions({session_id: self.sessions[session_id]})
+            # if "MDM_datafile_path" not in self.sessions[session_id]:
+            self.sessions[session_id]["MDM_cfg_path"] = MDM_cfg_path
+            self.sessions[session_id]["MDM_script_path"] = MDM_script_path
+            self.sessions[session_id]["MDM_log_path"] = MDM_log_path
+            self.sessions[session_id]["MDM_dataset_name"] = MDM_dataset_name
+            self.sessions = self.dump_sessions({session_id: self.sessions[session_id] })
+                # self.sessions = self.dump_sessions({session_id: self.sessions[session_id] |
+                #                                                 {
+                #                                                     "MDM_datafile_path": MDM_datafile_path,
+                #                                                     "MDM_visualization_paths": MDM_visualization_paths}
+                #                                     })
+            # else:
+            #     self.sessions[session_id]["MDM_cfg_path"] = MDM_cfg_path
+            #     self.sessions[session_id]["MDM_script_path"] = MDM_script_path
+            #     self.sessions[session_id]["MDM_log_path"] = MDM_log_path
+            #     # self.sessions[session_id]["MDM_datafile_path"].extend(MDM_datafile_path)
+            #     # self.sessions[session_id]["MDM_visualization_paths"].extend(MDM_visualization_paths)
+            #     self.sessions[session_id]["MDM_dataset_name"].append(MDM_dataset_name)
+            #     self.sessions = self.dump_sessions({session_id: self.sessions[session_id]})
 
             error_code = 0
-            info = "request success, show market dynamics labeling visualization\n" + MDM_run_info
+            info = "request success, start market dynamics modeling\n"
 
             res = {
                 "error_code": error_code,
                 "info": info,
-                "market_dynamic_labeling_visulization": str(encoded_string_result, 'utf-8'),
-                "market_dynamic_labeling_analysis": str(encoded_string_analysis, 'utf-8'),
                 "session_id": session_id
             }
             logger.info(info)
@@ -751,8 +803,6 @@ class Server():
             res = {
                 "error_code": error_code,
                 "info": info + str(exc_type) + str(fname) + str(exc_tb.tb_lineno),
-                "market_dynamic_labeling_visulization": "",
-                "market_dynamic_labeling_analysis": "",
                 "session_id": session_id
             }
             logger.info(info)
@@ -760,12 +810,13 @@ class Server():
 
     def MDM_status(self, request):
         request_json = json.loads(request.get_data(as_text=True))
+        self.sessions = self.load_sessions()
+        session_id = request_json.get("session_id")
+        print('MDM_status', request_json)
         try:
-
-            self.sessions = self.load_sessions()
-            session_id = request_json.get("session_id")
-            work_dir = self.sessions[session_id]["work_dir"]
-
+            print('if session_id in self.sessions', session_id in self.sessions)
+            print('MDM_status sessions_1', self.sessions[session_id])
+            MDM_cfg_path = self.sessions[session_id]["MDM_cfg_path"]
             if session_id in self.sessions:
                 if os.path.exists(self.sessions[session_id]["MDM_log_path"]):
                     cmd = "tail -n 2000 {}".format(self.sessions[session_id]["MDM_log_path"])
@@ -789,20 +840,57 @@ class Server():
             info = [line for line in info if 'nohup: ignoring input' not in line]
             info = '\n'.join(info)
 
+
+
+
+            # reload MDM_cfg to get results
+            MDM_cfg = Config.fromfile(MDM_cfg_path)
+            MDM_cfg = replace_cfg_vals(MDM_cfg)
+            MDM_datafile_path = MDM_cfg.market_dynamics_model.process_datafile_path
+            MDM_visualization_paths = MDM_cfg.market_dynamics_model.market_dynamic_modeling_visualization_paths
+            MDM_analysis_path = MDM_cfg.market_dynamics_model.market_dynamic_modeling_analysis_paths
+
+            with open(MDM_visualization_paths[0], "rb") as image_file:
+                encoded_string_result = base64.b64encode(image_file.read())
+
+            with open(MDM_analysis_path[0], "rb") as image_file:
+                encoded_string_analysis = base64.b64encode(image_file.read())
+
+            # update session information:
+            if "MDM_datafile_path" not in self.sessions[session_id]:
+                self.sessions = self.dump_sessions({session_id: self.sessions[session_id] |
+                                                                {
+                                                                    "MDM_datafile_path": [MDM_datafile_path],
+                                                                    "MDM_visualization_paths": [path for path in MDM_visualization_paths]}
+                                                    })
+            else:
+                self.sessions[session_id]["MDM_datafile_path"].append(MDM_datafile_path)
+                self.sessions[session_id]["MDM_visualization_paths"].extend(MDM_visualization_paths)
+                self.sessions = self.dump_sessions({session_id: self.sessions[session_id]})
+
+
+
+
             res = {
                 "info": info,
-                "MDM_end": MDM_end
+                "MDM_end": MDM_end,
+                "market_dynamic_labeling_visulization": str(encoded_string_result, 'utf-8'),
+                "market_dynamic_labeling_analysis": str(encoded_string_analysis, 'utf-8'),
+                'session_id': session_id
             }
             logger.info("get market dynamics modeling running status success")
             return jsonify(res)
 
         except Exception as e:
             error_code = 1
-            info = "request data error, {}".format(e)
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            info = "request data error, {}".format(e) + str(exc_type) + str(exc_tb.tb_lineno)
             res = {
                 "error_code": error_code,
-                "info": '',
-                "session_id": ""
+                "info": info,
+                "market_dynamic_labeling_visulization": "",
+                "market_dynamic_labeling_analysis": "",
+                "session_id": session_id
             }
             logger.info(info)
             return jsonify(res)
@@ -831,7 +919,8 @@ class Server():
             info = "request success, save market dynamics"
             res = {
                 "error_code": error_code,
-                "info": info
+                "info": info,
+                'session_id':session_id
             }
             logger.info(info)
             return jsonify(res)
@@ -841,7 +930,8 @@ class Server():
             info = "request data error, {}".format(e)
             res = {
                 "error_code": error_code,
-                "info": info
+                "info": info,
+                'session_id':session_id
             }
             logger.info(info)
             return jsonify(res)
@@ -964,6 +1054,7 @@ class Server():
                 for row in data:
                     writer.writerow(row)
 
+
             # update session info
             if "custom_datafile_paths" not in self.sessions[session_id]:
                 self.sessions = self.dump_sessions({session_id: self.sessions[session_id] |
@@ -1038,9 +1129,8 @@ class Server():
             cfg.trainer.work_dir = cfg.work_dir
 
             #update data path according to dataset_name
-            #parse dataset_name with ':'
             if dataset_name == "custom":
-                task_name, tic_name = dataset_name, dataset_name
+                task_name, tic_name= dataset_name, dataset_name
             else:
                 task_name, tic_name = dataset_name.split(':')
             # check the extension name of the data file
@@ -1080,6 +1170,7 @@ class Server():
         request_json = json.loads(request.get_data(as_text=True))
         try:
             session_id = request_json.get("session_id")
+            print('request_json',request_json)
 
             self.sessions = self.load_sessions()
             if session_id in self.sessions:
@@ -1087,16 +1178,17 @@ class Server():
                 # get the saved csv file path that is set in save_market_dynamics_labeling()
                 # TODO: modify the save_market_dynamics_labeling()
                 # get all custom data file paths
-                custom_datafile_paths = self.sessions[session_id]["custom_datafile_paths"]
+                if "custom_datafile_paths" in self.sessions[session_id]:
+                    custom_datafile_paths = self.sessions[session_id]["custom_datafile_paths"]
+                    # parse all custom data file name from custom_datafile_paths
+                    custom_datafile_names = [os.path.basename(path).split('.')[0] for path in custom_datafile_paths]
+                else:
+                    custom_datafile_paths = []
+                    custom_datafile_names = []
                 MDM_dataset_name = self.sessions[session_id]["MDM_dataset_name"]
-
-            # parse all custom data file name from custom_datafile_paths
-            custom_datafile_names = [os.path.basename(path).split('.')[0] for path in custom_datafile_paths]
-
-            # forbid download csv file if it is not a custom data
-            if MDM_dataset_name not in custom_datafile_names:
+            else:
                 error_code = 1
-                info = "request error, you can only download custom data"
+                info = "Please start your session first from running a modeling"
                 res = {
                     "error_code": error_code,
                     "info": info,
@@ -1105,14 +1197,31 @@ class Server():
                 logger.info(info)
                 return jsonify(res)
 
+
+
+            # forbid download csv file if it is not a custom data
+            # if MDM_dataset_name not in custom_datafile_names:
+            #     error_code = 1
+            #     info = "request error, you can only download custom data"
+            #     res = {
+            #         "error_code": error_code,
+            #         "info": info,
+            #         "file": None
+            #     }
+            #     logger.info(info)
+            #     return jsonify(res)
+
             # get the saved csv file path that is set in save_market_dynamics_labeling()
-            saved_dataset_path = os.path.join(work_dir, MDM_dataset_name + ".csv")
+            print('saved_dataset_path',self.sessions[session_id]["MDM_datafile_path"])
+            saved_dataset_path = self.sessions[session_id]["MDM_datafile_path"][-1]
 
             # Read the CSV file contents
             with open(saved_dataset_path, 'r', encoding='utf-8') as file:
                 csv_data = file.read()
 
             # Create a response with appropriate headers for downloading a CSV file
+
+            # TODO: modify the file response name
             response = Response(
                 csv_data,
                 content_type='text/csv',
@@ -1133,11 +1242,15 @@ class Server():
             return jsonify(res)
 
         except Exception as e:
+
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
             error_code = 1
-            info = "request error, {}".format(e)
+            info = "request data error, {}".format(e)
             res = {
                 "error_code": error_code,
-                "info": info,
+                "info": info + str(exc_type) + str(fname) + str(exc_tb.tb_lineno),
+                "session_id": session_id,
                 "file": None
             }
             logger.info(info)
@@ -1183,7 +1296,7 @@ def getParameters():
     res = SERVER.get_parameters(request)
     return res
 
-@app.route("/api/TradeMaster/evaluation_getParameters", methods=["GET"])
+@app.route("/api/TradeMaster/evaluation_getParameters", methods=["POST"])
 def evaluation_getParameters():
     res = SERVER.evaluation_parameters(request)
     return res
