@@ -747,6 +747,11 @@ class Server():
                 self.sessions = self.dump_sessions({session_id: self.sessions[session_id]})
 
             # run MDM
+            #clear the log file if exists
+            if os.path.exists(MDM_log_path):
+                os.remove(MDM_log_path)
+
+
             cmd = "conda activate TradeMaster && nohup python -u {} --config {} --verbose 0 > {} 2>&1 &".format(
                 MDM_script_path,
                 MDM_cfg_path,
