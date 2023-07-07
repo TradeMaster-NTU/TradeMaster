@@ -21,8 +21,11 @@ TradeMaster is a first-of-its kind, best-in-class __open-source platform__ for _
 | Update | Status |
 | --                      | ------    |
 | Support [automatic feature generation and selection](https://arxiv.org/abs/2211.12507)| :hammer: Update [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/Tutorial9_Feature_Generation.ipynb) on 11 May 2023 |
-| Release [Colab](https://colab.research.google.com/drive/10M3F6qF8qJ31eQkBR7B6OHhYCR1ZUlrp#scrollTo=4TKpEroeFdT4) Version | :speech_balloon: [Updated](https://github.com/TradeMaster-NTU/TradeMaster/pull/133) on 29 March 2023 |
-| Incldue [HK Stock](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/data/portfolio_management/hstech30/HSTech30.pdf) and [Future](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/data/portfolio_management/Future/future.pdf) Datasets | :compass: Updated [#131](https://github.com/TradeMaster-NTU/TradeMaster/pull/131) [#132](https://github.com/TradeMaster-NTU/TradeMaster/pull/132) on 27 March 2023 |
+| Release TradeMaster [Python package](https://pypi.org/project/trademasterntu/) | :whale: Updated on 11 May 2023 | 
+| Build TradeMaster [website](https://trademaster.ai) | :whale: Available at [here](https://trademaster.ai) on 23 April
+| Write TradeMaster [software documentation](https://trademaster.readthedocs.io/en/latest/) | :speech_balloon: Updated on 11 April 2023|
+| Release [Colab](https://colab.research.google.com/drive/10M3F6qF8qJ31eQkBR7B6OHhYCR1ZUlrp#scrollTo=4TKpEroeFdT4) version | :speech_balloon: [Updated](https://github.com/TradeMaster-NTU/TradeMaster/pull/133) on 29 March 2023 |
+| Incldue [HK Stock](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/data/portfolio_management/hstech30/HSTech30.pdf) and [Future](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/data/portfolio_management/Future/future.pdf) datasets | :compass: Updated [#131](https://github.com/TradeMaster-NTU/TradeMaster/pull/131) [#132](https://github.com/TradeMaster-NTU/TradeMaster/pull/132) on 27 March 2023 |
 | Support [Alpha158](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/Tutorial8_Train_with_more_technical_indicators.ipynb) | :hammer: Updated [#123](https://github.com/TradeMaster-NTU/TradeMaster/pull/123) [#124](https://github.com/TradeMaster-NTU/TradeMaster/pull/124) on 20 March 2023 |
 | Release TradeMaster 1.0.0 | :octocat: [Released v1.0.0](https://github.com/TradeMaster-NTU/TradeMaster/releases/tag/v1.0.0) on 5 March 2023 |
 
@@ -211,14 +214,16 @@ TradeMaster provides many visualization toolkits for a systematic evaluation of 
 [Commission Fee is not Enough: A Hierarchical Reinforced Framework for Portfolio Management](https://ojs.aaai.org/index.php/AAAI/article/view/16142) *(AAAI 21)*
 
 ## News
+- [AAAI Summer Syposium][Call for participation on RL4Fintech syposium in Singapore](https://sites.google.com/view/aaai23-ai4fintech)
 - [知乎][用强化学习在金融市场上赚钱？南洋理工发布全新基于强化学习的量化交易平台TradeMaster](https://zhuanlan.zhihu.com/p/614855780?utm_medium=social&utm_oi=798261254362927104&utm_psn=1620381293060993024&utm_source=wechat_session&wechatShare=1&s_r=0)
 - [机器之心][南洋理工发布量化交易大师TradeMaster，涵盖15种强化学习算法](https://mp.weixin.qq.com/s/MTUOksGGgaWX6GkXZT6wwA)
 - [运筹OR帷幄][量化交易大师TradeMaster](https://mp.weixin.qq.com/s/bAuvKD5QD3Lz8ZC60WWJLQ)
 - [Medium][Introduction on TradeMaster](https://medium.com/@trademaster.ntu/introduction-to-trademaster-a-new-standard-of-reinforcement-learning-framework-for-quantitative-67f7133485e2)
+- [AAAI-23 Bridge Program][Host a tutorial on reinforcement learning for quantitative trading with TradeMaster](https://sites.google.com/view/aaai-ai-fin/home)
 
 
 ## Team
-- This repository is developed and maintained by [AMI](https://personal.ntu.edu.sg/boan/) group lead by [Prof Bo An](boan@ntu.edu.sg) at [Nanyang Technological University](https://www.ntu.edu.sg/).
+- This repository is developed and maintained by [AMI](https://personal.ntu.edu.sg/boan/) group at [Nanyang Technological University](https://www.ntu.edu.sg/).
 - We have positions for software engineer, research associate and postdoc. If you are interested in working at the intersection of RL and quantitative trading, feel free to send us an email with your CV.
 
 ## Competition
