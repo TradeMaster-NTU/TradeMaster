@@ -96,7 +96,7 @@ class MarketDynamicsModelingAnalysis(object):
         intervals.append([last_index, i])
         return intervals
 
-    def save_data_by_dynamics(self,data,tic,data_folder):
+    def save_data_by_dynamics(self,data,data_folder):
 
         # segment data into dynamics with 'label' column
         # get unique label
@@ -231,8 +231,10 @@ class MarketDynamicsModelingAnalysis(object):
         axs[2, 1].set_title('Average max downtrend length of each dynamics')
         plt.tight_layout()
         # save the figure
-        fig.savefig(os.path.join(data_folder,'metrics_of_each_dynamics.png'))
-        print("metrics_of_each_dynamics.png saved in",data_folder)
+        path=os.path.join(data_folder,'metrics_of_each_dynamics.png')
+        fig.savefig(path)
+        # print("metrics_of_each_dynamics.png saved at",path)
+        return path
 
     def run_analysis(self,data_path):
         # if extention is .feather
@@ -245,12 +247,15 @@ class MarketDynamicsModelingAnalysis(object):
         if 'tic' not in data.columns:
             data['tic']='default'
         tics = data['tic'].unique()
+        market_dynamic_modeling_analysis_paths= []
         for tic in tics:
             # get data of each tic
             data_tic = data[data['tic'] == tic]
             data_folder = os.path.dirname(data_path) + '/' + tic
-            data_folder,dynamics_num=self.save_data_by_dynamics(data_tic,tic,data_folder)
-            self.calculate_metrics(dynamics_num,data_folder)
+            data_folder,dynamics_num=self.save_data_by_dynamics(data_tic,data_folder)
+            market_dynamic_modeling_analysis_path=self.calculate_metrics(dynamics_num,data_folder)
+            market_dynamic_modeling_analysis_paths.append(market_dynamic_modeling_analysis_path)
+        return market_dynamic_modeling_analysis_paths
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

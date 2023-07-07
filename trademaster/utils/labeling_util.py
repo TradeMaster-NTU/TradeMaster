@@ -138,9 +138,11 @@ class Worker():
             for tic in self.tics:
                 turning_points = self.turning_points_dict[tic]
                 norm_coef_list = self.norm_coef_list_dict[tic]
-                if low==high and self.labeling_method=='slope' and self.dynamic_num!=2:
-                    raise Exception('Forlabeling_method slope, the low and high should be different if your dynamic_num is not 2.')
-                if low>high:
+                if self.labeling_method=='slope' and self.dynamic_num==2:
+                    print('For labeling_method==slope, and dynamic number==2 we will take the mean of the low and high as the seperation slope')
+                    low = (low+high)/2
+                    high = low
+                elif low>=high:
                     # auto zooming low high according to the coef_list
                     # if dynamic number is 4, then the low and high should be the 25% and 75% of the coef_list
                     # uf dynamic number is 3, then the low and high should be the 33% and 66% of the coef_list
@@ -150,7 +152,7 @@ class Worker():
                     coef_list = sorted(coef_list)
                     high = coef_list[int(((self.dynamic_num - 1) / self.dynamic_num) * len(coef_list))][0]
                     low = coef_list[int((1 / self.dynamic_num) * len(coef_list))][0]
-                    print('auto set low and high, will be used if labeling method is slope, low: ', low, ' high: ', high)
+                    print(f' tic {tic} auto set low and high, will be used if labeling method is slope, low: ', low, ' high: ', high)
 
                 label, data_seg, label_seg, index_seg = self.get_label(self.data_dict[tic], turning_points,
                                                                        low, high, norm_coef_list, tic,
@@ -495,7 +497,7 @@ class Worker():
                     label, data_seg, label_seg_raw, index_seg = self.get_label(data=data, turning_points=turning_points_temp_flat,
                                                                            low=None, high=None, normalized_coef_list=normalized_coef_list, tic=tic,
                                                                            dynamic_num=self.dynamic_num,
-                                                                           labeling_method='quantile')
+                                                                           labeling_method=self.labeling_method)
                     # label the segments
                     label_seg=[None for _ in range(len(turning_points)-1)]
                     # print(indexs)
@@ -701,7 +703,7 @@ class Worker():
         # set the title
         plt.title(f"Dynamics_of_{tic}_linear_{self.labeling_method}_{plot_feather}", fontsize=20)
         fig_path = plot_path + '_' + tic + '.png'
-        print('plot to ' + fig_path)
+        # print('plot to ' + fig_path)
         fig.savefig(fig_path)
         plt.close(fig)
         return os.path.abspath(fig_path).replace("\\", "/")

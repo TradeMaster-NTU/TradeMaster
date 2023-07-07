@@ -423,21 +423,20 @@ def MRL_F2B_args_converter(args):
     output_args={}
     output_args['data_path']=args['dataset_path']
     output_args['method']='slice_and_merge'
-    #convert Granularity to fitting_parameters
-    # Granularity=0-> base=5 Granularity=1-> base=25
-    G=args['Granularity']
-    output_args['fitting_parameters']=[str(2/(20*float(G)+5)),str(1/(20*float(G)+5)),'4']#"2/7 2/14 4"
-    output_args['slope_interval']=[float(args['bear_threshold']),float(args['bull_threshold'])]
-    output_args['dynamic_number']=int(args['number_of_market_dynamics'])
-    output_args['max_length_expectation']=int(args['minimun_length'])
-    output_args['PM']=args['PM']
     if args['dataset_name']=="order_excecution:BTC":
         output_args['OE_BTC']=True
     else:
         output_args['OE_BTC']=False
 
-
+    if args['labeling_method']=="slope":
+        # use auto zooming for slope
+        output_args['slope_interval']=[0,0]
+    # keep the same for the rest of parameters in the args for output_args
+    for key in args.keys():
+        if key not in output_args.keys():
+            output_args[key]=args[key]
     return output_args
+
 def plot(df,alg,color='darkcyan',save=False):
     x = range(len(df))
     y=(df["total assets"].values-df["total assets"].values[0])/df["total assets"].values[0]

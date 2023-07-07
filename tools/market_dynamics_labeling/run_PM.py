@@ -105,16 +105,16 @@ def run_mdm():
         # update test style
         model = build_market_dynamics_model(cfg)
 
-        process_datafile_path, market_dynamic_labeling_visualization_paths=model.run()
+        process_datafile_path, market_dynamic_modeling_visualization_paths=model.run()
         print(f'The processed datafile is at {process_datafile_path}')
-        plot_dir = os.path.dirname(os.path.realpath(market_dynamic_labeling_visualization_paths[0]))
+        plot_dir = os.path.dirname(os.path.realpath(market_dynamic_modeling_visualization_paths[0]))
         print(f'The visualizations are at {plot_dir}')
         print(f'The experiment log is at {outputfolder}/res.log')
 
     ## wirte path to cfg
     cfg.market_dynamics_model.data_path=original_data_path
     cfg.market_dynamics_model.process_datafile_path=process_datafile_path.replace("\\", "/")
-    cfg.market_dynamics_model.market_dynamic_labeling_visualization_paths=market_dynamic_labeling_visualization_paths
+    cfg.market_dynamics_model.market_dynamic_modeling_visualization_paths=market_dynamic_modeling_visualization_paths
     cfg.dump(args.config)
 
 

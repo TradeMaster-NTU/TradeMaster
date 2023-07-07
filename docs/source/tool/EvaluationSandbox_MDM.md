@@ -17,8 +17,8 @@ The dynamics can be used as meta-information. For example, in the evaluation pro
   ```
 
 - After you have labeled the dataset with market dynamics, you may want to test your agent under specific market dynamics.
-  1.Update the 'test_style_path' in the config files to the labeled dataset path you get from previous step.
-  1. Run the trainer with arguments `--task dynamics_test --test_dynamic dynamic_label` to perform evaluation on specific market dynamic. You will get reports and visualization result.
+  1. **Update the 'test_style_path'** in the config files to the labeled dataset path you get from previous step. The default test_style_path is the path of and example dataset (which is not labeled by this tool). 
+  2. Run the trainer with arguments `--task dynamics_test --test_dynamic dynamic_label` to perform evaluation on specific market dynamic. You will get reports and visualization result.
   ```
   $ python tools/algorithmic_trading/train.py --task_name dynamics_test --test_dynamic 0
   ```
@@ -39,7 +39,7 @@ The scores of the visualization result are calculated as described:
   - Do Nothing: Take no action at all
 ## Example
 We show a use case of using the tool to label dynamics on an [`example BTCUSDT dataset`](https://datasets.tardis.dev/v1/binance-futures/book_snapshot_5/2020/09/01/BTCUSDT.csv.gz)(click to download) from the open example of a data provider [`Tardis.dev`](https://docs.tardis.dev/downloadable-csv-files)   
-We have already aggregate the data to second level and the data is provided [`here`](../../../data/market_dynamics_modeling/second_level_BTC_LOB/2020-09-01-2020-09-01.feather)
+We have already aggregate the data to second level and the data is provided [`here`](../../../data/market_dynamics_modeling/second_level_BTC_LOB/data.feather)
 With the [`configuration file`](../../../configs/market_dynamics_modeling/market_dynamics_modeling.py), you will get the following dynamics modeling result:
   <div align="center">
           <img src="example_figs/Radar_plot.png" width = 400 height =  />

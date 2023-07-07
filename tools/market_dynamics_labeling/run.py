@@ -26,7 +26,7 @@ def parse_args():
 
     parser.add_argument("--data_path", type=str,help="data path to read")
     parser.add_argument("--method", type=str, help='method to use: slice_and_merge')
-    parser.add_argument("--slope_interval",  nargs="+", type=float,help='The low, high slope when labeling_method=slope')
+    parser.add_argument("--slope_interval",  nargs="+", type=float,help='The low, high slope when labeling_method=slope, ')
     parser.add_argument('--dynamic_number',type=int,default=3,help='The number of dynamics to be modeled')
     parser.add_argument('--max_length_expectation',type=int,default=300,help='Slice longer than this number will not merge actively')
     parser.add_argument('--OE_BTC',type=bool,default=False,help='If dataset is OE_BTC')
@@ -42,7 +42,9 @@ def parse_args():
     parser.add_argument("--merging_threshold", type=float, default=-1,help='The metric threshold that is used to decide whether a slice will be merged')
     parser.add_argument("--merging_dynamic_constraint", type=int, default=-1,help='Neighbor segment of dynamics spans greater than this number will not be merged(setting this to $-1$ will disable the constraint)')
     parser.add_argument("--filter_strength", type=int, default=1,help='The strength of the low-pass Butterworth filter, the bigger the lower cutoff frequency, "1" have the cutoff frequency of min_length_limit period')
-
+    parser.add_argument("--exp_name",type=str,default='default_experiment',help='The name of the experiment')
+    # default true verbose
+    parser.add_argument("--verbose",type=int,default=1,help='Whether to print the log')
 
 
     args = parser.parse_args()
@@ -74,28 +76,36 @@ def run_mdm():
     # test_dynamic=args.test_dynamic
 
     cfg = replace_cfg_vals(cfg)
-    print(cfg.pretty_text)
+    model = build_market_dynamics_model(cfg)
+
 
 
     #log to file
     # get the folder of args.data_path
-    outputfolder = os.path.dirname(cfg.market_dynamics_model.data_path)
+    outputfolder = os.path.join(os.path.dirname(cfg.market_dynamics_model.data_path),cfg.market_dynamics_model.exp_name)
+    # create folder if not exist
+    if not os.path.exists(outputfolder):
+        os.makedirs(outputfolder)
     f = open(f"{outputfolder}/res.log", 'a')
     backup = sys.stdout
     sys.stdout = Tee(sys.stdout, f)
-
+    if args.verbose==1:
+        print(cfg.pretty_text)
     # update test style
-    model = build_market_dynamics_model(cfg)
 
-    process_datafile_path, market_dynamic_labeling_visualization_paths=model.run()
-    print(f'The processed datafile is at {process_datafile_path}')
-    plot_dir = os.path.dirname(os.path.realpath(market_dynamic_labeling_visualization_paths[0]))
-    print(f'The visualizations are at {plot_dir}')
-    print(f'The experiment log is at {outputfolder}/res.log')
+
+
+    process_datafile_path, market_dynamic_modeling_visualization_paths,market_dynamic_modeling_analysis_paths=model.run()
+    plot_dir = os.path.dirname(os.path.realpath(market_dynamic_modeling_visualization_paths[0]))
+    if args.verbose==1:
+        print(f'The processed datafile is at {process_datafile_path}')
+        print(f'The visualizations are at {plot_dir}')
+        print(f'The experiment log is at {outputfolder}/res.log')
 
     ## wirte path to cfg
     cfg.market_dynamics_model.process_datafile_path=process_datafile_path.replace("\\", "/")
-    cfg.market_dynamics_model.market_dynamic_labeling_visualization_paths=market_dynamic_labeling_visualization_paths
+    cfg.market_dynamics_model.market_dynamic_modeling_visualization_paths=market_dynamic_modeling_visualization_paths
+    cfg.market_dynamics_model.market_dynamic_modeling_analysis_paths=market_dynamic_modeling_analysis_paths
     cfg.dump(args.config)
 
 

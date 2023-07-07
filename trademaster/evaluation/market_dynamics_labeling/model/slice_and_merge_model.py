@@ -30,6 +30,7 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
         self.merging_metric=get_attr(kwargs, "merging_metric", None)
         self.merging_threshold=get_attr(kwargs, "merging_threshold", None)
         self.merging_dynamic_constraint=get_attr(kwargs, "merging_dynamic_constraint", None)
+        self.exp_name=get_attr(kwargs, "exp_name", None)
 
     def file_extension_selector(self,read):
         if self.data_path.endswith('.csv'):
@@ -60,7 +61,7 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
         folder_name=os.path.dirname(self.data_path)
         # file name without extension
         file_name=os.path.splitext(os.path.basename(self.data_path))[0]
-        output_path=os.path.join(folder_name,self.tic).replace("\\", "/")
+        output_path=os.path.join(folder_name,self.exp_name,self.tic).replace("\\", "/")
         # make output_path for tic
         if not os.path.exists(output_path):
             os.makedirs(output_path)
@@ -134,7 +135,7 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
         print('----------------------------------')
         print('start plotting')
         # a list the path to all the modeling visulizations
-        market_dynamic_labeling_visualization_paths=worker.plot(worker.tics, self.slope_interval, output_path, self.model_id)
+        market_dynamic_modeling_visualization_paths=worker.plot(worker.tics, self.slope_interval, output_path, self.model_id)
         print('plotting done')
         print('----------------------------------')
         # if self.OE_BTC == True:
@@ -143,8 +144,8 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
         #MDM analysis
         print('start market dynamics modeling analysis')
         MDM_analysis=market_dynamics_modeling_analysis.MarketDynamicsModelingAnalysis(process_datafile_path,self.key_indicator)
-        MDM_analysis.run_analysis(process_datafile_path)
+        market_dynamic_modeling_analysis_paths=MDM_analysis.run_analysis(process_datafile_path)
         print('market dynamics modeling analysis done')
 
-        return os.path.abspath(process_datafile_path), market_dynamic_labeling_visualization_paths
+        return os.path.abspath(process_datafile_path), market_dynamic_modeling_visualization_paths,market_dynamic_modeling_analysis_paths
 
