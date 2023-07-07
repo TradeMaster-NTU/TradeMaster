@@ -703,7 +703,7 @@ class Worker():
         # set the title
         plt.title(f"Dynamics_of_{tic}_linear_{self.labeling_method}_{plot_feather}", fontsize=20)
         fig_path = plot_path + '_' + tic + '.png'
-        print('plot to ' + fig_path)
+        # print('plot to ' + fig_path)
         fig.savefig(fig_path)
         plt.close(fig)
         return os.path.abspath(fig_path).replace("\\", "/")

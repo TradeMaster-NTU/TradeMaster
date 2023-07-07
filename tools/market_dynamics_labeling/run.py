@@ -89,8 +89,8 @@ def run_mdm():
     f = open(f"{outputfolder}/res.log", 'a')
     backup = sys.stdout
     sys.stdout = Tee(sys.stdout, f)
-
-    # print(cfg.pretty_text)
+    if args.verbose==1:
+        print(cfg.pretty_text)
     # update test style
 
 
