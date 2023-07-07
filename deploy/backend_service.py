@@ -65,16 +65,16 @@ class Server():
             "dataset_name": [
                 "algorithmic_trading:BTC",
                 "algorithmic_trading:FX",
-                "order_excecution:BTC",
-                "order_excecution:PD_BTC",
+                # "order_execution:BTC",
+                # "order_execution:PD_BTC",
                 "portfolio_management:dj30",
                 "portfolio_management:exchange",
             'market_dynamics_modeling:second_level_BTC_LOB'],
             "start_date": {
                 "algorithmic_trading:BTC": "2015-10-01",
                 "algorithmic_trading:FX": "2000-01-01",
-                "order_excecution:BTC": "2021-04-07",
-                "order_excecution:PD_BTC": "2013-04-29",
+                "order_execution:BTC": "2021-04-07",
+                "order_execution:PD_BTC": "2013-04-29",
                 "portfolio_management:dj30": "2012-01-04",
                 "portfolio_management:exchange": "2000-01-27",
                 'market_dynamics_modeling:second_level_BTC_LOB': "2020-09-01"
@@ -82,8 +82,8 @@ class Server():
             "end_date": {
                 "algorithmic_trading:BTC": "2021-07-05",
                 "algorithmic_trading:FX": "2019-12-31",
-                "order_excecution:BTC": "2021-04-19",
-                "order_excecution:PD_BTC": "2021-07-05",
+                "order_execution:BTC": "2021-04-19",
+                "order_execution:PD_BTC": "2021-07-05",
                 "portfolio_management:dj30": "2021-12-31",
                 "portfolio_management:exchange": "2019-12-31",
                 'market_dynamics_modeling:second_level_BTC_LOB': "2020-09-01"
@@ -92,8 +92,8 @@ class Server():
             "min_length_limit": {
                 "algorithmic_trading:BTC": "24",
                 "algorithmic_trading:FX": "24",
-                "order_excecution:BTC": "24",
-                "order_excecution:PD_BTC": "24",
+                "order_execution:BTC": "24",
+                "order_execution:PD_BTC": "24",
                 "portfolio_management:dj30": "24",
                 "portfolio_management:exchange": "24",
                 'market_dynamics_modeling:second_level_BTC_LOB': "60"
@@ -101,8 +101,8 @@ class Server():
             "filter_strength": {
                 "algorithmic_trading:BTC": "1",
                 "algorithmic_trading:FX": "1",
-                "order_excecution:BTC": "1",
-                "order_excecution:PD_BTC": "1",
+                "order_execution:BTC": "1",
+                "order_execution:PD_BTC": "1",
                 "portfolio_management:dj30": "1",
                 "portfolio_management:exchange": "1",
                 'market_dynamics_modeling:second_level_BTC_LOB': "1"
@@ -110,8 +110,8 @@ class Server():
             "max_length_expectation": {
                 "algorithmic_trading:BTC": "144",
                 "algorithmic_trading:FX": "144",
-                "order_excecution:BTC": "144",
-                "order_excecution:PD_BTC": "144",
+                "order_execution:BTC": "144",
+                "order_execution:PD_BTC": "144",
                 "portfolio_management:dj30": "144",
                 "portfolio_management:exchange": "144",
                 'market_dynamics_modeling:second_level_BTC_LOB': "3600"
@@ -119,8 +119,8 @@ class Server():
             "key_indicator": {
                 "algorithmic_trading:BTC": "adjcp",
                 "algorithmic_trading:FX": "adjcp",
-                "order_excecution:BTC": "adjcp",
-                "order_excecution:PD_BTC": "adjcp",
+                "order_execution:BTC": "adjcp",
+                "order_execution:PD_BTC": "adjcp",
                 "portfolio_management:dj30": "adjcp",
                 "portfolio_management:exchange": "adjcp",
                 'market_dynamics_modeling:second_level_BTC_LOB': "bid1_price"
@@ -128,8 +128,8 @@ class Server():
             "timestamp": {
                 "algorithmic_trading:BTC": "date",
                 "algorithmic_trading:FX": "date",
-                "order_excecution:BTC": "date",
-                "order_excecution:PD_BTC": "date",
+                "order_execution:BTC": "date",
+                "order_execution:PD_BTC": "date",
                 "portfolio_management:dj30": "date",
                 "portfolio_management:exchange": "date",
                 'market_dynamics_modeling:second_level_BTC_LOB': "timestamp"
@@ -137,8 +137,8 @@ class Server():
             "tic": {
                 "algorithmic_trading:BTC": "data",
                 "algorithmic_trading:FX": "data",
-                "order_excecution:BTC": "data",
-                "order_excecution:PD_BTC": "data",
+                "order_execution:BTC": "data",
+                "order_execution:PD_BTC": "data",
                 "portfolio_management:dj30": "tic",
                 "portfolio_management:exchange": "tic",
                 'market_dynamics_modeling:second_level_BTC_LOB': "BTCUSDT"
@@ -146,8 +146,8 @@ class Server():
             "labeling_method": {
                 "algorithmic_trading:BTC": "quantile",
                 "algorithmic_trading:FX": "quantile",
-                "order_excecution:BTC": "quantile",
-                "order_excecution:PD_BTC": "quantile",
+                "order_execution:BTC": "quantile",
+                "order_execution:PD_BTC": "quantile",
                 "portfolio_management:dj30": "quantile",
                 "portfolio_management:exchange": "quantile",
                 'market_dynamics_modeling:second_level_BTC_LOB': "quantile"
@@ -155,8 +155,8 @@ class Server():
             "merging_metric": {
                 "algorithmic_trading:BTC": "DTW_distance",
                 "algorithmic_trading:FX": "DTW_distance",
-                "order_excecution:BTC": "DTW_distance",
-                "order_excecution:PD_BTC": "DTW_distance",
+                "order_execution:BTC": "DTW_distance",
+                "order_execution:PD_BTC": "DTW_distance",
                 "portfolio_management:dj30": "DTW_distance",
                 "portfolio_management:exchange": "DTW_distance",
                 'market_dynamics_modeling:second_level_BTC_LOB': "DTW_distance"
@@ -164,8 +164,8 @@ class Server():
             "merging_threshold": {
                 "algorithmic_trading:BTC": "0.03",
                 "algorithmic_trading:FX": "0.03",
-                "order_excecution:BTC": "0.03",
-                "order_excecution:PD_BTC": "0.03",
+                "order_execution:BTC": "0.03",
+                "order_execution:PD_BTC": "0.03",
                 "portfolio_management:dj30": "0.03",
                 "portfolio_management:exchange": "0.03",
                 'market_dynamics_modeling:second_level_BTC_LOB': "0.0003"
@@ -173,8 +173,8 @@ class Server():
             "merging_dynamic_constraint": {
                 "algorithmic_trading:BTC": 1,
                 "algorithmic_trading:FX": 1,
-                "order_excecution:BTC": 1,
-                "order_excecution:PD_BTC": 1,
+                "order_execution:BTC": 1,
+                "order_execution:PD_BTC": 1,
                 "portfolio_management:dj30": 1,
                 "portfolio_management:exchange": 1,
                 'market_dynamics_modeling:second_level_BTC_LOB': 1
@@ -193,8 +193,8 @@ class Server():
                 "algorithmic_trading:BTC",
                 "algorithmic_trading:FX",
                 "algorithmic_trading:JPM",
-                "order_excecution:BTC",
-                "order_excecution:PD_BTC",
+                "order_execution:BTC",
+                "order_execution:PD_BTC",
                 "portfolio_management:dj30",
                 "portfolio_management:exchange"],
             "optimizer_name": ["adam"],
@@ -216,16 +216,16 @@ class Server():
             "start_date": {
                 "algorithmic_trading:BTC": "2015-10-01",
                 "algorithmic_trading:FX": "2000-01-01",
-                "order_excecution:BTC": "2021-04-07",
-                "order_excecution:PD_BTC": "2013-04-29",
+                "order_execution:BTC": "2021-04-07",
+                "order_execution:PD_BTC": "2013-04-29",
                 "portfolio_management:dj30": "2012-01-04",
                 "portfolio_management:exchange": "2000-01-27",
             },
             "end_date": {
                 "algorithmic_trading:BTC": "2021-07-06",
                 "algorithmic_trading:FX": "2019-12-31",
-                "order_excecution:BTC": "2021-03-19",
-                "order_excecution:PD_BTC": "2021-07-05",
+                "order_execution:BTC": "2021-03-19",
+                "order_execution:PD_BTC": "2021-07-05",
                 "portfolio_management:dj30": "2021-12-31",
                 "portfolio_management:exchange": "2019-12-31",
             },
@@ -660,13 +660,18 @@ class Server():
                 # print('cfg.data.data_path',cfg.data.data_path)
                 # parse the args['dataset_name'] by : into task_name and dataset_name
                 task_name, dataset_name = args['dataset_name'].split(':')
-                print('file_path', os.path.join(ROOT, 'data', task_name, dataset_name, "data.csv"))
+                logger.info('run MDM file_path', os.path.join(ROOT, 'data', task_name, dataset_name, "data.csv"))
+                logger.info('timestamp',args['timestamp'])
                 try:
                     data = pd.read_csv(os.path.join(ROOT, 'data',task_name,dataset_name, "data.csv"), index_col=0)
-                    data = data[(data["date"] >= test_start_date) & (data["date"] < test_end_date)]
                 except:
                     data = pd.read_feather(os.path.join(ROOT, 'data',task_name,dataset_name, "data.feather"))
-                    data = data[(data["date"] >= test_start_date) & (data["date"] < test_end_date)]
+                    # data = data[(data[args['timestamp']] >= test_start_date) & (data[args['timestamp']] < test_end_date)]
+                try:
+                    data = data[
+                        (data[args['timestamp']] >= test_start_date) & (data[args['timestamp']] < test_end_date)]
+                except:
+                    logger.info('slice data error, please check the timestamp')
 
 
             info += f"There are total {data.shape[0]} ticks in the dataset\\n"
@@ -916,6 +921,8 @@ class Server():
             info = [line.split('m ')[-1] if 'm ' in line else line for line in info.split('\n')]
             # remove 'nohup: ignoring input' in info
             info = [line for line in info if 'nohup: ignoring input' not in line]
+            # if 'it/s]' in line of info, seperate the line with 'it/s]' and get the last segment finished with 'it/s]'
+            info = [line.split('it/s]')[-2] if 'it/s]' in line else line for line in info]
             info = '\n'.join(info)
 
 
