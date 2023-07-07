@@ -17,8 +17,8 @@ The dynamics can be used as meta-information. For example, in the evaluation pro
   ```
 
 - After you have labeled the dataset with market dynamics, you may want to test your agent under specific market dynamics.
-  1.Update the 'test_style_path' in the config files to the labeled dataset path you get from previous step.
-  1. Run the trainer with arguments `--task dynamics_test --test_dynamic dynamic_label` to perform evaluation on specific market dynamic. You will get reports and visualization result.
+  1. **Update the 'test_style_path'** in the config files to the labeled dataset path you get from previous step. The default test_style_path is the path of and example dataset (which is not labeled by this tool). 
+  2. Run the trainer with arguments `--task dynamics_test --test_dynamic dynamic_label` to perform evaluation on specific market dynamic. You will get reports and visualization result.
   ```
   $ python tools/algorithmic_trading/train.py --task_name dynamics_test --test_dynamic 0
   ```
