@@ -40,6 +40,7 @@ class MarketDynamicsModelingAnalysis(object):
             mdd / (previous_mdd_end_step - previous_mdd_start_step+1e-10),
             (previous_mdd_end_step - previous_mdd_start_step),
             (previous_mdd_end_step - previous_mdd_start_step) / len(df),
+            mdd/len(df)
         )
 
 
@@ -68,6 +69,7 @@ class MarketDynamicsModelingAnalysis(object):
             mpp / (previous_mpp_end_step - previous_mpp_start_step+1e-10),
             (previous_mpp_end_step - previous_mpp_start_step),
             (previous_mpp_end_step - previous_mpp_start_step) / len(df),
+            mpp/len(df)
         )
 
 
@@ -133,6 +135,8 @@ class MarketDynamicsModelingAnalysis(object):
         mdd_length_list_list = []
         mpp_percentile_list_list = []
         mdd_percentile_list_list = []
+        mpp_sum_percentile_list_list = []
+        mdd_sum_percentile_list_list = []
         for label in range(dynamics_num):
             average_k_list = []
             average_length_list = []
@@ -142,6 +146,8 @@ class MarketDynamicsModelingAnalysis(object):
             mdd_length_list = []
             mpp_percentile_list = []
             mdd_percentile_list = []
+            mpp_sum_percentile_list=[]
+            mdd_sum_percentile_list=[]
             test_df_path = f"{data_folder}/label_{label}"
             df_list = os.listdir(test_df_path)
             self.sort_list(df_list)
@@ -159,6 +165,8 @@ class MarketDynamicsModelingAnalysis(object):
                 mdd_length_list.append(self.calculate_mdd_k(df_result)[1])
                 mpp_percentile_list.append(self.calculate_mpp_k(df_result)[2])
                 mdd_percentile_list.append(self.calculate_mdd_k(df_result)[2])
+                mpp_sum_percentile_list.append(self.calculate_mpp_k(df_result)[3])
+                mdd_sum_percentile_list.append(self.calculate_mdd_k(df_result)[3])
             average_k_list_list.append(average_k_list)
             average_length_list_list.append(average_length_list)
             mpp_k_list_list.append(mpp_k_list)
@@ -167,6 +175,8 @@ class MarketDynamicsModelingAnalysis(object):
             mdd_length_list_list.append(mdd_length_list)
             mpp_percentile_list_list.append(mpp_percentile_list)
             mdd_percentile_list_list.append(mdd_percentile_list)
+            mpp_sum_percentile_list_list.append(mpp_sum_percentile_list)
+            mdd_sum_percentile_list_list.append(mdd_sum_percentile_list)
         # for i in range(dynamics_num):
         #     print("For label {}".format(i))
         #     print("average_k_list mean", np.mean(average_k_list_list[i]))
@@ -205,18 +215,31 @@ class MarketDynamicsModelingAnalysis(object):
         axs[0, 1].set_xticks([i for i in range(dynamics_num+1)])
         axs[0, 1].set_xticklabels(['']+[i for i in range(dynamics_num)])
         axs[0, 1].set_title('Average length of each dynamics')
-        axs[1, 0].boxplot(mpp_k_list_list,showfliers=False)
-        axs[1, 0].set_ylabel('Average max uptrend slope')
+
+        axs[1, 0].boxplot(mpp_sum_percentile_list_list,showfliers=False)
+        axs[1, 0].set_ylabel('Average max uptrend')
         axs[1, 0].set_xlabel('label')
         axs[1, 0].set_xticks([i for i in range(dynamics_num+1)])
         axs[1, 0].set_xticklabels(['']+[i for i in range(dynamics_num)])
-        axs[1, 0].set_title('Average max uptrend slope of each dynamics')
-        axs[1, 1].boxplot(mdd_k_list_list,showfliers=False)
-        axs[1, 1].set_ylabel('Average max downtrend slope')
+        axs[1, 0].set_title('Average max uptrend of each dynamics')
+        axs[1, 1].boxplot(mdd_sum_percentile_list_list,showfliers=False)
+        axs[1, 1].set_ylabel('Average max downtrend')
         axs[1, 1].set_xlabel('label')
         axs[1, 1].set_xticks([i for i in range(dynamics_num+1)])
         axs[1, 1].set_xticklabels(['']+[i for i in range(dynamics_num)])
-        axs[1, 1].set_title('Average max downtrend slope of each dynamics')
+        axs[1, 1].set_title('Average max downtrend of each dynamics')
+        # axs[1, 0].boxplot(mpp_k_list_list,showfliers=False)
+        # axs[1, 0].set_ylabel('Average max uptrend slope')
+        # axs[1, 0].set_xlabel('label')
+        # axs[1, 0].set_xticks([i for i in range(dynamics_num+1)])
+        # axs[1, 0].set_xticklabels(['']+[i for i in range(dynamics_num)])
+        # axs[1, 0].set_title('Average max uptrend slope of each dynamics')
+        # axs[1, 1].boxplot(mdd_k_list_list,showfliers=False)
+        # axs[1, 1].set_ylabel('Average max downtrend slope')
+        # axs[1, 1].set_xlabel('label')
+        # axs[1, 1].set_xticks([i for i in range(dynamics_num+1)])
+        # axs[1, 1].set_xticklabels(['']+[i for i in range(dynamics_num)])
+        # axs[1, 1].set_title('Average max downtrend slope of each dynamics')
         axs[2, 0].boxplot(mpp_length_list_list,showfliers=False)
         axs[2, 0].set_ylabel('Average max uptrend length')
         axs[2, 0].set_xlabel('label')
