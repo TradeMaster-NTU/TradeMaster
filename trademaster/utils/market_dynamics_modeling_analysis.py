@@ -73,12 +73,25 @@ class MarketDynamicsModelingAnalysis(object):
         )
 
 
+    # def calculate_average_k(self,df):
+    #     price_list = [df.iloc[0][self.key_indicator]]
+    #     for i in range(1, len(df)):
+    #         price_list.append(df.iloc[i][self.key_indicator])
+    #
+    #     return (price_list[-1] - price_list[0]) / (len(price_list) * price_list[0])
+
     def calculate_average_k(self,df):
         price_list = [df.iloc[0][self.key_indicator]]
         for i in range(1, len(df)):
             price_list.append(df.iloc[i][self.key_indicator])
+        # slope=(price_list[-1] - price_list[0]) / (len(price_list) * price_list[0])
+        # calculate average slope by linear regression
+        x = np.arange(len(price_list))
+        y = np.array(price_list)
+        slope = np.polyfit(x, y, 1)[0]
+        slope=slope/price_list[0]
+        return slope
 
-        return (price_list[-1] - price_list[0]) / (len(price_list) * price_list[0])
 
 
     def get_intervals(self,data):
