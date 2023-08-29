@@ -75,8 +75,12 @@ class MarketDynamicsModelingAnalysis(object):
         price_list = [df.iloc[0][self.key_indicator]]
         for i in range(1, len(df)):
             price_list.append(df.iloc[i][self.key_indicator])
-
-        return (price_list[-1] - price_list[0]) / (len(price_list) * price_list[0])
+        # slope=(price_list[-1] - price_list[0]) / (len(price_list) * price_list[0])
+        # calculate average slope by linear regression
+        x = np.arange(len(price_list))
+        y = np.array(price_list)
+        slope = np.polyfit(x, y, 1)[0]
+        return slope
 
 
     def get_intervals(self,data):
@@ -167,6 +171,7 @@ class MarketDynamicsModelingAnalysis(object):
             mdd_length_list_list.append(mdd_length_list)
             mpp_percentile_list_list.append(mpp_percentile_list)
             mdd_percentile_list_list.append(mdd_percentile_list)
+
         # for i in range(dynamics_num):
         #     print("For label {}".format(i))
         #     print("average_k_list mean", np.mean(average_k_list_list[i]))
@@ -233,6 +238,22 @@ class MarketDynamicsModelingAnalysis(object):
         # save the figure
         path=os.path.join(data_folder,'metrics_of_each_dynamics.png')
         fig.savefig(path)
+        # stor the numercial data to csv
+        path=os.path.join(data_folder,'metrics_of_each_dynamics.csv')
+        # store the average and std of average_k_list_list, average_length_list_list, mpp_k_list_list, mdd_k_list_list, mpp_length_list_list, mdd_length_list_list to csv
+        df = pd.DataFrame({'average_k_list_mean': [np.mean(average_k_list_list[i]) for i in range(dynamics_num)],
+                            'average_k_list_std': [np.std(average_k_list_list[i]) for i in range(dynamics_num)],
+                            'average_length_list_mean': [np.mean(average_length_list_list[i]) for i in range(dynamics_num)],
+                            'average_length_list_std': [np.std(average_length_list_list[i]) for i in range(dynamics_num)],
+                            'mpp_k_list_mean': [np.mean(mpp_k_list_list[i]) for i in range(dynamics_num)],
+                            'mpp_k_list_std': [np.std(mpp_k_list_list[i]) for i in range(dynamics_num)],
+                            'mdd_k_list_mean': [np.mean(mdd_k_list_list[i]) for i in range(dynamics_num)],
+                            'mdd_k_list_std': [np.std(mdd_k_list_list[i]) for i in range(dynamics_num)],
+                            'mpp_length_list_mean': [np.mean(mpp_length_list_list[i]) for i in range(dynamics_num)],
+                            'mpp_length_list_std': [np.std(mpp_length_list_list[i]) for i in range(dynamics_num)],
+                            'mdd_length_list_mean': [np.mean(mdd_length_list_list[i]) for i in range(dynamics_num)],
+                            'mdd_length_list_std': [np.std(mdd_length_list_list[i]) for i in range(dynamics_num)]})
+        df.to_csv(path)
         # print("metrics_of_each_dynamics.png saved at",path)
         return path
 

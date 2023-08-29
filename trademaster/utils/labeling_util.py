@@ -644,6 +644,14 @@ class Worker():
                                                self.turning_points_dict[tic], low, high,
                                                normalized_coef_list=self.norm_coef_list_dict[tic],
                                                plot_path=self.plot_path, plot_feather=self.key_indicator))
+                self.plot_to_file(self.data_dict[tic], tic, self.y_pred_dict[tic],
+                                  self.turning_points_dict[tic], low, high,
+                                  normalized_coef_list=self.norm_coef_list_dict[tic],
+                                  plot_path=self.plot_path, plot_feather='key_indicator_filtered',if_color=False,suffix='_filtered')
+                self.plot_to_file(self.data_dict[tic], tic, self.y_pred_dict[tic],
+                                  self.turning_points_dict[tic], low, high,
+                                  normalized_coef_list=self.norm_coef_list_dict[tic],
+                                  plot_path=self.plot_path, plot_feather=self.key_indicator,if_color=False,suffix='_no_color')
                 # self.plot_to_file(self.data_dict[tic], tic, self.y_pred_dict[tic],
                 #                   self.turning_points_dict[tic], low, high,
                 #                   normalized_coef_list=self.norm_coef_list_dict[tic],
@@ -656,7 +664,7 @@ class Worker():
                 print('not able to plot TSNE')
 
     def plot_to_file(self, data, tic, y_pred_list, turning_points, low, high, normalized_coef_list,
-                     plot_path=None, plot_feather=None):
+                     plot_path=None, plot_feather=None,suffix='',if_color=True):
         data = data.reset_index(drop=True)
         # every sub-plot is contained segment of at most 100000 data points
         # 1. split the data into segments if the length is too long
@@ -678,7 +686,10 @@ class Worker():
         fig, axs = plt.subplots(sub_plot_num, 1, figsize=(50, 15 * sub_plot_num), constrained_layout=True)
         if sub_plot_num == 1:
             axs = [axs]
-        colors = list(dict(mcolors.BASE_COLORS, **mcolors.CSS4_COLORS).keys())
+        if if_color:
+            colors = list(dict(mcolors.BASE_COLORS, **mcolors.CSS4_COLORS).keys())
+        else:
+            colors = ['black' for _ in range(999)]
 
         counter = 0
         for index, ax in enumerate(axs):
@@ -702,7 +713,7 @@ class Worker():
             ax.legend(by_label.values(), by_label.keys(), prop=font)
         # set the title
         plt.title(f"Dynamics_of_{tic}_linear_{self.labeling_method}_{plot_feather}", fontsize=20)
-        fig_path = plot_path + '_' + tic + '.png'
+        fig_path = plot_path + '_' + tic+suffix + '.png'
         # print('plot to ' + fig_path)
         fig.savefig(fig_path)
         plt.close(fig)
