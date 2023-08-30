@@ -1,26 +1,26 @@
 market_dynamics_model = dict(
-    data_path=
-    'data/market_dynamics_modeling/second_level_BTC_LOB/data.feather',
+    data_path='data/algorithmic_trading/AAPL/test.csv',
     filter_strength=1,
     slope_interval=[1, -1],
     dynamic_number=3,
-    max_length_expectation=240,
-    key_indicator='bid1_price',
-    timestamp='timestamp',
-    tic='BTCUSDT',
+    max_length_expectation=120,
+    key_indicator='adjcp',
+    timestamp='date',
+    tic='AAPL',
     labeling_method='quantile',
-    min_length_limit=24,
+    min_length_limit=12,
     merging_metric='DTW_distance',
-    merging_threshold=0.003,
+    merging_threshold=0.03,
     merging_dynamic_constraint=1,
     OE_BTC=False,
     PM='',
+    exp_name='Market_Dynamics_Model',
     process_datafile_path=
-    '/home/hcxia/TradeMaster/data/market_dynamics_modeling/second_level_BTC_LOB/BTCUSDT/2020-09-01-2020-09-01_labeled_slice_and_merge_model_5dynamics_minlength60_quantile_labeling.feather',
+    '',
     market_dynamic_modeling_visualization_paths=[
-        '/home/hcxia/TradeMaster/data/market_dynamics_modeling/second_level_BTC_LOB/BTCUSDT/slice_and_merge_model_5dynamics_minlength60_quantile_labeling_BTCUSDT.png'
+        ],
+    market_dynamic_modeling_analysis_paths=[
     ],
-    market_dynamic_modeling_analysis_paths=[''],
     type='Linear_Market_Dynamics_Model')
 task_name = 'custom'
 dataset_name = 'custom'
