@@ -20,7 +20,7 @@ data = dict(
     train_path = "data/portfolio_management/dj30/new_train.csv",
     valid_path = "data/portfolio_management/dj30/new_valid.csv",
     test_path = "data/portfolio_management/dj30/new_test.csv",
-    test_dynamic_path='data/portfolio_management/dj30/test_labeled_3_24_-0.25_0.25.csv',
+    test_dynamic_path='data/portfolio_management/dj30/test_with_label.csv',
     tech_indicator_list = [
         "zopen",
         "zhigh",

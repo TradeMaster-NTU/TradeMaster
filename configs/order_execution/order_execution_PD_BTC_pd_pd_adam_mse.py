@@ -25,7 +25,7 @@ data = dict(
     train_path="data/order_execution/PD_BTC/train.csv",
     valid_path="data/order_execution/PD_BTC/valid.csv",
     test_path="data/order_execution/PD_BTC/test.csv",
-    test_dynamic_path="data/order_execution/PD_BTC/test_labeled_3_24_-0.15_0.15.csv",
+    test_dynamic_path="data/order_execution/PD_BTC/Market_Dynamics_Model/BTC/test_labeled_slice_and_merge_model_3dynamics_minlength12_quantile_labeling.csv",
     tech_indicator_list=[
         "high",
         "low",

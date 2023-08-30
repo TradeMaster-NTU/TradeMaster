@@ -1,0 +1,59 @@
+market_dynamics_model = dict(
+    data_path='/home/hcxia/Style-timegan/timegan-pytorch/data/DJI/DJI_data.csv',
+    filter_strength=1,
+    slope_interval=[-0.01, 0.01],
+    dynamic_number=3,
+    max_length_expectation=140,
+    OE_BTC=False,
+    PM='',
+    process_datafile_path=
+    '/home/hcxia/Style-timegan/timegan-pytorch/data/DJI/DJI_50/tic/DJI_data_labeled_slice_and_merge_model_3dynamics_minlength50_quantile_labeling.csv',
+    market_dynamic_labeling_visualization_paths=[
+        '/home/hcxia/Style-timegan/timegan-pytorch/data/djia/tic/slice_and_merge_model_3dynamics_minlength24_quantile_labeling_DIS.png'
+    ],
+    key_indicator='Adj Close',
+    timestamp='Date',
+    tic='tic',
+    labeling_method='quantile',
+    min_length_limit=50,
+    merging_metric='DTW_distance',
+    merging_threshold=0.03,
+    merging_dynamic_constraint=1,
+    exp_name='DJI_50',
+    type='Linear_Market_Dynamics_Model',
+    market_dynamic_modeling_visualization_paths=[
+        '/home/hcxia/Style-timegan/timegan-pytorch/data/DJI/DJI_50/tic/slice_and_merge_model_3dynamics_minlength50_quantile_labeling_DIS.png'
+    ],
+    market_dynamic_modeling_analysis_paths=[
+        '/home/hcxia/Style-timegan/timegan-pytorch/data/DJI/DJI_50/tic/MMM/metrics_of_each_dynamics.csv',
+        '/home/hcxia/Style-timegan/timegan-pytorch/data/DJI/DJI_50/tic/AXP/metrics_of_each_dynamics.csv',
+        '/home/hcxia/Style-timegan/timegan-pytorch/data/DJI/DJI_50/tic/AMGN/metrics_of_each_dynamics.csv',
+        '/home/hcxia/Style-timegan/timegan-pytorch/data/DJI/DJI_50/tic/AAPL/metrics_of_each_dynamics.csv',
+        '/home/hcxia/Style-timegan/timegan-pytorch/data/DJI/DJI_50/tic/BA/metrics_of_each_dynamics.csv',
+        '/home/hcxia/Style-timegan/timegan-pytorch/data/DJI/DJI_50/tic/CAT/metrics_of_each_dynamics.csv',
+        '/home/hcxia/Style-timegan/timegan-pytorch/data/DJI/DJI_50/tic/CVX/metrics_of_each_dynamics.csv',
+        '/home/hcxia/Style-timegan/timegan-pytorch/data/DJI/DJI_50/tic/CSCO/metrics_of_each_dynamics.csv',
+        '/home/hcxia/Style-timegan/timegan-pytorch/data/DJI/DJI_50/tic/KO/metrics_of_each_dynamics.csv',
+        '/home/hcxia/Style-timegan/timegan-pytorch/data/DJI/DJI_50/tic/GS/metrics_of_each_dynamics.csv',
+        '/home/hcxia/Style-timegan/timegan-pytorch/data/DJI/DJI_50/tic/HD/metrics_of_each_dynamics.csv',
+        '/home/hcxia/Style-timegan/timegan-pytorch/data/DJI/DJI_50/tic/HON/metrics_of_each_dynamics.csv',
+        '/home/hcxia/Style-timegan/timegan-pytorch/data/DJI/DJI_50/tic/IBM/metrics_of_each_dynamics.csv',
+        '/home/hcxia/Style-timegan/timegan-pytorch/data/DJI/DJI_50/tic/INTC/metrics_of_each_dynamics.csv',
+        '/home/hcxia/Style-timegan/timegan-pytorch/data/DJI/DJI_50/tic/JNJ/metrics_of_each_dynamics.csv',
+        '/home/hcxia/Style-timegan/timegan-pytorch/data/DJI/DJI_50/tic/JPM/metrics_of_each_dynamics.csv',
+        '/home/hcxia/Style-timegan/timegan-pytorch/data/DJI/DJI_50/tic/MCD/metrics_of_each_dynamics.csv',
+        '/home/hcxia/Style-timegan/timegan-pytorch/data/DJI/DJI_50/tic/MRK/metrics_of_each_dynamics.csv',
+        '/home/hcxia/Style-timegan/timegan-pytorch/data/DJI/DJI_50/tic/MSFT/metrics_of_each_dynamics.csv',
+        '/home/hcxia/Style-timegan/timegan-pytorch/data/DJI/DJI_50/tic/NKE/metrics_of_each_dynamics.csv',
+        '/home/hcxia/Style-timegan/timegan-pytorch/data/DJI/DJI_50/tic/PG/metrics_of_each_dynamics.csv',
+        '/home/hcxia/Style-timegan/timegan-pytorch/data/DJI/DJI_50/tic/CRM/metrics_of_each_dynamics.csv',
+        '/home/hcxia/Style-timegan/timegan-pytorch/data/DJI/DJI_50/tic/TRV/metrics_of_each_dynamics.csv',
+        '/home/hcxia/Style-timegan/timegan-pytorch/data/DJI/DJI_50/tic/UNH/metrics_of_each_dynamics.csv',
+        '/home/hcxia/Style-timegan/timegan-pytorch/data/DJI/DJI_50/tic/VZ/metrics_of_each_dynamics.csv',
+        '/home/hcxia/Style-timegan/timegan-pytorch/data/DJI/DJI_50/tic/V/metrics_of_each_dynamics.csv',
+        '/home/hcxia/Style-timegan/timegan-pytorch/data/DJI/DJI_50/tic/WBA/metrics_of_each_dynamics.csv',
+        '/home/hcxia/Style-timegan/timegan-pytorch/data/DJI/DJI_50/tic/WMT/metrics_of_each_dynamics.csv',
+        '/home/hcxia/Style-timegan/timegan-pytorch/data/DJI/DJI_50/tic/DIS/metrics_of_each_dynamics.csv'
+    ])
+task_name = 'custom'
+dataset_name = 'custom'

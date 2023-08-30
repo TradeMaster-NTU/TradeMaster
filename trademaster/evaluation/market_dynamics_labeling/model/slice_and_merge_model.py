@@ -68,7 +68,7 @@ class Linear_Market_Dynamics_Model(Market_dynamics_model):
         if dataset_name=='small_BTC' and task_name=='high_frequency_trading':
             raw_data = pd.read_csv(self.data_path,index_col=0)
             raw_data[self.tic] = 'HFT_small_BTC'
-            raw_data[self.key_indicator] = raw_data["close"]
+            # raw_data[self.key_indicator] = raw_data["close"]
             raw_data[self.timestamp] = raw_data.index
             # if not os.path.exists('./temp'):
             #     os.makedirs('./temp')

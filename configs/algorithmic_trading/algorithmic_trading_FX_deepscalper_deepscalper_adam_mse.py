@@ -24,8 +24,7 @@ data = dict(
     train_path='data/algorithmic_trading/FX/train.csv',
     valid_path='data/algorithmic_trading/FX/valid.csv',
     test_path='data/algorithmic_trading/FX/test.csv',
-    test_dynamic_path=
-    'data/algorithmic_trading/FX/test_labeled_3_24_-0.05_0.05.csv',
+    test_dynamic_path='data/algorithmic_trading/FX/Market_Dynamics_Model/YUAN/test_labeled_slice_and_merge_model_3dynamics_minlength12_quantile_labeling.csv',
     tech_indicator_list=[
         'high', 'low', 'open', 'close', 'adjcp', 'zopen', 'zhigh', 'zlow',
         'zadjcp', 'zclose', 'zd_5', 'zd_10', 'zd_15', 'zd_20', 'zd_25', 'zd_30'

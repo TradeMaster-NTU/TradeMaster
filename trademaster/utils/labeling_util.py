@@ -312,6 +312,9 @@ class Worker():
 
     def adjcp_apply_filter(self, data, Wn_indicator, order):
         data['key_indicator_filtered'] = self.butter_lowpass_filter(data[self.key_indicator], Wn_indicator, order)
+        # print(self.key_indicator)
+        # print(data[self.key_indicator])
+        # print(data['key_indicator_filtered'])
         # plot the filtered data and save it to res folder
         # self.plot_lowpassfilter(data, 'filter_test')
         # print(data[['key_indicator_filtered', 'pct_return_filtered']])
@@ -389,6 +392,7 @@ class Worker():
             distance, paths = fastdtw(shorter, longer[i:i + slice_length])
             distances.append(distance)
         # normalize the distance by the length of the shorter segment and mean value of the shorter segment
+        # print(np.mean(distances),(slice_length * np.mean(shorter)))
         return np.mean(distances) / (slice_length * np.mean(shorter))
 
     def get_turning_points(self, data_ori, tic, max_length_expectation=0):
@@ -644,6 +648,14 @@ class Worker():
                                                self.turning_points_dict[tic], low, high,
                                                normalized_coef_list=self.norm_coef_list_dict[tic],
                                                plot_path=self.plot_path, plot_feather=self.key_indicator))
+                self.plot_to_file(self.data_dict[tic], tic, self.y_pred_dict[tic],
+                                  self.turning_points_dict[tic], low, high,
+                                  normalized_coef_list=self.norm_coef_list_dict[tic],
+                                  plot_path=self.plot_path, plot_feather='key_indicator_filtered',if_color=False,suffix='_denoised')
+                self.plot_to_file(self.data_dict[tic], tic, self.y_pred_dict[tic],
+                                  self.turning_points_dict[tic], low, high,
+                                  normalized_coef_list=self.norm_coef_list_dict[tic],
+                                  plot_path=self.plot_path, plot_feather=self.key_indicator,if_color=False,suffix='_original')
                 # self.plot_to_file(self.data_dict[tic], tic, self.y_pred_dict[tic],
                 #                   self.turning_points_dict[tic], low, high,
                 #                   normalized_coef_list=self.norm_coef_list_dict[tic],
@@ -656,12 +668,14 @@ class Worker():
                 print('not able to plot TSNE')
 
     def plot_to_file(self, data, tic, y_pred_list, turning_points, low, high, normalized_coef_list,
-                     plot_path=None, plot_feather=None):
+                     plot_path=None, plot_feather=None,suffix='',if_color=True):
         data = data.reset_index(drop=True)
         # every sub-plot is contained segment of at most 100000 data points
         # 1. split the data into segments if the length is too long
-        # For the case that the data of a long period may have significant value change, we split the data into 4 segments
-        segment_length = min(100000, data.shape[0]//4)
+        # For the case that the data of a long period may have significant value change, we split the data into segments (max of 4)
+
+        segment_num = min(data.shape[0]/1000,4)
+        segment_length = min(100000, data.shape[0]//segment_num)
         plot_segments = []
         counter = 0
         segments_buffer = [turning_points[0]]
@@ -678,7 +692,10 @@ class Worker():
         fig, axs = plt.subplots(sub_plot_num, 1, figsize=(50, 15 * sub_plot_num), constrained_layout=True)
         if sub_plot_num == 1:
             axs = [axs]
-        colors = list(dict(mcolors.BASE_COLORS, **mcolors.CSS4_COLORS).keys())
+        if if_color:
+            colors = list(dict(mcolors.BASE_COLORS, **mcolors.CSS4_COLORS).keys())
+        else:
+            colors = ['black' for _ in range(999)]
 
         counter = 0
         for index, ax in enumerate(axs):
@@ -692,7 +709,7 @@ class Worker():
                     coef = i + counter
                 flag = self.dynamic_flag.get(coef)
                 ax.plot(x_seg, data[plot_feather].iloc[turning_points_seg[i]:turning_points_seg[i + 1]],
-                        color=colors[flag], label='market dynamic ' + str(flag))
+                        color=colors[flag], label='Market Dynamics ' + str(flag), linewidth=3)
             counter += len(turning_points_seg) - 1
             handles, labels = ax.get_legend_handles_labels()
             by_label = dict(zip(labels, handles))
@@ -702,7 +719,7 @@ class Worker():
             ax.legend(by_label.values(), by_label.keys(), prop=font)
         # set the title
         plt.title(f"Dynamics_of_{tic}_linear_{self.labeling_method}_{plot_feather}", fontsize=20)
-        fig_path = plot_path + '_' + tic + '.png'
+        fig_path = plot_path + '_' + tic+suffix + '.png'
         # print('plot to ' + fig_path)
         fig.savefig(fig_path)
         plt.close(fig)

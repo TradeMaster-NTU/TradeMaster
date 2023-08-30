@@ -25,7 +25,7 @@ data = dict(
     valid_path='data/algorithmic_trading/BTC/valid.csv',
     test_path='data/algorithmic_trading/BTC/test.csv',
     test_dynamic_path=
-    'data/algorithmic_trading/BTC/test_labeled_3_24_-0.15_0.15.csv',
+    'data/algorithmic_trading/BTC/Market_Dynamics_Model/BTC/test_labeled_slice_and_merge_model_3dynamics_minlength12_quantile_labeling.csv',
     tech_indicator_list=[
         'high', 'low', 'open', 'close', 'adjcp', 'zopen', 'zhigh', 'zlow',
         'zadjcp', 'zclose', 'zd_5', 'zd_10', 'zd_15', 'zd_20', 'zd_25', 'zd_30'
