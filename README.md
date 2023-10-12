@@ -220,6 +220,7 @@ TradeMaster provides many visualization toolkits for a systematic evaluation of 
 [Commission Fee is not Enough: A Hierarchical Reinforced Framework for Portfolio Management](https://ojs.aaai.org/index.php/AAAI/article/view/16142) *(AAAI 21)*
 
 ## News
+- [AI科技评论][TradeMaster最新发布沙盒工具箱，探索量化交易的全新维度](https://mp.weixin.qq.com/s/WqU2t_hPH0t_1__VRPlz8g)
 - [AAAI Summer Syposium][Call for participation on RL4Fintech syposium in Singapore](https://sites.google.com/view/aaai23-ai4fintech)
 - [知乎][用强化学习在金融市场上赚钱？南洋理工发布全新基于强化学习的量化交易平台TradeMaster](https://zhuanlan.zhihu.com/p/614855780?utm_medium=social&utm_oi=798261254362927104&utm_psn=1620381293060993024&utm_source=wechat_session&wechatShare=1&s_r=0)
 - [机器之心][南洋理工发布量化交易大师TradeMaster，涵盖15种强化学习算法](https://mp.weixin.qq.com/s/MTUOksGGgaWX6GkXZT6wwA)
