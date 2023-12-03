@@ -2,7 +2,6 @@ import argparse
 import json
 import os
 import sys
-
 import pytz
 import requests
 import time
