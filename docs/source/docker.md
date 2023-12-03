@@ -1,5 +1,5 @@
 # Installation with Docker
-TradeMaster works on Docker.
+TradeMaster can work on Docker.
 
 __Download and install Docker__ from the [official webiste](https://docs.docker.com/engine/install/).
 
