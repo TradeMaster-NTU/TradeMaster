@@ -1,2 +1,2 @@
 def hello():
-  print('successful test.')
+  print('successful test!')
