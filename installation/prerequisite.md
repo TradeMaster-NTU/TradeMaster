@@ -3,7 +3,7 @@
 - Linux: Please follow the steps in this [blog](https://linuxize.com/post/how-to-install-anaconda-on-ubuntu-18-04/)
 - Windows: Please follow the steps in this [blog](https://docs.anaconda.com/anaconda/install/mac-os/)
 - MacOS: Please follow the steps in this [blog](https://docs.anaconda.com/anaconda/install/windows/)
-## Install [`Docker`](https://docs.docker.com/)(Optional)
+## Install [`Docker`](https://docs.docker.com/) (Optional)
 - Please follow the steps in this [blog](https://docs.docker.com/engine/install/)
 - To check whether the Docker has been installed properly, type `docker version`, it should show:
   ```
