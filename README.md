@@ -67,9 +67,9 @@ Here are the installation tutorials for different operating systems and docker:
 We provide tutorials covering core features of TradeMaster for users to get start with.
 |  Algorithm  | Dataset |   Market |                                                  Task                                                 |                     Code Link                      |
 | :---------: | :-----: | :-----: | :---------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------: |
-| EIIE | DJ30 | US Stock | Portfolio Management | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/Tutorial1_EIIE.ipynb)|
+| EIIE | DJ 30 | US Stock | Portfolio Management | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/Tutorial1_EIIE.ipynb)|
 | DeepScalper  |   BTC | Crypto | Intraday Trading | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/Tutorial2_DeepScalper.ipynb) | 
-| SARL | DJ30 | US Stock | Portfolio Management | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/Tutorial3_SARL.ipynb)| 
+| SARL | DJ 30 | US Stock | Portfolio Management | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/Tutorial3_SARL.ipynb)| 
 | PPO  |  SSE 50  | China Stock | Portfolio Management | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/Tutorial4_PPO.ipynb)|
 | ETEO | Bitcoin | Crypto | Order Execution | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/Tutorial5_ETEO.ipynb)|
 | Double DQN | Bitcoin | Crypto | High Frequency Trading | [tutorial](https://github.com/TradeMaster-NTU/TradeMaster/blob/1.0.0/tutorial/Tutorial6_DDQN.ipynb)|
