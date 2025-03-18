@@ -30,6 +30,15 @@ Install Apex following [apex repo](https://github.com/NVIDIA/apex):
   pip install -v --no-cache-dir .
   cd ..
   ```
+If on CPU platforms,
+  ```
+  pip install packaging mkl
+  git clone https://github.com/NVIDIA/apex
+  cd apex
+  git switch python_only
+  pip install -v --no-cache-dir .
+  cd ..
+  ```
 ## TradeMaster installation  
 
   ```
