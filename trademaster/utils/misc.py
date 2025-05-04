@@ -457,7 +457,8 @@ def load_best_model(output_dir,
 
     if resume:
         with pathmgr.open(resume, "rb") as f:
-            checkpoint = torch.load(f, map_location="cpu")
+            checkpoint = torch.load(f, map_location="cpu", weights_only=False)
+
 
         for name, model in save["models"].items():
             if model:

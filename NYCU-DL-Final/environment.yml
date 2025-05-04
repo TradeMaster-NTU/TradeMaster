@@ -1,0 +1,11 @@
+name: TradeMaster
+channels:
+  - https://repo.anaconda.com/pkgs/main
+  - https://repo.anaconda.com/pkgs/r
+dependencies:
+  - python=3.9
+  - torchaudio==0.12.1
+  - torchvision==0.13.1
+  - cudatoolkit=11.3
+  - cpuonly
+prefix: /root/miniconda3/envs/TradeMaster

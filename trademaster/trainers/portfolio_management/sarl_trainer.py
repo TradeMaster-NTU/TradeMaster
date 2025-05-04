@@ -55,7 +55,7 @@ def f(msg):
     logging.basicConfig(format='%(message)s',level=logging.DEBUG)
     logging.info(msg)
 
-@TRAINERS.register_module()
+@TRAINERS.register_module(force=True)
 class PortfolioManagementSARLTrainer(Trainer):
     def __init__(self, **kwargs):
         super(PortfolioManagementSARLTrainer, self).__init__()
