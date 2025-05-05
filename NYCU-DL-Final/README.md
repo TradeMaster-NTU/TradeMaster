@@ -1,19 +1,21 @@
 ## Tutorial
 
-### 0. 下載Conda
+### 0. 下載Conda(安裝一直按enter , 有yes打yes即可)
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
 bash miniconda.sh
 source ~/.bashrc
 conda --version
 會顯示像這樣：
-
 ```bash
 conda 24.3.0
 ```
 
 ### 1. 啟動腳本
+git clone https://github.com/alu98753/NYCU2025DLfinal-TradeMaster.git
+
 
 cd NYCU2025DLfinal-TradeMaster
+git checkout feat/TW-EIIE
 bash NYCU-DL-Final/setup_env.sh
 
 ### 2. 接著會提示你啟動環境
@@ -28,4 +30,3 @@ cd tools/portfolio_management
 python train_eiie.py
 
 ### 4. 跑得起來就沒問題啦
-
