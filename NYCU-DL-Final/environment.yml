@@ -1,11 +1,30 @@
 name: TradeMaster
 channels:
-  - https://repo.anaconda.com/pkgs/main
-  - https://repo.anaconda.com/pkgs/r
+  - pytorch
+  - conda-forge
+  - defaults
 dependencies:
   - python=3.9
-  - torchaudio==0.12.1
-  - torchvision==0.13.1
-  - cudatoolkit=11.3
-  - cpuonly
-prefix: /root/miniconda3/envs/TradeMaster
+  - numpy=1.23.5                # 避開 numpy 2.0 的 breaking change
+  - pydantic=1.10.12            # Ray 相容版本
+  - pip                         # pip still needed for PyPI-only packages
+  - pytorch=2.0.1               # 建議明確鎖定版本（搭配 torch ecosystem 更穩）
+  - torchvision=0.15.2          # 與 torch=2.0.1 相容版本
+  - torchaudio=2.0.2
+  - scipy
+  - matplotlib
+  - pandas
+  - scikit-learn
+  - gymnasium==0.28.1           # 避免和 gym==0.26.x 的不相容
+  - lightgbm
+  - pip:
+      - yapf==0.30.0            # 避開 verify=False 的錯誤
+      - diffusers==0.25.1       # 可與 transformers 相容
+      - wandb
+      - optuna
+      - ray==2.0.0              # 與 pydantic 1.x 穩定搭配
+      - plotly
+      - tensorboard
+      - transformers==4.36.2    # 與 diffusers 相容，並支援 torch 2.x
+      - yfinance
+      - finmind

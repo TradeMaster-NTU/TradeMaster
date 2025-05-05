@@ -15,7 +15,7 @@
     'environment': 
     {'type': 'PortfolioManagementEIIEEnvironment'}, 'agent': {'type': 'PortfolioManagementEIIE', 
     'memory_capacity': 1000, 'gamma': 0.99, 'policy_update_frequency': 500}, 
-    'trainer': {'type': 'PortfolioManagementEIIETrainer', 'epochs': 2, 
+    'trainer': {'type': 'PortfolioManagementEIIETrainer', 'epochs': 1, 
     'work_dir': 'work_dir/portfolio_management_dj30_eiie_eiie_adam_mse', 
     'if_remove': False}, 'loss': {'type': 'MSELoss'}, 'optimizer': {'type': 'Adam', 'lr': 0.001}, 
     'act': {'type': 'EIIEConv', 'input_dim': None, 'output_dim': 1, 'time_steps': 10, 'kernel_size': 3, 'dims': [32]}, 
