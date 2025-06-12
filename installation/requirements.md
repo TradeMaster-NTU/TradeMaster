@@ -2,7 +2,7 @@
 TradeMaster works on Linux, Windows and MacOS for both CPU and GPU, which requires Python 3.9+, CUDA 11.3+ and PyTorch 1.12+. If you have not installed CUDA, please download it from the [official website](https://developer.nvidia.com/cuda-11.3.0-download-archive)
 
 __Download and install Miniconda__ from the [official website](https://docs.conda.io/en/latest/miniconda.html).
-## Ceate a conda environment and activate it
+## Create a conda environment and activate it
 
   ```
   conda update -n base -c defaults conda
