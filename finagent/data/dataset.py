@@ -6,6 +6,43 @@ import pandas as pd
 pd.set_option('display.max_columns', 100000)
 pd.set_option('display.max_rows', 100000)
 
+STOCKTWITS_SENTIMENT_COLUMNS = [
+    "timestamp",
+    "stocktwits_posts",
+    "stocktwits_comments",
+    "stocktwits_likes",
+    "stocktwits_impressions",
+    "stocktwits_sentiment",
+]
+
+ADANOS_SENTIMENT_COLUMNS = [
+    "timestamp",
+    "adanos_source",
+    "adanos_buzz_score",
+    "adanos_mentions",
+    "adanos_sentiment_score",
+    "adanos_bullish_pct",
+    "adanos_bearish_pct",
+    "adanos_trend",
+    "adanos_latest_buzz_score",
+    "adanos_latest_sentiment_score",
+]
+
+
+def normalize_sentiment_dataframe(df: pd.DataFrame) -> pd.DataFrame:
+    """Normalize supported social sentiment parquet schemas."""
+    columns = set(df.columns)
+
+    if set(STOCKTWITS_SENTIMENT_COLUMNS).issubset(columns):
+        return df[STOCKTWITS_SENTIMENT_COLUMNS].copy()
+
+    if set(ADANOS_SENTIMENT_COLUMNS).issubset(columns):
+        return df[ADANOS_SENTIMENT_COLUMNS].copy()
+
+    raise KeyError(
+        "Unsupported sentiment schema. Expected Stocktwits/FMP columns or Adanos sentiment columns."
+    )
+
 @DATASET.register_module(force=True)
 class Dataset(BaseDataset):
     def __init__(self,
@@ -153,12 +190,7 @@ class Dataset(BaseDataset):
             df = df.sort_values(by="timestamp")
             df = df.reset_index(drop=True)
 
-            df = df[["timestamp",
-                     "stocktwits_posts",
-                     "stocktwits_comments",
-                     "stocktwits_likes",
-                     "stocktwits_impressions",
-                     "stocktwits_sentiment"]]
+            df = normalize_sentiment_dataframe(df)
 
             sentiments[asset] = df
 

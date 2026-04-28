@@ -217,6 +217,15 @@ TradeMaster provides many visualization toolkits for a systematic evaluation of 
 ## Publications
 [A multimodal foundation agent for financial trading: Tool-augmented, diversified, and generalist](https://personal.ntu.edu.sg/boan/papers/KDD24_FinAgent.pdf) *(KDD 2024)*
 
+### Optional Adanos market sentiment for FinAgent
+
+TradeMaster's `finagent` stack already accepts an optional `sentiment_path`. This PR adds an alternative downloader path for [Adanos Market Sentiment API](https://api.adanos.org/docs/) so FinAgent experiments can enrich stocks with cross-source market sentiment from Reddit, X, News, and Polymarket without changing the default FMP-based setup.
+
+- Config example: `configs/finagent/downloader/tools/adanos_sentiment_exp.py`
+- Auth: set `ADANOS_API_KEY`
+- Output: daily CSV files that can be processed into the existing `sentiment_path` parquet flow
+- Scope: fully optional; existing FMP sentiment configs continue to work unchanged
+
 [MacroHFT: Memory augmented context-aware reinforcement learning on high frequency trading](https://personal.ntu.edu.sg/boan/papers/KDD24_MacroHFT.pdf) *(KDD 2024)*
 
 [Reinforcement learning with maskable stock representation for portfolio management in customizable stock pools](https://personal.ntu.edu.sg/boan/papers/WWW24_EarnMore.pdf) *(WWW 2024)*

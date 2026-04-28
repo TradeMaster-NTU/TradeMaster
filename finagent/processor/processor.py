@@ -58,6 +58,19 @@ def cal_sentiment(df, columns):
     return df
 
 
+ADANOS_SENTIMENT_COLUMNS = [
+    "adanos_source",
+    "adanos_buzz_score",
+    "adanos_mentions",
+    "adanos_sentiment_score",
+    "adanos_bullish_pct",
+    "adanos_bearish_pct",
+    "adanos_trend",
+    "adanos_latest_buzz_score",
+    "adanos_latest_sentiment_score",
+]
+
+
 def cal_factor(df, level="day"):
     # intermediate values
     df['max_oc'] = df[["open", "close"]].max(axis=1)
@@ -509,23 +522,28 @@ class Processor():
 
                 if sentiment_type == "fmp":
                     sentiment_column_map = {}
+                    selected_columns = sentiment_columns
+                elif sentiment_type == "adanos":
+                    sentiment_column_map = {}
+                    selected_columns = ADANOS_SENTIMENT_COLUMNS
+                else:
+                    raise ValueError("Unsupported sentiment_type: {}".format(sentiment_type))
 
                 assert os.path.exists(sentiment_path), "sentiment path {} does not exist".format(sentiment_path)
 
                 sentiment_df = pd.read_csv(sentiment_path)
-                sentiment_df = sentiment_df.rename(columns=sentiment_column_map)[["timestamp"] + sentiment_columns]
+                sentiment_df = sentiment_df.rename(columns=sentiment_column_map)[["timestamp"] + selected_columns]
                 sentiment_df["timestamp"] = pd.to_datetime(sentiment_df["timestamp"])
 
                 sentiment_df = sentiment_df[ (sentiment_df["timestamp"] >= start_date) & (sentiment_df["timestamp"] < end_date)]
                 sentiment_df = sentiment_df.sort_values(by="timestamp")
                 sentiment_df["timestamp"] = pd.to_datetime(sentiment_df["timestamp"]).apply(lambda x: x.strftime("%Y-%m-%d"))
 
-                if sentiment_type == "rapidapi_seekingalpha":
-                    sentiment_df["type"] = "rapidapi"
-                    sentiment_df["source"] = "seekingalpha"
-
-                sentiment_df = cal_sentiment(sentiment_df, sentiment_columns)
-                sentiment_df = sentiment_df.drop_duplicates(subset=["timestamp"], keep="first")
+                if sentiment_type == "adanos":
+                    sentiment_df = sentiment_df.drop_duplicates(subset=["timestamp", "adanos_source"], keep="last")
+                else:
+                    sentiment_df = cal_sentiment(sentiment_df, sentiment_columns)
+                    sentiment_df = sentiment_df.drop_duplicates(subset=["timestamp"], keep="first")
                 sentiment_df = sentiment_df.reset_index(drop=True)
                 sentiment_df["timestamp"] = pd.to_datetime(sentiment_df["timestamp"]).apply(lambda x: x.strftime("%Y-%m-%d"))
                 sentiments_df.append(sentiment_df)
@@ -545,7 +563,10 @@ class Processor():
 
             sentiments_df = sentiments_df.sort_values(by="timestamp")
             sentiments_df = sentiments_df.reset_index(drop=True)
-            sentiments_df = sentiments_df[["timestamp", "type"] + sentiment_columns]
+            if "adanos_source" in sentiments_df.columns:
+                sentiments_df = sentiments_df[["timestamp", "type"] + ADANOS_SENTIMENT_COLUMNS]
+            else:
+                sentiments_df = sentiments_df[["timestamp", "type"] + sentiment_columns]
 
             outpath = os.path.join(self.root, self.workdir, self.tag, "sentiment")
             os.makedirs(outpath, exist_ok=True)

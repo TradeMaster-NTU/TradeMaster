@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 ROOT = str(Path(__file__).resolve().parents[2])
 import warnings
+from finagent.prompt.sentiment import format_social_sentiment_text
 def str2html(doc: str) -> BeautifulSoup:
     doc = BeautifulSoup(doc, 'html.parser')
     return doc
@@ -143,8 +144,7 @@ def prepared_tools_params(state: Dict,
                 guidance_text = "\n".join(guidance_list)
 
     # prepare sentiment
-    # TODO: add sentiment for social media
-    sentiment_text = None
+    sentiment_text = format_social_sentiment_text(sentiment=sentiment, date=date)
 
     # prepare stategies
 
