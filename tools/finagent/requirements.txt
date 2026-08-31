@@ -11,7 +11,7 @@ polygon-api-client
 mplfinance
 python-dotenv
 gym
-pandas_ta
+pandas-ta-classic>=0.3.59
 scikit-learn-extra
 json5
 pyarrow
